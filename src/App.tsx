@@ -5,6 +5,7 @@ import {
   formatNumber,
   getDailyNutrition,
   getExerciseById,
+  getCurrentTransformationFull,
   getPowerLevel,
   getPrimaryRecommendation,
   getProgramById,
@@ -234,6 +235,81 @@ function OnboardingView({
   )
 }
 
+function QuestSection({ state }: { state: AppState }) {
+  const tf = getCurrentTransformationFull(state)
+  const next = tf.nextTransformation
+  if (!next || next.quests.length === 0) return null
+
+  const allDone = next.quests.every(q => q.requirement(state) >= q.target)
+
+  return (
+    <section className="panel stack-md">
+      <div className="section-head">
+        <div>
+          <span className="eyebrow">QUÊTES</span>
+          <h3 style={{ color: next.accent }}>Vers {next.name}</h3>
+        </div>
+        <img
+          src={next.image}
+          alt={next.name}
+          style={{ width: 56, height: 56, objectFit: 'contain', opacity: 0.85 }}
+        />
+      </div>
+
+      <div className="stack-md">
+        {next.quests.map(q => {
+          const current = q.requirement(state)
+          const done = current >= q.target
+          const pct = Math.min(100, Math.round((current / q.target) * 100))
+          return (
+            <div key={q.id} className="progress-block">
+              <div className="progress-meta">
+                <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  {done && <span style={{ color: '#ffd700', fontSize: '1rem' }}>✦</span>}
+                  <strong style={{ color: done ? '#ffd700' : 'inherit' }}>{q.name}</strong>
+                </span>
+                <strong style={{ color: done ? '#ffd700' : 'var(--accent-calm)' }}>
+                  {Math.min(current, q.target).toLocaleString()} / {q.target.toLocaleString()}
+                </strong>
+              </div>
+              <p style={{ fontSize: '0.75rem', opacity: 0.65, margin: '2px 0 4px' }}>{q.description}</p>
+              <div className="progress-shell">
+                <div
+                  className="progress-fill"
+                  style={{
+                    width: `${pct}%`,
+                    background: done
+                      ? 'linear-gradient(90deg, #ffd700, #ffaa00)'
+                      : `linear-gradient(90deg, ${next.accent}, ${next.accent}88)`,
+                  }}
+                />
+              </div>
+            </div>
+          )
+        })}
+      </div>
+
+      {allDone && (
+        <div
+          style={{
+            marginTop: 8,
+            padding: '12px 16px',
+            borderRadius: 8,
+            border: `1px solid ${next.accent}`,
+            background: `${next.accent}18`,
+            textAlign: 'center',
+            fontWeight: 700,
+            color: next.accent,
+            letterSpacing: '0.05em',
+          }}
+        >
+          ⚡ TRANSFORMATION AVAILABLE: {next.name.toUpperCase()} ⚡
+        </div>
+      )}
+    </section>
+  )
+}
+
 function HomeView({
   state,
   nextSession,
@@ -266,6 +342,8 @@ function HomeView({
           {transformation.name}
         </div>
       </section>
+
+      <QuestSection state={state} />
 
       <section className="panel stack-md">
         <div className="section-head">

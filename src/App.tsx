@@ -104,6 +104,15 @@ function ProgressBar({
   )
 }
 
+function SectionEyebrow({ icon, label }: { icon: string; label: string }) {
+  return (
+    <div className="section-eyebrow">
+      <span>{icon}</span>
+      <span>{label}</span>
+    </div>
+  )
+}
+
 function getLastSet(workouts: AppState['workouts'], exerciseId: string) {
   for (let index = workouts.length - 1; index >= 0; index -= 1) {
     const exerciseLog = workouts[index].exercises.find(
@@ -235,6 +244,26 @@ function OnboardingView({
   )
 }
 
+function TransformationTimeline({ state }: { state: AppState }) {
+  const tf = getCurrentTransformationFull(state)
+  return (
+    <div className="transformation-timeline">
+      {tf.allTransformations.map((t, i) => {
+        const isActive = i === tf.currentIndex
+        const isLocked = i > tf.currentIndex
+        return (
+          <div key={t.level} className={`timeline-node ${isActive ? 'active' : ''} ${isLocked ? 'locked' : ''}`}>
+            <div className="timeline-img-wrap">
+              <img src={t.image} alt={t.name} />
+            </div>
+            <span className="timeline-label">{t.name.replace('Super Saiyan', 'SSJ').replace('Mastered Ultra Instinct', 'MUI').replace('Ultra Instinct Sign', 'UI Sign')}</span>
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
 function QuestSection({ state }: { state: AppState }) {
   const tf = getCurrentTransformationFull(state)
   const next = tf.nextTransformation
@@ -246,13 +275,14 @@ function QuestSection({ state }: { state: AppState }) {
     <section className="panel stack-md">
       <div className="section-head">
         <div>
-          <span className="eyebrow">QUÊTES</span>
+          <SectionEyebrow icon="⚡" label="Quêtes" />
           <h3 style={{ color: next.accent }}>Vers {next.name}</h3>
         </div>
         <img
           src={next.image}
           alt={next.name}
-          style={{ width: 56, height: 56, objectFit: 'contain', opacity: 0.85 }}
+          className={`transformation-image ${allDone ? 'aura-glow' : ''}`}
+          style={{ width: 72, height: 72, filter: `drop-shadow(0 0 16px ${next.accent}88)` }}
         />
       </div>
 
@@ -262,20 +292,22 @@ function QuestSection({ state }: { state: AppState }) {
           const done = current >= q.target
           const pct = Math.min(100, Math.round((current / q.target) * 100))
           return (
-            <div key={q.id} className="progress-block">
-              <div className="progress-meta">
-                <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                  {done && <span style={{ color: '#ffd700', fontSize: '1rem' }}>✦</span>}
-                  <strong style={{ color: done ? '#ffd700' : 'inherit' }}>{q.name}</strong>
-                </span>
-                <strong style={{ color: done ? '#ffd700' : 'var(--accent-calm)' }}>
+            <div key={q.id} className={`quest-card ${done ? 'completed' : ''}`}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8 }}>
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 2 }}>
+                    {done && <span style={{ color: '#ffd700', fontSize: '0.85rem' }}>✦</span>}
+                    <strong style={{ fontSize: '0.88rem', color: done ? '#ffd700' : 'var(--text)' }}>{q.name}</strong>
+                  </div>
+                  <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--muted)' }}>{q.description}</p>
+                </div>
+                <span style={{ fontSize: '0.78rem', fontWeight: 700, color: done ? '#ffd700' : 'var(--muted)', whiteSpace: 'nowrap' }}>
                   {Math.min(current, q.target).toLocaleString()} / {q.target.toLocaleString()}
-                </strong>
+                </span>
               </div>
-              <p style={{ fontSize: '0.75rem', opacity: 0.65, margin: '2px 0 4px' }}>{q.description}</p>
-              <div className="progress-shell">
+              <div className="quest-progress-bar">
                 <div
-                  className="progress-fill"
+                  className="quest-progress-fill"
                   style={{
                     width: `${pct}%`,
                     background: done
@@ -291,19 +323,10 @@ function QuestSection({ state }: { state: AppState }) {
 
       {allDone && (
         <div
-          style={{
-            marginTop: 8,
-            padding: '12px 16px',
-            borderRadius: 8,
-            border: `1px solid ${next.accent}`,
-            background: `${next.accent}18`,
-            textAlign: 'center',
-            fontWeight: 700,
-            color: next.accent,
-            letterSpacing: '0.05em',
-          }}
+          className="transformation-available-banner"
+          style={{ borderColor: next.accent, color: next.accent, background: `${next.accent}12` }}
         >
-          ⚡ TRANSFORMATION AVAILABLE: {next.name.toUpperCase()} ⚡
+          ⚡ TRANSFORMATION DISPONIBLE : {next.name.toUpperCase()} ⚡
         </div>
       )}
     </section>
@@ -325,22 +348,36 @@ function HomeView({
 }) {
   const targets = state.targets!
   const nutrition = getDailyNutrition(state.foodEntries)
-  const transformation = getTransformation(powerLevel)
+  const tf = getCurrentTransformationFull(state)
+  const transformation = tf.current
   const weeklyWorkouts = getWeeklyWorkouts(state.workouts)
   const weeklyVolume = weeklyWorkouts.reduce((sum, workout) => sum + getWorkoutVolume(workout), 0)
   const recipeSuggestions = getRecommendedRecipes(state)
 
   return (
     <div className="page">
-      <section className="hero-card">
-        <div className="hero-copy">
+      <section className="hero-card" style={{ borderColor: `${transformation.accent}33` }}>
+        <div className="hero-copy" style={{ flex: 1 }}>
           <span className="eyebrow">Power Level</span>
-          <h2>{formatNumber(powerLevel)}</h2>
-          <p>{transformation.name} active. Continue ta progression sans perdre de vitesse.</p>
+          <h2 style={{ color: transformation.accent }}>{formatNumber(powerLevel)}</h2>
+          <p>{transformation.name} — Continue ta progression.</p>
+          <div className="hero-badge" style={{ borderColor: transformation.accent, color: transformation.accent, display: 'inline-block', marginTop: 8 }}>
+            {transformation.name}
+          </div>
         </div>
-        <div className="hero-badge" style={{ borderColor: transformation.accent, color: transformation.accent }}>
-          {transformation.name}
+        <div className="transformation-hero">
+          <img
+            src={transformation.image}
+            alt={transformation.name}
+            className="transformation-image"
+            style={{ filter: `drop-shadow(0 0 24px ${transformation.accent}88)` }}
+          />
         </div>
+      </section>
+
+      <section className="panel stack-md">
+        <SectionEyebrow icon="🗺️" label="Saga des formes" />
+        <TransformationTimeline state={state} />
       </section>
 
       <QuestSection state={state} />
@@ -348,42 +385,48 @@ function HomeView({
       <section className="panel stack-md">
         <div className="section-head">
           <div>
-            <span className="eyebrow">Mission du jour</span>
+            <SectionEyebrow icon="⚔️" label="Mission du jour" />
             <h3>{nextSession?.name ?? 'Aucune seance programmee'}</h3>
           </div>
           <button className="primary-btn" onClick={onStartWorkout} type="button">
             {state.activeWorkout ? 'Reprendre' : 'Lancer'}
           </button>
         </div>
-        <p>{nextSession?.focus ?? 'Choisis un programme pour recevoir une seance guidee.'}</p>
+        {nextSession
+          ? <p>{nextSession.focus}</p>
+          : <div className="empty-state"><div className="empty-icon">🎯</div><p>Choisis un programme depuis le profil pour recevoir une seance guidee.</p></div>
+        }
         <div className="metrics-grid">
-          <MetricCard label="Seances semaine" value={`${weeklyWorkouts.length}/${state.profile?.trainingDaysPerWeek ?? 0}`} accent="var(--accent-gold)" />
-          <MetricCard label="Volume semaine" value={`${formatNumber(weeklyVolume)} kg`} accent="var(--accent-blue)" />
-          <MetricCard label="Calories restantes" value={`${Math.max(0, Math.round(targets.calories - nutrition.calories))}`} accent="var(--accent-orange)" />
+          <MetricCard label="Seances" value={`${weeklyWorkouts.length}/${state.profile?.trainingDaysPerWeek ?? 0}`} accent="var(--accent-gold)" />
+          <MetricCard label="Volume" value={`${formatNumber(weeklyVolume)} kg`} accent="var(--accent-blue)" />
+          <MetricCard label="Kcal restantes" value={`${Math.max(0, Math.round(targets.calories - nutrition.calories))}`} accent="var(--accent-orange)" />
         </div>
       </section>
 
       <section className="panel stack-md">
-        <span className="eyebrow">Nutrition cible</span>
+        <SectionEyebrow icon="🥩" label="Nutrition cible" />
         <ProgressBar label="Calories" value={nutrition.calories} target={targets.calories} accent="linear-gradient(90deg, #ffb400, #ff6a00)" />
         <ProgressBar label="Proteines" value={nutrition.protein} target={targets.protein} accent="linear-gradient(90deg, #00d4ff, #4fffb0)" />
       </section>
 
       <section className="panel stack-md">
-        <span className="eyebrow">Scouter insight</span>
+        <SectionEyebrow icon="🔭" label="Scouter insight" />
         <p>{recommendation}</p>
       </section>
 
       <section className="panel stack-md">
-        <span className="eyebrow">Recipes</span>
-        <div className="card-list">
-          {recipeSuggestions.map((recipe) => (
-            <article className="mini-card" key={recipe.id}>
-              <strong>{recipe.name}</strong>
-              <span>{recipe.calories} kcal • {recipe.protein}P • {recipe.carbs}G • {recipe.fats}L</span>
-            </article>
-          ))}
-        </div>
+        <SectionEyebrow icon="🍱" label="Recettes suggérées" />
+        {recipeSuggestions.length === 0
+          ? <div className="empty-state"><div className="empty-icon">🍳</div><p>Ajoute des repas pour recevoir des suggestions.</p></div>
+          : <div className="card-list">
+              {recipeSuggestions.map((recipe) => (
+                <article className="mini-card" key={recipe.id}>
+                  <strong>{recipe.name}</strong>
+                  <span>{recipe.calories} kcal • {recipe.protein}P • {recipe.carbs}G • {recipe.fats}L</span>
+                </article>
+              ))}
+            </div>
+        }
       </section>
     </div>
   )
@@ -411,7 +454,16 @@ function TrainView({
   const activeWorkout = state.activeWorkout
 
   if (!selectedProgram || !nextSession) {
-    return <div className="page"><section className="panel"><p>Choisis d abord un programme depuis le profil.</p></section></div>
+    return (
+      <div className="page">
+        <section className="panel">
+          <div className="empty-state">
+            <div className="empty-icon">🏋️</div>
+            <p>Choisis un programme depuis le profil pour commencer ta Saga.</p>
+          </div>
+        </section>
+      </div>
+    )
   }
 
   if (!activeWorkout) {
@@ -429,7 +481,7 @@ function TrainView({
         <section className="panel stack-md">
           <div className="section-head">
             <div>
-              <span className="eyebrow">Prochaine seance</span>
+              <SectionEyebrow icon="📋" label="Prochaine séance" />
               <h3>{nextSession.name}</h3>
             </div>
             <button className="primary-btn" onClick={onStartWorkout} type="button">Start</button>
@@ -456,8 +508,8 @@ function TrainView({
       {restTimer > 0 && (
         <section className="panel timer-panel">
           <div>
-            <span className="eyebrow">Rest timer</span>
-            <h3>{restTimer}s</h3>
+            <SectionEyebrow icon="⏱️" label="Rest timer" />
+            <h3 style={{ fontSize: '3.2rem', margin: 0 }}>{restTimer}s</h3>
           </div>
           <button className="ghost-btn" onClick={onSkipTimer} type="button">Skip</button>
         </section>
@@ -466,7 +518,7 @@ function TrainView({
       <section className="panel stack-md">
         <div className="section-head">
           <div>
-            <span className="eyebrow">Active workout</span>
+            <SectionEyebrow icon="💪" label="Séance active" />
             <h3>{nextSession.name}</h3>
           </div>
           <button className="primary-btn" onClick={onFinishWorkout} type="button">Finish</button>
@@ -489,7 +541,7 @@ function TrainView({
             <div className="section-head section-head--tight">
               <div>
                 <h3>{exercise.name}</h3>
-                <p>{target.sets} x {target.repMin}-{target.repMax} • RIR {target.targetRir} • Rest {target.restSeconds}s</p>
+                <p style={{ margin: 0 }}>{target.sets} x {target.repMin}-{target.repMax} • RIR {target.targetRir} • Rest {target.restSeconds}s</p>
               </div>
               {previous && <span className="badge">Last {previous.weightKg} x {previous.reps}</span>}
             </div>
@@ -521,12 +573,14 @@ function TrainView({
             </div>
 
             <button className="secondary-btn" type="button" onClick={() => onAddSet(exercise.id, Number(currentInput.weight || 0), Number(currentInput.reps || 0), Number(currentInput.rir || target.targetRir), currentInput.setType)}>
-              Add set
+              + Ajouter la série
             </button>
 
             <div className="set-list">
               {exerciseLog.sets.length === 0 ? (
-                <p className="muted">No set yet. Start with the previous load and push one clean rep or a small load jump.</p>
+                <div className="empty-state" style={{ padding: '12px 0' }}>
+                  <p style={{ margin: 0, fontSize: '0.85rem' }}>🎯 Démarre avec la charge précédente et progresse.</p>
+                </div>
               ) : (
                 exerciseLog.sets.map((set) => (
                   <div className="set-row" key={set.id}>
@@ -539,11 +593,13 @@ function TrainView({
               )}
             </div>
 
-            <div className="chip-row">
-              {exercise.alternatives.map((alternativeId) => (
-                <span className="chip chip--static" key={alternativeId}>{getExerciseById(alternativeId).name}</span>
-              ))}
-            </div>
+            {exercise.alternatives.length > 0 && (
+              <div className="chip-row">
+                {exercise.alternatives.map((alternativeId) => (
+                  <span className="chip chip--static" key={alternativeId}>{getExerciseById(alternativeId).name}</span>
+                ))}
+              </div>
+            )}
           </section>
         )
       })}
@@ -561,16 +617,16 @@ function NutritionView({ state, onAddFood }: { state: AppState; onAddFood: (entr
   return (
     <div className="page">
       <section className="panel stack-md">
-        <span className="eyebrow">Nutrition</span>
+        <SectionEyebrow icon="🥩" label="Nutrition aujourd'hui" />
         <ProgressBar label="Calories" value={totals.calories} target={state.targets?.calories ?? 1} accent="linear-gradient(90deg, #ffb400, #ff6a00)" />
         <ProgressBar label="Proteines" value={totals.protein} target={state.targets?.protein ?? 1} accent="linear-gradient(90deg, #00d4ff, #4fffb0)" />
       </section>
 
       <section className="panel stack-md">
-        <span className="eyebrow">Quick add food</span>
+        <SectionEyebrow icon="➕" label="Ajouter un aliment" />
         <div className="field-grid compact-grid">
           <label>
-            <span>Food</span>
+            <span>Aliment</span>
             <select value={selectedFood.id} onChange={(event) => setSelectedFood(foods.find((food) => food.id === event.target.value) ?? foods[0])}>
               {foods.map((food) => <option key={food.id} value={food.id}>{food.name}</option>)}
             </select>
@@ -598,19 +654,22 @@ function NutritionView({ state, onAddFood }: { state: AppState; onAddFood: (entr
       </section>
 
       <section className="panel stack-md">
-        <span className="eyebrow">Saved meals</span>
-        <div className="card-list">
-          {state.savedMeals.map((meal) => (
-            <button className="mini-card mini-card--button" key={meal.id} type="button" onClick={() => onAddFood({ id: makeId('meal'), date: todayIso(), name: meal.name, category: meal.category, grams: 1, calories: meal.calories, protein: meal.protein, carbs: meal.carbs, fats: meal.fats })}>
-              <strong>{meal.name}</strong>
-              <span>{meal.calories} kcal • {meal.protein}P</span>
-            </button>
-          ))}
-        </div>
+        <SectionEyebrow icon="💾" label="Repas sauvegardés" />
+        {state.savedMeals.length === 0
+          ? <div className="empty-state"><div className="empty-icon">🍽️</div><p>Aucun repas sauvegarde.</p></div>
+          : <div className="card-list">
+              {state.savedMeals.map((meal) => (
+                <button className="mini-card mini-card--button" key={meal.id} type="button" onClick={() => onAddFood({ id: makeId('meal'), date: todayIso(), name: meal.name, category: meal.category, grams: 1, calories: meal.calories, protein: meal.protein, carbs: meal.carbs, fats: meal.fats })}>
+                  <strong>{meal.name}</strong>
+                  <span>{meal.calories} kcal • {meal.protein}P</span>
+                </button>
+              ))}
+            </div>
+        }
       </section>
 
       <section className="panel stack-md">
-        <span className="eyebrow">Suggested recipes</span>
+        <SectionEyebrow icon="🍱" label="Recettes suggérées" />
         <div className="card-list">
           {suggestions.map((recipe) => (
             <button className="mini-card mini-card--button" key={recipe.id} type="button" onClick={() => onAddFood({ id: makeId('recipe'), date: todayIso(), name: recipe.name, category: recipe.category, grams: 1, calories: recipe.calories, protein: recipe.protein, carbs: recipe.carbs, fats: recipe.fats })}>
@@ -631,18 +690,21 @@ function ScouterView({ state }: { state: AppState }) {
   return (
     <div className="page">
       <section className="panel stack-md">
-        <span className="eyebrow">Scouter analytics</span>
+        <SectionEyebrow icon="📡" label="Scouter analytics" />
         <div className="metrics-grid">
-          <MetricCard label="Workouts" value={String(weeklyWorkouts.length)} accent="var(--accent-gold)" />
+          <MetricCard label="Seances" value={String(weeklyWorkouts.length)} accent="var(--accent-gold)" />
           <MetricCard label="Volume" value={`${formatNumber(weeklyWorkouts.reduce((sum, workout) => sum + getWorkoutVolume(workout), 0))} kg`} accent="var(--accent-blue)" />
-          <MetricCard label="Bodyweight" value={`${state.bodyweightEntries.at(-1)?.weightKg ?? state.profile?.weightKg ?? 0} kg`} accent="var(--accent-orange)" />
+          <MetricCard label="Poids" value={`${state.bodyweightEntries.at(-1)?.weightKg ?? state.profile?.weightKg ?? 0} kg`} accent="var(--accent-orange)" />
         </div>
       </section>
 
       <section className="panel stack-md">
-        <span className="eyebrow">Volume by muscle</span>
+        <SectionEyebrow icon="💪" label="Volume par muscle" />
         {volumeByMuscle.length === 0 ? (
-          <p className="muted">Complete ta premiere semaine pour voir la map musculaire.</p>
+          <div className="empty-state">
+            <div className="empty-icon">📊</div>
+            <p>Complete ta premiere semaine pour voir la map musculaire.</p>
+          </div>
         ) : (
           volumeByMuscle.map(([muscle, volume]) => (
             <ProgressBar key={muscle} label={muscle} value={volume} target={Math.max(volumeByMuscle[0][1], 1)} accent="linear-gradient(90deg, #4fffb0, #00d4ff)" />
@@ -675,17 +737,17 @@ function ProfileView({
     <div className="page">
       <section className="hero-card">
         <div className="hero-copy">
-          <span className="eyebrow">Profile</span>
+          <span className="eyebrow">Profil</span>
           <h2>{state.profile?.name}</h2>
           <p>{transformation.name} • {state.profile?.goal.replace('_', ' ')}</p>
         </div>
         <div className="hero-badge" style={{ borderColor: transformation.accent, color: transformation.accent }}>
-          {dragonBalls}/7 DB
+          {dragonBalls}/7 🐉
         </div>
       </section>
 
       <section className="panel stack-md">
-        <span className="eyebrow">Bodyweight</span>
+        <SectionEyebrow icon="⚖️" label="Poids corporel" />
         <div className="inline-form">
           <input value={bodyweight} onChange={(event) => setBodyweight(event.target.value)} />
           <button className="secondary-btn" type="button" onClick={() => onLogBodyweight({ id: makeId('bw'), date: todayIso(), weightKg: Number(bodyweight) })}>Log</button>
@@ -693,38 +755,50 @@ function ProfileView({
       </section>
 
       <section className="panel stack-md">
-        <span className="eyebrow">Measurements</span>
+        <SectionEyebrow icon="📏" label="Mensurations" />
         <div className="field-grid compact-grid">
-          <label><span>Waist</span><input value={measurements.waist} onChange={(event) => setMeasurements({ ...measurements, waist: event.target.value })} /></label>
-          <label><span>Chest</span><input value={measurements.chest} onChange={(event) => setMeasurements({ ...measurements, chest: event.target.value })} /></label>
-          <label><span>Arm</span><input value={measurements.arm} onChange={(event) => setMeasurements({ ...measurements, arm: event.target.value })} /></label>
-          <label><span>Thigh</span><input value={measurements.thigh} onChange={(event) => setMeasurements({ ...measurements, thigh: event.target.value })} /></label>
+          <label><span>Tour de taille</span><input value={measurements.waist} onChange={(event) => setMeasurements({ ...measurements, waist: event.target.value })} /></label>
+          <label><span>Poitrine</span><input value={measurements.chest} onChange={(event) => setMeasurements({ ...measurements, chest: event.target.value })} /></label>
+          <label><span>Bras</span><input value={measurements.arm} onChange={(event) => setMeasurements({ ...measurements, arm: event.target.value })} /></label>
+          <label><span>Cuisse</span><input value={measurements.thigh} onChange={(event) => setMeasurements({ ...measurements, thigh: event.target.value })} /></label>
         </div>
-        <button className="secondary-btn" type="button" onClick={() => onLogMeasurement({ id: makeId('measure'), date: todayIso(), waistCm: Number(measurements.waist), chestCm: Number(measurements.chest), armCm: Number(measurements.arm), thighCm: Number(measurements.thigh) })}>Save measurements</button>
+        <button className="secondary-btn" type="button" onClick={() => onLogMeasurement({ id: makeId('measure'), date: todayIso(), waistCm: Number(measurements.waist), chestCm: Number(measurements.chest), armCm: Number(measurements.arm), thighCm: Number(measurements.thigh) })}>Sauvegarder</button>
       </section>
 
       <section className="panel stack-md">
-        <span className="eyebrow">Programs</span>
-        <div className="card-list">
-          {programs.map((program) => (
-            <button className={`mini-card mini-card--button ${state.selectedProgramId === program.id ? 'mini-card--selected' : ''}`} key={program.id} type="button" onClick={() => onChooseProgram(program.id)}>
-              <strong>{program.name}</strong>
-              <span>{program.saga} • {program.daysPerWeek} jours</span>
-            </button>
-          ))}
-        </div>
+        <SectionEyebrow icon="📚" label="Programmes" />
+        {programs.length === 0
+          ? <div className="empty-state"><div className="empty-icon">📖</div><p>Aucun programme disponible.</p></div>
+          : <div className="card-list">
+              {programs.map((program) => (
+                <button className={`mini-card mini-card--button ${state.selectedProgramId === program.id ? 'mini-card--selected' : ''}`} key={program.id} type="button" onClick={() => onChooseProgram(program.id)}>
+                  <strong>{program.name}</strong>
+                  <span>{program.saga} • {program.daysPerWeek} jours</span>
+                </button>
+              ))}
+            </div>
+        }
       </section>
+
+      <p className="profile-footer">Propulsé par Katrava ⚡</p>
     </div>
   )
 }
 
 function BottomNav({ tab, onChange }: { tab: TabId; onChange: (tab: TabId) => void }) {
-  const items: Array<[TabId, string]> = [['home', 'Home'], ['train', 'Train'], ['nutrition', 'Fuel'], ['scouter', 'Scouter'], ['profile', 'Profile']]
+  const items: Array<[TabId, string, string]> = [
+    ['home', '🏠', 'Home'],
+    ['train', '⚔️', 'Train'],
+    ['nutrition', '🥩', 'Fuel'],
+    ['scouter', '📡', 'Scouter'],
+    ['profile', '👤', 'Profile'],
+  ]
   return (
     <nav className="bottom-nav">
-      {items.map(([id, label]) => (
+      {items.map(([id, icon, label]) => (
         <button key={id} className={`nav-item ${tab === id ? 'nav-item--active' : ''}`} onClick={() => onChange(id)} type="button">
-          {label}
+          <div style={{ fontSize: '1.2rem', lineHeight: 1 }}>{icon}</div>
+          <div>{label}</div>
         </button>
       ))}
     </nav>

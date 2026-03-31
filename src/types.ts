@@ -259,6 +259,48 @@ export interface MainObjective {
   completed: boolean
 }
 
+// RP Hypertrophy-style volume tracking
+export interface MuscleVolumeTarget {
+  muscle: MuscleGroup
+  mev: number
+  mav: number
+  mrv: number
+  currentSets: number
+}
+
+// Post-workout session feedback (RP style)
+export interface SessionFeedback {
+  date: string
+  workoutId: string
+  muscleGroups: {
+    muscle: MuscleGroup
+    pump: 1 | 2 | 3 | 4 | 5
+    soreness: 1 | 2 | 3 | 4 | 5
+    performance: 'worse' | 'same' | 'better'
+    jointPain: boolean
+  }[]
+}
+
+// Mesocycle / block tracking
+export interface MesocycleState {
+  id: string
+  name: string
+  startDate: string
+  weekNumber: number
+  totalWeeks: number
+  phase: 'accumulation' | 'intensification' | 'deload'
+  volumeMultiplier: number
+}
+
+// MacroFactor-style adaptive TDEE
+export interface AdaptiveTDEE {
+  date: string
+  estimatedTDEE: number
+  caloriesIn: number
+  weightTrend: number
+  adjustment: number
+}
+
 export interface AppState {
   profile: UserProfile | null
   targets: GoalTargets | null
@@ -274,4 +316,8 @@ export interface AppState {
   onboardingAnswers: OnboardingAnswers | null
   completedDailyQuests: Record<string, string[]>
   unlockedTransformations: string[]
+  sessionFeedback: SessionFeedback[]
+  mesocycle: MesocycleState | null
+  adaptiveTDEE: AdaptiveTDEE[]
+  weeklyMuscleVolume: Record<string, number>
 }

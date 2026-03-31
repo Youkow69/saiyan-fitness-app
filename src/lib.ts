@@ -9,9 +9,7 @@ import type {
   MainObjective,
   MuscleGroup,
   MuscleVolumeTarget,
-  OnboardingAnswers,
   ProgramTemplate,
-  SessionFeedback,
   UserProfile,
   WorkoutLog,
 } from './types'
@@ -473,7 +471,6 @@ export function getAdaptiveTDEEStatus(state: AppState): { tdee: number; dailyDel
   const hasEnoughData = (state.bodyweightEntries ?? []).length >= 7 && (state.foodEntries ?? []).length >= 7
   const tdee = calculateAdaptiveTDEE(state)
   const todayNutrition = getDailyNutrition(state.foodEntries)
-  const targetCals = state.targets?.calories ?? tdee
   const dailyDelta = todayNutrition.calories - tdee
   const status = dailyDelta > 100 ? 'surplus' : dailyDelta < -100 ? 'deficit' : 'maintenance'
   return { tdee, dailyDelta, status, hasEnoughData }

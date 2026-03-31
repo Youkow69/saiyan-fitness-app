@@ -161,7 +161,7 @@ function FeedbackModal({
     setEntries(prev => ({ ...prev, [muscle]: { ...prev[muscle], [key]: val } }))
   }
 
-  const ratingCircles = (muscle: string, key: 'pump' | 'soreness', _labels: string[]) => (
+  const ratingCircles = (muscle: string, key: 'pump' | 'soreness') => (
     <div style={{ display: 'flex', gap: 6 }}>
       {[1,2,3,4,5].map(n => (
         <button
@@ -202,8 +202,8 @@ function FeedbackModal({
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
           <div>
-            <span className="eyebrow">Post-seance</span>
-            <h3 style={{ margin: 0, fontFamily: 'Bebas Neue, sans-serif', fontSize: '1.6rem' }}>Feedback RP</h3>
+            <span className="eyebrow">Feedback post-seance</span>
+            <h3 style={{ margin: 0, fontFamily: 'Bebas Neue, sans-serif', fontSize: '1.6rem' }}>Ressenti RP</h3>
           </div>
           <button className="ghost-btn" style={{ minHeight: 36, padding: '4px 12px' }} onClick={onSkip} type="button">Passer</button>
         </div>
@@ -216,11 +216,11 @@ function FeedbackModal({
               <div className="stack-md" style={{ gap: 10 }}>
                 <div>
                   <span style={{ fontSize: '0.72rem', color: 'var(--muted)', display: 'block', marginBottom: 6 }}>PUMP (1=aucun, 5=extreme)</span>
-                  {ratingCircles(muscle, 'pump', [])}
+                  {ratingCircles(muscle, 'pump')}
                 </div>
                 <div>
                   <span style={{ fontSize: '0.72rem', color: 'var(--muted)', display: 'block', marginBottom: 6 }}>COURBATURES PREVUES (1=aucune, 5=intense)</span>
-                  {ratingCircles(muscle, 'soreness', [])}
+                  {ratingCircles(muscle, 'soreness')}
                 </div>
                 <div>
                   <span style={{ fontSize: '0.72rem', color: 'var(--muted)', display: 'block', marginBottom: 8 }}>PERFORMANCE VS DERNIERE FOIS</span>
@@ -244,7 +244,7 @@ function FeedbackModal({
                   </div>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <span style={{ fontSize: '0.78rem', color: 'var(--muted)', flex: 1 }}>Douleur articulaire?</span>
+                  <span style={{ fontSize: '0.78rem', color: 'var(--muted)', flex: 1 }}>Douleur articulaire ?</span>
                   <button
                     type="button"
                     onClick={() => set(muscle, 'jointPain', !entries[muscle].jointPain)}
@@ -501,7 +501,7 @@ function QuestSection({ state }: { state: AppState }) {
     <section className="panel stack-md">
       <div className="section-head">
         <div>
-          <SectionEyebrow icon="[Q]" label="Quetes de transformation" />
+          <SectionEyebrow icon="⚔️" label="Quetes de transformation" />
           <h3 style={{ color: next.accent }}>Vers {next.name}</h3>
         </div>
         <img src={next.image} alt={next.name} className={`transformation-image ${allDone ? 'aura-glow' : ''}`} style={{ width: 72, height: 72, filter: `drop-shadow(0 0 16px ${next.accent}88)` }} />
@@ -517,7 +517,7 @@ function QuestSection({ state }: { state: AppState }) {
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8 }}>
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 2 }}>
-                    {done && <span style={{ color: '#ffd700', fontSize: '0.85rem' }}>+</span>}
+                    {done && <span style={{ color: '#ffd700', fontSize: '0.85rem' }}>✓</span>}
                     <strong style={{ fontSize: '0.88rem', color: done ? '#ffd700' : 'var(--text)' }}>{q.name}</strong>
                   </div>
                   <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--muted)' }}>{q.description}</p>
@@ -559,7 +559,7 @@ function DailyQuestsPanel({ state, onUpdateQuestProgress, onCompleteQuest }: {
     <section className="panel stack-md">
       <div className="section-head">
         <div>
-          <SectionEyebrow icon="[D]" label="Quetes quotidiennes" />
+          <SectionEyebrow icon="🗓️" label="Quetes quotidiennes" />
           <h3>{completedCount}/8 completees</h3>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -580,15 +580,16 @@ function DailyQuestsPanel({ state, onUpdateQuestProgress, onCompleteQuest }: {
           const isAutoCalc = ['protein', 'calories', 'training'].includes(q.id)
           const pct = Math.min(100, Math.round((q.current / q.target) * 100))
           const alreadyCompleted = completedToday.includes(q.id)
+          const categoryClass = `quest-card-${q.category ?? 'activity'}`
 
           return (
-            <div key={q.id} className={`quest-card ${q.isComplete ? 'completed' : ''}`}>
+            <div key={q.id} className={`quest-card ${categoryClass} ${q.isComplete ? 'completed' : ''}`}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 1 }}>
                   <span style={{ fontSize: '1.1rem', width: 24, textAlign: 'center' as const }}>{q.icon}</span>
                   <div style={{ flex: 1 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                      {q.isComplete && <span style={{ color: '#ffd700', fontSize: '0.8rem' }}>+</span>}
+                      {q.isComplete && <span style={{ color: '#ffd700', fontSize: '0.8rem' }}>✓</span>}
                       <strong style={{ fontSize: '0.85rem', color: q.isComplete ? '#ffd700' : 'var(--text)' }}>{q.name}</strong>
                       {isAutoCalc && <span style={{ fontSize: '0.6rem', color: 'var(--accent-blue)', fontWeight: 700, textTransform: 'uppercase' as const, letterSpacing: '0.06em', background: 'rgba(55,183,255,0.12)', padding: '1px 5px', borderRadius: 4 }}>AUTO</span>}
                     </div>
@@ -630,7 +631,7 @@ function MainObjectivesPanel({ state }: { state: AppState }) {
 
   return (
     <section className="panel stack-md">
-      <SectionEyebrow icon="[O]" label="Objectifs principaux" />
+      <SectionEyebrow icon="🎯" label="Objectifs principaux" />
       <div className="stack-md">
         {objectives.map(obj => {
           const totalM = obj.milestones.length
@@ -659,7 +660,7 @@ function MainObjectivesPanel({ state }: { state: AppState }) {
                   return (
                     <div key={idx} style={{ opacity: done ? 1 : 0.65 }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 2 }}>
-                        <span style={{ fontSize: '0.72rem', color: done ? '#ffd700' : 'var(--muted)' }}>{done ? 'ok ' : ''}{m.description}</span>
+                        <span style={{ fontSize: '0.72rem', color: done ? '#ffd700' : 'var(--muted)' }}>{done ? '✓ ' : ''}{m.description}</span>
                         <span style={{ fontSize: '0.7rem', color: 'var(--muted)' }}>{Math.min(cur, m.target).toLocaleString()}/{m.target.toLocaleString()} {m.unit}</span>
                       </div>
                       <div style={{ height: 3, borderRadius: 2, background: 'rgba(255,255,255,0.06)', overflow: 'hidden' }}>
@@ -687,7 +688,7 @@ function MesocycleCard({ state }: { state: AppState }) {
     <section className="panel" style={{ borderColor: `${status.color}33`, background: `linear-gradient(135deg, rgba(20,28,43,0.95), rgba(8,12,20,0.98))` }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
-          <SectionEyebrow icon="[M]" label="Mesocycle" />
+          <SectionEyebrow icon="⚡" label="Mesocycle" />
           <h3 style={{ margin: '4px 0 2px', color: status.color }}>{status.label}</h3>
           <p style={{ margin: 0, fontSize: '0.78rem', color: 'var(--muted)' }}>{status.detail}</p>
         </div>
@@ -724,7 +725,7 @@ function VolumeDashboard({ state }: { state: AppState }) {
   return (
     <section className="panel stack-md">
       <div>
-        <SectionEyebrow icon="[V]" label="Volume RP — Landmarks" />
+        <SectionEyebrow icon="📈" label="Volume RP — Landmarks" />
         <p style={{ margin: '4px 0 0', fontSize: '0.75rem', color: 'var(--muted)' }}>MEV = Minimum Effectif | MAV = Maximum Adaptatif | MRV = Maximum Recuperable</p>
       </div>
 
@@ -746,13 +747,9 @@ function VolumeDashboard({ state }: { state: AppState }) {
                 <span style={{ fontSize: '0.85rem', fontWeight: 700, color }}>{vt.currentSets} series</span>
               </div>
 
-              {/* MEV/MAV/MRV bar */}
               <div style={{ position: 'relative', height: 10, borderRadius: 5, background: 'rgba(255,255,255,0.06)', overflow: 'visible', marginBottom: 6 }}>
-                {/* MEV marker */}
                 <div style={{ position: 'absolute', left: `${Math.round((vt.mev / vt.mrv) * 100)}%`, top: -2, bottom: -2, width: 2, background: 'rgba(255,95,118,0.6)', borderRadius: 1 }} />
-                {/* MAV marker */}
                 <div style={{ position: 'absolute', left: `${Math.round((vt.mav / vt.mrv) * 100)}%`, top: -2, bottom: -2, width: 2, background: 'rgba(255,200,61,0.6)', borderRadius: 1 }} />
-                {/* Fill */}
                 <div style={{ height: '100%', borderRadius: 5, width: `${mrvPct}%`, background: color, transition: 'width 0.5s ease', opacity: 0.85 }} />
               </div>
 
@@ -781,10 +778,10 @@ function AdaptiveTDEECard({ state }: { state: AppState }) {
 
   return (
     <section className="panel stack-md">
-      <SectionEyebrow icon="[T]" label="TDEE Adaptatif" />
+      <SectionEyebrow icon="🔥" label="TDEE Adaptatif" />
       <div className="metrics-grid">
         <article className="metric-card">
-          <span className="eyebrow">TDEE estimé</span>
+          <span className="eyebrow">TDEE estime</span>
           <strong style={{ color: 'var(--accent-gold)' }}>{formatNumber(tdee)}</strong>
           <span style={{ fontSize: '0.7rem', color: 'var(--muted)' }}>kcal/jour</span>
         </article>
@@ -794,7 +791,7 @@ function AdaptiveTDEECard({ state }: { state: AppState }) {
           <span style={{ fontSize: '0.7rem', color: 'var(--muted)' }}>{deltaLabel}</span>
         </article>
         <article className="metric-card">
-          <span className="eyebrow">Auj. logge</span>
+          <span className="eyebrow">Auj. logue</span>
           <strong style={{ color: 'var(--accent-blue)' }}>{formatNumber(todayNutrition.calories)}</strong>
           <span style={{ fontSize: '0.7rem', color: 'var(--muted)' }}>kcal</span>
         </article>
@@ -838,7 +835,7 @@ function HomeView({ state, nextSession, powerLevel, recommendation, onStartWorko
       {/* Hero */}
       <section className="hero-card" style={{ borderColor: `${transformation.accent}33` }}>
         <div className="hero-copy" style={{ flex: 1 }}>
-          <span className="eyebrow">Power Level</span>
+          <span className="eyebrow">Niveau de puissance</span>
           <h2 style={{ color: transformation.accent }}>{formatNumber(powerLevel)}</h2>
           <p>{transformation.name} — Continue ta progression.</p>
           <div className="hero-badge" style={{ borderColor: transformation.accent, color: transformation.accent, display: 'inline-block', marginTop: 8 }}>
@@ -850,12 +847,17 @@ function HomeView({ state, nextSession, powerLevel, recommendation, onStartWorko
         </div>
       </section>
 
+      {/* Big CTA */}
+      <button className="cta-button" onClick={onStartWorkout} type="button">
+        {state.activeWorkout ? "REPRENDRE L'ENTRAINEMENT" : "COMMENCER L'ENTRAINEMENT"}
+      </button>
+
       {/* Mesocycle status */}
       <MesocycleCard state={state} />
 
       {/* Transformation timeline */}
       <section className="panel stack-md">
-        <SectionEyebrow icon="[S]" label="Saga des formes" />
+        <SectionEyebrow icon="✨" label="Saga des formes" />
         <TransformationTimeline state={state} />
       </section>
 
@@ -872,16 +874,16 @@ function HomeView({ state, nextSession, powerLevel, recommendation, onStartWorko
       <section className="panel stack-md">
         <div className="section-head">
           <div>
-            <SectionEyebrow icon="[X]" label="Mission du jour" />
+            <SectionEyebrow icon="💥" label="Mission du jour" />
             <h3>{nextSession?.name ?? 'Aucune seance programmee'}</h3>
           </div>
           <button className="primary-btn" onClick={onStartWorkout} type="button">
-            {state.activeWorkout ? 'Reprendre' : 'Lancer'}
+            {state.activeWorkout ? 'Reprendre' : 'Demarrer'}
           </button>
         </div>
         {nextSession
           ? <p>{nextSession.focus}</p>
-          : <div className="empty-state"><div className="empty-icon">[?]</div><p>Choisis un programme depuis le profil.</p></div>
+          : <div className="empty-state"><div className="empty-icon">🏋️</div><p>Choisis un programme depuis le profil.</p></div>
         }
         <div className="metrics-grid">
           <MetricCard label="Seances" value={`${weeklyWorkouts.length}/${state.profile?.trainingDaysPerWeek ?? 0}`} accent="var(--accent-gold)" />
@@ -893,7 +895,7 @@ function HomeView({ state, nextSession, powerLevel, recommendation, onStartWorko
       {/* Last workout summary */}
       {lastWorkout && (
         <section className="panel stack-md" style={{ borderColor: 'rgba(55,183,255,0.15)' }}>
-          <SectionEyebrow icon="[L]" label="Derniere seance" />
+          <SectionEyebrow icon="📅" label="Derniere seance" />
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div>
               <strong style={{ fontSize: '0.9rem' }}>{lastWorkout.sessionName}</strong>
@@ -916,22 +918,22 @@ function HomeView({ state, nextSession, powerLevel, recommendation, onStartWorko
 
       {/* Nutrition */}
       <section className="panel stack-md">
-        <SectionEyebrow icon="[N]" label="Nutrition cible" />
+        <SectionEyebrow icon="🍽️" label="Nutrition cible" />
         <ProgressBar label="Calories" value={nutrition.calories} target={targets.calories} accent="linear-gradient(90deg, #ffb400, #ff6a00)" />
         <ProgressBar label="Proteines" value={nutrition.protein} target={targets.protein} accent="linear-gradient(90deg, #00d4ff, #4fffb0)" />
       </section>
 
       {/* Scouter insight */}
       <section className="panel stack-md">
-        <SectionEyebrow icon="[I]" label="Scouter insight" />
+        <SectionEyebrow icon="🔍" label="Analyse Scouter" />
         <p>{recommendation}</p>
       </section>
 
       {/* Recipe suggestions */}
       <section className="panel stack-md">
-        <SectionEyebrow icon="[R]" label="Recettes suggerees" />
+        <SectionEyebrow icon="🍳" label="Recettes suggerees" />
         {getRecommendedRecipes(state).length === 0
-          ? <div className="empty-state"><div className="empty-icon">[c]</div><p>Ajoute des repas pour des suggestions.</p></div>
+          ? <div className="empty-state"><div className="empty-icon">🍳</div><p>Ajoute des repas pour des suggestions.</p></div>
           : <div className="card-list">
               {getRecommendedRecipes(state).map(recipe => (
                 <article className="mini-card" key={recipe.id}>
@@ -967,7 +969,7 @@ function TrainView({ state, onStartWorkout, onAddSet, onFinishWorkout, restTimer
       <div className="page">
         <section className="panel">
           <div className="empty-state">
-            <div className="empty-icon">[gym]</div>
+            <div className="empty-icon">🏋️</div>
             <p>Choisis un programme depuis le profil pour commencer ta Saga.</p>
           </div>
         </section>
@@ -990,10 +992,10 @@ function TrainView({ state, onStartWorkout, onAddSet, onFinishWorkout, restTimer
         <section className="panel stack-md">
           <div className="section-head">
             <div>
-              <SectionEyebrow icon="[P]" label="Prochaine seance" />
+              <SectionEyebrow icon="▶️" label="Prochaine seance" />
               <h3>{nextSession.name}</h3>
             </div>
-            <button className="primary-btn" onClick={onStartWorkout} type="button">Start</button>
+            <button className="primary-btn" onClick={onStartWorkout} type="button">Demarrer</button>
           </div>
           <p>{nextSession.focus}</p>
           <div className="card-list">
@@ -1002,7 +1004,7 @@ function TrainView({ state, onStartWorkout, onAddSet, onFinishWorkout, restTimer
               return (
                 <article className="mini-card" key={entry.exerciseId}>
                   <strong>{exercise.name}</strong>
-                  <span>{entry.sets} x {entry.repMin}-{entry.repMax} - RIR {entry.targetRir}</span>
+                  <span>{entry.sets} x {entry.repMin}-{entry.repMax} — RIR {entry.targetRir}</span>
                 </article>
               )
             })}
@@ -1017,20 +1019,20 @@ function TrainView({ state, onStartWorkout, onAddSet, onFinishWorkout, restTimer
       {restTimer > 0 && (
         <section className="panel timer-panel">
           <div>
-            <SectionEyebrow icon="[T]" label="Rest timer" />
+            <SectionEyebrow icon="⏱️" label="Repos" />
             <h3 style={{ fontSize: '3.2rem', margin: 0 }}>{restTimer}s</h3>
           </div>
-          <button className="ghost-btn" onClick={onSkipTimer} type="button">Skip</button>
+          <button className="ghost-btn" onClick={onSkipTimer} type="button">Passer</button>
         </section>
       )}
 
       <section className="panel stack-md">
         <div className="section-head">
           <div>
-            <SectionEyebrow icon="[A]" label="Seance active" />
+            <SectionEyebrow icon="🏋️" label="Seance en cours" />
             <h3>{nextSession.name}</h3>
           </div>
-          <button className="primary-btn" onClick={onFinishWorkout} type="button">Finish</button>
+          <button className="primary-btn" onClick={onFinishWorkout} type="button">Terminer</button>
         </div>
       </section>
 
@@ -1050,23 +1052,23 @@ function TrainView({ state, onStartWorkout, onAddSet, onFinishWorkout, restTimer
             <div className="section-head section-head--tight">
               <div>
                 <h3>{exercise.name}</h3>
-                <p style={{ margin: 0 }}>{target.sets} x {target.repMin}-{target.repMax} - RIR {target.targetRir} - Rest {target.restSeconds}s</p>
+                <p style={{ margin: 0 }}>{target.sets} x {target.repMin}-{target.repMax} — RIR {target.targetRir} — Repos {target.restSeconds}s</p>
               </div>
-              {previous && <span className="badge">Last {previous.weightKg} x {previous.reps}</span>}
+              {previous && <span className="badge">Dernier: {previous.weightKg} x {previous.reps}</span>}
             </div>
 
             <div className="field-grid compact-grid">
-              <label><span>Poids</span><input value={currentInput.weight} onChange={e => setDraftInputs({ ...draftInputs, [exercise.id]: { ...currentInput, weight: e.target.value } })} /></label>
+              <label><span>Poids (kg)</span><input value={currentInput.weight} onChange={e => setDraftInputs({ ...draftInputs, [exercise.id]: { ...currentInput, weight: e.target.value } })} /></label>
               <label><span>Reps</span><input value={currentInput.reps} onChange={e => setDraftInputs({ ...draftInputs, [exercise.id]: { ...currentInput, reps: e.target.value } })} /></label>
               <label><span>RIR</span><input value={currentInput.rir} onChange={e => setDraftInputs({ ...draftInputs, [exercise.id]: { ...currentInput, rir: e.target.value } })} /></label>
               <label>
                 <span>Type</span>
                 <select value={currentInput.setType} onChange={e => setDraftInputs({ ...draftInputs, [exercise.id]: { ...currentInput, setType: e.target.value as SetType } })}>
-                  <option value="warmup">Warm-up</option>
+                  <option value="warmup">Echauffement</option>
                   <option value="normal">Normal</option>
                   <option value="top">Top set</option>
                   <option value="backoff">Back-off</option>
-                  <option value="drop">Drop</option>
+                  <option value="drop">Drop set</option>
                   <option value="amrap">AMRAP</option>
                 </select>
               </label>
@@ -1078,7 +1080,7 @@ function TrainView({ state, onStartWorkout, onAddSet, onFinishWorkout, restTimer
 
             <div className="set-list">
               {exerciseLog.sets.length === 0
-                ? <div className="empty-state" style={{ padding: '10px 0' }}><p style={{ margin: 0, fontSize: '0.83rem' }}>Demarre avec la charge precedente et progresse.</p></div>
+                ? <div className="empty-state" style={{ padding: '10px 0' }}><p style={{ margin: 0, fontSize: '0.83rem' }}>Commence avec la charge precedente et progresse.</p></div>
                 : exerciseLog.sets.map(set => (
                     <div className="set-row" key={set.id}>
                       <span>S{set.setIndex}</span>
@@ -1120,7 +1122,7 @@ function NutritionView({ state, onAddFood }: { state: AppState; onAddFood: (entr
 
       {/* Today's nutrition */}
       <section className="panel stack-md">
-        <SectionEyebrow icon="[N]" label="Nutrition aujourd'hui" />
+        <SectionEyebrow icon="🍽️" label="Nutrition aujourd'hui" />
         <ProgressBar label="Calories" value={totals.calories} target={state.targets?.calories ?? 1} accent="linear-gradient(90deg, #ffb400, #ff6a00)" />
         <ProgressBar label="Proteines" value={totals.protein} target={state.targets?.protein ?? 1} accent="linear-gradient(90deg, #00d4ff, #4fffb0)" />
         <ProgressBar label="Glucides" value={totals.carbs} target={state.targets?.carbs ?? 1} accent="linear-gradient(90deg, #a855f7, #6366f1)" />
@@ -1129,7 +1131,7 @@ function NutritionView({ state, onAddFood }: { state: AppState; onAddFood: (entr
 
       {/* Add food */}
       <section className="panel stack-md">
-        <SectionEyebrow icon="[+]" label="Ajouter un aliment" />
+        <SectionEyebrow icon="➕" label="Ajouter un aliment" />
         <div className="field-grid compact-grid">
           <label>
             <span>Aliment</span>
@@ -1141,12 +1143,12 @@ function NutritionView({ state, onAddFood }: { state: AppState; onAddFood: (entr
           <label>
             <span>Categorie</span>
             <select value={category} onChange={e => setCategory(e.target.value as FoodEntry['category'])}>
-              <option value="breakfast">Breakfast</option>
-              <option value="lunch">Lunch</option>
-              <option value="dinner">Dinner</option>
-              <option value="snack">Snack</option>
-              <option value="pre_workout">Pre</option>
-              <option value="post_workout">Post</option>
+              <option value="breakfast">Petit-dejeuner</option>
+              <option value="lunch">Dejeuner</option>
+              <option value="dinner">Diner</option>
+              <option value="snack">Collation</option>
+              <option value="pre_workout">Pre-seance</option>
+              <option value="post_workout">Post-seance</option>
             </select>
           </label>
         </div>
@@ -1158,9 +1160,9 @@ function NutritionView({ state, onAddFood }: { state: AppState; onAddFood: (entr
 
       {/* Saved meals */}
       <section className="panel stack-md">
-        <SectionEyebrow icon="[S]" label="Repas sauvegardes" />
+        <SectionEyebrow icon="🥡" label="Repas sauvegardes" />
         {state.savedMeals.length === 0
-          ? <div className="empty-state"><div className="empty-icon">[p]</div><p>Aucun repas sauvegarde.</p></div>
+          ? <div className="empty-state"><div className="empty-icon">🥡</div><p>Aucun repas sauvegarde.</p></div>
           : <div className="card-list">
               {state.savedMeals.map(meal => (
                 <button className="mini-card mini-card--button" key={meal.id} type="button" onClick={() => onAddFood({ id: makeId('meal'), date: todayIso(), name: meal.name, category: meal.category, grams: 1, calories: meal.calories, protein: meal.protein, carbs: meal.carbs, fats: meal.fats })}>
@@ -1174,7 +1176,7 @@ function NutritionView({ state, onAddFood }: { state: AppState; onAddFood: (entr
 
       {/* Recipes */}
       <section className="panel stack-md">
-        <SectionEyebrow icon="[B]" label="Recettes suggerees" />
+        <SectionEyebrow icon="🍳" label="Recettes suggerees" />
         <div className="card-list">
           {suggestions.map(recipe => (
             <button className="mini-card mini-card--button" key={recipe.id} type="button" onClick={() => onAddFood({ id: makeId('recipe'), date: todayIso(), name: recipe.name, category: recipe.category, grams: 1, calories: recipe.calories, protein: recipe.protein, carbs: recipe.carbs, fats: recipe.fats })}>
@@ -1197,7 +1199,7 @@ function ScouterView({ state }: { state: AppState }) {
   return (
     <div className="page">
       <section className="panel stack-md">
-        <SectionEyebrow icon="[SC]" label="Scouter analytics" />
+        <SectionEyebrow icon="🔬" label="Analyse hebdomadaire" />
         <div className="metrics-grid">
           <MetricCard label="Seances" value={String(weeklyWorkouts.length)} accent="var(--accent-gold)" />
           <MetricCard label="Volume" value={`${formatNumber(weeklyWorkouts.reduce((s, w) => s + getWorkoutVolume(w), 0))} kg`} accent="var(--accent-blue)" />
@@ -1210,10 +1212,10 @@ function ScouterView({ state }: { state: AppState }) {
 
       {/* Volume by muscle (tonnage) */}
       <section className="panel stack-md">
-        <SectionEyebrow icon="[W]" label="Tonnage par muscle" />
+        <SectionEyebrow icon="📊" label="Tonnage par muscle" />
         {volumeByMuscle.length === 0 ? (
           <div className="empty-state">
-            <div className="empty-icon">[ch]</div>
+            <div className="empty-icon">📊</div>
             <p>Complete ta premiere semaine pour voir la map musculaire.</p>
           </div>
         ) : (
@@ -1225,7 +1227,7 @@ function ScouterView({ state }: { state: AppState }) {
 
       {/* Top lifts */}
       <section className="panel stack-md">
-        <SectionEyebrow icon="[1RM]" label="1RM estimes" />
+        <SectionEyebrow icon="💪" label="1RM estimes" />
         {['bench_press', 'back_squat', 'romanian_deadlift', 'pull_up'].map(exerciseId => {
           let best = 0
           state.workouts.forEach(w => w.exercises.filter(e => e.exerciseId === exerciseId).forEach(e => e.sets.forEach(s => { const e1rm = s.weightKg * (1 + s.reps / 30); if (e1rm > best) best = e1rm })))
@@ -1246,12 +1248,14 @@ function ScouterView({ state }: { state: AppState }) {
 
 // ── Profile view ──────────────────────────────────────────────────────────────
 
-function ProfileView({ state, powerLevel, onLogBodyweight, onLogMeasurement, onChooseProgram }: {
+function ProfileView({ state, powerLevel, onLogBodyweight, onLogMeasurement, onChooseProgram, onToggleTheme, theme }: {
   state: AppState
   powerLevel: number
   onLogBodyweight: (entry: BodyweightEntry) => void
   onLogMeasurement: (entry: MeasurementEntry) => void
   onChooseProgram: (programId: string) => void
+  onToggleTheme: () => void
+  theme: 'dark' | 'light'
 }) {
   const [bodyweight, setBodyweight] = useState(String(state.profile?.weightKg ?? 0))
   const [measurements, setMeasurements] = useState({ waist: '', chest: '', arm: '', thigh: '' })
@@ -1266,15 +1270,26 @@ function ProfileView({ state, powerLevel, onLogBodyweight, onLogMeasurement, onC
           <span className="eyebrow">Profil</span>
           <h2>{state.profile?.name}</h2>
           <p>{transformation.name} - {state.profile?.goal.replace('_', ' ')}</p>
-          <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+          <div style={{ display: 'flex', gap: 8, marginTop: 8, flexWrap: 'wrap' as const }}>
             <span className="hero-badge" style={{ borderColor: transformation.accent, color: transformation.accent }}>{dragonBalls}/7 DBZ</span>
             {streak > 0 && <span className="hero-badge" style={{ color: 'var(--accent-orange)', borderColor: 'var(--accent-orange)' }}>{streak}j streak</span>}
           </div>
         </div>
+        <button
+          type="button"
+          onClick={onToggleTheme}
+          className="theme-toggle"
+          title={theme === 'dark' ? 'Passer en clair' : 'Passer en sombre'}
+          aria-label="Changer le theme"
+        >
+          <span className="theme-toggle-knob" style={{ transform: theme === 'light' ? 'translateX(24px)' : 'translateX(0)' }}>
+            {theme === 'dark' ? '🌙' : '☀️'}
+          </span>
+        </button>
       </section>
 
       <section className="panel stack-md">
-        <SectionEyebrow icon="[W]" label="Poids corporel" />
+        <SectionEyebrow icon="⚖️" label="Poids corporel" />
         <div className="inline-form">
           <input value={bodyweight} onChange={e => setBodyweight(e.target.value)} />
           <button className="secondary-btn" type="button" onClick={() => onLogBodyweight({ id: makeId('bw'), date: todayIso(), weightKg: Number(bodyweight) })}>Log</button>
@@ -1289,9 +1304,9 @@ function ProfileView({ state, powerLevel, onLogBodyweight, onLogMeasurement, onC
       </section>
 
       <section className="panel stack-md">
-        <SectionEyebrow icon="[R]" label="Mensurations" />
+        <SectionEyebrow icon="📏" label="Mensurations" />
         <div className="field-grid compact-grid">
-          <label><span>Taille (cm)</span><input value={measurements.waist} onChange={e => setMeasurements({ ...measurements, waist: e.target.value })} /></label>
+          <label><span>Tour de taille (cm)</span><input value={measurements.waist} onChange={e => setMeasurements({ ...measurements, waist: e.target.value })} /></label>
           <label><span>Poitrine</span><input value={measurements.chest} onChange={e => setMeasurements({ ...measurements, chest: e.target.value })} /></label>
           <label><span>Bras</span><input value={measurements.arm} onChange={e => setMeasurements({ ...measurements, arm: e.target.value })} /></label>
           <label><span>Cuisse</span><input value={measurements.thigh} onChange={e => setMeasurements({ ...measurements, thigh: e.target.value })} /></label>
@@ -1300,9 +1315,9 @@ function ProfileView({ state, powerLevel, onLogBodyweight, onLogMeasurement, onC
       </section>
 
       <section className="panel stack-md">
-        <SectionEyebrow icon="[PR]" label="Programmes" />
+        <SectionEyebrow icon="📋" label="Programmes" />
         {programs.length === 0
-          ? <div className="empty-state"><div className="empty-icon">[bk]</div><p>Aucun programme disponible.</p></div>
+          ? <div className="empty-state"><div className="empty-icon">📋</div><p>Aucun programme disponible.</p></div>
           : <div className="card-list">
               {programs.map(program => (
                 <button className={`mini-card mini-card--button ${state.selectedProgramId === program.id ? 'mini-card--selected' : ''}`} key={program.id} type="button" onClick={() => onChooseProgram(program.id)}>
@@ -1322,19 +1337,19 @@ function ProfileView({ state, powerLevel, onLogBodyweight, onLogMeasurement, onC
 // ── Bottom nav ────────────────────────────────────────────────────────────────
 
 function BottomNav({ tab, onChange }: { tab: TabId; onChange: (tab: TabId) => void }) {
-  const items: Array<[TabId, string, string]> = [
-    ['home', 'H', 'Home'],
-    ['train', 'T', 'Train'],
-    ['nutrition', 'N', 'Fuel'],
-    ['scouter', 'SC', 'Scouter'],
-    ['profile', 'P', 'Profile'],
+  const items: Array<{ id: TabId; icon: string; label: string }> = [
+    { id: 'home',      icon: '🏠', label: 'Accueil'   },
+    { id: 'train',     icon: '💪', label: 'Training'  },
+    { id: 'nutrition', icon: '🍽️', label: 'Nutrition' },
+    { id: 'scouter',   icon: '📊', label: 'Stats'     },
+    { id: 'profile',   icon: '👤', label: 'Profil'    },
   ]
   return (
     <nav className="bottom-nav">
-      {items.map(([id, icon, label]) => (
+      {items.map(({ id, icon, label }) => (
         <button key={id} className={`nav-item ${tab === id ? 'nav-item--active' : ''}`} onClick={() => onChange(id)} type="button">
-          <div style={{ fontSize: '0.9rem', lineHeight: 1, fontWeight: 800, fontFamily: 'Bebas Neue, sans-serif', letterSpacing: '0.04em' }}>{icon}</div>
-          <div>{label}</div>
+          <span className="nav-icon">{icon}</span>
+          <span className="nav-label">{label}</span>
         </button>
       ))}
     </nav>
@@ -1363,6 +1378,7 @@ function App() {
   const [tab, setTab] = useState<TabId>('home')
   const [restTimer, setRestTimer] = useState(0)
   const [pendingFeedback, setPendingFeedback] = useState<{ workoutId: string; muscles: MuscleGroup[] } | null>(null)
+  const [theme, setTheme] = useState<'dark' | 'light'>(() => (localStorage.getItem('sf_theme') as 'dark' | 'light') || 'dark')
 
   useEffect(() => saveState(state), [state])
   useEffect(() => {
@@ -1370,6 +1386,10 @@ function App() {
     const timer = window.setTimeout(() => setRestTimer(c => c - 1), 1000)
     return () => window.clearTimeout(timer)
   }, [restTimer])
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme)
+    localStorage.setItem('sf_theme', theme)
+  }, [theme])
 
   const selectedProgram = getProgramById(state.selectedProgramId)
   const nextIndex = state.programCursor[selectedProgram?.id ?? ''] ?? 0
@@ -1423,7 +1443,6 @@ function App() {
   const finishWorkout = () => {
     if (!state.activeWorkout || !selectedProgram || !nextSession) return
 
-    // Collect unique primary muscles from this workout for feedback
     const musclesWorked = new Set<MuscleGroup>()
     state.activeWorkout.exercises.forEach(ex => {
       if (ex.sets.filter(s => s.setType !== 'warmup').length > 0) {
@@ -1449,7 +1468,6 @@ function App() {
     }))
     setRestTimer(0)
 
-    // Show feedback modal if muscles were worked
     if (musclesWorked.size > 0) {
       setPendingFeedback({ workoutId: workout.id, muscles: Array.from(musclesWorked) })
     } else {
@@ -1519,7 +1537,7 @@ function App() {
       {tab === 'train' && <TrainView state={state} onStartWorkout={startWorkout} onAddSet={addSet} onFinishWorkout={finishWorkout} restTimer={restTimer} onSkipTimer={() => setRestTimer(0)} />}
       {tab === 'nutrition' && <NutritionView state={state} onAddFood={addFood} />}
       {tab === 'scouter' && <ScouterView state={state} />}
-      {tab === 'profile' && <ProfileView state={state} powerLevel={powerLevel} onLogBodyweight={logBodyweight} onLogMeasurement={logMeasurement} onChooseProgram={chooseProgram} />}
+      {tab === 'profile' && <ProfileView state={state} powerLevel={powerLevel} onLogBodyweight={logBodyweight} onLogMeasurement={logMeasurement} onChooseProgram={chooseProgram} onToggleTheme={() => setTheme(t => t === 'dark' ? 'light' : 'dark')} theme={theme} />}
       <BottomNav tab={tab} onChange={setTab} />
     </div>
   )

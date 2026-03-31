@@ -2,9 +2,12 @@ import { exercises, programs, recipes } from './data'
 import type {
   ActivityLevel,
   AppState,
+  DailyQuest,
   Exercise,
   Goal,
   GoalTargets,
+  MainObjective,
+  OnboardingAnswers,
   ProgramTemplate,
   UserProfile,
   WorkoutLog,
@@ -199,6 +202,7 @@ export const TRANSFORMATIONS: Transformation[] = [
       { id: 'ssj_q1', name: 'Rage Awakening', description: 'Complete 5 workouts', requirement: (s) => s.workouts.length, target: 5 },
       { id: 'ssj_q2', name: 'Break Your Limits', description: 'Log 1,000 kg total volume', requirement: (s) => s.workouts.reduce((t, w) => t + getWorkoutVolume(w), 0), target: 1000 },
       { id: 'ssj_q3', name: 'First Blood', description: 'Beat 1 Personal Record', requirement: (s) => countPRs(s), target: 1 },
+      { id: 'ssj_daily', name: 'Discipline Saiyan', description: 'Complete 20 daily quests', requirement: (s) => countCompletedDailyQuests(s), target: 20 },
     ],
   },
   {
@@ -212,6 +216,7 @@ export const TRANSFORMATIONS: Transformation[] = [
       { id: 'ssj2_q2', name: 'Cell Games Training', description: 'Log 5,000 kg total volume', requirement: (s) => s.workouts.reduce((t, w) => t + getWorkoutVolume(w), 0), target: 5000 },
       { id: 'ssj2_q3', name: 'Lightning Strikes', description: 'Beat 5 PRs', requirement: (s) => countPRs(s), target: 5 },
       { id: 'ssj2_q4', name: '7-Day Warrior', description: 'Achieve a 7-day streak', requirement: (s) => getStreak(s), target: 7 },
+      { id: 'ssj2_daily', name: 'Habitude de Champion', description: 'Complete 60 daily quests', requirement: (s) => countCompletedDailyQuests(s), target: 60 },
     ],
   },
   {
@@ -225,6 +230,7 @@ export const TRANSFORMATIONS: Transformation[] = [
       { id: 'ssj3_q2', name: 'Spirit Bomb Power', description: 'Log 15,000 kg total volume', requirement: (s) => s.workouts.reduce((t, w) => t + getWorkoutVolume(w), 0), target: 15000 },
       { id: 'ssj3_q3', name: 'Record Breaker', description: 'Beat 15 PRs', requirement: (s) => countPRs(s), target: 15 },
       { id: 'ssj3_q4', name: 'Consistency King', description: '14-day streak', requirement: (s) => getStreak(s), target: 14 },
+      { id: 'ssj3_daily', name: 'Régularité Absolue', description: 'Complete 150 daily quests', requirement: (s) => countCompletedDailyQuests(s), target: 150 },
     ],
   },
   {
@@ -238,6 +244,7 @@ export const TRANSFORMATIONS: Transformation[] = [
       { id: 'god_q2', name: 'Divine Training', description: 'Log 50,000 kg volume', requirement: (s) => s.workouts.reduce((t, w) => t + getWorkoutVolume(w), 0), target: 50000 },
       { id: 'god_q3', name: 'God-Level Records', description: 'Beat 30 PRs', requirement: (s) => countPRs(s), target: 30 },
       { id: 'god_q4', name: 'Iron Will', description: '30-day streak', requirement: (s) => getStreak(s), target: 30 },
+      { id: 'god_daily', name: 'Rituel Divin', description: 'Complete 300 daily quests', requirement: (s) => countCompletedDailyQuests(s), target: 300 },
     ],
   },
   {
@@ -251,6 +258,7 @@ export const TRANSFORMATIONS: Transformation[] = [
       { id: 'blue_q2', name: 'Universal Power', description: 'Log 100,000 kg volume', requirement: (s) => s.workouts.reduce((t, w) => t + getWorkoutVolume(w), 0), target: 100000 },
       { id: 'blue_q3', name: 'Unstoppable', description: 'Beat 50 PRs', requirement: (s) => countPRs(s), target: 50 },
       { id: 'blue_q4', name: '60 Days of War', description: '60-day streak', requirement: (s) => getStreak(s), target: 60 },
+      { id: 'blue_daily', name: 'Ki Divin Maîtrisé', description: 'Complete 500 daily quests', requirement: (s) => countCompletedDailyQuests(s), target: 500 },
     ],
   },
   {
@@ -264,6 +272,7 @@ export const TRANSFORMATIONS: Transformation[] = [
       { id: 'ui_q2', name: 'Autonomous Movement', description: 'Log 250,000 kg volume', requirement: (s) => s.workouts.reduce((t, w) => t + getWorkoutVolume(w), 0), target: 250000 },
       { id: 'ui_q3', name: 'Legend Status', description: 'Beat 100 PRs', requirement: (s) => countPRs(s), target: 100 },
       { id: 'ui_q4', name: '90 Days Unbroken', description: '90-day streak', requirement: (s) => getStreak(s), target: 90 },
+      { id: 'ui_daily', name: 'Instinct Pur', description: 'Complete 1,000 daily quests', requirement: (s) => countCompletedDailyQuests(s), target: 1000 },
     ],
   },
   {
@@ -277,6 +286,7 @@ export const TRANSFORMATIONS: Transformation[] = [
       { id: 'mui_q2', name: 'Beyond Gods', description: 'Log 500,000 kg volume', requirement: (s) => s.workouts.reduce((t, w) => t + getWorkoutVolume(w), 0), target: 500000 },
       { id: 'mui_q3', name: 'Transcendence', description: 'Beat 200 PRs', requirement: (s) => countPRs(s), target: 200 },
       { id: 'mui_q4', name: 'One Year Warrior', description: '365-day streak', requirement: (s) => getStreak(s), target: 365 },
+      { id: 'mui_daily', name: 'Maîtrise Totale', description: 'Complete 2,000 daily quests', requirement: (s) => countCompletedDailyQuests(s), target: 2000 },
     ],
   },
 ]
@@ -329,7 +339,6 @@ export function getCurrentTransformationFull(state: AppState) {
     else break
   }
 
-  // Check quest completion for unlocking
   let unlockedIndex = 0
   for (let i = 1; i < TRANSFORMATIONS.length; i++) {
     const t = TRANSFORMATIONS[i]
@@ -346,6 +355,140 @@ export function getCurrentTransformationFull(state: AppState) {
     allTransformations: TRANSFORMATIONS,
   }
 }
+
+// ── Daily Quest System ────────────────────────────────────────────────────────
+
+export const DAILY_QUESTS: DailyQuest[] = [
+  { id: 'steps',    name: '10 000 pas',          description: "Marche 10 000 pas aujourd'hui",         icon: '🚶', target: 10000, unit: 'pas',    category: 'activity'  },
+  { id: 'water',    name: 'Hydratation',          description: "Bois 2L d'eau",                         icon: '💧', target: 8,     unit: 'verres', category: 'nutrition' },
+  { id: 'protein',  name: 'Objectif Protéines',   description: 'Atteins ton objectif protéines',        icon: '🥩', target: 100,   unit: '%',      category: 'nutrition' },
+  { id: 'calories', name: 'Objectif Calories',    description: 'Reste dans ta cible calorique (±10%)',  icon: '🔥', target: 100,   unit: '%',      category: 'nutrition' },
+  { id: 'training', name: "Entraînement du jour", description: 'Complète ta séance programmée',         icon: '💪', target: 1,     unit: 'séance', category: 'training'  },
+  { id: 'sleep',    name: 'Sommeil 7h+',          description: 'Dors au moins 7 heures',                icon: '😴', target: 7,     unit: 'heures', category: 'recovery'  },
+  { id: 'stretch',  name: 'Étirements',           description: '10 min d\'étirements ou mobilité',      icon: '🧘', target: 10,    unit: 'min',    category: 'recovery'  },
+  { id: 'no_junk',  name: 'Clean Eating',         description: "Pas de junk food aujourd'hui",          icon: '🥗', target: 1,     unit: 'jour',   category: 'nutrition' },
+]
+
+export function countCompletedDailyQuests(state: AppState): number {
+  if (!state.completedDailyQuests) return 0
+  return Object.values(state.completedDailyQuests).reduce((total, quests) => total + quests.length, 0)
+}
+
+export function getDailyQuestStatus(state: AppState) {
+  const today = todayIso()
+  const progress = (state.dailyQuestProgress ?? []).find(d => d.date === today)
+  const completed = (state.completedDailyQuests ?? {})[today] ?? []
+  const nutrition = getDailyNutrition(state.foodEntries)
+  const todayWorkouts = state.workouts.filter(w => w.date === today)
+
+  return DAILY_QUESTS.map(quest => {
+    let current = progress?.quests[quest.id] ?? 0
+
+    // Auto-calculate from app data where possible
+    if (quest.id === 'protein' && state.targets) {
+      current = state.targets.protein > 0 ? Math.round((nutrition.protein / state.targets.protein) * 100) : 0
+    } else if (quest.id === 'calories' && state.targets) {
+      const ratio = state.targets.calories > 0 ? nutrition.calories / state.targets.calories : 0
+      current = (ratio >= 0.9 && ratio <= 1.1) ? 100 : Math.round(ratio * 100)
+    } else if (quest.id === 'training') {
+      current = todayWorkouts.length > 0 ? 1 : 0
+    }
+
+    const isComplete = completed.includes(quest.id) || current >= quest.target
+    return { ...quest, current, isComplete }
+  })
+}
+
+// ── Main Objectives ───────────────────────────────────────────────────────────
+
+export function generateMainObjectives(state: AppState): MainObjective[] {
+  const answers = state.onboardingAnswers
+  const objectives: MainObjective[] = []
+
+  objectives.push({
+    id: 'first_month', name: '30 Jours de Feu', description: 'Enchaîne les entraînements pendant 30 jours',
+    icon: '🔥', completed: false,
+    milestones: [
+      { description: '7 jours', target: 7, unit: 'jours', check: s => getStreak(s) },
+      { description: '14 jours', target: 14, unit: 'jours', check: s => getStreak(s) },
+      { description: '30 jours', target: 30, unit: 'jours', check: s => getStreak(s) },
+    ],
+  })
+
+  objectives.push({
+    id: 'volume_master', name: 'Maître du Volume', description: 'Accumule du volume total à la barre',
+    icon: '🏋️', completed: false,
+    milestones: [
+      { description: '10 000 kg', target: 10000, unit: 'kg', check: s => s.workouts.reduce((t, w) => t + getWorkoutVolume(w), 0) },
+      { description: '50 000 kg', target: 50000, unit: 'kg', check: s => s.workouts.reduce((t, w) => t + getWorkoutVolume(w), 0) },
+      { description: '100 000 kg', target: 100000, unit: 'kg', check: s => s.workouts.reduce((t, w) => t + getWorkoutVolume(w), 0) },
+    ],
+  })
+
+  if (!answers) return objectives
+
+  if (answers.primaryGoalDetail === 'aesthetics' || answers.primaryGoalDetail === 'bodybuilding_competition') {
+    objectives.push({
+      id: 'physique', name: 'Sculpteur de Physique', description: 'Travaille tous les groupes musculaires',
+      icon: '💎', completed: false,
+      milestones: [
+        { description: 'Log tes mensurations', target: 3, unit: 'entrées', check: s => s.measurementEntries.length },
+        { description: '50 séances complètes', target: 50, unit: 'séances', check: s => s.workouts.length },
+        { description: 'Cohérence 3 mois', target: 90, unit: 'jours', check: s => getStreak(s) },
+      ],
+    })
+  }
+
+  if (answers.primaryGoalDetail === 'strength' || answers.primaryGoalDetail === 'powerlifting') {
+    objectives.push({
+      id: 'strength_master', name: 'Force Brute', description: 'Bats tes records sur les mouvements de base',
+      icon: '⚡', completed: false,
+      milestones: [
+        { description: '10 PRs battus', target: 10, unit: 'PRs', check: s => countPRs(s) },
+        { description: '25 PRs battus', target: 25, unit: 'PRs', check: s => countPRs(s) },
+        { description: '50 PRs battus', target: 50, unit: 'PRs', check: s => countPRs(s) },
+      ],
+    })
+  }
+
+  if (answers.primaryGoalDetail === 'weight_loss' || answers.primaryGoalDetail === 'health') {
+    objectives.push({
+      id: 'weight_goal', name: 'Transformation Physique', description: 'Suis ton poids et atteins ton objectif',
+      icon: '📉', completed: false,
+      milestones: [
+        { description: '10 pesées enregistrées', target: 10, unit: 'pesées', check: s => s.bodyweightEntries.length },
+        { description: '30 pesées enregistrées', target: 30, unit: 'pesées', check: s => s.bodyweightEntries.length },
+        { description: '4 semaines de régularité', target: 28, unit: 'jours', check: s => getStreak(s) },
+      ],
+    })
+  }
+
+  if (answers.weakPoints && answers.weakPoints.length > 0) {
+    objectives.push({
+      id: 'weak_points', name: 'Corriger les Faiblesses', description: `Focus sur : ${answers.weakPoints.join(', ')}`,
+      icon: '🎯', completed: false,
+      milestones: [
+        { description: '20 séances avec focus', target: 20, unit: 'séances', check: s => s.workouts.length },
+        { description: '40 séances avec focus', target: 40, unit: 'séances', check: s => s.workouts.length },
+      ],
+    })
+  }
+
+  if (answers.currentCardio === 'none' || answers.currentCardio === 'light') {
+    objectives.push({
+      id: 'cardio_boost', name: 'Cardio Warrior', description: 'Améliore ton cardio avec des pas quotidiens',
+      icon: '❤️', completed: false,
+      milestones: [
+        { description: '7 jours à 10K pas', target: 7, unit: 'jours', check: s => (s.dailyQuestProgress ?? []).filter(d => (d.quests['steps'] ?? 0) >= 10000).length },
+        { description: '30 jours à 10K pas', target: 30, unit: 'jours', check: s => (s.dailyQuestProgress ?? []).filter(d => (d.quests['steps'] ?? 0) >= 10000).length },
+      ],
+    })
+  }
+
+  return objectives
+}
+
+// ── Existing helpers ──────────────────────────────────────────────────────────
 
 export function getRecommendedRecipes(state: AppState) {
   const totals = getDailyNutrition(state.foodEntries)

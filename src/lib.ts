@@ -210,7 +210,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     level: 'ssj2',
     name: 'Super Saiyan 2',
     accent: 'var(--accent-blue)',
-    image: 'images/gohan.png',
+    image: 'images/goku_ssj.png',
     powerThreshold: 5000,
     quests: [
       { id: 'ssj2_q1', name: 'Depasse ton Pere', description: 'Complete 15 seances', requirement: (s) => s.workouts.length, target: 15 },
@@ -238,7 +238,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     level: 'god',
     name: 'Super Saiyan God',
     accent: 'var(--accent-red)',
-    image: 'images/vegeta.png',
+    image: 'images/goku_ssj_blue.png',
     powerThreshold: 50000,
     quests: [
       { id: 'god_q1', name: 'Rituel des Saiyans', description: 'Complete 60 seances', requirement: (s) => s.workouts.length, target: 60 },

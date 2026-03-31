@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from 'react'
 import { foods, programs, savedMeals } from './data'
 import {
   calculateTargets,
-  countCompletedDailyQuests,
   formatNumber,
   generateMainObjectives,
   getAdaptiveTDEEStatus,

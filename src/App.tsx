@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { foods, programs, savedMeals } from './data'
+import { exercises, foods, programs, savedMeals } from './data'
 import {
   calculateTargets,
   formatNumber,
@@ -29,6 +29,7 @@ import { loadState, saveState } from './storage'
 import type {
   AppState,
   BodyweightEntry,
+  CustomRoutine,
   FoodEntry,
   Goal,
   MeasurementEntry,
@@ -91,6 +92,7 @@ const defaultState: AppState = {
   mesocycle: null,
   adaptiveTDEE: [],
   weeklyMuscleVolume: {},
+  customRoutines: [],
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -910,16 +912,24 @@ function HomeView({ state, nextSession, powerLevel, recommendation, onStartWorko
 
 // ── TRAIN VIEW ────────────────────────────────────────────────────────────────
 
-function TrainView({ state, onStartWorkout, onStartSession, onAddSet, onFinishWorkout, restTimer, onSkipTimer }: {
+function TrainView({ state, customRoutines, onStartWorkout, onStartSession, onStartCustomRoutine, onAddCustomRoutine, onDeleteCustomRoutine, onAddSet, onFinishWorkout, restTimer, onSkipTimer }: {
   state: AppState
+  customRoutines: CustomRoutine[]
   onStartWorkout: () => void
   onStartSession: (sessionIndex: number) => void
+  onStartCustomRoutine: (routine: CustomRoutine) => void
+  onAddCustomRoutine: (routine: CustomRoutine) => void
+  onDeleteCustomRoutine: (id: string) => void
   onAddSet: (exerciseId: string, weightKg: number, reps: number, rir: number, setType: SetType) => void
   onFinishWorkout: () => void
   restTimer: number
   onSkipTimer: () => void
 }) {
   const [draftInputs, setDraftInputs] = useState<Record<string, { weight: string; reps: string; rir: string; setType: SetType }>>({})
+  const [creatingRoutine, setCreatingRoutine] = useState(false)
+  const [routineName, setRoutineName] = useState('')
+  const [routineExercises, setRoutineExercises] = useState<Array<{exerciseId: string; sets: number; repMin: number; repMax: number; restSeconds: number}>>([])
+  const [exerciseSearch, setExerciseSearch] = useState('')
   const selectedProgram = getProgramById(state.selectedProgramId)
   const nextIndex = state.programCursor[selectedProgram?.id ?? ''] ?? 0
   const nextSession = selectedProgram?.sessions[nextIndex % (selectedProgram?.sessions.length ?? 1)] ?? null
@@ -1043,6 +1053,64 @@ function TrainView({ state, onStartWorkout, onStartSession, onAddSet, onFinishWo
         <span>Demarrer un Entrainement Libre</span>
       </button>
 
+      {/* Créer ma routine button */}
+      <button className="libre-btn" onClick={() => setCreatingRoutine(true)} type="button">
+        <span style={{ fontSize: '1.2rem' }}>➕</span>
+        <span>Créer ma routine</span>
+      </button>
+
+      {/* Custom routine creation panel */}
+      {creatingRoutine && (
+        <section className="hevy-card stack-md">
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <SectionTitle icon="✏️" label="Nouvelle routine" />
+            <button className="ghost-btn" style={{ minHeight: 34, padding: '4px 12px' }} onClick={() => { setCreatingRoutine(false); setRoutineName(''); setRoutineExercises([]); setExerciseSearch('') }} type="button">✕</button>
+          </div>
+          <label><span>Nom de la routine</span><input value={routineName} onChange={e => setRoutineName(e.target.value)} placeholder="Ex: Full Body A" /></label>
+          <div>
+            <span className="eyebrow">Ajouter des exercices</span>
+            <input value={exerciseSearch} onChange={e => setExerciseSearch(e.target.value)} placeholder="Chercher un exercice..." style={{ marginBottom: 8 }} />
+            <div style={{ maxHeight: 180, overflowY: 'auto', display: 'grid', gap: 6 }}>
+              {exercises.filter(ex => ex.name.toLowerCase().includes(exerciseSearch.toLowerCase())).slice(0, 12).map(ex => (
+                <button key={ex.id} className="ghost-btn" style={{ minHeight: 36, padding: '6px 12px', textAlign: 'left', fontSize: '0.82rem' }} type="button"
+                  onClick={() => { if (!routineExercises.find(e => e.exerciseId === ex.id)) { setRoutineExercises(prev => [...prev, { exerciseId: ex.id, sets: 3, repMin: 8, repMax: 12, restSeconds: 90 }]) } }}>
+                  {ex.name} <span style={{ color: 'var(--muted)', fontSize: '0.72rem' }}>— {ex.primaryMuscles.join(', ')}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+          {routineExercises.length > 0 && (
+            <div className="stack-md">
+              <span className="eyebrow">Exercices ajoutés ({routineExercises.length})</span>
+              {routineExercises.map((re, idx) => {
+                const ex = getExerciseById(re.exerciseId)
+                return (
+                  <div key={re.exerciseId} style={{ background: 'rgba(255,255,255,0.03)', borderRadius: 12, padding: '10px 12px', border: '1px solid var(--stroke)' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                      <strong style={{ fontSize: '0.85rem' }}>{ex.name}</strong>
+                      <button type="button" onClick={() => setRoutineExercises(prev => prev.filter((_, i) => i !== idx))} style={{ background: 'transparent', border: 'none', color: 'var(--accent-red)', cursor: 'pointer', fontSize: '1rem', padding: '2px 6px' }}>✕</button>
+                    </div>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 6 }}>
+                      <label style={{ gap: 4 }}><span style={{ fontSize: '0.65rem' }}>Séries</span><input type="number" value={re.sets} min={1} max={10} onChange={e => setRoutineExercises(prev => prev.map((x, i) => i === idx ? { ...x, sets: Number(e.target.value) } : x))} /></label>
+                      <label style={{ gap: 4 }}><span style={{ fontSize: '0.65rem' }}>Reps min</span><input type="number" value={re.repMin} min={1} max={50} onChange={e => setRoutineExercises(prev => prev.map((x, i) => i === idx ? { ...x, repMin: Number(e.target.value) } : x))} /></label>
+                      <label style={{ gap: 4 }}><span style={{ fontSize: '0.65rem' }}>Reps max</span><input type="number" value={re.repMax} min={1} max={50} onChange={e => setRoutineExercises(prev => prev.map((x, i) => i === idx ? { ...x, repMax: Number(e.target.value) } : x))} /></label>
+                      <label style={{ gap: 4 }}><span style={{ fontSize: '0.65rem' }}>Repos(s)</span><input type="number" value={re.restSeconds} min={30} max={600} step={15} onChange={e => setRoutineExercises(prev => prev.map((x, i) => i === idx ? { ...x, restSeconds: Number(e.target.value) } : x))} /></label>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          )}
+          <button className="primary-btn" type="button" disabled={!routineName.trim() || routineExercises.length === 0}
+            onClick={() => {
+              onAddCustomRoutine({ id: makeId('cr'), name: routineName.trim(), exercises: routineExercises })
+              setCreatingRoutine(false); setRoutineName(''); setRoutineExercises([]); setExerciseSearch('')
+            }}>
+            Sauvegarder la routine
+          </button>
+        </section>
+      )}
+
       <SectionTitle icon="📋" label="Seances du programme" />
 
       {/* All sessions as Hevy-style routine cards */}
@@ -1073,6 +1141,33 @@ function TrainView({ state, onStartWorkout, onStartSession, onAddSet, onFinishWo
           </section>
         )
       })}
+
+      {/* Custom routines section */}
+      {customRoutines.length > 0 && (
+        <>
+          <SectionTitle icon="⭐" label="Mes routines perso" />
+          {customRoutines.map(routine => (
+            <section key={routine.id} className="routine-card">
+              <div style={{ marginBottom: 12 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                  <h3 style={{ margin: 0 }}>{routine.name}</h3>
+                  <span className="next-badge" style={{ background: 'var(--accent-blue)', color: '#fff' }}>PERSO</span>
+                </div>
+                <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--muted)' }}>
+                  {routine.exercises.slice(0, 3).map(e => getExerciseById(e.exerciseId).name).join(', ')}
+                  {routine.exercises.length > 3 ? ` +${routine.exercises.length - 3} exercices` : ''}
+                </p>
+              </div>
+              <div style={{ display: 'flex', gap: 10 }}>
+                <button className="cta-button" style={{ fontSize: '1.1rem', padding: '0.9rem', flex: 1 }} onClick={() => onStartCustomRoutine(routine)} type="button">
+                  COMMENCER
+                </button>
+                <button className="ghost-btn" style={{ minHeight: 48, padding: '8px 14px', borderRadius: 12 }} onClick={() => onDeleteCustomRoutine(routine.id)} type="button">🗑️</button>
+              </div>
+            </section>
+          ))}
+        </>
+      )}
     </div>
   )
 }
@@ -1392,6 +1487,7 @@ function App() {
       mesocycle: loaded.mesocycle ?? null,
       adaptiveTDEE: loaded.adaptiveTDEE ?? [],
       weeklyMuscleVolume: loaded.weeklyMuscleVolume ?? {},
+      customRoutines: loaded.customRoutines ?? [],
     }
   })
   const [tab, setTab] = useState<TabId>('home')
@@ -1447,6 +1543,22 @@ function App() {
     setState(c => ({ ...c, activeWorkout: draft }))
   }
 
+  const startCustomRoutine = (routine: CustomRoutine) => {
+    const draft: WorkoutDraft = {
+      programId: 'custom',
+      sessionId: routine.id,
+      sessionName: routine.name,
+      startedAt: new Date().toISOString(),
+      exercises: routine.exercises.map(entry => ({
+        exerciseId: entry.exerciseId,
+        target: { exerciseId: entry.exerciseId, sets: entry.sets, repMin: entry.repMin, repMax: entry.repMax, targetRir: 2, restSeconds: entry.restSeconds },
+        sets: [],
+      })),
+    }
+    setState(c => ({ ...c, activeWorkout: draft }))
+    setTab('train')
+  }
+
   const addSet = (exerciseId: string, weightKg: number, reps: number, rir: number, setType: SetType) => {
     if (!state.activeWorkout || reps <= 0) return
     const exerciseTarget = state.activeWorkout.exercises.find(e => e.exerciseId === exerciseId)?.target
@@ -1465,9 +1577,22 @@ function App() {
   }
 
   const finishWorkout = () => {
-    if (!state.activeWorkout || !selectedProgram) return
-    const activeSession = selectedProgram.sessions.find(s => s.id === state.activeWorkout!.sessionId) ?? nextSession
-    if (!activeSession) return
+    if (!state.activeWorkout) return
+    const isCustom = state.activeWorkout.programId === 'custom'
+    let sessionName: string
+    let programId: string
+
+    if (isCustom) {
+      const cr = state.customRoutines.find(r => r.id === state.activeWorkout!.sessionId)
+      sessionName = cr?.name ?? state.activeWorkout.sessionName ?? 'Seance libre'
+      programId = 'custom'
+    } else {
+      if (!selectedProgram) return
+      const activeSession = selectedProgram.sessions.find(s => s.id === state.activeWorkout!.sessionId) ?? nextSession
+      if (!activeSession) return
+      sessionName = activeSession.name
+      programId = selectedProgram.id
+    }
 
     const musclesWorked = new Set<MuscleGroup>()
     state.activeWorkout.exercises.forEach(ex => {
@@ -1479,9 +1604,9 @@ function App() {
     const workout = {
       id: makeId('workout'),
       date: todayIso(),
-      programId: selectedProgram.id,
-      sessionId: activeSession.id,
-      sessionName: activeSession.name,
+      programId,
+      sessionId: state.activeWorkout.sessionId,
+      sessionName,
       exercises: state.activeWorkout.exercises.filter(e => e.sets.length > 0),
       durationMinutes: Math.max(25, Math.round((Date.now() - new Date(state.activeWorkout.startedAt).getTime()) / 60000)),
     }
@@ -1490,7 +1615,7 @@ function App() {
       ...c,
       workouts: [...c.workouts, workout],
       activeWorkout: null,
-      programCursor: { ...c.programCursor, [selectedProgram.id]: (c.programCursor[selectedProgram.id] ?? 0) + 1 },
+      programCursor: isCustom ? c.programCursor : { ...c.programCursor, [programId]: (c.programCursor[programId] ?? 0) + 1 },
     }))
     setRestTimer(0)
 
@@ -1534,6 +1659,14 @@ function App() {
     })
   }
 
+  const addCustomRoutine = (routine: CustomRoutine) => {
+    setState(c => ({ ...c, customRoutines: [...c.customRoutines, routine] }))
+  }
+
+  const deleteCustomRoutine = (id: string) => {
+    setState(c => ({ ...c, customRoutines: c.customRoutines.filter(r => r.id !== id) }))
+  }
+
   if (!state.profile || !state.targets) {
     return <OnboardingView onComplete={completeOnboarding} />
   }
@@ -1549,7 +1682,21 @@ function App() {
         />
       )}
       {tab === 'home' && <HomeView state={state} nextSession={nextSession} powerLevel={powerLevel} recommendation={recommendation} onStartWorkout={startWorkout} onUpdateQuestProgress={updateQuestProgress} onCompleteQuest={completeQuest} onNavigate={setTab} />}
-      {tab === 'train' && <TrainView state={state} onStartWorkout={startWorkout} onStartSession={startSession} onAddSet={addSet} onFinishWorkout={finishWorkout} restTimer={restTimer} onSkipTimer={() => setRestTimer(0)} />}
+      {tab === 'train' && (
+        <TrainView
+          state={state}
+          customRoutines={state.customRoutines}
+          onStartWorkout={startWorkout}
+          onStartSession={startSession}
+          onStartCustomRoutine={startCustomRoutine}
+          onAddCustomRoutine={addCustomRoutine}
+          onDeleteCustomRoutine={deleteCustomRoutine}
+          onAddSet={addSet}
+          onFinishWorkout={finishWorkout}
+          restTimer={restTimer}
+          onSkipTimer={() => setRestTimer(0)}
+        />
+      )}
       {tab === 'nutrition' && <NutritionView state={state} onAddFood={addFood} />}
       {tab === 'scouter' && <ScouterView state={state} />}
       {tab === 'profile' && <ProfileView state={state} powerLevel={powerLevel} onLogBodyweight={logBodyweight} onLogMeasurement={logMeasurement} onChooseProgram={chooseProgram} onToggleTheme={() => setTheme(t => t === 'dark' ? 'light' : 'dark')} theme={theme} onNavigate={setTab} />}

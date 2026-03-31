@@ -213,6 +213,52 @@ export interface MeasurementEntry {
   thighCm: number
 }
 
+export type QuestType = 'daily' | 'main' | 'transformation'
+
+export interface DailyQuest {
+  id: string
+  name: string
+  description: string
+  icon: string
+  target: number
+  unit: string
+  category: 'activity' | 'nutrition' | 'training' | 'recovery'
+}
+
+export interface DailyQuestProgress {
+  date: string
+  quests: Record<string, number>
+}
+
+export interface OnboardingAnswers {
+  primaryGoalDetail: string
+  targetBodyfat: string
+  weakPoints: string[]
+  currentCardio: string
+  sleepHours: number
+  stressLevel: string
+  mealPrepWillingness: string
+  supplementsUsed: string[]
+  pastInjuries: string[]
+  motivationStyle: string
+  dailyStepGoal: number
+  waterGoalLiters: number
+}
+
+export interface MainObjective {
+  id: string
+  name: string
+  description: string
+  icon: string
+  milestones: {
+    description: string
+    target: number
+    unit: string
+    check: (state: AppState) => number
+  }[]
+  completed: boolean
+}
+
 export interface AppState {
   profile: UserProfile | null
   targets: GoalTargets | null
@@ -224,4 +270,8 @@ export interface AppState {
   savedMeals: SavedMeal[]
   bodyweightEntries: BodyweightEntry[]
   measurementEntries: MeasurementEntry[]
+  dailyQuestProgress: DailyQuestProgress[]
+  onboardingAnswers: OnboardingAnswers | null
+  completedDailyQuests: Record<string, string[]>
+  unlockedTransformations: string[]
 }

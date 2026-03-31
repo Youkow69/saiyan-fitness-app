@@ -18,7 +18,6 @@ import {
   getStreak,
   getTransformation,
   getVolumeByMuscle,
-  getVolumeRecommendation,
   getVolumeStatus,
   getWeeklySetsByMuscle,
   getWeeklyWorkouts,
@@ -26,7 +25,6 @@ import {
   makeId,
   recommendProgram,
   todayIso,
-  VOLUME_LANDMARKS,
 } from './lib'
 import { loadState, saveState } from './storage'
 import type {
@@ -163,7 +161,7 @@ function FeedbackModal({
     setEntries(prev => ({ ...prev, [muscle]: { ...prev[muscle], [key]: val } }))
   }
 
-  const ratingCircles = (muscle: string, key: 'pump' | 'soreness', labels: string[]) => (
+  const ratingCircles = (muscle: string, key: 'pump' | 'soreness', _labels: string[]) => (
     <div style={{ display: 'flex', gap: 6 }}>
       {[1,2,3,4,5].map(n => (
         <button

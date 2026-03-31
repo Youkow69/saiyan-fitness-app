@@ -147,6 +147,7 @@ export interface WorkoutDraft {
   programId: string
   sessionId: string
   startedAt: string
+  sessionName?: string
   exercises: LoggedExercise[]
 }
 
@@ -301,6 +302,18 @@ export interface AdaptiveTDEE {
   adjustment: number
 }
 
+export interface CustomRoutine {
+  id: string
+  name: string
+  exercises: {
+    exerciseId: string
+    sets: number
+    repMin: number
+    repMax: number
+    restSeconds: number
+  }[]
+}
+
 export interface AppState {
   profile: UserProfile | null
   targets: GoalTargets | null
@@ -320,4 +333,5 @@ export interface AppState {
   mesocycle: MesocycleState | null
   adaptiveTDEE: AdaptiveTDEE[]
   weeklyMuscleVolume: Record<string, number>
+  customRoutines: CustomRoutine[]
 }

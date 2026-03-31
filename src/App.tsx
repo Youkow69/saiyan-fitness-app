@@ -2,8 +2,11 @@ import { useEffect, useMemo, useState } from 'react'
 import { foods, programs, savedMeals } from './data'
 import {
   calculateTargets,
+  countCompletedDailyQuests,
   formatNumber,
+  generateMainObjectives,
   getDailyNutrition,
+  getDailyQuestStatus,
   getExerciseById,
   getCurrentTransformationFull,
   getPowerLevel,
@@ -25,6 +28,7 @@ import type {
   FoodEntry,
   Goal,
   MeasurementEntry,
+  OnboardingAnswers,
   ProgramSession,
   SetType,
   TabId,
@@ -47,6 +51,21 @@ const defaultProfile: UserProfile = {
   injuryNotes: '',
 }
 
+const defaultOnboardingAnswers: OnboardingAnswers = {
+  primaryGoalDetail: '',
+  targetBodyfat: '',
+  weakPoints: [],
+  currentCardio: 'none',
+  sleepHours: 7,
+  stressLevel: 'moderate',
+  mealPrepWillingness: 'moderate',
+  supplementsUsed: [],
+  pastInjuries: [],
+  motivationStyle: 'data',
+  dailyStepGoal: 10000,
+  waterGoalLiters: 2,
+}
+
 const defaultState: AppState = {
   profile: null,
   targets: null,
@@ -58,6 +77,10 @@ const defaultState: AppState = {
   savedMeals,
   bodyweightEntries: [],
   measurementEntries: [],
+  dailyQuestProgress: [],
+  onboardingAnswers: null,
+  completedDailyQuests: {},
+  unlockedTransformations: [],
 }
 
 function MetricCard({
@@ -128,118 +151,246 @@ function getLastSet(workouts: AppState['workouts'], exerciseId: string) {
 function OnboardingView({
   onComplete,
 }: {
-  onComplete: (profile: UserProfile) => void
+  onComplete: (profile: UserProfile, answers: OnboardingAnswers) => void
 }) {
+  const [step, setStep] = useState(1)
   const [draft, setDraft] = useState<UserProfile>(defaultProfile)
+  const [answers, setAnswers] = useState<OnboardingAnswers>(defaultOnboardingAnswers)
+
+  const weakPointOptions = ['Epaules', 'Bras', 'Jambes', 'Dos', 'Poitrine', 'Abdominaux', 'Mollets', 'Fessiers']
+  const supplementOptions = ['Creatine', 'Whey', 'Cafeine', 'Omega-3', 'Vitamine D', 'BCAA', 'Pre-workout', 'Aucun']
+  const injuryOptions = ['Epaule', 'Genou', 'Dos', 'Poignet', 'Cheville', 'Hanche', 'Coude', 'Aucune']
+
+  const toggleArrayItem = (arr: string[], item: string) =>
+    arr.includes(item) ? arr.filter((x) => x !== item) : [...arr, item]
+
+  const stepTitles = ['Profil de base', 'Entrainement', 'Objectifs profonds', 'Cibles quotidiennes']
 
   return (
     <div className="page onboarding-shell">
       <section className="hero-card hero-card--scan">
-        <span className="eyebrow">Scouter Scan</span>
+        <span className="eyebrow">Scouter Scan — Etape {step}/4</span>
         <h1>Saiyan Fitness</h1>
-        <p>
-          Configure ton profil, calcule ton TDEE automatiquement et recois ta premiere
-          Saga sur mesure.
-        </p>
+        <p style={{ marginBottom: 0 }}>{stepTitles[step - 1]}</p>
+        <div style={{ display: 'flex', gap: 6, marginTop: 12 }}>
+          {[1, 2, 3, 4].map((s) => (
+            <div
+              key={s}
+              style={{
+                flex: 1,
+                height: 4,
+                borderRadius: 2,
+                background: s <= step ? 'var(--accent-gold)' : 'rgba(255,255,255,0.1)',
+                transition: 'background 0.3s ease',
+              }}
+            />
+          ))}
+        </div>
       </section>
 
-      <section className="panel stack-lg">
-        <div className="field-grid">
-          <label>
-            <span>Nom</span>
-            <input value={draft.name} onChange={(event) => setDraft({ ...draft, name: event.target.value })} />
-          </label>
-          <label>
-            <span>Age</span>
-            <input type="number" value={draft.age} onChange={(event) => setDraft({ ...draft, age: Number(event.target.value) })} />
-          </label>
-          <label>
-            <span>Poids (kg)</span>
-            <input type="number" value={draft.weightKg} onChange={(event) => setDraft({ ...draft, weightKg: Number(event.target.value) })} />
-          </label>
-          <label>
-            <span>Taille (cm)</span>
-            <input type="number" value={draft.heightCm} onChange={(event) => setDraft({ ...draft, heightCm: Number(event.target.value) })} />
-          </label>
-        </div>
-
-        <div className="field-grid">
-          <label>
-            <span>Sexe</span>
-            <select value={draft.sex} onChange={(event) => setDraft({ ...draft, sex: event.target.value as UserProfile['sex'] })}>
-              <option value="male">Homme</option>
-              <option value="female">Femme</option>
-            </select>
-          </label>
-          <label>
-            <span>Activite</span>
-            <select value={draft.activityLevel} onChange={(event) => setDraft({ ...draft, activityLevel: event.target.value as UserProfile['activityLevel'] })}>
-              <option value="sedentary">Sedentaire</option>
-              <option value="light">Legere</option>
-              <option value="moderate">Moderee</option>
-              <option value="high">Elevee</option>
-              <option value="athlete">Athlete</option>
-            </select>
-          </label>
-          <label>
-            <span>Niveau</span>
-            <select value={draft.experienceLevel} onChange={(event) => setDraft({ ...draft, experienceLevel: event.target.value as UserProfile['experienceLevel'] })}>
-              <option value="beginner">Debutant</option>
-              <option value="intermediate">Intermediaire</option>
-              <option value="advanced">Avance</option>
-            </select>
-          </label>
-          <label>
-            <span>Jours par semaine</span>
-            <input type="number" min={2} max={6} value={draft.trainingDaysPerWeek} onChange={(event) => setDraft({ ...draft, trainingDaysPerWeek: Number(event.target.value) })} />
-          </label>
-        </div>
-
-        <div className="choice-group">
-          <span className="field-title">Objectif principal</span>
-          <div className="chip-row">
-            {[
-              ['muscle_gain', 'Prise de masse'],
-              ['fat_loss', 'Perte de gras'],
-              ['recomp', 'Recomposition'],
-              ['strength', 'Force'],
-              ['endurance', 'Endurance'],
-            ].map(([value, label]) => (
-              <button
-                key={value}
-                className={`chip ${draft.goal === value ? 'chip--active' : ''}`}
-                onClick={() => setDraft({ ...draft, goal: value as Goal })}
-                type="button"
-              >
-                {label}
-              </button>
-            ))}
+      {step === 1 && (
+        <section className="panel stack-lg">
+          <div className="field-grid">
+            <label>
+              <span>Nom</span>
+              <input value={draft.name} onChange={(e) => setDraft({ ...draft, name: e.target.value })} />
+            </label>
+            <label>
+              <span>Age</span>
+              <input type="number" value={draft.age} onChange={(e) => setDraft({ ...draft, age: Number(e.target.value) })} />
+            </label>
+            <label>
+              <span>Poids (kg)</span>
+              <input type="number" value={draft.weightKg} onChange={(e) => setDraft({ ...draft, weightKg: Number(e.target.value) })} />
+            </label>
+            <label>
+              <span>Taille (cm)</span>
+              <input type="number" value={draft.heightCm} onChange={(e) => setDraft({ ...draft, heightCm: Number(e.target.value) })} />
+            </label>
           </div>
-        </div>
 
-        <div className="field-grid">
-          <label>
-            <span>Materiel</span>
-            <select value={draft.equipmentAccess} onChange={(event) => setDraft({ ...draft, equipmentAccess: event.target.value as UserProfile['equipmentAccess'] })}>
-              <option value="full_gym">Full gym</option>
-              <option value="basic_gym">Basic gym</option>
-              <option value="home_gym">Home gym</option>
-            </select>
-          </label>
-          <label>
-            <span>Preference alimentaire</span>
-            <input value={draft.dietaryPreference} onChange={(event) => setDraft({ ...draft, dietaryPreference: event.target.value })} />
-          </label>
-          <label className="field-span-2">
-            <span>Contraintes / blessures</span>
-            <input value={draft.injuryNotes} onChange={(event) => setDraft({ ...draft, injuryNotes: event.target.value })} />
-          </label>
-        </div>
+          <div className="choice-group">
+            <span className="field-title">Sexe</span>
+            <div className="chip-row">
+              {[['male', 'Homme'], ['female', 'Femme']].map(([v, l]) => (
+                <button key={v} className={`chip ${draft.sex === v ? 'chip--active' : ''}`} onClick={() => setDraft({ ...draft, sex: v as UserProfile['sex'] })} type="button">{l}</button>
+              ))}
+            </div>
+          </div>
 
-        <button className="primary-btn" onClick={() => onComplete(draft)} type="button">
-          Demarrer la premiere Saga
-        </button>
-      </section>
+          <div className="choice-group">
+            <span className="field-title">Objectif principal</span>
+            <div className="chip-row">
+              {[['muscle_gain', 'Prise de masse'], ['fat_loss', 'Perte de gras'], ['recomp', 'Recomposition'], ['strength', 'Force'], ['endurance', 'Endurance']].map(([v, l]) => (
+                <button key={v} className={`chip ${draft.goal === v ? 'chip--active' : ''}`} onClick={() => setDraft({ ...draft, goal: v as Goal })} type="button">{l}</button>
+              ))}
+            </div>
+          </div>
+
+          <button className="primary-btn" onClick={() => setStep(2)} type="button">Suivant</button>
+        </section>
+      )}
+
+      {step === 2 && (
+        <section className="panel stack-lg">
+          <div className="choice-group">
+            <span className="field-title">Niveau d'activite</span>
+            <div className="chip-row">
+              {[['sedentary', 'Sedentaire'], ['light', 'Legere'], ['moderate', 'Moderee'], ['high', 'Elevee'], ['athlete', 'Athlete']].map(([v, l]) => (
+                <button key={v} className={`chip ${draft.activityLevel === v ? 'chip--active' : ''}`} onClick={() => setDraft({ ...draft, activityLevel: v as UserProfile['activityLevel'] })} type="button">{l}</button>
+              ))}
+            </div>
+          </div>
+
+          <div className="choice-group">
+            <span className="field-title">Niveau d'experience</span>
+            <div className="chip-row">
+              {[['beginner', 'Debutant'], ['intermediate', 'Intermediaire'], ['advanced', 'Avance']].map(([v, l]) => (
+                <button key={v} className={`chip ${draft.experienceLevel === v ? 'chip--active' : ''}`} onClick={() => setDraft({ ...draft, experienceLevel: v as UserProfile['experienceLevel'] })} type="button">{l}</button>
+              ))}
+            </div>
+          </div>
+
+          <div className="choice-group">
+            <span className="field-title">Materiel disponible</span>
+            <div className="chip-row">
+              {[['full_gym', 'Full gym'], ['basic_gym', 'Basic gym'], ['home_gym', 'Home gym']].map(([v, l]) => (
+                <button key={v} className={`chip ${draft.equipmentAccess === v ? 'chip--active' : ''}`} onClick={() => setDraft({ ...draft, equipmentAccess: v as UserProfile['equipmentAccess'] })} type="button">{l}</button>
+              ))}
+            </div>
+          </div>
+
+          <div className="field-grid">
+            <label>
+              <span>Jours par semaine</span>
+              <input type="number" min={2} max={6} value={draft.trainingDaysPerWeek} onChange={(e) => setDraft({ ...draft, trainingDaysPerWeek: Number(e.target.value) })} />
+            </label>
+            <label>
+              <span>Preference alimentaire</span>
+              <input value={draft.dietaryPreference} onChange={(e) => setDraft({ ...draft, dietaryPreference: e.target.value })} />
+            </label>
+            <label className="field-span-2">
+              <span>Contraintes / blessures</span>
+              <input value={draft.injuryNotes} onChange={(e) => setDraft({ ...draft, injuryNotes: e.target.value })} />
+            </label>
+          </div>
+
+          <div style={{ display: 'flex', gap: 10 }}>
+            <button className="ghost-btn" style={{ flex: 1 }} onClick={() => setStep(1)} type="button">Retour</button>
+            <button className="primary-btn" style={{ flex: 2 }} onClick={() => setStep(3)} type="button">Suivant</button>
+          </div>
+        </section>
+      )}
+
+      {step === 3 && (
+        <section className="panel stack-lg">
+          <div className="choice-group">
+            <span className="field-title">Points faibles a cibler</span>
+            <div className="chip-row">
+              {weakPointOptions.map((item) => (
+                <button key={item} className={`chip ${answers.weakPoints.includes(item) ? 'chip--active' : ''}`} onClick={() => setAnswers({ ...answers, weakPoints: toggleArrayItem(answers.weakPoints, item) })} type="button">{item}</button>
+              ))}
+            </div>
+          </div>
+
+          <div className="choice-group">
+            <span className="field-title">Cardio actuel</span>
+            <div className="chip-row">
+              {[['none', 'Aucun'], ['light', 'Leger'], ['moderate', 'Modere'], ['intense', 'Intense']].map(([v, l]) => (
+                <button key={v} className={`chip ${answers.currentCardio === v ? 'chip--active' : ''}`} onClick={() => setAnswers({ ...answers, currentCardio: v })} type="button">{l}</button>
+              ))}
+            </div>
+          </div>
+
+          <div className="choice-group">
+            <span className="field-title">Style de motivation</span>
+            <div className="chip-row">
+              {[['data', 'Data/Stats'], ['community', 'Communaute'], ['aesthetics', 'Esthetique'], ['performance', 'Performance'], ['health', 'Sante']].map(([v, l]) => (
+                <button key={v} className={`chip ${answers.motivationStyle === v ? 'chip--active' : ''}`} onClick={() => setAnswers({ ...answers, motivationStyle: v })} type="button">{l}</button>
+              ))}
+            </div>
+          </div>
+
+          <div className="choice-group">
+            <span className="field-title">Supplements utilises</span>
+            <div className="chip-row">
+              {supplementOptions.map((item) => (
+                <button key={item} className={`chip ${answers.supplementsUsed.includes(item) ? 'chip--active' : ''}`} onClick={() => setAnswers({ ...answers, supplementsUsed: toggleArrayItem(answers.supplementsUsed, item) })} type="button">{item}</button>
+              ))}
+            </div>
+          </div>
+
+          <div className="choice-group">
+            <span className="field-title">Blessures passees</span>
+            <div className="chip-row">
+              {injuryOptions.map((item) => (
+                <button key={item} className={`chip ${answers.pastInjuries.includes(item) ? 'chip--active' : ''}`} onClick={() => setAnswers({ ...answers, pastInjuries: toggleArrayItem(answers.pastInjuries, item) })} type="button">{item}</button>
+              ))}
+            </div>
+          </div>
+
+          <div className="choice-group">
+            <span className="field-title">Niveau de stress</span>
+            <div className="chip-row">
+              {[['low', 'Faible'], ['moderate', 'Modere'], ['high', 'Eleve'], ['very_high', 'Tres eleve']].map(([v, l]) => (
+                <button key={v} className={`chip ${answers.stressLevel === v ? 'chip--active' : ''}`} onClick={() => setAnswers({ ...answers, stressLevel: v })} type="button">{l}</button>
+              ))}
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', gap: 10 }}>
+            <button className="ghost-btn" style={{ flex: 1 }} onClick={() => setStep(2)} type="button">Retour</button>
+            <button className="primary-btn" style={{ flex: 2 }} onClick={() => setStep(4)} type="button">Suivant</button>
+          </div>
+        </section>
+      )}
+
+      {step === 4 && (
+        <section className="panel stack-lg">
+          <div className="choice-group">
+            <span className="field-title">Objectif de pas quotidien</span>
+            <div className="chip-row">
+              {[[8000, '8 000 pas'], [10000, '10 000 pas'], [12000, '12 000 pas'], [15000, '15 000 pas']].map(([v, l]) => (
+                <button key={String(v)} className={`chip ${answers.dailyStepGoal === v ? 'chip--active' : ''}`} onClick={() => setAnswers({ ...answers, dailyStepGoal: v as number })} type="button">{l}</button>
+              ))}
+            </div>
+          </div>
+
+          <div className="choice-group">
+            <span className="field-title">Objectif d'hydratation</span>
+            <div className="chip-row">
+              {[[1.5, '1.5 L'], [2, '2 L'], [2.5, '2.5 L'], [3, '3 L']].map(([v, l]) => (
+                <button key={String(v)} className={`chip ${answers.waterGoalLiters === v ? 'chip--active' : ''}`} onClick={() => setAnswers({ ...answers, waterGoalLiters: v as number })} type="button">{l}</button>
+              ))}
+            </div>
+          </div>
+
+          <div className="choice-group">
+            <span className="field-title">Heures de sommeil cible</span>
+            <div className="chip-row">
+              {[[6, '6h'], [7, '7h'], [8, '8h'], [9, '9h+']].map(([v, l]) => (
+                <button key={String(v)} className={`chip ${answers.sleepHours === v ? 'chip--active' : ''}`} onClick={() => setAnswers({ ...answers, sleepHours: v as number })} type="button">{l}</button>
+              ))}
+            </div>
+          </div>
+
+          <div className="choice-group">
+            <span className="field-title">Meal prep</span>
+            <div className="chip-row">
+              {[['none', 'Aucun'], ['light', 'Leger'], ['moderate', 'Modere'], ['heavy', 'Full prep']].map(([v, l]) => (
+                <button key={v} className={`chip ${answers.mealPrepWillingness === v ? 'chip--active' : ''}`} onClick={() => setAnswers({ ...answers, mealPrepWillingness: v })} type="button">{l}</button>
+              ))}
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', gap: 10 }}>
+            <button className="ghost-btn" style={{ flex: 1 }} onClick={() => setStep(3)} type="button">Retour</button>
+            <button className="primary-btn" style={{ flex: 2 }} onClick={() => onComplete(draft, answers)} type="button">
+              Demarrer la premiere Saga
+            </button>
+          </div>
+        </section>
+      )}
     </div>
   )
 }
@@ -275,7 +426,7 @@ function QuestSection({ state }: { state: AppState }) {
     <section className="panel stack-md">
       <div className="section-head">
         <div>
-          <SectionEyebrow icon="⚡" label="Quêtes" />
+          <SectionEyebrow icon="lightning" label="Quetes" />
           <h3 style={{ color: next.accent }}>Vers {next.name}</h3>
         </div>
         <img
@@ -296,7 +447,7 @@ function QuestSection({ state }: { state: AppState }) {
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8 }}>
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 2 }}>
-                    {done && <span style={{ color: '#ffd700', fontSize: '0.85rem' }}>✦</span>}
+                    {done && <span style={{ color: '#ffd700', fontSize: '0.85rem' }}>+</span>}
                     <strong style={{ fontSize: '0.88rem', color: done ? '#ffd700' : 'var(--text)' }}>{q.name}</strong>
                   </div>
                   <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--muted)' }}>{q.description}</p>
@@ -326,9 +477,200 @@ function QuestSection({ state }: { state: AppState }) {
           className="transformation-available-banner"
           style={{ borderColor: next.accent, color: next.accent, background: `${next.accent}12` }}
         >
-          ⚡ TRANSFORMATION DISPONIBLE : {next.name.toUpperCase()} ⚡
+          TRANSFORMATION DISPONIBLE : {next.name.toUpperCase()}
         </div>
       )}
+    </section>
+  )
+}
+
+function DailyQuestsPanel({
+  state,
+  onUpdateQuestProgress,
+  onCompleteQuest,
+}: {
+  state: AppState
+  onUpdateQuestProgress: (questId: string, delta: number) => void
+  onCompleteQuest: (questId: string) => void
+}) {
+  const questStatuses = getDailyQuestStatus(state)
+  const completedCount = questStatuses.filter(q => q.isComplete).length
+  const today = todayIso()
+  const completedToday = (state.completedDailyQuests ?? {})[today] ?? []
+
+  return (
+    <section className="panel stack-md">
+      <div className="section-head">
+        <div>
+          <SectionEyebrow icon="sword" label="Quetes quotidiennes" />
+          <h3>{completedCount}/8 completees</h3>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+          <span style={{ fontSize: '1.2rem' }}>fire</span>
+          <span style={{ fontWeight: 800, color: 'var(--accent-gold)' }}>{countCompletedDailyQuests(state)}</span>
+        </div>
+      </div>
+
+      <div style={{ display: 'flex', gap: 4, marginBottom: 4 }}>
+        {questStatuses.map((q) => (
+          <div
+            key={q.id}
+            style={{
+              flex: 1,
+              height: 4,
+              borderRadius: 2,
+              background: q.isComplete ? 'var(--accent-gold)' : 'rgba(255,255,255,0.08)',
+              transition: 'background 0.3s ease',
+            }}
+          />
+        ))}
+      </div>
+
+      <div className="stack-md">
+        {questStatuses.map((q) => {
+          const isManual = ['steps', 'water', 'sleep', 'stretch', 'no_junk'].includes(q.id)
+          const isAutoCalc = ['protein', 'calories', 'training'].includes(q.id)
+          const pct = Math.min(100, Math.round((q.current / q.target) * 100))
+          const alreadyCompleted = completedToday.includes(q.id)
+
+          return (
+            <div key={q.id} className={`quest-card ${q.isComplete ? 'completed' : ''}`}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 1 }}>
+                  <span style={{ fontSize: '1.3rem' }}>{q.icon}</span>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                      {q.isComplete && <span style={{ color: '#ffd700', fontSize: '0.8rem' }}>+</span>}
+                      <strong style={{ fontSize: '0.85rem', color: q.isComplete ? '#ffd700' : 'var(--text)' }}>{q.name}</strong>
+                      {isAutoCalc && <span style={{ fontSize: '0.65rem', color: 'var(--accent-blue)', fontWeight: 700, textTransform: 'uppercase' as const, letterSpacing: '0.06em' }}>auto</span>}
+                    </div>
+                    <p style={{ margin: 0, fontSize: '0.72rem', color: 'var(--muted)' }}>{q.description}</p>
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  {isManual && !q.isComplete && q.id !== 'no_junk' && (
+                    <>
+                      <button
+                        type="button"
+                        className="ghost-btn"
+                        style={{ minHeight: 32, padding: '4px 10px', borderRadius: 10, fontSize: '1rem' }}
+                        onClick={() => onUpdateQuestProgress(q.id, -1)}
+                      >-</button>
+                      <span style={{ fontSize: '0.8rem', fontWeight: 700, minWidth: 40, textAlign: 'center' as const }}>
+                        {q.current}/{q.target}
+                      </span>
+                      <button
+                        type="button"
+                        className="ghost-btn"
+                        style={{ minHeight: 32, padding: '4px 10px', borderRadius: 10, fontSize: '1rem' }}
+                        onClick={() => onUpdateQuestProgress(q.id, 1)}
+                      >+</button>
+                    </>
+                  )}
+                  {(q.id === 'no_junk' || isAutoCalc) && !q.isComplete && !alreadyCompleted && (
+                    <button
+                      type="button"
+                      className="ghost-btn"
+                      style={{ minHeight: 32, padding: '4px 12px', borderRadius: 10, fontSize: '0.75rem', fontWeight: 700 }}
+                      onClick={() => onCompleteQuest(q.id)}
+                    >OK</button>
+                  )}
+                  {isAutoCalc && (
+                    <span style={{ fontSize: '0.78rem', fontWeight: 700, color: q.isComplete ? '#ffd700' : 'var(--muted)', minWidth: 44, textAlign: 'right' as const }}>
+                      {pct}%
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              <div className="quest-progress-bar">
+                <div
+                  className="quest-progress-fill"
+                  style={{
+                    width: `${pct}%`,
+                    background: q.isComplete
+                      ? 'linear-gradient(90deg, #ffd700, #ffaa00)'
+                      : 'linear-gradient(90deg, #ff8c00, #ffd700)',
+                  }}
+                />
+              </div>
+            </div>
+          )
+        })}
+      </div>
+    </section>
+  )
+}
+
+function MainObjectivesPanel({ state }: { state: AppState }) {
+  const objectives = useMemo(() => generateMainObjectives(state), [state])
+  if (objectives.length === 0) return null
+
+  return (
+    <section className="panel stack-md">
+      <SectionEyebrow icon="target" label="Objectifs principaux" />
+      <div className="stack-md">
+        {objectives.map((obj) => {
+          const totalMilestones = obj.milestones.length
+          const completedMilestones = obj.milestones.filter((m) => m.check(state) >= m.target).length
+          const overallPct = Math.round((completedMilestones / totalMilestones) * 100)
+
+          return (
+            <div key={obj.id} className={`quest-card ${obj.completed ? 'completed' : ''}`}>
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, marginBottom: 8 }}>
+                <span style={{ fontSize: '1.5rem' }}>{obj.icon}</span>
+                <div style={{ flex: 1 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <strong style={{ fontSize: '0.9rem', color: obj.completed ? '#ffd700' : 'var(--text)' }}>
+                      {obj.completed ? '+ ' : ''}{obj.name}
+                    </strong>
+                    <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--muted)' }}>
+                      {completedMilestones}/{totalMilestones}
+                    </span>
+                  </div>
+                  <p style={{ margin: '2px 0 0', fontSize: '0.75rem', color: 'var(--muted)' }}>{obj.description}</p>
+                </div>
+              </div>
+
+              <div className="quest-progress-bar" style={{ marginBottom: 8 }}>
+                <div
+                  className="quest-progress-fill"
+                  style={{
+                    width: `${overallPct}%`,
+                    background: obj.completed
+                      ? 'linear-gradient(90deg, #ffd700, #ffaa00)'
+                      : 'linear-gradient(90deg, #37b7ff, #4fffb0)',
+                  }}
+                />
+              </div>
+
+              <div className="stack-md" style={{ gap: 6 }}>
+                {obj.milestones.map((milestone, idx) => {
+                  const current = milestone.check(state)
+                  const done = current >= milestone.target
+                  const milestonePct = Math.min(100, Math.round((current / milestone.target) * 100))
+                  return (
+                    <div key={idx} style={{ opacity: done ? 1 : 0.7 }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 3 }}>
+                        <span style={{ fontSize: '0.73rem', color: done ? '#ffd700' : 'var(--muted)' }}>
+                          {done ? 'ok ' : ''}{milestone.description}
+                        </span>
+                        <span style={{ fontSize: '0.72rem', color: 'var(--muted)' }}>
+                          {Math.min(current, milestone.target).toLocaleString()}/{milestone.target.toLocaleString()} {milestone.unit}
+                        </span>
+                      </div>
+                      <div style={{ height: 3, borderRadius: 2, background: 'rgba(255,255,255,0.06)', overflow: 'hidden' }}>
+                        <div style={{ height: '100%', borderRadius: 2, width: `${milestonePct}%`, background: done ? '#ffd700' : 'rgba(55,183,255,0.6)', transition: 'width 0.6s ease' }} />
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+          )
+        })}
+      </div>
     </section>
   )
 }
@@ -339,12 +681,16 @@ function HomeView({
   powerLevel,
   recommendation,
   onStartWorkout,
+  onUpdateQuestProgress,
+  onCompleteQuest,
 }: {
   state: AppState
   nextSession: ProgramSession | null
   powerLevel: number
   recommendation: string
   onStartWorkout: () => void
+  onUpdateQuestProgress: (questId: string, delta: number) => void
+  onCompleteQuest: (questId: string) => void
 }) {
   const targets = state.targets!
   const nutrition = getDailyNutrition(state.foodEntries)
@@ -376,16 +722,24 @@ function HomeView({
       </section>
 
       <section className="panel stack-md">
-        <SectionEyebrow icon="🗺️" label="Saga des formes" />
+        <SectionEyebrow icon="map" label="Saga des formes" />
         <TransformationTimeline state={state} />
       </section>
 
       <QuestSection state={state} />
 
+      <DailyQuestsPanel
+        state={state}
+        onUpdateQuestProgress={onUpdateQuestProgress}
+        onCompleteQuest={onCompleteQuest}
+      />
+
+      <MainObjectivesPanel state={state} />
+
       <section className="panel stack-md">
         <div className="section-head">
           <div>
-            <SectionEyebrow icon="⚔️" label="Mission du jour" />
+            <SectionEyebrow icon="sword" label="Mission du jour" />
             <h3>{nextSession?.name ?? 'Aucune seance programmee'}</h3>
           </div>
           <button className="primary-btn" onClick={onStartWorkout} type="button">
@@ -394,7 +748,7 @@ function HomeView({
         </div>
         {nextSession
           ? <p>{nextSession.focus}</p>
-          : <div className="empty-state"><div className="empty-icon">🎯</div><p>Choisis un programme depuis le profil pour recevoir une seance guidee.</p></div>
+          : <div className="empty-state"><div className="empty-icon">target</div><p>Choisis un programme depuis le profil pour recevoir une seance guidee.</p></div>
         }
         <div className="metrics-grid">
           <MetricCard label="Seances" value={`${weeklyWorkouts.length}/${state.profile?.trainingDaysPerWeek ?? 0}`} accent="var(--accent-gold)" />
@@ -404,25 +758,25 @@ function HomeView({
       </section>
 
       <section className="panel stack-md">
-        <SectionEyebrow icon="🥩" label="Nutrition cible" />
+        <SectionEyebrow icon="meat" label="Nutrition cible" />
         <ProgressBar label="Calories" value={nutrition.calories} target={targets.calories} accent="linear-gradient(90deg, #ffb400, #ff6a00)" />
         <ProgressBar label="Proteines" value={nutrition.protein} target={targets.protein} accent="linear-gradient(90deg, #00d4ff, #4fffb0)" />
       </section>
 
       <section className="panel stack-md">
-        <SectionEyebrow icon="🔭" label="Scouter insight" />
+        <SectionEyebrow icon="telescope" label="Scouter insight" />
         <p>{recommendation}</p>
       </section>
 
       <section className="panel stack-md">
-        <SectionEyebrow icon="🍱" label="Recettes suggérées" />
+        <SectionEyebrow icon="bento" label="Recettes suggerees" />
         {recipeSuggestions.length === 0
-          ? <div className="empty-state"><div className="empty-icon">🍳</div><p>Ajoute des repas pour recevoir des suggestions.</p></div>
+          ? <div className="empty-state"><div className="empty-icon">cooking</div><p>Ajoute des repas pour recevoir des suggestions.</p></div>
           : <div className="card-list">
               {recipeSuggestions.map((recipe) => (
                 <article className="mini-card" key={recipe.id}>
                   <strong>{recipe.name}</strong>
-                  <span>{recipe.calories} kcal • {recipe.protein}P • {recipe.carbs}G • {recipe.fats}L</span>
+                  <span>{recipe.calories} kcal - {recipe.protein}P - {recipe.carbs}G - {recipe.fats}L</span>
                 </article>
               ))}
             </div>
@@ -458,7 +812,7 @@ function TrainView({
       <div className="page">
         <section className="panel">
           <div className="empty-state">
-            <div className="empty-icon">🏋️</div>
+            <div className="empty-icon">gym</div>
             <p>Choisis un programme depuis le profil pour commencer ta Saga.</p>
           </div>
         </section>
@@ -481,7 +835,7 @@ function TrainView({
         <section className="panel stack-md">
           <div className="section-head">
             <div>
-              <SectionEyebrow icon="📋" label="Prochaine séance" />
+              <SectionEyebrow icon="clipboard" label="Prochaine seance" />
               <h3>{nextSession.name}</h3>
             </div>
             <button className="primary-btn" onClick={onStartWorkout} type="button">Start</button>
@@ -493,7 +847,7 @@ function TrainView({
               return (
                 <article className="mini-card" key={entry.exerciseId}>
                   <strong>{exercise.name}</strong>
-                  <span>{entry.sets} x {entry.repMin}-{entry.repMax} • RIR {entry.targetRir}</span>
+                  <span>{entry.sets} x {entry.repMin}-{entry.repMax} - RIR {entry.targetRir}</span>
                 </article>
               )
             })}
@@ -508,7 +862,7 @@ function TrainView({
       {restTimer > 0 && (
         <section className="panel timer-panel">
           <div>
-            <SectionEyebrow icon="⏱️" label="Rest timer" />
+            <SectionEyebrow icon="timer" label="Rest timer" />
             <h3 style={{ fontSize: '3.2rem', margin: 0 }}>{restTimer}s</h3>
           </div>
           <button className="ghost-btn" onClick={onSkipTimer} type="button">Skip</button>
@@ -518,7 +872,7 @@ function TrainView({
       <section className="panel stack-md">
         <div className="section-head">
           <div>
-            <SectionEyebrow icon="💪" label="Séance active" />
+            <SectionEyebrow icon="muscle" label="Seance active" />
             <h3>{nextSession.name}</h3>
           </div>
           <button className="primary-btn" onClick={onFinishWorkout} type="button">Finish</button>
@@ -541,7 +895,7 @@ function TrainView({
             <div className="section-head section-head--tight">
               <div>
                 <h3>{exercise.name}</h3>
-                <p style={{ margin: 0 }}>{target.sets} x {target.repMin}-{target.repMax} • RIR {target.targetRir} • Rest {target.restSeconds}s</p>
+                <p style={{ margin: 0 }}>{target.sets} x {target.repMin}-{target.repMax} - RIR {target.targetRir} - Rest {target.restSeconds}s</p>
               </div>
               {previous && <span className="badge">Last {previous.weightKg} x {previous.reps}</span>}
             </div>
@@ -549,19 +903,19 @@ function TrainView({
             <div className="field-grid compact-grid">
               <label>
                 <span>Poids</span>
-                <input value={currentInput.weight} onChange={(event) => setDraftInputs({ ...draftInputs, [exercise.id]: { ...currentInput, weight: event.target.value } })} />
+                <input value={currentInput.weight} onChange={(e) => setDraftInputs({ ...draftInputs, [exercise.id]: { ...currentInput, weight: e.target.value } })} />
               </label>
               <label>
                 <span>Reps</span>
-                <input value={currentInput.reps} onChange={(event) => setDraftInputs({ ...draftInputs, [exercise.id]: { ...currentInput, reps: event.target.value } })} />
+                <input value={currentInput.reps} onChange={(e) => setDraftInputs({ ...draftInputs, [exercise.id]: { ...currentInput, reps: e.target.value } })} />
               </label>
               <label>
                 <span>RIR</span>
-                <input value={currentInput.rir} onChange={(event) => setDraftInputs({ ...draftInputs, [exercise.id]: { ...currentInput, rir: event.target.value } })} />
+                <input value={currentInput.rir} onChange={(e) => setDraftInputs({ ...draftInputs, [exercise.id]: { ...currentInput, rir: e.target.value } })} />
               </label>
               <label>
                 <span>Type</span>
-                <select value={currentInput.setType} onChange={(event) => setDraftInputs({ ...draftInputs, [exercise.id]: { ...currentInput, setType: event.target.value as SetType } })}>
+                <select value={currentInput.setType} onChange={(e) => setDraftInputs({ ...draftInputs, [exercise.id]: { ...currentInput, setType: e.target.value as SetType } })}>
                   <option value="warmup">Warm-up</option>
                   <option value="normal">Normal</option>
                   <option value="top">Top set</option>
@@ -573,13 +927,13 @@ function TrainView({
             </div>
 
             <button className="secondary-btn" type="button" onClick={() => onAddSet(exercise.id, Number(currentInput.weight || 0), Number(currentInput.reps || 0), Number(currentInput.rir || target.targetRir), currentInput.setType)}>
-              + Ajouter la série
+              + Ajouter la serie
             </button>
 
             <div className="set-list">
               {exerciseLog.sets.length === 0 ? (
                 <div className="empty-state" style={{ padding: '12px 0' }}>
-                  <p style={{ margin: 0, fontSize: '0.85rem' }}>🎯 Démarre avec la charge précédente et progresse.</p>
+                  <p style={{ margin: 0, fontSize: '0.85rem' }}>Demarre avec la charge precedente et progresse.</p>
                 </div>
               ) : (
                 exerciseLog.sets.map((set) => (
@@ -617,27 +971,27 @@ function NutritionView({ state, onAddFood }: { state: AppState; onAddFood: (entr
   return (
     <div className="page">
       <section className="panel stack-md">
-        <SectionEyebrow icon="🥩" label="Nutrition aujourd'hui" />
+        <SectionEyebrow icon="meat" label="Nutrition aujourd'hui" />
         <ProgressBar label="Calories" value={totals.calories} target={state.targets?.calories ?? 1} accent="linear-gradient(90deg, #ffb400, #ff6a00)" />
         <ProgressBar label="Proteines" value={totals.protein} target={state.targets?.protein ?? 1} accent="linear-gradient(90deg, #00d4ff, #4fffb0)" />
       </section>
 
       <section className="panel stack-md">
-        <SectionEyebrow icon="➕" label="Ajouter un aliment" />
+        <SectionEyebrow icon="plus" label="Ajouter un aliment" />
         <div className="field-grid compact-grid">
           <label>
             <span>Aliment</span>
-            <select value={selectedFood.id} onChange={(event) => setSelectedFood(foods.find((food) => food.id === event.target.value) ?? foods[0])}>
+            <select value={selectedFood.id} onChange={(e) => setSelectedFood(foods.find((food) => food.id === e.target.value) ?? foods[0])}>
               {foods.map((food) => <option key={food.id} value={food.id}>{food.name}</option>)}
             </select>
           </label>
           <label>
             <span>Grammes</span>
-            <input value={grams} onChange={(event) => setGrams(event.target.value)} />
+            <input value={grams} onChange={(e) => setGrams(e.target.value)} />
           </label>
           <label>
             <span>Categorie</span>
-            <select value={category} onChange={(event) => setCategory(event.target.value as FoodEntry['category'])}>
+            <select value={category} onChange={(e) => setCategory(e.target.value as FoodEntry['category'])}>
               <option value="breakfast">Breakfast</option>
               <option value="lunch">Lunch</option>
               <option value="dinner">Dinner</option>
@@ -654,14 +1008,14 @@ function NutritionView({ state, onAddFood }: { state: AppState; onAddFood: (entr
       </section>
 
       <section className="panel stack-md">
-        <SectionEyebrow icon="💾" label="Repas sauvegardés" />
+        <SectionEyebrow icon="save" label="Repas sauvegardes" />
         {state.savedMeals.length === 0
-          ? <div className="empty-state"><div className="empty-icon">🍽️</div><p>Aucun repas sauvegarde.</p></div>
+          ? <div className="empty-state"><div className="empty-icon">plate</div><p>Aucun repas sauvegarde.</p></div>
           : <div className="card-list">
               {state.savedMeals.map((meal) => (
                 <button className="mini-card mini-card--button" key={meal.id} type="button" onClick={() => onAddFood({ id: makeId('meal'), date: todayIso(), name: meal.name, category: meal.category, grams: 1, calories: meal.calories, protein: meal.protein, carbs: meal.carbs, fats: meal.fats })}>
                   <strong>{meal.name}</strong>
-                  <span>{meal.calories} kcal • {meal.protein}P</span>
+                  <span>{meal.calories} kcal - {meal.protein}P</span>
                 </button>
               ))}
             </div>
@@ -669,12 +1023,12 @@ function NutritionView({ state, onAddFood }: { state: AppState; onAddFood: (entr
       </section>
 
       <section className="panel stack-md">
-        <SectionEyebrow icon="🍱" label="Recettes suggérées" />
+        <SectionEyebrow icon="bento" label="Recettes suggerees" />
         <div className="card-list">
           {suggestions.map((recipe) => (
             <button className="mini-card mini-card--button" key={recipe.id} type="button" onClick={() => onAddFood({ id: makeId('recipe'), date: todayIso(), name: recipe.name, category: recipe.category, grams: 1, calories: recipe.calories, protein: recipe.protein, carbs: recipe.carbs, fats: recipe.fats })}>
               <strong>{recipe.name}</strong>
-              <span>{recipe.prepMinutes} min • {recipe.calories} kcal • {recipe.protein}P</span>
+              <span>{recipe.prepMinutes} min - {recipe.calories} kcal - {recipe.protein}P</span>
             </button>
           ))}
         </div>
@@ -690,7 +1044,7 @@ function ScouterView({ state }: { state: AppState }) {
   return (
     <div className="page">
       <section className="panel stack-md">
-        <SectionEyebrow icon="📡" label="Scouter analytics" />
+        <SectionEyebrow icon="satellite" label="Scouter analytics" />
         <div className="metrics-grid">
           <MetricCard label="Seances" value={String(weeklyWorkouts.length)} accent="var(--accent-gold)" />
           <MetricCard label="Volume" value={`${formatNumber(weeklyWorkouts.reduce((sum, workout) => sum + getWorkoutVolume(workout), 0))} kg`} accent="var(--accent-blue)" />
@@ -699,10 +1053,10 @@ function ScouterView({ state }: { state: AppState }) {
       </section>
 
       <section className="panel stack-md">
-        <SectionEyebrow icon="💪" label="Volume par muscle" />
+        <SectionEyebrow icon="muscle" label="Volume par muscle" />
         {volumeByMuscle.length === 0 ? (
           <div className="empty-state">
-            <div className="empty-icon">📊</div>
+            <div className="empty-icon">chart</div>
             <p>Complete ta premiere semaine pour voir la map musculaire.</p>
           </div>
         ) : (
@@ -739,59 +1093,59 @@ function ProfileView({
         <div className="hero-copy">
           <span className="eyebrow">Profil</span>
           <h2>{state.profile?.name}</h2>
-          <p>{transformation.name} • {state.profile?.goal.replace('_', ' ')}</p>
+          <p>{transformation.name} - {state.profile?.goal.replace('_', ' ')}</p>
         </div>
         <div className="hero-badge" style={{ borderColor: transformation.accent, color: transformation.accent }}>
-          {dragonBalls}/7 🐉
+          {dragonBalls}/7
         </div>
       </section>
 
       <section className="panel stack-md">
-        <SectionEyebrow icon="⚖️" label="Poids corporel" />
+        <SectionEyebrow icon="scale" label="Poids corporel" />
         <div className="inline-form">
-          <input value={bodyweight} onChange={(event) => setBodyweight(event.target.value)} />
+          <input value={bodyweight} onChange={(e) => setBodyweight(e.target.value)} />
           <button className="secondary-btn" type="button" onClick={() => onLogBodyweight({ id: makeId('bw'), date: todayIso(), weightKg: Number(bodyweight) })}>Log</button>
         </div>
       </section>
 
       <section className="panel stack-md">
-        <SectionEyebrow icon="📏" label="Mensurations" />
+        <SectionEyebrow icon="ruler" label="Mensurations" />
         <div className="field-grid compact-grid">
-          <label><span>Tour de taille</span><input value={measurements.waist} onChange={(event) => setMeasurements({ ...measurements, waist: event.target.value })} /></label>
-          <label><span>Poitrine</span><input value={measurements.chest} onChange={(event) => setMeasurements({ ...measurements, chest: event.target.value })} /></label>
-          <label><span>Bras</span><input value={measurements.arm} onChange={(event) => setMeasurements({ ...measurements, arm: event.target.value })} /></label>
-          <label><span>Cuisse</span><input value={measurements.thigh} onChange={(event) => setMeasurements({ ...measurements, thigh: event.target.value })} /></label>
+          <label><span>Tour de taille</span><input value={measurements.waist} onChange={(e) => setMeasurements({ ...measurements, waist: e.target.value })} /></label>
+          <label><span>Poitrine</span><input value={measurements.chest} onChange={(e) => setMeasurements({ ...measurements, chest: e.target.value })} /></label>
+          <label><span>Bras</span><input value={measurements.arm} onChange={(e) => setMeasurements({ ...measurements, arm: e.target.value })} /></label>
+          <label><span>Cuisse</span><input value={measurements.thigh} onChange={(e) => setMeasurements({ ...measurements, thigh: e.target.value })} /></label>
         </div>
         <button className="secondary-btn" type="button" onClick={() => onLogMeasurement({ id: makeId('measure'), date: todayIso(), waistCm: Number(measurements.waist), chestCm: Number(measurements.chest), armCm: Number(measurements.arm), thighCm: Number(measurements.thigh) })}>Sauvegarder</button>
       </section>
 
       <section className="panel stack-md">
-        <SectionEyebrow icon="📚" label="Programmes" />
+        <SectionEyebrow icon="books" label="Programmes" />
         {programs.length === 0
-          ? <div className="empty-state"><div className="empty-icon">📖</div><p>Aucun programme disponible.</p></div>
+          ? <div className="empty-state"><div className="empty-icon">book</div><p>Aucun programme disponible.</p></div>
           : <div className="card-list">
               {programs.map((program) => (
                 <button className={`mini-card mini-card--button ${state.selectedProgramId === program.id ? 'mini-card--selected' : ''}`} key={program.id} type="button" onClick={() => onChooseProgram(program.id)}>
                   <strong>{program.name}</strong>
-                  <span>{program.saga} • {program.daysPerWeek} jours</span>
+                  <span>{program.saga} - {program.daysPerWeek} jours</span>
                 </button>
               ))}
             </div>
         }
       </section>
 
-      <p className="profile-footer">Propulsé par Katrava ⚡</p>
+      <p className="profile-footer">Propulse par Katrava</p>
     </div>
   )
 }
 
 function BottomNav({ tab, onChange }: { tab: TabId; onChange: (tab: TabId) => void }) {
   const items: Array<[TabId, string, string]> = [
-    ['home', '🏠', 'Home'],
-    ['train', '⚔️', 'Train'],
-    ['nutrition', '🥩', 'Fuel'],
-    ['scouter', '📡', 'Scouter'],
-    ['profile', '👤', 'Profile'],
+    ['home', 'home', 'Home'],
+    ['train', 'sword', 'Train'],
+    ['nutrition', 'meat', 'Fuel'],
+    ['scouter', 'satellite', 'Scouter'],
+    ['profile', 'person', 'Profile'],
   ]
   return (
     <nav className="bottom-nav">
@@ -806,7 +1160,18 @@ function BottomNav({ tab, onChange }: { tab: TabId; onChange: (tab: TabId) => vo
 }
 
 function App() {
-  const [state, setState] = useState<AppState>(() => loadState() ?? defaultState)
+  const [state, setState] = useState<AppState>(() => {
+    const loaded = loadState()
+    if (!loaded) return defaultState
+    return {
+      ...defaultState,
+      ...loaded,
+      dailyQuestProgress: loaded.dailyQuestProgress ?? [],
+      onboardingAnswers: loaded.onboardingAnswers ?? null,
+      completedDailyQuests: loaded.completedDailyQuests ?? {},
+      unlockedTransformations: loaded.unlockedTransformations ?? [],
+    }
+  })
   const [tab, setTab] = useState<TabId>('home')
   const [restTimer, setRestTimer] = useState(0)
 
@@ -823,7 +1188,7 @@ function App() {
   const powerLevel = useMemo(() => getPowerLevel(state), [state])
   const recommendation = useMemo(() => getPrimaryRecommendation(state), [state])
 
-  const completeOnboarding = (profile: UserProfile) => {
+  const completeOnboarding = (profile: UserProfile, answers: OnboardingAnswers) => {
     const targets = calculateTargets(profile)
     const recommendedProgram = recommendProgram(profile)
     setState({
@@ -833,6 +1198,7 @@ function App() {
       selectedProgramId: recommendedProgram.id,
       savedMeals,
       bodyweightEntries: [{ id: makeId('bw'), date: todayIso(), weightKg: profile.weightKg }],
+      onboardingAnswers: answers,
     })
   }
 
@@ -891,13 +1257,39 @@ function App() {
   const logMeasurement = (entry: MeasurementEntry) => setState((current) => ({ ...current, measurementEntries: [...current.measurementEntries, entry] }))
   const chooseProgram = (programId: string) => setState((current) => ({ ...current, selectedProgramId: programId }))
 
+  const updateQuestProgress = (questId: string, delta: number) => {
+    const today = todayIso()
+    setState((current) => {
+      const existing = (current.dailyQuestProgress ?? []).find(d => d.date === today)
+      const currentVal = existing?.quests[questId] ?? 0
+      const newVal = Math.max(0, currentVal + delta)
+      const updatedProgress = existing
+        ? (current.dailyQuestProgress ?? []).map(d => d.date === today ? { ...d, quests: { ...d.quests, [questId]: newVal } } : d)
+        : [...(current.dailyQuestProgress ?? []), { date: today, quests: { [questId]: newVal } }]
+      return { ...current, dailyQuestProgress: updatedProgress }
+    })
+  }
+
+  const completeQuest = (questId: string) => {
+    const today = todayIso()
+    setState((current) => {
+      const alreadyDone = ((current.completedDailyQuests ?? {})[today] ?? []).includes(questId)
+      if (alreadyDone) return current
+      const updatedCompleted = {
+        ...(current.completedDailyQuests ?? {}),
+        [today]: [...((current.completedDailyQuests ?? {})[today] ?? []), questId],
+      }
+      return { ...current, completedDailyQuests: updatedCompleted }
+    })
+  }
+
   if (!state.profile || !state.targets) {
     return <OnboardingView onComplete={completeOnboarding} />
   }
 
   return (
     <div className="app-shell">
-      {tab === 'home' && <HomeView state={state} nextSession={nextSession} powerLevel={powerLevel} recommendation={recommendation} onStartWorkout={startWorkout} />}
+      {tab === 'home' && <HomeView state={state} nextSession={nextSession} powerLevel={powerLevel} recommendation={recommendation} onStartWorkout={startWorkout} onUpdateQuestProgress={updateQuestProgress} onCompleteQuest={completeQuest} />}
       {tab === 'train' && <TrainView state={state} onStartWorkout={startWorkout} onAddSet={addSet} onFinishWorkout={finishWorkout} restTimer={restTimer} onSkipTimer={() => setRestTimer(0)} />}
       {tab === 'nutrition' && <NutritionView state={state} onAddFood={addFood} />}
       {tab === 'scouter' && <ScouterView state={state} />}

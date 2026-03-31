@@ -94,6 +94,35 @@ const defaultState: AppState = {
   weeklyMuscleVolume: {},
 }
 
+// ── Helpers ───────────────────────────────────────────────────────────────────
+
+function countPRsFromWorkouts(workouts: AppState['workouts']): number {
+  const bestByExercise = new Map<string, number>()
+  let prCount = 0
+  const sorted = [...workouts].sort((a, b) => a.date.localeCompare(b.date))
+  sorted.forEach(w => {
+    w.exercises.forEach(ex => {
+      ex.sets.forEach(set => {
+        const e1rm = set.weightKg * (1 + set.reps / 30)
+        const prev = bestByExercise.get(ex.exerciseId) ?? 0
+        if (e1rm > prev && prev > 0) prCount++
+        if (e1rm > prev) bestByExercise.set(ex.exerciseId, e1rm)
+      })
+    })
+  })
+  return prCount
+}
+
+function getLastSet(workouts: AppState['workouts'], exerciseId: string) {
+  for (let index = workouts.length - 1; index >= 0; index -= 1) {
+    const exerciseLog = workouts[index].exercises.find(
+      (entry) => entry.exerciseId === exerciseId && entry.sets.length > 0,
+    )
+    if (exerciseLog) return exerciseLog.sets[exerciseLog.sets.length - 1]
+  }
+  return null
+}
+
 // ── Reusable components ───────────────────────────────────────────────────────
 
 function MetricCard({ label, value, accent }: { label: string; value: string; accent: string }) {
@@ -120,23 +149,13 @@ function ProgressBar({ label, value, target, accent }: { label: string; value: n
   )
 }
 
-function SectionEyebrow({ icon, label }: { icon: string; label: string }) {
+function SectionTitle({ icon, label }: { icon: string; label: string }) {
   return (
-    <div className="section-eyebrow">
-      <span>{icon}</span>
-      <span>{label}</span>
+    <div className="section-title-row">
+      <span className="section-title-icon">{icon}</span>
+      <h3 className="section-title-text">{label}</h3>
     </div>
   )
-}
-
-function getLastSet(workouts: AppState['workouts'], exerciseId: string) {
-  for (let index = workouts.length - 1; index >= 0; index -= 1) {
-    const exerciseLog = workouts[index].exercises.find(
-      (entry) => entry.exerciseId === exerciseId && entry.sets.length > 0,
-    )
-    if (exerciseLog) return exerciseLog.sets[exerciseLog.sets.length - 1]
-  }
-  return null
 }
 
 // ── Post-workout Feedback Modal ───────────────────────────────────────────────
@@ -207,19 +226,17 @@ function FeedbackModal({
           </div>
           <button className="ghost-btn" style={{ minHeight: 36, padding: '4px 12px' }} onClick={onSkip} type="button">Passer</button>
         </div>
-
         <div className="stack-md">
           {muscles.map(muscle => (
             <div key={muscle} style={{ background: 'rgba(255,255,255,0.03)', borderRadius: 14, padding: '14px', border: '1px solid var(--stroke)' }}>
               <strong style={{ fontSize: '0.9rem', display: 'block', marginBottom: 10 }}>{muscle}</strong>
-
               <div className="stack-md" style={{ gap: 10 }}>
                 <div>
                   <span style={{ fontSize: '0.72rem', color: 'var(--muted)', display: 'block', marginBottom: 6 }}>PUMP (1=aucun, 5=extreme)</span>
                   {ratingCircles(muscle, 'pump')}
                 </div>
                 <div>
-                  <span style={{ fontSize: '0.72rem', color: 'var(--muted)', display: 'block', marginBottom: 6 }}>COURBATURES PREVUES (1=aucune, 5=intense)</span>
+                  <span style={{ fontSize: '0.72rem', color: 'var(--muted)', display: 'block', marginBottom: 6 }}>COURBATURES (1=aucune, 5=intense)</span>
                   {ratingCircles(muscle, 'soreness')}
                 </div>
                 <div>
@@ -263,7 +280,6 @@ function FeedbackModal({
             </div>
           ))}
         </div>
-
         <button className="primary-btn" style={{ width: '100%', marginTop: 16 }} onClick={handleSave} type="button">
           Sauvegarder le feedback
         </button>
@@ -282,10 +298,7 @@ function OnboardingView({ onComplete }: { onComplete: (profile: UserProfile, ans
   const weakPointOptions = ['Epaules', 'Bras', 'Jambes', 'Dos', 'Poitrine', 'Abdominaux', 'Mollets', 'Fessiers']
   const supplementOptions = ['Creatine', 'Whey', 'Cafeine', 'Omega-3', 'Vitamine D', 'BCAA', 'Pre-workout', 'Aucun']
   const injuryOptions = ['Epaule', 'Genou', 'Dos', 'Poignet', 'Cheville', 'Hanche', 'Coude', 'Aucune']
-
-  const toggle = (arr: string[], item: string) =>
-    arr.includes(item) ? arr.filter(x => x !== item) : [...arr, item]
-
+  const toggle = (arr: string[], item: string) => arr.includes(item) ? arr.filter(x => x !== item) : [...arr, item]
   const stepTitles = ['Profil de base', 'Entrainement', 'Objectifs profonds', 'Cibles quotidiennes']
 
   return (
@@ -328,7 +341,6 @@ function OnboardingView({ onComplete }: { onComplete: (profile: UserProfile, ans
           <button className="primary-btn" onClick={() => setStep(2)} type="button">Suivant</button>
         </section>
       )}
-
       {step === 2 && (
         <section className="panel stack-lg">
           <div className="choice-group">
@@ -366,7 +378,6 @@ function OnboardingView({ onComplete }: { onComplete: (profile: UserProfile, ans
           </div>
         </section>
       )}
-
       {step === 3 && (
         <section className="panel stack-lg">
           <div className="choice-group">
@@ -423,7 +434,6 @@ function OnboardingView({ onComplete }: { onComplete: (profile: UserProfile, ans
           </div>
         </section>
       )}
-
       {step === 4 && (
         <section className="panel stack-lg">
           <div className="choice-group">
@@ -468,7 +478,7 @@ function OnboardingView({ onComplete }: { onComplete: (profile: UserProfile, ans
   )
 }
 
-// ── Transformation UI ─────────────────────────────────────────────────────────
+// ── Transformation Timeline ───────────────────────────────────────────────────
 
 function TransformationTimeline({ state }: { state: AppState }) {
   const tf = getCurrentTransformationFull(state)
@@ -494,19 +504,15 @@ function QuestSection({ state }: { state: AppState }) {
   const tf = getCurrentTransformationFull(state)
   const next = tf.nextTransformation
   if (!next || next.quests.length === 0) return null
-
   const allDone = next.quests.every(q => q.requirement(state) >= q.target)
-
   return (
-    <section className="panel stack-md">
+    <section className="hevy-card stack-md">
       <div className="section-head">
         <div>
-          <SectionEyebrow icon="⚔️" label="Quetes de transformation" />
-          <h3 style={{ color: next.accent }}>Vers {next.name}</h3>
+          <SectionTitle icon="⚔️" label={`Quetes vers ${next.name}`} />
         </div>
-        <img src={next.image} alt={next.name} className={`transformation-image ${allDone ? 'aura-glow' : ''}`} style={{ width: 72, height: 72, filter: `drop-shadow(0 0 16px ${next.accent}88)` }} />
+        <img src={next.image} alt={next.name} className={`transformation-image ${allDone ? 'aura-glow' : ''}`} style={{ width: 60, height: 60, filter: `drop-shadow(0 0 12px ${next.accent}88)` }} />
       </div>
-
       <div className="stack-md">
         {next.quests.map(q => {
           const current = q.requirement(state)
@@ -515,9 +521,9 @@ function QuestSection({ state }: { state: AppState }) {
           return (
             <div key={q.id} className={`quest-card ${done ? 'completed' : ''}`}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8 }}>
-                <div>
+                <div style={{ flex: 1 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 2 }}>
-                    {done && <span style={{ color: '#ffd700', fontSize: '0.85rem' }}>✓</span>}
+                    {done && <span style={{ color: '#ffd700' }}>✓</span>}
                     <strong style={{ fontSize: '0.88rem', color: done ? '#ffd700' : 'var(--text)' }}>{q.name}</strong>
                   </div>
                   <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--muted)' }}>{q.description}</p>
@@ -527,16 +533,15 @@ function QuestSection({ state }: { state: AppState }) {
                 </span>
               </div>
               <div className="quest-progress-bar">
-                <div className="quest-progress-fill" style={{ width: `${pct}%`, background: done ? 'linear-gradient(90deg, #ffd700, #ffaa00)' : `linear-gradient(90deg, ${next.accent}, ${next.accent}88)` }} />
+                <div className="quest-progress-fill" style={{ width: `${pct}%`, background: done ? 'linear-gradient(90deg,#ffd700,#ffaa00)' : `linear-gradient(90deg,${next.accent},${next.accent}88)` }} />
               </div>
             </div>
           )
         })}
       </div>
-
       {allDone && (
         <div className="transformation-available-banner" style={{ borderColor: next.accent, color: next.accent, background: `${next.accent}12` }}>
-          TRANSFORMATION DISPONIBLE: {next.name.toUpperCase()}
+          TRANSFORMATION DISPONIBLE : {next.name.toUpperCase()}
         </div>
       )}
     </section>
@@ -556,24 +561,16 @@ function DailyQuestsPanel({ state, onUpdateQuestProgress, onCompleteQuest }: {
   const completedToday = (state.completedDailyQuests ?? {})[today] ?? []
 
   return (
-    <section className="panel stack-md">
+    <section className="hevy-card stack-md">
       <div className="section-head">
-        <div>
-          <SectionEyebrow icon="🗓️" label="Quetes quotidiennes" />
-          <h3>{completedCount}/8 completees</h3>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-          <span style={{ fontSize: '0.75rem', color: 'var(--muted)' }}>total</span>
-          <strong style={{ color: 'var(--accent-gold)', fontSize: '1.1rem' }}>{countCompletedDailyQuests(state)}</strong>
-        </div>
+        <SectionTitle icon="🗓️" label="Quetes quotidiennes" />
+        <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--accent-gold)' }}>{completedCount}/8</span>
       </div>
-
       <div style={{ display: 'flex', gap: 4 }}>
         {questStatuses.map(q => (
-          <div key={q.id} style={{ flex: 1, height: 4, borderRadius: 2, background: q.isComplete ? 'var(--accent-gold)' : 'rgba(255,255,255,0.08)', transition: 'background 0.3s ease' }} />
+          <div key={q.id} style={{ flex: 1, height: 4, borderRadius: 2, background: q.isComplete ? 'var(--accent-gold)' : 'rgba(255,255,255,0.08)', transition: 'background 0.3s' }} />
         ))}
       </div>
-
       <div className="stack-md">
         {questStatuses.map(q => {
           const isManual = ['steps', 'water', 'sleep', 'stretch', 'no_junk'].includes(q.id)
@@ -581,7 +578,6 @@ function DailyQuestsPanel({ state, onUpdateQuestProgress, onCompleteQuest }: {
           const pct = Math.min(100, Math.round((q.current / q.target) * 100))
           const alreadyCompleted = completedToday.includes(q.id)
           const categoryClass = `quest-card-${q.category ?? 'activity'}`
-
           return (
             <div key={q.id} className={`quest-card ${categoryClass} ${q.isComplete ? 'completed' : ''}`}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
@@ -591,7 +587,7 @@ function DailyQuestsPanel({ state, onUpdateQuestProgress, onCompleteQuest }: {
                     <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                       {q.isComplete && <span style={{ color: '#ffd700', fontSize: '0.8rem' }}>✓</span>}
                       <strong style={{ fontSize: '0.85rem', color: q.isComplete ? '#ffd700' : 'var(--text)' }}>{q.name}</strong>
-                      {isAutoCalc && <span style={{ fontSize: '0.6rem', color: 'var(--accent-blue)', fontWeight: 700, textTransform: 'uppercase' as const, letterSpacing: '0.06em', background: 'rgba(55,183,255,0.12)', padding: '1px 5px', borderRadius: 4 }}>AUTO</span>}
+                      {isAutoCalc && <span className="auto-badge">AUTO</span>}
                     </div>
                     <p style={{ margin: 0, fontSize: '0.7rem', color: 'var(--muted)' }}>{q.description}</p>
                   </div>
@@ -613,7 +609,7 @@ function DailyQuestsPanel({ state, onUpdateQuestProgress, onCompleteQuest }: {
                 </div>
               </div>
               <div className="quest-progress-bar">
-                <div className="quest-progress-fill" style={{ width: `${pct}%`, background: q.isComplete ? 'linear-gradient(90deg, #ffd700, #ffaa00)' : 'linear-gradient(90deg, #ff8c00, #ffd700)' }} />
+                <div className="quest-progress-fill" style={{ width: `${pct}%`, background: q.isComplete ? 'linear-gradient(90deg,#ffd700,#ffaa00)' : 'linear-gradient(90deg,#ff8c00,#ffd700)' }} />
               </div>
             </div>
           )
@@ -628,10 +624,9 @@ function DailyQuestsPanel({ state, onUpdateQuestProgress, onCompleteQuest }: {
 function MainObjectivesPanel({ state }: { state: AppState }) {
   const objectives = useMemo(() => generateMainObjectives(state), [state])
   if (objectives.length === 0) return null
-
   return (
-    <section className="panel stack-md">
-      <SectionEyebrow icon="🎯" label="Objectifs principaux" />
+    <section className="hevy-card stack-md">
+      <SectionTitle icon="🎯" label="Objectifs principaux" />
       <div className="stack-md">
         {objectives.map(obj => {
           const totalM = obj.milestones.length
@@ -642,15 +637,15 @@ function MainObjectivesPanel({ state }: { state: AppState }) {
               <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, marginBottom: 8 }}>
                 <span style={{ fontSize: '1.4rem' }}>{obj.icon}</span>
                 <div style={{ flex: 1 }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                     <strong style={{ fontSize: '0.9rem', color: obj.completed ? '#ffd700' : 'var(--text)' }}>{obj.name}</strong>
-                    <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--muted)' }}>{doneM}/{totalM}</span>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--muted)' }}>{doneM}/{totalM}</span>
                   </div>
                   <p style={{ margin: '2px 0 0', fontSize: '0.75rem', color: 'var(--muted)' }}>{obj.description}</p>
                 </div>
               </div>
               <div className="quest-progress-bar" style={{ marginBottom: 8 }}>
-                <div className="quest-progress-fill" style={{ width: `${pct}%`, background: obj.completed ? 'linear-gradient(90deg, #ffd700, #ffaa00)' : 'linear-gradient(90deg, #37b7ff, #4fffb0)' }} />
+                <div className="quest-progress-fill" style={{ width: `${pct}%`, background: obj.completed ? 'linear-gradient(90deg,#ffd700,#ffaa00)' : 'linear-gradient(90deg,#37b7ff,#4fffb0)' }} />
               </div>
               <div className="stack-md" style={{ gap: 5 }}>
                 {obj.milestones.map((m, idx) => {
@@ -664,7 +659,7 @@ function MainObjectivesPanel({ state }: { state: AppState }) {
                         <span style={{ fontSize: '0.7rem', color: 'var(--muted)' }}>{Math.min(cur, m.target).toLocaleString()}/{m.target.toLocaleString()} {m.unit}</span>
                       </div>
                       <div style={{ height: 3, borderRadius: 2, background: 'rgba(255,255,255,0.06)', overflow: 'hidden' }}>
-                        <div style={{ height: '100%', borderRadius: 2, width: `${mp}%`, background: done ? '#ffd700' : 'rgba(55,183,255,0.6)', transition: 'width 0.6s ease' }} />
+                        <div style={{ height: '100%', width: `${mp}%`, background: done ? '#ffd700' : 'rgba(55,183,255,0.6)', transition: 'width 0.6s ease' }} />
                       </div>
                     </div>
                   )
@@ -678,85 +673,39 @@ function MainObjectivesPanel({ state }: { state: AppState }) {
   )
 }
 
-// ── Mesocycle Status Card ─────────────────────────────────────────────────────
-
-function MesocycleCard({ state }: { state: AppState }) {
-  const status = getMesocycleStatus(state)
-  const streak = getStreak(state)
-
-  return (
-    <section className="panel" style={{ borderColor: `${status.color}33`, background: `linear-gradient(135deg, rgba(20,28,43,0.95), rgba(8,12,20,0.98))` }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div>
-          <SectionEyebrow icon="⚡" label="Mesocycle" />
-          <h3 style={{ margin: '4px 0 2px', color: status.color }}>{status.label}</h3>
-          <p style={{ margin: 0, fontSize: '0.78rem', color: 'var(--muted)' }}>{status.detail}</p>
-        </div>
-        <div style={{ textAlign: 'right' as const }}>
-          <div style={{ fontSize: '2rem', fontFamily: 'Bebas Neue, sans-serif', color: 'var(--accent-gold)', lineHeight: 1 }}>{streak}</div>
-          <div style={{ fontSize: '0.65rem', color: 'var(--muted)', textTransform: 'uppercase' as const, letterSpacing: '0.08em' }}>jours streak</div>
-        </div>
-      </div>
-    </section>
-  )
-}
-
-// ── RP Volume Dashboard (Scouter) ─────────────────────────────────────────────
+// ── RP Volume Dashboard ───────────────────────────────────────────────────────
 
 function VolumeDashboard({ state }: { state: AppState }) {
   const volumeTargets = useMemo(() => getWeeklySetsByMuscle(state), [state])
-
-  const statusColors = {
-    none: 'var(--muted)',
-    below_mev: 'var(--accent-red)',
-    productive: '#4fffb0',
-    high: 'var(--accent-gold)',
-    above_mrv: 'var(--accent-red)',
-  }
-
-  const statusLabels = {
-    none: 'Aucun travail',
-    below_mev: 'Sous MEV',
-    productive: 'Zone productive',
-    high: 'Volume eleve',
-    above_mrv: 'Au-dessus MRV',
-  }
-
+  const statusColors = { none: 'var(--muted)', below_mev: 'var(--accent-red)', productive: '#4fffb0', high: 'var(--accent-gold)', above_mrv: 'var(--accent-red)' }
+  const statusLabels = { none: 'Aucun', below_mev: 'Sous MEV', productive: 'Productif', high: 'Eleve', above_mrv: 'Au-dessus MRV' }
   return (
-    <section className="panel stack-md">
+    <section className="hevy-card stack-md">
       <div>
-        <SectionEyebrow icon="📈" label="Volume RP — Landmarks" />
-        <p style={{ margin: '4px 0 0', fontSize: '0.75rem', color: 'var(--muted)' }}>MEV = Minimum Effectif | MAV = Maximum Adaptatif | MRV = Maximum Recuperable</p>
+        <SectionTitle icon="📈" label="Volume RP — Landmarks" />
+        <p style={{ margin: '2px 0 0', fontSize: '0.72rem', color: 'var(--muted)' }}>MEV · MAV · MRV</p>
       </div>
-
       <div className="stack-md">
         {volumeTargets.map(vt => {
           const status = getVolumeStatus(vt.currentSets, vt.mev, vt.mav, vt.mrv)
           const color = statusColors[status]
           const mrvPct = Math.min(100, Math.round((vt.currentSets / vt.mrv) * 100))
-
           return (
-            <div key={vt.muscle} style={{ background: 'rgba(255,255,255,0.02)', borderRadius: 12, padding: '12px', border: `1px solid ${color}22` }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+            <div key={vt.muscle} style={{ background: 'rgba(255,255,255,0.02)', borderRadius: 10, padding: '10px 12px', border: `1px solid ${color}22` }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <strong style={{ fontSize: '0.85rem' }}>{vt.muscle}</strong>
-                  <span style={{ fontSize: '0.65rem', fontWeight: 700, color, background: `${color}18`, padding: '2px 7px', borderRadius: 6, textTransform: 'uppercase' as const, letterSpacing: '0.05em' }}>
-                    {statusLabels[status]}
-                  </span>
+                  <strong style={{ fontSize: '0.82rem' }}>{vt.muscle}</strong>
+                  <span style={{ fontSize: '0.62rem', fontWeight: 700, color, background: `${color}18`, padding: '1px 6px', borderRadius: 5, textTransform: 'uppercase' as const }}>{statusLabels[status]}</span>
                 </div>
-                <span style={{ fontSize: '0.85rem', fontWeight: 700, color }}>{vt.currentSets} series</span>
+                <span style={{ fontSize: '0.82rem', fontWeight: 700, color }}>{vt.currentSets} series</span>
               </div>
-
-              <div style={{ position: 'relative', height: 10, borderRadius: 5, background: 'rgba(255,255,255,0.06)', overflow: 'visible', marginBottom: 6 }}>
+              <div style={{ position: 'relative', height: 8, borderRadius: 4, background: 'rgba(255,255,255,0.06)', overflow: 'visible', marginBottom: 4 }}>
                 <div style={{ position: 'absolute', left: `${Math.round((vt.mev / vt.mrv) * 100)}%`, top: -2, bottom: -2, width: 2, background: 'rgba(255,95,118,0.6)', borderRadius: 1 }} />
                 <div style={{ position: 'absolute', left: `${Math.round((vt.mav / vt.mrv) * 100)}%`, top: -2, bottom: -2, width: 2, background: 'rgba(255,200,61,0.6)', borderRadius: 1 }} />
-                <div style={{ height: '100%', borderRadius: 5, width: `${mrvPct}%`, background: color, transition: 'width 0.5s ease', opacity: 0.85 }} />
+                <div style={{ height: '100%', borderRadius: 4, width: `${mrvPct}%`, background: color, transition: 'width 0.5s ease', opacity: 0.85 }} />
               </div>
-
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.65rem', color: 'var(--muted)' }}>
-                <span>MEV: {vt.mev}</span>
-                <span>MAV: {vt.mav}</span>
-                <span>MRV: {vt.mrv}</span>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.62rem', color: 'var(--muted)' }}>
+                <span>MEV {vt.mev}</span><span>MAV {vt.mav}</span><span>MRV {vt.mrv}</span>
               </div>
             </div>
           )
@@ -771,19 +720,17 @@ function VolumeDashboard({ state }: { state: AppState }) {
 function AdaptiveTDEECard({ state }: { state: AppState }) {
   const { tdee, dailyDelta, status, hasEnoughData } = useMemo(() => getAdaptiveTDEEStatus(state), [state])
   const todayNutrition = getDailyNutrition(state.foodEntries)
-
   const statusColor = status === 'surplus' ? 'var(--accent-orange)' : status === 'deficit' ? 'var(--accent-blue)' : '#4fffb0'
   const statusLabel = status === 'surplus' ? 'Surplus' : status === 'deficit' ? 'Deficit' : 'Maintenance'
-  const deltaLabel = Math.abs(dailyDelta) > 0 ? `${dailyDelta > 0 ? '+' : ''}${Math.round(dailyDelta)} kcal vs TDEE` : 'En maintenance'
-
+  const deltaLabel = Math.abs(dailyDelta) > 0 ? `${dailyDelta > 0 ? '+' : ''}${Math.round(dailyDelta)} kcal` : 'Maintenu'
   return (
-    <section className="panel stack-md">
-      <SectionEyebrow icon="🔥" label="TDEE Adaptatif" />
+    <section className="hevy-card stack-md">
+      <SectionTitle icon="🔥" label="TDEE Adaptatif" />
       <div className="metrics-grid">
         <article className="metric-card">
           <span className="eyebrow">TDEE estime</span>
           <strong style={{ color: 'var(--accent-gold)' }}>{formatNumber(tdee)}</strong>
-          <span style={{ fontSize: '0.7rem', color: 'var(--muted)' }}>kcal/jour</span>
+          <span style={{ fontSize: '0.7rem', color: 'var(--muted)' }}>kcal/j</span>
         </article>
         <article className="metric-card">
           <span className="eyebrow">Balance</span>
@@ -796,24 +743,18 @@ function AdaptiveTDEECard({ state }: { state: AppState }) {
           <span style={{ fontSize: '0.7rem', color: 'var(--muted)' }}>kcal</span>
         </article>
       </div>
-
       {!hasEnoughData && (
-        <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--muted)', background: 'rgba(255,255,255,0.03)', padding: '10px 12px', borderRadius: 10 }}>
-          Logue 7+ jours de nutrition et de pesees pour activer le TDEE adaptatif (style MacroFactor).
-        </p>
-      )}
-      {hasEnoughData && (
-        <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--muted)' }}>
-          Base sur tes 14 derniers jours de nutrition et de pesees.
+        <p style={{ margin: 0, fontSize: '0.73rem', color: 'var(--muted)', background: 'rgba(255,255,255,0.03)', padding: '10px 12px', borderRadius: 10 }}>
+          Logue 7+ jours pour activer le TDEE adaptatif style MacroFactor.
         </p>
       )}
     </section>
   )
 }
 
-// ── Home view ─────────────────────────────────────────────────────────────────
+// ── HOME VIEW ─────────────────────────────────────────────────────────────────
 
-function HomeView({ state, nextSession, powerLevel, recommendation, onStartWorkout, onUpdateQuestProgress, onCompleteQuest }: {
+function HomeView({ state, nextSession, powerLevel, recommendation, onStartWorkout, onUpdateQuestProgress, onCompleteQuest, onNavigate }: {
   state: AppState
   nextSession: ProgramSession | null
   powerLevel: number
@@ -821,29 +762,35 @@ function HomeView({ state, nextSession, powerLevel, recommendation, onStartWorko
   onStartWorkout: () => void
   onUpdateQuestProgress: (questId: string, delta: number) => void
   onCompleteQuest: (questId: string) => void
+  onNavigate: (tab: TabId) => void
 }) {
   const targets = state.targets!
   const nutrition = getDailyNutrition(state.foodEntries)
   const tf = getCurrentTransformationFull(state)
   const transformation = tf.current
   const weeklyWorkouts = getWeeklyWorkouts(state.workouts)
-  const weeklyVolume = weeklyWorkouts.reduce((sum, w) => sum + getWorkoutVolume(w), 0)
   const lastWorkout = state.workouts.length > 0 ? state.workouts[state.workouts.length - 1] : null
+  const prCount = countPRsFromWorkouts(state.workouts)
+  const mesocycle = getMesocycleStatus(state)
+  const streak = getStreak(state)
 
   return (
     <div className="page">
-      {/* Hero */}
-      <section className="hero-card" style={{ borderColor: `${transformation.accent}33` }}>
-        <div className="hero-copy" style={{ flex: 1 }}>
+      {/* Hero power level card */}
+      <section className="hevy-hero" style={{ borderColor: `${transformation.accent}44` }}>
+        <div style={{ flex: 1 }}>
           <span className="eyebrow">Niveau de puissance</span>
-          <h2 style={{ color: transformation.accent }}>{formatNumber(powerLevel)}</h2>
-          <p>{transformation.name} — Continue ta progression.</p>
-          <div className="hero-badge" style={{ borderColor: transformation.accent, color: transformation.accent, display: 'inline-block', marginTop: 8 }}>
-            {transformation.name}
+          <div style={{ fontSize: 'clamp(2.8rem,8vw,4rem)', fontFamily: 'Bebas Neue, sans-serif', color: transformation.accent, lineHeight: 1 }}>
+            {formatNumber(powerLevel)}
+          </div>
+          <p style={{ margin: '6px 0 0', color: 'var(--muted)', fontSize: '0.85rem' }}>{transformation.name} — Continue ta progression</p>
+          <div style={{ display: 'flex', gap: 8, marginTop: 10, flexWrap: 'wrap' as const }}>
+            <span className="hero-badge" style={{ borderColor: transformation.accent, color: transformation.accent }}>{transformation.name}</span>
+            {streak > 0 && <span className="hero-badge" style={{ color: 'var(--accent-orange)', borderColor: 'var(--accent-orange)' }}>{streak}j 🔥</span>}
           </div>
         </div>
-        <div className="transformation-hero">
-          <img src={transformation.image} alt={transformation.name} className="transformation-image" style={{ filter: `drop-shadow(0 0 24px ${transformation.accent}88)` }} />
+        <div>
+          <img src={transformation.image} alt={transformation.name} className="transformation-image" style={{ width: 110, height: 110, filter: `drop-shadow(0 0 20px ${transformation.accent}99)` }} />
         </div>
       </section>
 
@@ -852,12 +799,44 @@ function HomeView({ state, nextSession, powerLevel, recommendation, onStartWorko
         {state.activeWorkout ? "REPRENDRE L'ENTRAINEMENT" : "COMMENCER L'ENTRAINEMENT"}
       </button>
 
-      {/* Mesocycle status */}
-      <MesocycleCard state={state} />
+      {/* Quick action 2×2 grid */}
+      <div className="quick-grid">
+        <button className="quick-card" onClick={() => onNavigate('scouter')} type="button">
+          <span className="quick-card-icon">📊</span>
+          <span className="quick-card-label">Statistiques</span>
+        </button>
+        <button className="quick-card" onClick={() => onNavigate('train')} type="button">
+          <span className="quick-card-icon">💪</span>
+          <span className="quick-card-label">Exercices</span>
+        </button>
+        <button className="quick-card" onClick={() => onNavigate('profile')} type="button">
+          <span className="quick-card-icon">📏</span>
+          <span className="quick-card-label">Mesures</span>
+        </button>
+        <button className="quick-card" onClick={() => onNavigate('nutrition')} type="button">
+          <span className="quick-card-icon">🍽️</span>
+          <span className="quick-card-label">Nutrition</span>
+        </button>
+      </div>
 
-      {/* Transformation timeline */}
-      <section className="panel stack-md">
-        <SectionEyebrow icon="✨" label="Saga des formes" />
+      {/* Mesocycle status */}
+      <section className="hevy-card" style={{ borderColor: `${mesocycle.color}33` }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div>
+            <SectionTitle icon="⚡" label="Mesocycle" />
+            <p style={{ margin: '2px 0 0', fontWeight: 700, color: mesocycle.color, fontSize: '0.9rem' }}>{mesocycle.label}</p>
+            <p style={{ margin: '2px 0 0', fontSize: '0.75rem', color: 'var(--muted)' }}>{mesocycle.detail}</p>
+          </div>
+          <div style={{ textAlign: 'right' as const }}>
+            <div style={{ fontSize: '2.2rem', fontFamily: 'Bebas Neue, sans-serif', color: 'var(--accent-gold)', lineHeight: 1 }}>{streak}</div>
+            <div style={{ fontSize: '0.62rem', color: 'var(--muted)', textTransform: 'uppercase' as const, letterSpacing: '0.08em' }}>jours</div>
+          </div>
+        </div>
+      </section>
+
+      {/* Transformation saga */}
+      <section className="hevy-card stack-md">
+        <SectionTitle icon="✨" label="Saga des transformations" />
         <TransformationTimeline state={state} />
       </section>
 
@@ -871,88 +850,71 @@ function HomeView({ state, nextSession, powerLevel, recommendation, onStartWorko
       <MainObjectivesPanel state={state} />
 
       {/* Mission du jour */}
-      <section className="panel stack-md">
-        <div className="section-head">
-          <div>
-            <SectionEyebrow icon="💥" label="Mission du jour" />
-            <h3>{nextSession?.name ?? 'Aucune seance programmee'}</h3>
-          </div>
-          <button className="primary-btn" onClick={onStartWorkout} type="button">
+      <section className="hevy-card stack-md">
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <SectionTitle icon="💥" label="Mission du jour" />
+          <button className="primary-btn" style={{ minHeight: 40, padding: '8px 16px', fontSize: '0.82rem' }} onClick={onStartWorkout} type="button">
             {state.activeWorkout ? 'Reprendre' : 'Demarrer'}
           </button>
         </div>
         {nextSession
-          ? <p>{nextSession.focus}</p>
+          ? <><h3 style={{ margin: '4px 0 2px' }}>{nextSession.name}</h3><p style={{ margin: 0, color: 'var(--muted)', fontSize: '0.82rem' }}>{nextSession.focus}</p></>
           : <div className="empty-state"><div className="empty-icon">🏋️</div><p>Choisis un programme depuis le profil.</p></div>
         }
         <div className="metrics-grid">
           <MetricCard label="Seances" value={`${weeklyWorkouts.length}/${state.profile?.trainingDaysPerWeek ?? 0}`} accent="var(--accent-gold)" />
-          <MetricCard label="Volume" value={`${formatNumber(weeklyVolume)} kg`} accent="var(--accent-blue)" />
           <MetricCard label="Kcal rest." value={`${Math.max(0, Math.round(targets.calories - nutrition.calories))}`} accent="var(--accent-orange)" />
+          <MetricCard label="PRs total" value={String(prCount)} accent="var(--accent-blue)" />
         </div>
       </section>
 
-      {/* Last workout summary */}
+      {/* Last workout — Hevy-style summary */}
       {lastWorkout && (
-        <section className="panel stack-md" style={{ borderColor: 'rgba(55,183,255,0.15)' }}>
-          <SectionEyebrow icon="📅" label="Derniere seance" />
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <div>
-              <strong style={{ fontSize: '0.9rem' }}>{lastWorkout.sessionName}</strong>
-              <p style={{ margin: '2px 0 0', fontSize: '0.75rem', color: 'var(--muted)' }}>{lastWorkout.date} — {lastWorkout.durationMinutes} min</p>
+        <section className="hevy-card stack-md">
+          <SectionTitle icon="📅" label="Dernier entrainement" />
+          <div className="workout-summary-card">
+            <div style={{ marginBottom: 8 }}>
+              <strong style={{ fontSize: '1rem' }}>{lastWorkout.sessionName}</strong>
+              <p style={{ margin: '2px 0 0', fontSize: '0.75rem', color: 'var(--muted)' }}>{lastWorkout.date}</p>
             </div>
-            <div style={{ textAlign: 'right' as const }}>
-              <strong style={{ color: 'var(--accent-blue)' }}>{formatNumber(getWorkoutVolume(lastWorkout))} kg</strong>
-              <p style={{ margin: 0, fontSize: '0.7rem', color: 'var(--muted)' }}>volume total</p>
+            <div className="workout-summary-stats">
+              <div className="workout-stat"><span>🕐</span><span>{lastWorkout.durationMinutes} min</span></div>
+              <div className="workout-stat"><span>📊</span><span>{formatNumber(getWorkoutVolume(lastWorkout))} kg</span></div>
+              <div className="workout-stat"><span>⭐</span><span>{lastWorkout.exercises.length} exos</span></div>
             </div>
-          </div>
-          <div className="chip-row">
-            {lastWorkout.exercises.slice(0, 4).map(ex => (
-              <span key={ex.exerciseId} className="chip chip--static" style={{ fontSize: '0.72rem' }}>
-                {getExerciseById(ex.exerciseId).name} {ex.sets.length > 0 && `— ${ex.sets[ex.sets.length - 1].weightKg}kg`}
-              </span>
-            ))}
+            <div className="chip-row" style={{ marginTop: 8 }}>
+              {lastWorkout.exercises.slice(0, 4).map(ex => (
+                <span key={ex.exerciseId} className="chip chip--static" style={{ fontSize: '0.7rem' }}>
+                  {getExerciseById(ex.exerciseId).name}{ex.sets.length > 0 ? ` ${ex.sets[ex.sets.length - 1].weightKg}kg` : ''}
+                </span>
+              ))}
+            </div>
           </div>
         </section>
       )}
 
-      {/* Nutrition */}
-      <section className="panel stack-md">
-        <SectionEyebrow icon="🍽️" label="Nutrition cible" />
-        <ProgressBar label="Calories" value={nutrition.calories} target={targets.calories} accent="linear-gradient(90deg, #ffb400, #ff6a00)" />
-        <ProgressBar label="Proteines" value={nutrition.protein} target={targets.protein} accent="linear-gradient(90deg, #00d4ff, #4fffb0)" />
+      {/* Nutrition bar */}
+      <section className="hevy-card stack-md">
+        <SectionTitle icon="🍽️" label="Nutrition aujourd'hui" />
+        <ProgressBar label="Calories" value={nutrition.calories} target={targets.calories} accent="linear-gradient(90deg,#ffb400,#ff6a00)" />
+        <ProgressBar label="Proteines" value={nutrition.protein} target={targets.protein} accent="linear-gradient(90deg,#00d4ff,#4fffb0)" />
       </section>
 
       {/* Scouter insight */}
-      <section className="panel stack-md">
-        <SectionEyebrow icon="🔍" label="Analyse Scouter" />
-        <p>{recommendation}</p>
-      </section>
-
-      {/* Recipe suggestions */}
-      <section className="panel stack-md">
-        <SectionEyebrow icon="🍳" label="Recettes suggerees" />
-        {getRecommendedRecipes(state).length === 0
-          ? <div className="empty-state"><div className="empty-icon">🍳</div><p>Ajoute des repas pour des suggestions.</p></div>
-          : <div className="card-list">
-              {getRecommendedRecipes(state).map(recipe => (
-                <article className="mini-card" key={recipe.id}>
-                  <strong>{recipe.name}</strong>
-                  <span>{recipe.calories} kcal - {recipe.protein}P - {recipe.carbs}G - {recipe.fats}L</span>
-                </article>
-              ))}
-            </div>
-        }
+      <section className="hevy-card">
+        <SectionTitle icon="🔍" label="Analyse Scouter" />
+        <p style={{ margin: '8px 0 0', color: 'var(--muted)', fontSize: '0.85rem' }}>{recommendation}</p>
       </section>
     </div>
   )
 }
 
-// ── Train view ────────────────────────────────────────────────────────────────
+// ── TRAIN VIEW ────────────────────────────────────────────────────────────────
 
-function TrainView({ state, onStartWorkout, onAddSet, onFinishWorkout, restTimer, onSkipTimer }: {
+function TrainView({ state, onStartWorkout, onStartSession, onAddSet, onFinishWorkout, restTimer, onSkipTimer }: {
   state: AppState
   onStartWorkout: () => void
+  onStartSession: (sessionIndex: number) => void
   onAddSet: (exerciseId: string, weightKg: number, reps: number, rir: number, setType: SetType) => void
   onFinishWorkout: () => void
   restTimer: number
@@ -964,10 +926,10 @@ function TrainView({ state, onStartWorkout, onAddSet, onFinishWorkout, restTimer
   const nextSession = selectedProgram?.sessions[nextIndex % (selectedProgram?.sessions.length ?? 1)] ?? null
   const activeWorkout = state.activeWorkout
 
-  if (!selectedProgram || !nextSession) {
+  if (!selectedProgram) {
     return (
       <div className="page">
-        <section className="panel">
+        <section className="hevy-card">
           <div className="empty-state">
             <div className="empty-icon">🏋️</div>
             <p>Choisis un programme depuis le profil pour commencer ta Saga.</p>
@@ -977,128 +939,138 @@ function TrainView({ state, onStartWorkout, onAddSet, onFinishWorkout, restTimer
     )
   }
 
-  if (!activeWorkout) {
+  if (activeWorkout && nextSession) {
     return (
       <div className="page">
-        <section className="hero-card">
-          <div className="hero-copy">
-            <span className="eyebrow">{selectedProgram.saga}</span>
-            <h2>{selectedProgram.name}</h2>
-            <p>{selectedProgram.description}</p>
-          </div>
-          <div className="hero-badge">{selectedProgram.daysPerWeek} j/sem</div>
-        </section>
-
-        <section className="panel stack-md">
-          <div className="section-head">
+        {restTimer > 0 && (
+          <section className="hevy-card timer-panel">
             <div>
-              <SectionEyebrow icon="▶️" label="Prochaine seance" />
-              <h3>{nextSession.name}</h3>
+              <SectionTitle icon="⏱️" label="Repos" />
+              <h3 style={{ fontSize: '3.2rem', margin: '4px 0 0', color: 'var(--accent-gold)' }}>{restTimer}s</h3>
             </div>
-            <button className="primary-btn" onClick={onStartWorkout} type="button">Demarrer</button>
-          </div>
-          <p>{nextSession.focus}</p>
-          <div className="card-list">
-            {nextSession.exercises.map(entry => {
-              const exercise = getExerciseById(entry.exerciseId)
-              return (
-                <article className="mini-card" key={entry.exerciseId}>
-                  <strong>{exercise.name}</strong>
-                  <span>{entry.sets} x {entry.repMin}-{entry.repMax} — RIR {entry.targetRir}</span>
-                </article>
-              )
-            })}
+            <button className="ghost-btn" onClick={onSkipTimer} type="button">Passer</button>
+          </section>
+        )}
+        <section className="hevy-card stack-md">
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div>
+              <SectionTitle icon="🏋️" label="Seance en cours" />
+              <h3 style={{ margin: '4px 0 0' }}>{nextSession.name}</h3>
+            </div>
+            <button className="primary-btn" onClick={onFinishWorkout} type="button">Terminer</button>
           </div>
         </section>
+        {activeWorkout.exercises.map(exerciseLog => {
+          const exercise = getExerciseById(exerciseLog.exerciseId)
+          const target = exerciseLog.target
+          const previous = getLastSet(state.workouts, exercise.id)
+          const currentInput = draftInputs[exercise.id] ?? {
+            weight: previous?.weightKg?.toString() ?? '',
+            reps: previous?.reps?.toString() ?? `${target.repMin}`,
+            rir: String(target.targetRir),
+            setType: 'normal' as SetType,
+          }
+          return (
+            <section className="hevy-card stack-md" key={exercise.id}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                <div>
+                  <h3 style={{ margin: 0 }}>{exercise.name}</h3>
+                  <p style={{ margin: '2px 0 0', fontSize: '0.78rem', color: 'var(--muted)' }}>{target.sets}×{target.repMin}-{target.repMax} — RIR {target.targetRir} — Repos {target.restSeconds}s</p>
+                </div>
+                {previous && <span className="badge" style={{ fontSize: '0.72rem' }}>Dernier: {previous.weightKg}×{previous.reps}</span>}
+              </div>
+              <div className="field-grid compact-grid">
+                <label><span>Poids (kg)</span><input value={currentInput.weight} onChange={e => setDraftInputs({ ...draftInputs, [exercise.id]: { ...currentInput, weight: e.target.value } })} /></label>
+                <label><span>Reps</span><input value={currentInput.reps} onChange={e => setDraftInputs({ ...draftInputs, [exercise.id]: { ...currentInput, reps: e.target.value } })} /></label>
+                <label><span>RIR</span><input value={currentInput.rir} onChange={e => setDraftInputs({ ...draftInputs, [exercise.id]: { ...currentInput, rir: e.target.value } })} /></label>
+                <label>
+                  <span>Type</span>
+                  <select value={currentInput.setType} onChange={e => setDraftInputs({ ...draftInputs, [exercise.id]: { ...currentInput, setType: e.target.value as SetType } })}>
+                    <option value="warmup">Echauffement</option>
+                    <option value="normal">Normal</option>
+                    <option value="top">Top set</option>
+                    <option value="backoff">Back-off</option>
+                    <option value="drop">Drop set</option>
+                    <option value="amrap">AMRAP</option>
+                  </select>
+                </label>
+              </div>
+              <button className="secondary-btn" type="button" onClick={() => onAddSet(exercise.id, Number(currentInput.weight || 0), Number(currentInput.reps || 0), Number(currentInput.rir || target.targetRir), currentInput.setType)}>
+                + Ajouter la serie
+              </button>
+              <div className="set-list">
+                {exerciseLog.sets.length === 0
+                  ? <div className="empty-state" style={{ padding: '10px 0' }}><p style={{ margin: 0, fontSize: '0.83rem' }}>Commence avec la charge precedente.</p></div>
+                  : exerciseLog.sets.map(set => (
+                      <div className="set-row" key={set.id}>
+                        <span>S{set.setIndex}</span>
+                        <strong>{set.weightKg} kg × {set.reps}</strong>
+                        <span>RIR {set.rir}</span>
+                        <span>{set.setType}</span>
+                      </div>
+                    ))
+                }
+              </div>
+              {exercise.alternatives.length > 0 && (
+                <div className="chip-row">
+                  {exercise.alternatives.map(altId => (
+                    <span className="chip chip--static" key={altId} style={{ fontSize: '0.72rem' }}>{getExerciseById(altId).name}</span>
+                  ))}
+                </div>
+              )}
+            </section>
+          )
+        })}
       </div>
     )
   }
 
+  // Hevy-style: show all sessions as cards with exercise preview + CTA
   return (
     <div className="page">
-      {restTimer > 0 && (
-        <section className="panel timer-panel">
-          <div>
-            <SectionEyebrow icon="⏱️" label="Repos" />
-            <h3 style={{ fontSize: '3.2rem', margin: 0 }}>{restTimer}s</h3>
-          </div>
-          <button className="ghost-btn" onClick={onSkipTimer} type="button">Passer</button>
-        </section>
-      )}
-
-      <section className="panel stack-md">
-        <div className="section-head">
-          <div>
-            <SectionEyebrow icon="🏋️" label="Seance en cours" />
-            <h3>{nextSession.name}</h3>
-          </div>
-          <button className="primary-btn" onClick={onFinishWorkout} type="button">Terminer</button>
+      {/* Program header */}
+      <section className="hevy-hero">
+        <div style={{ flex: 1 }}>
+          <span className="eyebrow">{selectedProgram.saga}</span>
+          <h2 style={{ margin: '4px 0' }}>{selectedProgram.name}</h2>
+          <p style={{ margin: 0, color: 'var(--muted)', fontSize: '0.82rem' }}>{selectedProgram.split} — {selectedProgram.daysPerWeek} jours/semaine</p>
         </div>
+        <div className="hero-badge" style={{ alignSelf: 'flex-start' }}>{selectedProgram.daysPerWeek} j/sem</div>
       </section>
 
-      {activeWorkout.exercises.map(exerciseLog => {
-        const exercise = getExerciseById(exerciseLog.exerciseId)
-        const target = exerciseLog.target
-        const previous = getLastSet(state.workouts, exercise.id)
-        const currentInput = draftInputs[exercise.id] ?? {
-          weight: previous?.weightKg?.toString() ?? '',
-          reps: previous?.reps?.toString() ?? `${target.repMin}`,
-          rir: String(target.targetRir),
-          setType: 'normal' as SetType,
-        }
+      {/* Libre session */}
+      <button className="libre-btn" onClick={onStartWorkout} type="button">
+        <span style={{ fontSize: '1.2rem' }}>+</span>
+        <span>Demarrer un Entrainement Libre</span>
+      </button>
 
+      <SectionTitle icon="📋" label="Seances du programme" />
+
+      {/* All sessions as Hevy-style routine cards */}
+      {selectedProgram.sessions.map((session, idx) => {
+        const isNext = idx === nextIndex % selectedProgram.sessions.length
+        const exerciseNames = session.exercises.slice(0, 3).map(e => getExerciseById(e.exerciseId).name).join(', ')
+        const moreCount = session.exercises.length - 3
         return (
-          <section className="panel stack-md" key={exercise.id}>
-            <div className="section-head section-head--tight">
-              <div>
-                <h3>{exercise.name}</h3>
-                <p style={{ margin: 0 }}>{target.sets} x {target.repMin}-{target.repMax} — RIR {target.targetRir} — Repos {target.restSeconds}s</p>
+          <section key={session.id} className={`routine-card ${isNext ? 'routine-card--next' : ''}`}>
+            <div style={{ marginBottom: 12 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                <h3 style={{ margin: 0 }}>{session.name}</h3>
+                {isNext && <span className="next-badge">PROCHAINE</span>}
               </div>
-              {previous && <span className="badge">Dernier: {previous.weightKg} x {previous.reps}</span>}
+              <p style={{ margin: 0, fontSize: '0.78rem', color: 'var(--muted)' }}>{session.focus}</p>
+              <p style={{ margin: '4px 0 0', fontSize: '0.75rem', color: 'var(--muted)' }}>
+                {exerciseNames}{moreCount > 0 ? ` +${moreCount} exercices` : ''}
+              </p>
             </div>
-
-            <div className="field-grid compact-grid">
-              <label><span>Poids (kg)</span><input value={currentInput.weight} onChange={e => setDraftInputs({ ...draftInputs, [exercise.id]: { ...currentInput, weight: e.target.value } })} /></label>
-              <label><span>Reps</span><input value={currentInput.reps} onChange={e => setDraftInputs({ ...draftInputs, [exercise.id]: { ...currentInput, reps: e.target.value } })} /></label>
-              <label><span>RIR</span><input value={currentInput.rir} onChange={e => setDraftInputs({ ...draftInputs, [exercise.id]: { ...currentInput, rir: e.target.value } })} /></label>
-              <label>
-                <span>Type</span>
-                <select value={currentInput.setType} onChange={e => setDraftInputs({ ...draftInputs, [exercise.id]: { ...currentInput, setType: e.target.value as SetType } })}>
-                  <option value="warmup">Echauffement</option>
-                  <option value="normal">Normal</option>
-                  <option value="top">Top set</option>
-                  <option value="backoff">Back-off</option>
-                  <option value="drop">Drop set</option>
-                  <option value="amrap">AMRAP</option>
-                </select>
-              </label>
-            </div>
-
-            <button className="secondary-btn" type="button" onClick={() => onAddSet(exercise.id, Number(currentInput.weight || 0), Number(currentInput.reps || 0), Number(currentInput.rir || target.targetRir), currentInput.setType)}>
-              + Ajouter la serie
+            <button
+              className="cta-button"
+              style={{ fontSize: '1.1rem', padding: '0.9rem' }}
+              onClick={() => onStartSession(idx)}
+              type="button"
+            >
+              COMMENCER LA SEANCE
             </button>
-
-            <div className="set-list">
-              {exerciseLog.sets.length === 0
-                ? <div className="empty-state" style={{ padding: '10px 0' }}><p style={{ margin: 0, fontSize: '0.83rem' }}>Commence avec la charge precedente et progresse.</p></div>
-                : exerciseLog.sets.map(set => (
-                    <div className="set-row" key={set.id}>
-                      <span>S{set.setIndex}</span>
-                      <strong>{set.weightKg} kg x {set.reps}</strong>
-                      <span>RIR {set.rir}</span>
-                      <span>{set.setType}</span>
-                    </div>
-                  ))
-              }
-            </div>
-
-            {exercise.alternatives.length > 0 && (
-              <div className="chip-row">
-                {exercise.alternatives.map(altId => (
-                  <span className="chip chip--static" key={altId}>{getExerciseById(altId).name}</span>
-                ))}
-              </div>
-            )}
           </section>
         )
       })}
@@ -1106,7 +1078,7 @@ function TrainView({ state, onStartWorkout, onAddSet, onFinishWorkout, restTimer
   )
 }
 
-// ── Nutrition view ────────────────────────────────────────────────────────────
+// ── NUTRITION VIEW ────────────────────────────────────────────────────────────
 
 function NutritionView({ state, onAddFood }: { state: AppState; onAddFood: (entry: FoodEntry) => void }) {
   const [selectedFood, setSelectedFood] = useState(foods[0])
@@ -1117,21 +1089,16 @@ function NutritionView({ state, onAddFood }: { state: AppState; onAddFood: (entr
 
   return (
     <div className="page">
-      {/* Adaptive TDEE */}
       <AdaptiveTDEECard state={state} />
-
-      {/* Today's nutrition */}
-      <section className="panel stack-md">
-        <SectionEyebrow icon="🍽️" label="Nutrition aujourd'hui" />
-        <ProgressBar label="Calories" value={totals.calories} target={state.targets?.calories ?? 1} accent="linear-gradient(90deg, #ffb400, #ff6a00)" />
-        <ProgressBar label="Proteines" value={totals.protein} target={state.targets?.protein ?? 1} accent="linear-gradient(90deg, #00d4ff, #4fffb0)" />
-        <ProgressBar label="Glucides" value={totals.carbs} target={state.targets?.carbs ?? 1} accent="linear-gradient(90deg, #a855f7, #6366f1)" />
-        <ProgressBar label="Lipides" value={totals.fats} target={state.targets?.fats ?? 1} accent="linear-gradient(90deg, #f59e0b, #ef4444)" />
+      <section className="hevy-card stack-md">
+        <SectionTitle icon="🍽️" label="Nutrition aujourd'hui" />
+        <ProgressBar label="Calories" value={totals.calories} target={state.targets?.calories ?? 1} accent="linear-gradient(90deg,#ffb400,#ff6a00)" />
+        <ProgressBar label="Proteines" value={totals.protein} target={state.targets?.protein ?? 1} accent="linear-gradient(90deg,#00d4ff,#4fffb0)" />
+        <ProgressBar label="Glucides" value={totals.carbs} target={state.targets?.carbs ?? 1} accent="linear-gradient(90deg,#a855f7,#6366f1)" />
+        <ProgressBar label="Lipides" value={totals.fats} target={state.targets?.fats ?? 1} accent="linear-gradient(90deg,#f59e0b,#ef4444)" />
       </section>
-
-      {/* Add food */}
-      <section className="panel stack-md">
-        <SectionEyebrow icon="➕" label="Ajouter un aliment" />
+      <section className="hevy-card stack-md">
+        <SectionTitle icon="➕" label="Ajouter un aliment" />
         <div className="field-grid compact-grid">
           <label>
             <span>Aliment</span>
@@ -1157,31 +1124,27 @@ function NutritionView({ state, onAddFood }: { state: AppState; onAddFood: (entr
           onAddFood({ id: makeId('food'), date: todayIso(), name: selectedFood.name, category, grams: Number(grams || 0), calories: Math.round(selectedFood.calories * ratio), protein: Number((selectedFood.protein * ratio).toFixed(1)), carbs: Number((selectedFood.carbs * ratio).toFixed(1)), fats: Number((selectedFood.fats * ratio).toFixed(1)) })
         }}>Ajouter</button>
       </section>
-
-      {/* Saved meals */}
-      <section className="panel stack-md">
-        <SectionEyebrow icon="🥡" label="Repas sauvegardes" />
+      <section className="hevy-card stack-md">
+        <SectionTitle icon="🥡" label="Repas sauvegardes" />
         {state.savedMeals.length === 0
           ? <div className="empty-state"><div className="empty-icon">🥡</div><p>Aucun repas sauvegarde.</p></div>
           : <div className="card-list">
               {state.savedMeals.map(meal => (
                 <button className="mini-card mini-card--button" key={meal.id} type="button" onClick={() => onAddFood({ id: makeId('meal'), date: todayIso(), name: meal.name, category: meal.category, grams: 1, calories: meal.calories, protein: meal.protein, carbs: meal.carbs, fats: meal.fats })}>
                   <strong>{meal.name}</strong>
-                  <span>{meal.calories} kcal - {meal.protein}P</span>
+                  <span>{meal.calories} kcal — {meal.protein}P</span>
                 </button>
               ))}
             </div>
         }
       </section>
-
-      {/* Recipes */}
-      <section className="panel stack-md">
-        <SectionEyebrow icon="🍳" label="Recettes suggerees" />
+      <section className="hevy-card stack-md">
+        <SectionTitle icon="🍳" label="Recettes suggerees" />
         <div className="card-list">
           {suggestions.map(recipe => (
             <button className="mini-card mini-card--button" key={recipe.id} type="button" onClick={() => onAddFood({ id: makeId('recipe'), date: todayIso(), name: recipe.name, category: recipe.category, grams: 1, calories: recipe.calories, protein: recipe.protein, carbs: recipe.carbs, fats: recipe.fats })}>
               <strong>{recipe.name}</strong>
-              <span>{recipe.prepMinutes} min - {recipe.calories} kcal - {recipe.protein}P</span>
+              <span>{recipe.prepMinutes} min — {recipe.calories} kcal — {recipe.protein}P</span>
             </button>
           ))}
         </div>
@@ -1190,53 +1153,54 @@ function NutritionView({ state, onAddFood }: { state: AppState; onAddFood: (entr
   )
 }
 
-// ── Scouter view ──────────────────────────────────────────────────────────────
+// ── SCOUTER VIEW ──────────────────────────────────────────────────────────────
 
 function ScouterView({ state }: { state: AppState }) {
   const weeklyWorkouts = getWeeklyWorkouts(state.workouts)
   const volumeByMuscle = getVolumeByMuscle(weeklyWorkouts)
+  const totalVolume = state.workouts.reduce((s, w) => s + getWorkoutVolume(w), 0)
+  const prCount = countPRsFromWorkouts(state.workouts)
 
   return (
     <div className="page">
-      <section className="panel stack-md">
-        <SectionEyebrow icon="🔬" label="Analyse hebdomadaire" />
+      <section className="hevy-card stack-md">
+        <SectionTitle icon="🔬" label="Statistiques" />
         <div className="metrics-grid">
-          <MetricCard label="Seances" value={String(weeklyWorkouts.length)} accent="var(--accent-gold)" />
-          <MetricCard label="Volume" value={`${formatNumber(weeklyWorkouts.reduce((s, w) => s + getWorkoutVolume(w), 0))} kg`} accent="var(--accent-blue)" />
-          <MetricCard label="Poids" value={`${state.bodyweightEntries.at(-1)?.weightKg ?? state.profile?.weightKg ?? 0} kg`} accent="var(--accent-orange)" />
+          <MetricCard label="Seances total" value={String(state.workouts.length)} accent="var(--accent-gold)" />
+          <MetricCard label="Volume total" value={`${formatNumber(totalVolume)} kg`} accent="var(--accent-blue)" />
+          <MetricCard label="Records" value={String(prCount)} accent="var(--accent-orange)" />
+        </div>
+        <div className="metrics-grid">
+          <MetricCard label="Cette semaine" value={String(weeklyWorkouts.length)} accent="var(--accent-gold)" />
+          <MetricCard label="Vol. semaine" value={`${formatNumber(weeklyWorkouts.reduce((s, w) => s + getWorkoutVolume(w), 0))} kg`} accent="var(--accent-blue)" />
+          <MetricCard label="Poids actuel" value={`${state.bodyweightEntries.at(-1)?.weightKg ?? state.profile?.weightKg ?? 0} kg`} accent="#4fffb0" />
         </div>
       </section>
 
-      {/* RP Volume Landmarks */}
       <VolumeDashboard state={state} />
 
-      {/* Volume by muscle (tonnage) */}
-      <section className="panel stack-md">
-        <SectionEyebrow icon="📊" label="Tonnage par muscle" />
+      <section className="hevy-card stack-md">
+        <SectionTitle icon="📊" label="Tonnage par muscle" />
         {volumeByMuscle.length === 0 ? (
-          <div className="empty-state">
-            <div className="empty-icon">📊</div>
-            <p>Complete ta premiere semaine pour voir la map musculaire.</p>
-          </div>
+          <div className="empty-state"><div className="empty-icon">📊</div><p>Complete ta premiere semaine pour voir la map musculaire.</p></div>
         ) : (
           volumeByMuscle.map(([muscle, volume]) => (
-            <ProgressBar key={muscle} label={muscle} value={volume} target={Math.max(volumeByMuscle[0][1], 1)} accent="linear-gradient(90deg, #4fffb0, #00d4ff)" />
+            <ProgressBar key={muscle} label={muscle} value={volume} target={Math.max(volumeByMuscle[0][1], 1)} accent="linear-gradient(90deg,#4fffb0,#00d4ff)" />
           ))
         )}
       </section>
 
-      {/* Top lifts */}
-      <section className="panel stack-md">
-        <SectionEyebrow icon="💪" label="1RM estimes" />
+      <section className="hevy-card stack-md">
+        <SectionTitle icon="💪" label="1RM estimes" />
         {['bench_press', 'back_squat', 'romanian_deadlift', 'pull_up'].map(exerciseId => {
           let best = 0
           state.workouts.forEach(w => w.exercises.filter(e => e.exerciseId === exerciseId).forEach(e => e.sets.forEach(s => { const e1rm = s.weightKg * (1 + s.reps / 30); if (e1rm > best) best = e1rm })))
           const ex = getExerciseById(exerciseId)
           return (
-            <div key={exerciseId} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div key={exerciseId} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 0', borderBottom: '1px solid var(--stroke)' }}>
               <span style={{ fontSize: '0.85rem' }}>{ex.name}</span>
               <strong style={{ color: best > 0 ? 'var(--accent-gold)' : 'var(--muted)', fontSize: '0.9rem' }}>
-                {best > 0 ? `~${Math.round(best)} kg` : 'Pas de donnees'}
+                {best > 0 ? `~${Math.round(best)} kg` : '—'}
               </strong>
             </div>
           )
@@ -1246,9 +1210,9 @@ function ScouterView({ state }: { state: AppState }) {
   )
 }
 
-// ── Profile view ──────────────────────────────────────────────────────────────
+// ── PROFILE VIEW ──────────────────────────────────────────────────────────────
 
-function ProfileView({ state, powerLevel, onLogBodyweight, onLogMeasurement, onChooseProgram, onToggleTheme, theme }: {
+function ProfileView({ state, powerLevel, onLogBodyweight, onLogMeasurement, onChooseProgram, onToggleTheme, theme, onNavigate }: {
   state: AppState
   powerLevel: number
   onLogBodyweight: (entry: BodyweightEntry) => void
@@ -1256,55 +1220,93 @@ function ProfileView({ state, powerLevel, onLogBodyweight, onLogMeasurement, onC
   onChooseProgram: (programId: string) => void
   onToggleTheme: () => void
   theme: 'dark' | 'light'
+  onNavigate: (tab: TabId) => void
 }) {
   const [bodyweight, setBodyweight] = useState(String(state.profile?.weightKg ?? 0))
   const [measurements, setMeasurements] = useState({ waist: '', chest: '', arm: '', thigh: '' })
   const transformation = getTransformation(powerLevel)
-  const dragonBalls = Math.min(7, Math.floor((state.workouts.length + state.bodyweightEntries.length) / 2))
   const streak = getStreak(state)
+  const totalVolume = state.workouts.reduce((s, w) => s + getWorkoutVolume(w), 0)
+  const prCount = countPRsFromWorkouts(state.workouts)
+  const tf = getCurrentTransformationFull(state)
 
   return (
     <div className="page">
-      <section className="hero-card">
-        <div className="hero-copy">
-          <span className="eyebrow">Profil</span>
-          <h2>{state.profile?.name}</h2>
-          <p>{transformation.name} - {state.profile?.goal.replace('_', ' ')}</p>
-          <div style={{ display: 'flex', gap: 8, marginTop: 8, flexWrap: 'wrap' as const }}>
-            <span className="hero-badge" style={{ borderColor: transformation.accent, color: transformation.accent }}>{dragonBalls}/7 DBZ</span>
-            {streak > 0 && <span className="hero-badge" style={{ color: 'var(--accent-orange)', borderColor: 'var(--accent-orange)' }}>{streak}j streak</span>}
+      {/* Hevy-style profile hero */}
+      <section className="profile-hero">
+        <div style={{ display: 'flex', flexDirection: 'column' as const, alignItems: 'center', gap: 12 }}>
+          <img src={tf.current.image} alt={tf.current.name} style={{ width: 88, height: 88, objectFit: 'contain', filter: `drop-shadow(0 0 16px ${transformation.accent}88)`, animation: 'float 3s ease-in-out infinite' }} />
+          <div style={{ textAlign: 'center' as const }}>
+            <h2 style={{ margin: 0, fontSize: '2rem' }}>{state.profile?.name?.toUpperCase()}</h2>
+            <p style={{ margin: '4px 0 0', color: transformation.accent, fontSize: '0.85rem', fontWeight: 700 }}>{transformation.name}</p>
           </div>
         </div>
-        <button
-          type="button"
-          onClick={onToggleTheme}
-          className="theme-toggle"
-          title={theme === 'dark' ? 'Passer en clair' : 'Passer en sombre'}
-          aria-label="Changer le theme"
-        >
-          <span className="theme-toggle-knob" style={{ transform: theme === 'light' ? 'translateX(24px)' : 'translateX(0)' }}>
-            {theme === 'dark' ? '🌙' : '☀️'}
-          </span>
-        </button>
+        {/* Stats row */}
+        <div className="profile-stats-row">
+          <div className="profile-stat">
+            <span className="profile-stat-value">{state.workouts.length}</span>
+            <span className="profile-stat-label">Seances</span>
+          </div>
+          <div className="profile-stat-divider" />
+          <div className="profile-stat">
+            <span className="profile-stat-value">{formatNumber(totalVolume)}</span>
+            <span className="profile-stat-label">Volume kg</span>
+          </div>
+          <div className="profile-stat-divider" />
+          <div className="profile-stat">
+            <span className="profile-stat-value">{prCount}</span>
+            <span className="profile-stat-label">Records</span>
+          </div>
+          <div className="profile-stat-divider" />
+          <div className="profile-stat">
+            <span className="profile-stat-value">{streak}</span>
+            <span className="profile-stat-label">Streak 🔥</span>
+          </div>
+        </div>
       </section>
 
-      <section className="panel stack-md">
-        <SectionEyebrow icon="⚖️" label="Poids corporel" />
+      {/* Dashboard 2×2 */}
+      <section className="hevy-card stack-md">
+        <SectionTitle icon="🗂️" label="Tableau de bord" />
+        <div className="quick-grid">
+          <button className="quick-card" onClick={() => onNavigate('scouter')} type="button">
+            <span className="quick-card-icon">📊</span>
+            <span className="quick-card-label">Statistiques</span>
+          </button>
+          <button className="quick-card" onClick={() => onNavigate('train')} type="button">
+            <span className="quick-card-icon">💪</span>
+            <span className="quick-card-label">Exercices</span>
+          </button>
+          <button className="quick-card" type="button" onClick={() => {}}>
+            <span className="quick-card-icon">📏</span>
+            <span className="quick-card-label">Mesures</span>
+          </button>
+          <button className="quick-card" onClick={() => onNavigate('nutrition')} type="button">
+            <span className="quick-card-icon">🍽️</span>
+            <span className="quick-card-label">Nutrition</span>
+          </button>
+        </div>
+      </section>
+
+      {/* Bodyweight */}
+      <section className="hevy-card stack-md">
+        <SectionTitle icon="⚖️" label="Poids corporel" />
         <div className="inline-form">
-          <input value={bodyweight} onChange={e => setBodyweight(e.target.value)} />
+          <input value={bodyweight} onChange={e => setBodyweight(e.target.value)} placeholder="kg" />
           <button className="secondary-btn" type="button" onClick={() => onLogBodyweight({ id: makeId('bw'), date: todayIso(), weightKg: Number(bodyweight) })}>Log</button>
         </div>
         {state.bodyweightEntries.length >= 2 && (
-          <p style={{ margin: 0, fontSize: '0.78rem', color: 'var(--muted)' }}>
-            Debut: {state.bodyweightEntries[0].weightKg} kg |
-            Maintenant: {state.bodyweightEntries.at(-1)?.weightKg} kg |
-            Delta: {((state.bodyweightEntries.at(-1)?.weightKg ?? 0) - state.bodyweightEntries[0].weightKg).toFixed(1)} kg
-          </p>
+          <div style={{ display: 'flex', gap: 12, fontSize: '0.78rem', color: 'var(--muted)' }}>
+            <span>Debut: <strong style={{ color: 'var(--text)' }}>{state.bodyweightEntries[0].weightKg} kg</strong></span>
+            <span>Actuel: <strong style={{ color: 'var(--text)' }}>{state.bodyweightEntries.at(-1)?.weightKg} kg</strong></span>
+            <span>Delta: <strong style={{ color: ((state.bodyweightEntries.at(-1)?.weightKg ?? 0) - state.bodyweightEntries[0].weightKg) >= 0 ? 'var(--accent-orange)' : 'var(--accent-blue)' }}>{((state.bodyweightEntries.at(-1)?.weightKg ?? 0) - state.bodyweightEntries[0].weightKg).toFixed(1)} kg</strong></span>
+          </div>
         )}
       </section>
 
-      <section className="panel stack-md">
-        <SectionEyebrow icon="📏" label="Mensurations" />
+      {/* Measurements */}
+      <section className="hevy-card stack-md">
+        <SectionTitle icon="📏" label="Mensurations" />
         <div className="field-grid compact-grid">
           <label><span>Tour de taille (cm)</span><input value={measurements.waist} onChange={e => setMeasurements({ ...measurements, waist: e.target.value })} /></label>
           <label><span>Poitrine</span><input value={measurements.chest} onChange={e => setMeasurements({ ...measurements, chest: e.target.value })} /></label>
@@ -1314,27 +1316,45 @@ function ProfileView({ state, powerLevel, onLogBodyweight, onLogMeasurement, onC
         <button className="secondary-btn" type="button" onClick={() => onLogMeasurement({ id: makeId('measure'), date: todayIso(), waistCm: Number(measurements.waist), chestCm: Number(measurements.chest), armCm: Number(measurements.arm), thighCm: Number(measurements.thigh) })}>Sauvegarder</button>
       </section>
 
-      <section className="panel stack-md">
-        <SectionEyebrow icon="📋" label="Programmes" />
+      {/* Programs */}
+      <section className="hevy-card stack-md">
+        <SectionTitle icon="📋" label="Programmes" />
         {programs.length === 0
           ? <div className="empty-state"><div className="empty-icon">📋</div><p>Aucun programme disponible.</p></div>
           : <div className="card-list">
               {programs.map(program => (
                 <button className={`mini-card mini-card--button ${state.selectedProgramId === program.id ? 'mini-card--selected' : ''}`} key={program.id} type="button" onClick={() => onChooseProgram(program.id)}>
                   <strong>{program.name}</strong>
-                  <span>{program.saga} - {program.daysPerWeek} jours - {program.split}</span>
+                  <span>{program.saga} — {program.daysPerWeek} jours — {program.split}</span>
                 </button>
               ))}
             </div>
         }
       </section>
 
-      <p className="profile-footer">Propulse par Katrava</p>
+      {/* Settings */}
+      <section className="hevy-card stack-md">
+        <SectionTitle icon="⚙️" label="Parametres" />
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 0', borderBottom: '1px solid var(--stroke)' }}>
+          <span style={{ fontSize: '0.9rem' }}>{theme === 'dark' ? '🌙 Mode sombre' : '☀️ Mode clair'}</span>
+          <button type="button" onClick={onToggleTheme} className="theme-toggle" aria-label="Changer le theme">
+            <span className="theme-toggle-knob" style={{ transform: theme === 'light' ? 'translateX(24px)' : 'translateX(0)' }}>
+              {theme === 'dark' ? '🌙' : '☀️'}
+            </span>
+          </button>
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 0' }}>
+          <span style={{ fontSize: '0.9rem' }}>Profil: {state.profile?.name}</span>
+          <span style={{ fontSize: '0.78rem', color: 'var(--muted)' }}>{state.profile?.goal?.replace('_', ' ')}</span>
+        </div>
+      </section>
+
+      <p className="profile-footer">Propulse par Katrava ⚡</p>
     </div>
   )
 }
 
-// ── Bottom nav ────────────────────────────────────────────────────────────────
+// ── Bottom Nav ────────────────────────────────────────────────────────────────
 
 function BottomNav({ tab, onChange }: { tab: TabId; onChange: (tab: TabId) => void }) {
   const items: Array<{ id: TabId; icon: string; label: string }> = [
@@ -1400,15 +1420,7 @@ function App() {
   const completeOnboarding = (profile: UserProfile, answers: OnboardingAnswers) => {
     const targets = calculateTargets(profile)
     const recommendedProgram = recommendProgram(profile)
-    setState({
-      ...defaultState,
-      profile,
-      targets,
-      selectedProgramId: recommendedProgram.id,
-      savedMeals,
-      bodyweightEntries: [{ id: makeId('bw'), date: todayIso(), weightKg: profile.weightKg }],
-      onboardingAnswers: answers,
-    })
+    setState({ ...defaultState, profile, targets, selectedProgramId: recommendedProgram.id, savedMeals, bodyweightEntries: [{ id: makeId('bw'), date: todayIso(), weightKg: profile.weightKg }], onboardingAnswers: answers })
   }
 
   const startWorkout = () => {
@@ -1421,6 +1433,19 @@ function App() {
     }
     setState(c => ({ ...c, activeWorkout: draft }))
     setTab('train')
+  }
+
+  const startSession = (sessionIndex: number) => {
+    if (!selectedProgram) return
+    const session = selectedProgram.sessions[sessionIndex]
+    if (!session) return
+    const draft: WorkoutDraft = {
+      programId: selectedProgram.id,
+      sessionId: session.id,
+      startedAt: new Date().toISOString(),
+      exercises: session.exercises.map(entry => ({ exerciseId: entry.exerciseId, target: entry, sets: [] })),
+    }
+    setState(c => ({ ...c, activeWorkout: draft }))
   }
 
   const addSet = (exerciseId: string, weightKg: number, reps: number, rir: number, setType: SetType) => {
@@ -1441,7 +1466,9 @@ function App() {
   }
 
   const finishWorkout = () => {
-    if (!state.activeWorkout || !selectedProgram || !nextSession) return
+    if (!state.activeWorkout || !selectedProgram) return
+    const activeSession = selectedProgram.sessions.find(s => s.id === state.activeWorkout!.sessionId) ?? nextSession
+    if (!activeSession) return
 
     const musclesWorked = new Set<MuscleGroup>()
     state.activeWorkout.exercises.forEach(ex => {
@@ -1454,8 +1481,8 @@ function App() {
       id: makeId('workout'),
       date: todayIso(),
       programId: selectedProgram.id,
-      sessionId: nextSession.id,
-      sessionName: nextSession.name,
+      sessionId: activeSession.id,
+      sessionName: activeSession.name,
       exercises: state.activeWorkout.exercises.filter(e => e.sets.length > 0),
       durationMinutes: Math.max(25, Math.round((Date.now() - new Date(state.activeWorkout.startedAt).getTime()) / 60000)),
     }
@@ -1477,11 +1504,6 @@ function App() {
 
   const saveFeedback = (feedback: SessionFeedback) => {
     setState(c => ({ ...c, sessionFeedback: [...(c.sessionFeedback ?? []), feedback] }))
-    setPendingFeedback(null)
-    setTab('home')
-  }
-
-  const skipFeedback = () => {
     setPendingFeedback(null)
     setTab('home')
   }
@@ -1509,13 +1531,7 @@ function App() {
     setState(c => {
       const alreadyDone = ((c.completedDailyQuests ?? {})[today] ?? []).includes(questId)
       if (alreadyDone) return c
-      return {
-        ...c,
-        completedDailyQuests: {
-          ...(c.completedDailyQuests ?? {}),
-          [today]: [...((c.completedDailyQuests ?? {})[today] ?? []), questId],
-        },
-      }
+      return { ...c, completedDailyQuests: { ...(c.completedDailyQuests ?? {}), [today]: [...((c.completedDailyQuests ?? {})[today] ?? []), questId] } }
     })
   }
 
@@ -1530,14 +1546,14 @@ function App() {
           muscles={pendingFeedback.muscles}
           workoutId={pendingFeedback.workoutId}
           onSave={saveFeedback}
-          onSkip={skipFeedback}
+          onSkip={() => { setPendingFeedback(null); setTab('home') }}
         />
       )}
-      {tab === 'home' && <HomeView state={state} nextSession={nextSession} powerLevel={powerLevel} recommendation={recommendation} onStartWorkout={startWorkout} onUpdateQuestProgress={updateQuestProgress} onCompleteQuest={completeQuest} />}
-      {tab === 'train' && <TrainView state={state} onStartWorkout={startWorkout} onAddSet={addSet} onFinishWorkout={finishWorkout} restTimer={restTimer} onSkipTimer={() => setRestTimer(0)} />}
+      {tab === 'home' && <HomeView state={state} nextSession={nextSession} powerLevel={powerLevel} recommendation={recommendation} onStartWorkout={startWorkout} onUpdateQuestProgress={updateQuestProgress} onCompleteQuest={completeQuest} onNavigate={setTab} />}
+      {tab === 'train' && <TrainView state={state} onStartWorkout={startWorkout} onStartSession={startSession} onAddSet={addSet} onFinishWorkout={finishWorkout} restTimer={restTimer} onSkipTimer={() => setRestTimer(0)} />}
       {tab === 'nutrition' && <NutritionView state={state} onAddFood={addFood} />}
       {tab === 'scouter' && <ScouterView state={state} />}
-      {tab === 'profile' && <ProfileView state={state} powerLevel={powerLevel} onLogBodyweight={logBodyweight} onLogMeasurement={logMeasurement} onChooseProgram={chooseProgram} onToggleTheme={() => setTheme(t => t === 'dark' ? 'light' : 'dark')} theme={theme} />}
+      {tab === 'profile' && <ProfileView state={state} powerLevel={powerLevel} onLogBodyweight={logBodyweight} onLogMeasurement={logMeasurement} onChooseProgram={chooseProgram} onToggleTheme={() => setTheme(t => t === 'dark' ? 'light' : 'dark')} theme={theme} onNavigate={setTab} />}
       <BottomNav tab={tab} onChange={setTab} />
     </div>
   )

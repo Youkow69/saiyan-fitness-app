@@ -39,6 +39,15 @@ interface ProfileViewProps {
   onNavigate: (tab: TabId) => void
 }
 
+
+const GOAL_FR: Record<string, string> = {
+  muscle_gain: 'Prise de muscle',
+  fat_loss: 'Perte de gras',
+  recomp: 'Recomposition',
+  strength: 'Force',
+  endurance: 'Endurance',
+}
+
 export const ProfileView: React.FC<ProfileViewProps> = React.memo(
   function ProfileView({ onToggleTheme, theme, onNavigate }) {
     const { state, dispatch } = useAppState()
@@ -95,7 +104,7 @@ export const ProfileView: React.FC<ProfileViewProps> = React.memo(
             <button className="secondary-btn" type="button" onClick={() => {
               const entry: BodyweightEntry = { id: makeId('bw'), date: todayIso(), weightKg: Number(bodyweight) }
               dispatch({ type: 'LOG_BODYWEIGHT', payload: entry })
-              showToast(`Poids enregistre: ${bodyweight} kg`, 'success')
+              showToast(`Poids enregistré : ${bodyweight} kg`, 'success')
             }}>Journal</button>
           </div>
           {state.bodyweightEntries.length >= 2 && (
@@ -153,7 +162,7 @@ export const ProfileView: React.FC<ProfileViewProps> = React.memo(
               onClick={() => {
                 if (editingProfile) {
                   dispatch({ type: 'UPDATE_PROFILE', payload: profileDraft })
-                  showToast('Profil mis a jour', 'success')
+                  showToast('Profil mis à jour', 'success')
                 } else {
                   setProfileDraft(state.profile!)
                 }
@@ -183,7 +192,7 @@ export const ProfileView: React.FC<ProfileViewProps> = React.memo(
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid var(--stroke)' }}>
                 <span style={{ fontSize: '0.85rem', color: 'var(--muted)' }}>Objectif</span>
-                <strong style={{ fontSize: '0.85rem' }}>{state.profile?.goal?.replace('_', ' ')}</strong>
+                <strong style={{ fontSize: '0.85rem' }}>{GOAL_FR[state.profile?.goal ?? ''] ?? state.profile?.goal?.replace('_', ' ')}</strong>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0' }}>
                 <span style={{ fontSize: '0.85rem', color: 'var(--muted)' }}>Jours/semaine</span>
@@ -195,10 +204,10 @@ export const ProfileView: React.FC<ProfileViewProps> = React.memo(
 
         {/* Settings */}
         <section className="hevy-card stack-md">
-          <SectionTitle icon="⚙️" label="Parametres" />
+          <SectionTitle icon="⚙️" label="Paramètres" />
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 0' }}>
             <span style={{ fontSize: '0.9rem' }}>{theme === 'dark' ? '🌙 Mode sombre' : '☀️ Mode clair'}</span>
-            <button type="button" onClick={onToggleTheme} className="theme-toggle" aria-label="Changer le theme">
+            <button type="button" onClick={onToggleTheme} className="theme-toggle" aria-label="Changer le thème">
               <span className="theme-toggle-knob" style={{ transform: theme === 'light' ? 'translateX(24px)' : 'translateX(0)' }}>
                 {theme === 'dark' ? '🌙' : '☀️'}
               </span>
@@ -206,7 +215,7 @@ export const ProfileView: React.FC<ProfileViewProps> = React.memo(
           </div>
         </section>
 
-        <p className="profile-footer">Propulse par Katrava ⚡</p>
+        <p className="profile-footer">Propulsé par Katrava ⚡</p>
       </div>
     )
   }

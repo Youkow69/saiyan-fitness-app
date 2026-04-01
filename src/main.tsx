@@ -22,9 +22,10 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boole
               Recharger l'app
             </button>
             <button onClick={() => {
-              if (window.confirm('ATTENTION : Ceci supprimera TOUTES tes donn\u00e9es. Cette action est IRREVERSIBLE. Continuer ?')) {
-                localStorage.removeItem('saiyan-fitness-v1');
-                window.location.reload();
+              const input = window.prompt('ATTENTION : Ceci supprimera TOUTES tes donn\u00e9es. Tape SUPPRIMER pour confirmer :')
+              if (input === 'SUPPRIMER') {
+                localStorage.removeItem('saiyan-fitness-v1')
+                window.location.reload()
               }
             }} style={{ padding: '12px 24px', borderRadius: 12, border: '1px solid rgba(255,95,118,0.4)', background: 'rgba(255,95,118,0.1)', color: '#ff5f76', fontWeight: 700, fontSize: '0.9rem', cursor: 'pointer' }}>
               Reset complet

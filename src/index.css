@@ -310,7 +310,9 @@ h3, h2, h1 {
 }
 
 .app-shell {
-  padding: 20px 16px 112px;
+  padding: 20px 16px 72px;
+  max-width: 600px;
+  margin: 0 auto;
 }
 
 .page {
@@ -411,8 +413,16 @@ h3, h2, h1 {
 
 .quick-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: 1fr 1fr;
   gap: 12px;
+}
+
+/* All cards handle overflow */
+.card, .hevy-card, .routine-card, .metric-card, .mini-card, .quest-card, .panel,
+[class*="card"], [class*="Card"] {
+  min-width: 0;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .quick-card {
@@ -727,7 +737,7 @@ h3, h2, h1 {
   gap: 12px;
 }
 
-.metrics-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.metrics-grid { grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); }
 .field-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .compact-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .field-span-2 { grid-column: span 2; }
@@ -1024,19 +1034,19 @@ select:focus {
 
 .bottom-nav {
   position: fixed;
-  left: 50%;
-  bottom: 16px;
-  transform: translateX(-50%);
-  width: min(calc(100% - 24px), 480px);
-  padding: 8px 4px;
-  background: rgba(12, 12, 20, 0.94);
-  backdrop-filter: blur(18px);
-  border: 1px solid var(--stroke);
-  border-radius: 20px;
+  bottom: 0;
+  left: 0;
+  right: 0;
   display: flex;
-  align-items: center;
+  flex-direction: row;
   justify-content: space-around;
-  z-index: 1000;
+  align-items: center;
+  background: var(--bg-card);
+  border-top: 1px solid var(--border);
+  padding: 6px 0;
+  padding-bottom: env(safe-area-inset-bottom);
+  z-index: 100;
+  height: auto;
 }
 
 .nav-item {
@@ -2031,64 +2041,25 @@ select:focus {
 
 /* Mobile-first (default): single column, 480px max */
 
-@media (min-width: 768px) {
-  .app-shell {
-    display: grid;
-    grid-template-columns: 240px 1fr;
-    gap: 24px;
-    width: min(100%, 960px);
-    padding: 24px 20px 40px;
-  }
-
+@media (min-width: 1100px) {
   .bottom-nav {
-    position: sticky;
-    top: 24px;
+    position: fixed;
     left: 0;
-    bottom: auto;
-    transform: none;
-    width: 100%;
+    top: 0;
+    bottom: 0;
+    right: auto;
+    width: 72px;
     flex-direction: column;
-    border-radius: 20px;
-    padding: 12px 8px;
-    height: fit-content;
-    gap: 4px;
-    background: var(--bg-card);
-    backdrop-filter: none;
+    justify-content: center;
+    border-top: none;
+    border-right: 1px solid var(--border);
+    padding: 0;
   }
-
-  .nav-item {
-    flex-direction: row;
-    justify-content: flex-start;
-    gap: 10px;
-    padding: 10px 14px;
-    min-height: 44px;
-  }
-
-  .nav-label {
-    font-size: 0.78rem;
-  }
-
-  .page {
-    width: 100%;
-  }
-}
-
-@media (min-width: 1024px) {
+  .bottom-nav .nav-label { font-size: 0.6rem; }
   .app-shell {
-    width: min(100%, 1200px);
-    grid-template-columns: 260px 1fr;
-  }
-
-  .page {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .page > .field-span-2,
-  .page > .hero-card,
-  .page > .hevy-hero,
-  .page > .power-card,
-  .page > .cta-button {
-    grid-column: span 2;
+    margin-left: 72px;
+    padding-bottom: 24px;
+    max-width: 800px;
   }
 }
 

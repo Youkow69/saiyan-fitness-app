@@ -60,7 +60,7 @@ function inferTag(food: { protein: number; carbs: number; fats: number; id: stri
 // Estimation logic
 // ---------------------------------------------------------------------------
 
-function estimateMicros(tagCounts: Record<FoodTag, number>, totalGrams: Record<FoodTag, number>): MicroEstimate[] {
+function estimateMicros(totalGrams: Record<FoodTag, number>): MicroEstimate[] {
   const g = totalGrams
 
   // Rough estimations per 100g of category
@@ -72,14 +72,10 @@ function estimateMicros(tagCounts: Record<FoodTag, number>, totalGrams: Record<F
   const potassiumFromFruit = (g.fruit / 100) * 200
 
   const calciumFromDairy = (g.dairy / 100) * 120
-  const vitDFromDairy = (g.dairy / 100) * 0.5
 
   const fiberFromVeg = (g.vegetable / 100) * 3.5
-  const vitAFromVeg = (g.vegetable / 100) * 450
-  const vitKFromVeg = (g.vegetable / 100) * 80
 
   const magnesiumFromGrain = (g.grain / 100) * 30
-  const bVitaminsFromGrain = (g.grain / 100) * 0.3
   const fiberFromGrain = (g.grain / 100) * 2.0
 
   const totalFiber = fiberFromVeg + fiberFromGrain
@@ -252,25 +248,21 @@ export function MicronutrientEstimate() {
   const today = todayIso()
 
   const estimates = useMemo(() => {
-    const todayEntries = (state.foodLog ?? []).filter((e: any) => e.date === today)
+    const todayEntries = (state.foodEntries ?? []).filter((e: any) => e.date === today)
 
-    const tagCounts: Record<FoodTag, number> = {
-      protein: 0, dairy: 0, fruit: 0, vegetable: 0, grain: 0, fat: 0, other: 0,
-    }
     const totalGrams: Record<FoodTag, number> = {
       protein: 0, dairy: 0, fruit: 0, vegetable: 0, grain: 0, fat: 0, other: 0,
     }
 
     todayEntries.forEach((entry: any) => {
-      const food = foods.find((f) => f.id === entry.foodId)
+      const food = foods.find((f) => f.name === entry.name)
       if (!food) return
       const tag = inferTag(food)
-      tagCounts[tag]++
       totalGrams[tag] += entry.grams ?? 100
     })
 
-    return estimateMicros(tagCounts, totalGrams)
-  }, [state.foodLog, today])
+    return estimateMicros(totalGrams)
+  }, [state.foodEntries, today])
 
   return (
     <div style={s.container}>

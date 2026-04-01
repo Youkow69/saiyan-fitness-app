@@ -63,7 +63,7 @@ export function WeightChart({ entries }: { entries: BodyweightEntry[] }) {
   if (sorted.length < 2) {
     return (
       <ChartContainer title="Poids corporel">
-        <div style={{ color: '#718096', fontSize: 13, textAlign: 'center', padding: 32 }}>
+        <div style={{ color: 'var(--text-secondary)', fontSize: 13, textAlign: 'center', padding: 32 }}>
           Ajoutez au moins 2 entrees pour voir le graphique.
         </div>
       </ChartContainer>
@@ -132,7 +132,7 @@ export function WeightChart({ entries }: { entries: BodyweightEntry[] }) {
                 stroke="rgba(255,255,255,0.06)"
                 strokeWidth={1}
               />
-              <text x={inset.left - 8} y={y + 4} textAnchor="end" fill="#718096" fontSize={10}>
+              <text x={inset.left - 8} y={y + 4} textAnchor="end" fill="var(--text-secondary)" fontSize={10}>
                 {val}
               </text>
             </g>
@@ -163,7 +163,7 @@ export function WeightChart({ entries }: { entries: BodyweightEntry[] }) {
 
         {/* Data points */}
         {points.map((p, i) => (
-          <circle key={i} cx={p.x} cy={p.y} r={3} fill="#ed8936" stroke="#1a1a2e" strokeWidth={1.5} />
+          <circle key={i} cx={p.x} cy={p.y} r={3} fill="#ed8936" stroke="var(--bg-card)" strokeWidth={1.5} />
         ))}
 
         {/* X-axis labels */}
@@ -175,7 +175,7 @@ export function WeightChart({ entries }: { entries: BodyweightEntry[] }) {
                 x={points[i].x}
                 y={svgH - 8}
                 textAnchor="middle"
-                fill="#718096"
+                fill="var(--text-secondary)"
                 fontSize={9}
               >
                 {new Date(e.date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}
@@ -210,7 +210,7 @@ export function VolumeChart({ workouts }: { workouts: WorkoutLog[] }) {
   if (weeklyVolume.length === 0) {
     return (
       <ChartContainer title="Volume hebdomadaire">
-        <div style={{ color: '#718096', fontSize: 13, textAlign: 'center', padding: 32 }}>
+        <div style={{ color: 'var(--text-secondary)', fontSize: 13, textAlign: 'center', padding: 32 }}>
           Aucune donnee de volume disponible.
         </div>
       </ChartContainer>
@@ -242,7 +242,7 @@ export function VolumeChart({ workouts }: { workouts: WorkoutLog[] }) {
                 y2={y}
                 stroke="rgba(255,255,255,0.06)"
               />
-              <text x={inset.left - 8} y={y + 4} textAnchor="end" fill="#718096" fontSize={9}>
+              <text x={inset.left - 8} y={y + 4} textAnchor="end" fill="var(--text-secondary)" fontSize={9}>
                 {val >= 1000 ? `${(val / 1000).toFixed(0)}k` : val}
               </text>
             </g>
@@ -268,7 +268,7 @@ export function VolumeChart({ workouts }: { workouts: WorkoutLog[] }) {
                 x={x + barW / 2}
                 y={svgH - 8}
                 textAnchor="middle"
-                fill="#718096"
+                fill="var(--text-secondary)"
                 fontSize={8}
                 transform={`rotate(-30, ${x + barW / 2}, ${svgH - 8})`}
               >
@@ -348,7 +348,7 @@ export function MacroPieChart({
         <div style={{ position: 'relative', width: size, height: size }}>
           <svg width={size} height={size}>
             {arcs.map((arc, i) => (
-              <path key={i} d={arc.path} fill={arc.color} stroke="#1a1a2e" strokeWidth={2} />
+              <path key={i} d={arc.path} fill={arc.color} stroke="var(--bg-card)" strokeWidth={2} />
             ))}
           </svg>
           <div
@@ -361,10 +361,10 @@ export function MacroPieChart({
               justifyContent: 'center',
             }}
           >
-            <div style={{ fontSize: 22, fontWeight: 800, color: '#e2e8f0' }}>
+            <div style={{ fontSize: 22, fontWeight: 800, color: 'var(--text)' }}>
               {Math.round(total)}
             </div>
-            <div style={{ fontSize: 10, color: '#718096' }}>kcal</div>
+            <div style={{ fontSize: 10, color: 'var(--text-secondary)' }}>kcal</div>
           </div>
         </div>
 
@@ -376,7 +376,7 @@ export function MacroPieChart({
               <div key={s.label}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, marginBottom: 3 }}>
                   <span style={{ color: s.color, fontWeight: 600 }}>{s.label}</span>
-                  <span style={{ color: '#a0aec0' }}>
+                  <span style={{ color: 'var(--text-secondary)' }}>
                     {s.grams}{s.unit} / {s.target}{s.unit} ({pct}%)
                   </span>
                 </div>
@@ -394,7 +394,7 @@ export function MacroPieChart({
               </div>
             )
           })}
-          <div style={{ fontSize: 11, color: '#718096', marginTop: 4 }}>
+          <div style={{ fontSize: 11, color: 'var(--text-secondary)', marginTop: 4 }}>
             Objectif: {targets.calories} kcal
           </div>
         </div>
@@ -431,7 +431,7 @@ export function OneRmChart({
   if (data.length < 2) {
     return (
       <ChartContainer title={`1RM - ${exerciseName || exerciseId}`}>
-        <div style={{ color: '#718096', fontSize: 13, textAlign: 'center', padding: 32 }}>
+        <div style={{ color: 'var(--text-secondary)', fontSize: 13, textAlign: 'center', padding: 32 }}>
           Pas assez de donnees pour cet exercice.
         </div>
       </ChartContainer>
@@ -469,7 +469,7 @@ export function OneRmChart({
           return (
             <g key={frac}>
               <line x1={inset.left} y1={y} x2={svgW - inset.right} y2={y} stroke="rgba(255,255,255,0.06)" />
-              <text x={inset.left - 8} y={y + 4} textAnchor="end" fill="#718096" fontSize={10}>
+              <text x={inset.left - 8} y={y + 4} textAnchor="end" fill="var(--text-secondary)" fontSize={10}>
                 {val}
               </text>
             </g>
@@ -482,7 +482,7 @@ export function OneRmChart({
         {/* Points */}
         {points.map((p, i) => (
           <g key={i}>
-            <circle cx={p.x} cy={p.y} r={4} fill="#38a169" stroke="#1a1a2e" strokeWidth={2} />
+            <circle cx={p.x} cy={p.y} r={4} fill="#38a169" stroke="var(--bg-card)" strokeWidth={2} />
             {i === points.length - 1 && (
               <text x={p.x} y={p.y - 10} textAnchor="middle" fill="#38a169" fontSize={11} fontWeight="bold">
                 {p.rm} kg
@@ -495,7 +495,7 @@ export function OneRmChart({
         {data.map(
           (d, i) =>
             i % Math.max(1, Math.floor(data.length / 5)) === 0 && (
-              <text key={i} x={points[i].x} y={svgH - 8} textAnchor="middle" fill="#718096" fontSize={9}>
+              <text key={i} x={points[i].x} y={svgH - 8} textAnchor="middle" fill="var(--text-secondary)" fontSize={9}>
                 {new Date(d.date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}
               </text>
             )
@@ -517,12 +517,12 @@ function ChartContainer({
   return (
     <div
       style={{
-        background: '#1a1a2e',
+        background: 'var(--bg-card)',
         borderRadius: 16,
         padding: 20,
         maxWidth: 560,
         margin: '0 auto 16px',
-        color: '#e2e8f0',
+        color: 'var(--text)',
         fontFamily: "'Segoe UI', sans-serif",
       }}
     >

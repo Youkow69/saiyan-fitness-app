@@ -83,7 +83,7 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
           <section className="hevy-card stack-md">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
-                <SectionTitle icon="🏋️" label="Seance en cours" />
+                <SectionTitle icon="🏋️" label="Séance en cours" />
                 <h3 style={{ margin: '4px 0 0' }}>{nextSession.name}</h3>
               </div>
               <button className="primary-btn" onClick={onFinishWorkout} type="button">Terminer</button>
@@ -130,7 +130,7 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
                 </button>
                 <div className="set-list">
                   {exerciseLog.sets.length === 0
-                    ? <div className="empty-state" style={{ padding: '10px 0' }}><p style={{ margin: 0, fontSize: '0.83rem' }}>Commence avec la charge precedente.</p></div>
+                    ? <div className="empty-state" style={{ padding: '10px 0' }}><p style={{ margin: 0, fontSize: '0.83rem' }}>Commence avec la charge précédente.</p></div>
                     : exerciseLog.sets.map((set) => (
                         <div className="set-row" key={set.id}>
                           <span>S{set.setIndex}</span>
@@ -181,7 +181,7 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
 
         <button className="secondary-btn" onClick={onStartWorkout} type="button" style={{ display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'center', width: '100%', padding: '12px 16px' }}>
           <span style={{ fontSize: '1.2rem' }}>⚡</span>
-          <span>Seance rapide</span>
+          <span>Séance rapide</span>
         </button>
 
         <button className="primary-btn" onClick={() => setCreatingRoutine(true)} type="button" style={{ display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'center', width: '100%', padding: '14px 16px', fontSize: '1rem' }}>
@@ -244,7 +244,7 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
           </section>
         )}
 
-        <SectionTitle icon="📋" label="Seances pre-faites" />
+        <SectionTitle icon="📋" label="Séances pre-faites" />
 
         {selectedProgram.sessions.map((session, idx) => {
           const isNext = idx === nextIndex % selectedProgram.sessions.length

@@ -1,5 +1,6 @@
 import React, { useCallback } from 'react'
 import type { TabId } from '../../types'
+import { IconHome, IconDumbbell, IconBowl, IconChart, IconUser } from '../ui/Icons'
 
 interface BottomNavProps {
   tab: TabId
@@ -11,15 +12,15 @@ const TAB_IDS: TabId[] = ['home', 'train', 'nutrition', 'scouter', 'profile']
 
 const items: Array<{
   id: TabId
-  icon: string
+  icon: React.FC<{ size?: number }>
   label: string
   ariaLabel: string
 }> = [
-  { id: 'home', icon: '🏠', label: 'Accueil', ariaLabel: 'Accueil' },
-  { id: 'train', icon: '💪', label: 'Training', ariaLabel: 'Entrainement' },
-  { id: 'nutrition', icon: '🍽️', label: 'Nutrition', ariaLabel: 'Nutrition' },
-  { id: 'scouter', icon: '📊', label: 'Stats', ariaLabel: 'Statistiques' },
-  { id: 'profile', icon: '👤', label: 'Profil', ariaLabel: 'Profil' },
+  { id: 'home', icon: IconHome, label: 'Accueil', ariaLabel: 'Accueil' },
+  { id: 'train', icon: IconDumbbell, label: 'Training', ariaLabel: 'Entra\u00EEnement' },
+  { id: 'nutrition', icon: IconBowl, label: 'Nutrition', ariaLabel: 'Nutrition' },
+  { id: 'scouter', icon: IconChart, label: 'Stats', ariaLabel: 'Statistiques' },
+  { id: 'profile', icon: IconUser, label: 'Profil', ariaLabel: 'Profil' },
 ]
 
 export const BottomNav: React.FC<BottomNavProps> = React.memo(
@@ -37,7 +38,7 @@ export const BottomNav: React.FC<BottomNavProps> = React.memo(
           onChange(prev)
         }
       },
-      [tab, onChange]
+      [tab, onChange],
     )
 
     return (
@@ -47,7 +48,7 @@ export const BottomNav: React.FC<BottomNavProps> = React.memo(
         aria-label="Navigation principale"
         onKeyDown={handleKeyDown}
       >
-        {items.map(({ id, icon, label, ariaLabel }) => (
+        {items.map(({ id, icon: Icon, label, ariaLabel }) => (
           <button
             key={id}
             className={`nav-item ${tab === id ? 'nav-item--active' : ''}`}
@@ -60,11 +61,9 @@ export const BottomNav: React.FC<BottomNavProps> = React.memo(
             tabIndex={tab === id ? 0 : -1}
             style={{ position: 'relative' }}
           >
-            <span
-              className="nav-icon"
-              aria-hidden="true"
-              dangerouslySetInnerHTML={{ __html: icon }}
-            />
+            <span className="nav-icon" aria-hidden="true">
+              <Icon size={22} />
+            </span>
             {id === 'train' && restTimer > 0 && (
               <span
                 style={{
@@ -93,5 +92,5 @@ export const BottomNav: React.FC<BottomNavProps> = React.memo(
         ))}
       </nav>
     )
-  }
+  },
 )

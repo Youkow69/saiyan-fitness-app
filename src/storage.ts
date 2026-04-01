@@ -8,6 +8,13 @@ export function loadState(): AppState | null {
     if (!raw) return null
     const parsed = JSON.parse(raw)
     if (!parsed || typeof parsed !== 'object') return null
+    if (!Array.isArray(parsed.workouts)) parsed.workouts = []
+    if (!Array.isArray(parsed.foodEntries)) parsed.foodEntries = []
+    if (!Array.isArray(parsed.bodyweightEntries)) parsed.bodyweightEntries = []
+    if (!Array.isArray(parsed.customRoutines)) parsed.customRoutines = []
+    if (!Array.isArray(parsed.savedMeals)) parsed.savedMeals = []
+    if (typeof parsed.completedDailyQuests !== 'object' || parsed.completedDailyQuests === null) parsed.completedDailyQuests = {}
+    if (typeof parsed.programCursor !== 'object' || parsed.programCursor === null) parsed.programCursor = {}
     return parsed as AppState
   } catch (e) {
     console.warn('[Saiyan] Failed to load state:', e)

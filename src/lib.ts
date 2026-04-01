@@ -237,8 +237,8 @@ export const TRANSFORMATIONS: Transformation[] = [
     image: 'images/goku_ssj.png',
     powerThreshold: 2000,
     quests: [
-      { id: 'ssj_q1', name: "L'Eveil de la Rage", description: 'Complete 5 seances', requirement: (s) => s.workouts.length, target: 5 },
-      { id: 'ssj_q2', name: 'Depasse tes Limites', description: 'Souleve 1 000 kg au total', requirement: (s) => s.workouts.reduce((t, w) => t + getWorkoutVolume(w), 0), target: 1000 },
+      { id: 'ssj_q1', name: "L'Eveil de la Rage", description: 'Complete 5 séances', requirement: (s) => s.workouts.length, target: 5 },
+      { id: 'ssj_q2', name: 'Dépasse tes Limites', description: 'Soulevé 1 000 kg au total', requirement: (s) => s.workouts.reduce((t, w) => t + getWorkoutVolume(w), 0), target: 1000 },
       { id: 'ssj_q3', name: 'Premier Sang', description: 'Bats 1 record personnel', requirement: (s) => countPRs(s), target: 1 },
       { id: 'ssj_daily', name: 'Discipline Saiyan', description: 'Complete 20 daily quests', requirement: (s) => countCompletedDailyQuests(s), target: 20 },
     ],
@@ -250,8 +250,8 @@ export const TRANSFORMATIONS: Transformation[] = [
     image: 'images/goku_ssj2.png',
     powerThreshold: 8000,
     quests: [
-      { id: 'ssj2_q1', name: 'Depasse ton Pere', description: 'Complete 15 seances', requirement: (s) => s.workouts.length, target: 15 },
-      { id: 'ssj2_q2', name: 'Entrainement des Cell Games', description: 'Souleve 5 000 kg au total', requirement: (s) => s.workouts.reduce((t, w) => t + getWorkoutVolume(w), 0), target: 5000 },
+      { id: 'ssj2_q1', name: 'Dépasse ton Pere', description: 'Complete 15 séances', requirement: (s) => s.workouts.length, target: 15 },
+      { id: 'ssj2_q2', name: 'Entraînement des Cell Games', description: 'Soulevé 5 000 kg au total', requirement: (s) => s.workouts.reduce((t, w) => t + getWorkoutVolume(w), 0), target: 5000 },
       { id: 'ssj2_q3', name: 'Coups de Foudre', description: 'Bats 5 records personnels', requirement: (s) => countPRs(s), target: 5 },
       { id: 'ssj2_q4', name: 'Guerrier 7 Jours', description: 'Atteins une serie de 7 jours', requirement: (s) => getStreak(s), target: 7 },
       { id: 'ssj2_daily', name: 'Habitude de Champion', description: 'Complete 60 daily quests', requirement: (s) => countCompletedDailyQuests(s), target: 60 },
@@ -264,11 +264,11 @@ export const TRANSFORMATIONS: Transformation[] = [
     image: 'images/goku_ssj3.png',
     powerThreshold: 25000,
     quests: [
-      { id: 'ssj3_q1', name: 'Au-dela de la Limite', description: 'Complete 30 seances', requirement: (s) => s.workouts.length, target: 30 },
-      { id: 'ssj3_q2', name: 'Puissance du Genkidama', description: 'Souleve 15 000 kg au total', requirement: (s) => s.workouts.reduce((t, w) => t + getWorkoutVolume(w), 0), target: 15000 },
+      { id: 'ssj3_q1', name: 'Au-dela de la Limite', description: 'Complete 30 séances', requirement: (s) => s.workouts.length, target: 30 },
+      { id: 'ssj3_q2', name: 'Puissance du Genkidama', description: 'Soulevé 15 000 kg au total', requirement: (s) => s.workouts.reduce((t, w) => t + getWorkoutVolume(w), 0), target: 15000 },
       { id: 'ssj3_q3', name: 'Briseur de Records', description: 'Bats 15 records personnels', requirement: (s) => countPRs(s), target: 15 },
-      { id: 'ssj3_q4', name: 'Roi de la Regularite', description: 'Serie de 14 jours', requirement: (s) => getStreak(s), target: 14 },
-      { id: 'ssj3_daily', name: 'Regularite Absolue', description: 'Complete 150 daily quests', requirement: (s) => countCompletedDailyQuests(s), target: 150 },
+      { id: 'ssj3_q4', name: 'Roi de la Régularité', description: 'Série de 14 jours', requirement: (s) => getStreak(s), target: 14 },
+      { id: 'ssj3_daily', name: 'Régularité Absolue', description: 'Complete 150 daily quests', requirement: (s) => countCompletedDailyQuests(s), target: 150 },
     ],
   },
   {
@@ -278,10 +278,10 @@ export const TRANSFORMATIONS: Transformation[] = [
     image: 'images/goku_god.png',
     powerThreshold: 60000,
     quests: [
-      { id: 'god_q1', name: 'Rituel des Saiyans', description: 'Complete 50 seances', requirement: (s) => s.workouts.length, target: 50 },
-      { id: 'god_q2', name: 'Entrainement Divin', description: 'Souleve 40 000 kg au total', requirement: (s) => s.workouts.reduce((t, w) => t + getWorkoutVolume(w), 0), target: 40000 },
+      { id: 'god_q1', name: 'Rituel des Saiyans', description: 'Complete 50 séances', requirement: (s) => s.workouts.length, target: 50 },
+      { id: 'god_q2', name: 'Entraînement Divin', description: 'Soulevé 40 000 kg au total', requirement: (s) => s.workouts.reduce((t, w) => t + getWorkoutVolume(w), 0), target: 40000 },
       { id: 'god_q3', name: 'Records Divins', description: 'Bats 30 records personnels', requirement: (s) => countPRs(s), target: 30 },
-      { id: 'god_q4', name: 'Volonte de Fer', description: 'Serie de 30 jours', requirement: (s) => getStreak(s), target: 30 },
+      { id: 'god_q4', name: 'Volonte de Fer', description: 'Série de 30 jours', requirement: (s) => getStreak(s), target: 30 },
       { id: 'god_daily', name: 'Rituel Divin', description: 'Complete 300 daily quests', requirement: (s) => countCompletedDailyQuests(s), target: 300 },
     ],
   },
@@ -292,11 +292,11 @@ export const TRANSFORMATIONS: Transformation[] = [
     image: 'images/goku_ssj_blue.png',
     powerThreshold: 150000,
     quests: [
-      { id: 'blue_q1', name: "Camp d'Entrainement de Whis", description: 'Complete 100 seances', requirement: (s) => s.workouts.length, target: 100 },
-      { id: 'blue_q2', name: 'Puissance Universelle', description: 'Souleve 100 000 kg au total', requirement: (s) => s.workouts.reduce((t, w) => t + getWorkoutVolume(w), 0), target: 100000 },
+      { id: 'blue_q1', name: "Camp d'Entraînement de Whis", description: 'Complete 100 séances', requirement: (s) => s.workouts.length, target: 100 },
+      { id: 'blue_q2', name: 'Puissance Universelle', description: 'Soulevé 100 000 kg au total', requirement: (s) => s.workouts.reduce((t, w) => t + getWorkoutVolume(w), 0), target: 100000 },
       { id: 'blue_q3', name: 'Inarretable', description: 'Bats 50 records personnels', requirement: (s) => countPRs(s), target: 50 },
-      { id: 'blue_q4', name: '60 Jours de Combat', description: 'Serie de 60 jours', requirement: (s) => getStreak(s), target: 60 },
-      { id: 'blue_daily', name: 'Ki Divin Maitrise', description: 'Complete 500 daily quests', requirement: (s) => countCompletedDailyQuests(s), target: 500 },
+      { id: 'blue_q4', name: '60 Jours de Combat', description: 'Série de 60 jours', requirement: (s) => getStreak(s), target: 60 },
+      { id: 'blue_daily', name: 'Ki Divin Maîtrise', description: 'Complete 500 daily quests', requirement: (s) => countCompletedDailyQuests(s), target: 500 },
     ],
   },
   {
@@ -306,10 +306,10 @@ export const TRANSFORMATIONS: Transformation[] = [
     image: 'images/goku_kaioken.png',
     powerThreshold: 350000,
     quests: [
-      { id: 'kk_q1', name: 'Maitrise du Kaioken', description: 'Complete 80 seances', requirement: (s) => s.workouts.length, target: 80 },
-      { id: 'kk_q2', name: 'Surcharge Totale', description: 'Souleve 80 000 kg au total', requirement: (s) => s.workouts.reduce((t, w) => t + getWorkoutVolume(w), 0), target: 80000 },
-      { id: 'kk_q3', name: 'Depassement x20', description: 'Bats 40 records personnels', requirement: (s) => countPRs(s), target: 40 },
-      { id: 'kk_q4', name: 'Endurance Kaioken', description: 'Serie de 45 jours', requirement: (s) => getStreak(s), target: 45 },
+      { id: 'kk_q1', name: 'Maîtrise du Kaioken', description: 'Complete 80 séances', requirement: (s) => s.workouts.length, target: 80 },
+      { id: 'kk_q2', name: 'Surcharge Totale', description: 'Soulevé 80 000 kg au total', requirement: (s) => s.workouts.reduce((t, w) => t + getWorkoutVolume(w), 0), target: 80000 },
+      { id: 'kk_q3', name: 'Dépassement x20', description: 'Bats 40 records personnels', requirement: (s) => countPRs(s), target: 40 },
+      { id: 'kk_q4', name: 'Endurance Kaioken', description: 'Série de 45 jours', requirement: (s) => getStreak(s), target: 45 },
       { id: 'kk_daily', name: 'Corps en Feu', description: 'Complete 400 daily quests', requirement: (s) => countCompletedDailyQuests(s), target: 400 },
     ],
   },
@@ -320,10 +320,10 @@ export const TRANSFORMATIONS: Transformation[] = [
     image: 'images/goku_ui_sign.png',
     powerThreshold: 650000,
     quests: [
-      { id: 'ui_q1', name: 'Tournoi du Pouvoir', description: 'Complete 200 seances', requirement: (s) => s.workouts.length, target: 200 },
-      { id: 'ui_q2', name: 'Mouvement Autonome', description: 'Souleve 250 000 kg au total', requirement: (s) => s.workouts.reduce((t, w) => t + getWorkoutVolume(w), 0), target: 250000 },
+      { id: 'ui_q1', name: 'Tournoi du Pouvoir', description: 'Complete 200 séances', requirement: (s) => s.workouts.length, target: 200 },
+      { id: 'ui_q2', name: 'Mouvement Autonome', description: 'Soulevé 250 000 kg au total', requirement: (s) => s.workouts.reduce((t, w) => t + getWorkoutVolume(w), 0), target: 250000 },
       { id: 'ui_q3', name: 'Statut Legendaire', description: 'Bats 100 records personnels', requirement: (s) => countPRs(s), target: 100 },
-      { id: 'ui_q4', name: '90 Jours Sans Faille', description: 'Serie de 90 jours', requirement: (s) => getStreak(s), target: 90 },
+      { id: 'ui_q4', name: '90 Jours Sans Faille', description: 'Série de 90 jours', requirement: (s) => getStreak(s), target: 90 },
       { id: 'ui_daily', name: 'Instinct Pur', description: 'Complete 1,000 daily quests', requirement: (s) => countCompletedDailyQuests(s), target: 1000 },
     ],
   },
@@ -334,11 +334,11 @@ export const TRANSFORMATIONS: Transformation[] = [
     image: 'images/goku_mui.png',
     powerThreshold: 1500000,
     quests: [
-      { id: 'mui_q1', name: 'Maitre de Soi', description: 'Complete 365 seances', requirement: (s) => s.workouts.length, target: 365 },
-      { id: 'mui_q2', name: 'Au-dela des Dieux', description: 'Souleve 500 000 kg au total', requirement: (s) => s.workouts.reduce((t, w) => t + getWorkoutVolume(w), 0), target: 500000 },
+      { id: 'mui_q1', name: 'Maître de Soi', description: 'Complete 365 séances', requirement: (s) => s.workouts.length, target: 365 },
+      { id: 'mui_q2', name: 'Au-dela des Dieux', description: 'Soulevé 500 000 kg au total', requirement: (s) => s.workouts.reduce((t, w) => t + getWorkoutVolume(w), 0), target: 500000 },
       { id: 'mui_q3', name: 'Transcendance', description: 'Bats 200 records personnels', requirement: (s) => countPRs(s), target: 200 },
-      { id: 'mui_q4', name: 'Guerrier 1 An', description: 'Serie de 365 jours', requirement: (s) => getStreak(s), target: 365 },
-      { id: 'mui_daily', name: 'Maitrise Totale', description: 'Complete 2,000 daily quests', requirement: (s) => countCompletedDailyQuests(s), target: 2000 },
+      { id: 'mui_q4', name: 'Guerrier 1 An', description: 'Série de 365 jours', requirement: (s) => getStreak(s), target: 365 },
+      { id: 'mui_daily', name: 'Maîtrise Totale', description: 'Complete 2,000 daily quests', requirement: (s) => countCompletedDailyQuests(s), target: 2000 },
     ],
   },
 ]
@@ -535,7 +535,7 @@ export function getMesocycleStatus(state: AppState): { label: string; detail: st
   }
 
   if (totalWorkouts === 0) {
-    return { label: 'Debut du cycle', detail: 'Commence ta premiere seance pour lancer le mesocycle', color: 'var(--muted)', weekNumber: 0 }
+    return { label: 'Debut du cycle', detail: 'Commence ta premiere séance pour lancer le mesocycle', color: 'var(--muted)', weekNumber: 0 }
   }
 
   const firstWorkoutDate = new Date(state.workouts[0].date)
@@ -557,14 +557,14 @@ export function getMesocycleStatus(state: AppState): { label: string; detail: st
 // ── Daily Quest System ────────────────────────────────────────────────────────
 
 export const DAILY_QUESTS: DailyQuest[] = [
-  { id: 'steps',    name: '10 000 pas',        description: "Marche 10 000 pas aujourd'hui",        icon: '|>', target: 10000, unit: 'pas',    category: 'activity'  },
-  { id: 'water',    name: 'Hydratation',        description: "Bois 2L d'eau",                        icon: 'H2O', target: 8,     unit: 'verres', category: 'nutrition' },
-  { id: 'protein',  name: 'Proteines',          description: 'Atteins ton objectif proteines',       icon: 'P',  target: 100,   unit: '%',      category: 'nutrition' },
-  { id: 'calories', name: 'Calories',           description: 'Reste dans ta cible calorique (±10%)', icon: 'C',  target: 100,   unit: '%',      category: 'nutrition' },
-  { id: 'training', name: 'Entrainement',       description: 'Complete ta seance programmee',        icon: 'T',  target: 1,     unit: 'seance', category: 'training'  },
-  { id: 'sleep',    name: 'Sommeil 7h+',        description: 'Dors au moins 7 heures',               icon: 'Z',  target: 7,     unit: 'heures', category: 'recovery'  },
-  { id: 'stretch',  name: 'Etirements',         description: '10 min d\'etirements ou mobilite',     icon: 'S',  target: 10,    unit: 'min',    category: 'recovery'  },
-  { id: 'no_junk',  name: 'Clean Eating',       description: "Pas de junk food aujourd'hui",         icon: 'OK', target: 1,     unit: 'jour',   category: 'nutrition' },
+  { id: 'steps',    name: '10 000 pas',        description: "Marche 10 000 pas aujourd'hui",              icon: '👟', target: 10000, unit: 'pas',     category: 'activity'  },
+  { id: 'water',    name: 'Hydratation',        description: "Bois 2L d'eau",                              icon: '💧', target: 8,     unit: 'verres',  category: 'nutrition' },
+  { id: 'protein',  name: 'Protéines',          description: 'Atteins ton objectif protéines',             icon: '🥩', target: 100,   unit: '%',       category: 'nutrition' },
+  { id: 'calories', name: 'Calories',           description: 'Reste dans ta cible calorique (±10%)',       icon: '🔥', target: 100,   unit: '%',       category: 'nutrition' },
+  { id: 'training', name: 'Entraînement',       description: 'Complète ta séance programmée',              icon: '💪', target: 1,     unit: 'séance',  category: 'training'  },
+  { id: 'sleep',    name: 'Sommeil 7h+',        description: 'Dors au moins 7 heures',                     icon: '😴', target: 7,     unit: 'heures',  category: 'recovery'  },
+  { id: 'stretch',  name: 'Étirements',         description: "10 min d'étirements ou mobilité",            icon: '🧘', target: 10,    unit: 'min',     category: 'recovery'  },
+  { id: 'no_junk',  name: 'Alimentation saine', description: "Pas de junk food aujourd'hui",               icon: '🥗', target: 1,     unit: 'jour',    category: 'nutrition' },
 ]
 
 export function countCompletedDailyQuests(state: AppState): number {
@@ -603,7 +603,7 @@ export function generateMainObjectives(state: AppState): MainObjective[] {
   const objectives: MainObjective[] = []
 
   objectives.push({
-    id: 'first_month', name: '30 Jours de Feu', description: 'Enchaine les entrainements pendant 30 jours',
+    id: 'first_month', name: '30 Jours de Feu', description: 'Enchaine les entraînements pendant 30 jours',
     icon: 'F', completed: false,
     milestones: [
       { description: '7 jours', target: 7, unit: 'jours', check: s => getStreak(s) },
@@ -613,7 +613,7 @@ export function generateMainObjectives(state: AppState): MainObjective[] {
   })
 
   objectives.push({
-    id: 'volume_master', name: 'Maitre du Volume', description: 'Accumule du volume total a la barre',
+    id: 'volume_master', name: 'Maître du Volume', description: 'Accumule du volume total a la barre',
     icon: 'V', completed: false,
     milestones: [
       { description: '10 000 kg', target: 10000, unit: 'kg', check: s => s.workouts.reduce((t, w) => t + getWorkoutVolume(w), 0) },
@@ -629,15 +629,15 @@ export function generateMainObjectives(state: AppState): MainObjective[] {
       id: 'weak_points', name: 'Corriger les Faiblesses', description: `Focus: ${answers.weakPoints.join(', ')}`,
       icon: 'W', completed: false,
       milestones: [
-        { description: '20 seances avec focus', target: 20, unit: 'seances', check: s => s.workouts.length },
-        { description: '40 seances avec focus', target: 40, unit: 'seances', check: s => s.workouts.length },
+        { description: '20 séances avec focus', target: 20, unit: 'séances', check: s => s.workouts.length },
+        { description: '40 séances avec focus', target: 40, unit: 'séances', check: s => s.workouts.length },
       ],
     })
   }
 
   if (answers.currentCardio === 'none' || answers.currentCardio === 'light') {
     objectives.push({
-      id: 'cardio_boost', name: 'Cardio Warrior', description: 'Ameliore ton cardio avec des pas quotidiens',
+      id: 'cardio_boost', name: 'Cardio Warrior', description: 'Améliore ton cardio avec des pas quotidiens',
       icon: 'C', completed: false,
       milestones: [
         { description: '7 jours a 10K pas', target: 7, unit: 'jours', check: s => (s.dailyQuestProgress ?? []).filter(d => (d.quests['steps'] ?? 0) >= 10000).length },
@@ -711,11 +711,11 @@ export function getPrimaryRecommendation(state: AppState) {
   }
 
   if (state.profile && weeklyWorkouts.length < state.profile.trainingDaysPerWeek) {
-    return `Complete ${state.profile.trainingDaysPerWeek - weeklyWorkouts.length} seance(s) de plus cette semaine pour rester dans ta Saga.`
+    return `Complete ${state.profile.trainingDaysPerWeek - weeklyWorkouts.length} séance(s) de plus cette semaine pour rester dans ta Saga.`
   }
 
   if (state.targets && nutrition.protein < state.targets.protein * 0.85) {
-    return 'Les proteines sont en retard aujourd\'hui. Ajoute un repas proteine ou un shake post-seance.'
+    return 'Les proteines sont en retard aujourd\'hui. Ajoute un repas proteine ou un shake post-séance.'
   }
 
   const weeklyVolume = weeklyWorkouts.reduce(
@@ -723,7 +723,7 @@ export function getPrimaryRecommendation(state: AppState) {
     0,
   )
   if (weeklyVolume < 4000) {
-    return 'Volume d\'entrainement hebdomadaire faible. Pousse tes mouvements principaux et finis tes accessoires.'
+    return 'Volume d\'entraînement hebdomadaire faible. Pousse tes mouvements principaux et finis tes accessoires.'
   }
 
   return 'Recuperation et regularite au top. Continue la progression lente, propre et repeatable.'

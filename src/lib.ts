@@ -30,6 +30,7 @@ const KCAL_PER_KG_BODY_MASS = 7700
 const ADAPTIVE_TDEE_MIN     = 1200
 const ADAPTIVE_TDEE_MAX     = 5000
 const ADAPTIVE_WINDOW_DAYS  = 14
+const SECONDARY_MUSCLE_FACTOR = 0.5
 
 const activityMultipliers: Record<ActivityLevel, number> = {
   sedentary: 1.2,
@@ -50,8 +51,9 @@ export function daysAgoIso(n: number): string {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
 }
 
-export function makeId(prefix: string) {
-  return `${prefix}_${Math.random().toString(36).slice(2, 10)}`
+export function makeId(prefix?: string): string {
+  const id = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2, 10) + Math.random().toString(36).slice(2, 10)
+  return prefix ? `${prefix}_${id}` : id
 }
 
 export function startOfWeekIso() {
@@ -131,12 +133,14 @@ export function formatNumber(value: number) {
 }
 
 export function estimate1Rm(weight: number, reps: number) {
+  if (isNaN(weight) || isNaN(reps)) return 0
   if (weight <= 0 || reps <= 0) return 0
   if (reps > 30 || weight > 1000) return 0
   return weight * (1 + reps / 30)
 }
 
 export function setVolume(weight: number, reps: number): number {
+  if (isNaN(weight) || isNaN(reps)) return 0
   if (weight < 0 || reps <= 0) return 0
   return Math.max(0, weight * reps)
 }
@@ -151,6 +155,10 @@ export function getWorkoutVolume(workout: WorkoutLog) {
       ),
     0,
   )
+}
+
+export function getTotalVolume(workouts: WorkoutLog[]): number {
+  return workouts.reduce((t, w) => t + getWorkoutVolume(w), 0)
 }
 
 export function getWeeklyWorkouts(workouts: WorkoutLog[]) {
@@ -360,7 +368,7 @@ export function getStreak(state: AppState): number {
     const d1 = new Date(dates[i] + 'T12:00:00')
     const d2 = new Date(dates[i + 1] + 'T12:00:00')
     const diff = (d1.getTime() - d2.getTime()) / 86400000
-    if (diff <= 2) streak++
+    if (diff <= 1) streak++
     else break
   }
   return streak
@@ -427,7 +435,7 @@ export function getWeeklySetsByMuscle(state: AppState): MuscleVolumeTarget[] {
         setCount.set(m, (setCount.get(m) ?? 0) + workingSets)
       })
       exercise.secondaryMuscles.forEach(m => {
-        setCount.set(m, (setCount.get(m) ?? 0) + Math.round(workingSets * 0.5))
+        setCount.set(m, (setCount.get(m) ?? 0) + Math.round(workingSets * SECONDARY_MUSCLE_FACTOR))
       })
     })
   })
@@ -683,7 +691,7 @@ export function getVolumeByMuscle(workouts: WorkoutLog[]) {
         volumeMap.set(muscle, (volumeMap.get(muscle) ?? 0) + rawVolume)
       })
       exercise.secondaryMuscles.forEach((muscle) => {
-        volumeMap.set(muscle, (volumeMap.get(muscle) ?? 0) + rawVolume * 0.45)
+        volumeMap.set(muscle, (volumeMap.get(muscle) ?? 0) + rawVolume * SECONDARY_MUSCLE_FACTOR)
       })
     })
   })

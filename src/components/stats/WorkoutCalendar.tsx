@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { todayIso, getStreak } from '../../lib'
 
 export interface CalendarWorkoutLog {
   id: string
@@ -32,7 +33,7 @@ function getIntensityLevel(volume: number, maxVolume: number): number {
 }
 
 const INTENSITY_COLORS: Record<number, string> = {
-  0: '#16213e',
+  0: 'var(--border)',
   1: 'rgba(237,137,54,0.2)',
   2: 'rgba(237,137,54,0.4)',
   3: 'rgba(237,137,54,0.6)',
@@ -41,38 +42,6 @@ const INTENSITY_COLORS: Record<number, string> = {
 }
 
 const DAY_LABELS = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim']
-
-function calculateStreak(workoutDates: Set<string>): number {
-  let streak = 0
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
-
-  // Check if today or yesterday had a workout (allow 1 day gap for current day)
-  const todayStr = today.toISOString().split('T')[0]
-  const yesterday = new Date(today)
-  yesterday.setDate(yesterday.getDate() - 1)
-  const yesterdayStr = yesterday.toISOString().split('T')[0]
-
-  let checkDate: Date
-  if (workoutDates.has(todayStr)) {
-    checkDate = new Date(today)
-  } else if (workoutDates.has(yesterdayStr)) {
-    checkDate = new Date(yesterday)
-  } else {
-    return 0
-  }
-
-  while (true) {
-    const dateStr = checkDate.toISOString().split('T')[0]
-    if (workoutDates.has(dateStr)) {
-      streak++
-      checkDate.setDate(checkDate.getDate() - 1)
-    } else {
-      break
-    }
-  }
-  return streak
-}
 
 export function WorkoutCalendar({ workouts }: { workouts: CalendarWorkoutLog[] }) {
   const [selectedDay, setSelectedDay] = useState<string | null>(null)
@@ -108,7 +77,7 @@ export function WorkoutCalendar({ workouts }: { workouts: CalendarWorkoutLog[] }
 
       for (let day = 1; day <= daysInMonth; day++) {
         const date = new Date(year, month, day)
-        const dateStr = date.toISOString().split('T')[0]
+        const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
         const dayOfWeek = date.getDay() === 0 ? 6 : date.getDay() - 1 // Mon=0, Sun=6
         const data = dayMap[dateStr]
         days.push({
@@ -125,22 +94,24 @@ export function WorkoutCalendar({ workouts }: { workouts: CalendarWorkoutLog[] }
     return { months, dayMap, maxVolume, workoutDates, totalWorkouts: workouts.length }
   }, [workouts])
 
-  const streak = useMemo(() => calculateStreak(workoutDates), [workoutDates])
+  const streak = useMemo(() => getStreak(workoutDates), [workoutDates])
 
   const selectedDayData = selectedDay ? dayMap[selectedDay] : null
   const selectedWorkouts = selectedDay
     ? workouts.filter((w) => w.date.split('T')[0] === selectedDay)
     : []
 
+  const todayStr = todayIso()
+
   return (
     <div
       style={{
-        background: '#1a1a2e',
+        background: 'var(--bg-card)',
         borderRadius: 16,
         padding: 24,
         maxWidth: 700,
         margin: '0 auto',
-        color: '#e2e8f0',
+        color: 'var(--text)',
         fontFamily: "'Segoe UI', sans-serif",
       }}
     >
@@ -154,7 +125,7 @@ export function WorkoutCalendar({ workouts }: { workouts: CalendarWorkoutLog[] }
           WebkitTextFillColor: 'transparent',
         }}
       >
-        Calendrier d&apos;Entrainement
+        Calendrier d'Entrainement
       </h2>
 
       {/* Stats row */}
@@ -169,29 +140,29 @@ export function WorkoutCalendar({ workouts }: { workouts: CalendarWorkoutLog[] }
       >
         <div
           style={{
-            background: '#16213e',
+            background: 'var(--border)',
             borderRadius: 10,
             padding: '10px 20px',
             textAlign: 'center',
           }}
         >
           <div style={{ fontSize: 24, fontWeight: 800, color: '#ed8936' }}>{streak}</div>
-          <div style={{ fontSize: 11, color: '#a0aec0' }}>Jours de suite</div>
+          <div style={{ fontSize: 11, color: 'var(--text-secondary)' }}>Jours de suite</div>
         </div>
         <div
           style={{
-            background: '#16213e',
+            background: 'var(--border)',
             borderRadius: 10,
             padding: '10px 20px',
             textAlign: 'center',
           }}
         >
           <div style={{ fontSize: 24, fontWeight: 800, color: '#3182ce' }}>{totalWorkouts}</div>
-          <div style={{ fontSize: 11, color: '#a0aec0' }}>Seances (3 mois)</div>
+          <div style={{ fontSize: 11, color: 'var(--text-secondary)' }}>Seances (3 mois)</div>
         </div>
         <div
           style={{
-            background: '#16213e',
+            background: 'var(--border)',
             borderRadius: 10,
             padding: '10px 20px',
             textAlign: 'center',
@@ -200,7 +171,7 @@ export function WorkoutCalendar({ workouts }: { workouts: CalendarWorkoutLog[] }
           <div style={{ fontSize: 24, fontWeight: 800, color: '#38a169' }}>
             {workoutDates.size}
           </div>
-          <div style={{ fontSize: 11, color: '#a0aec0' }}>Jours actifs</div>
+          <div style={{ fontSize: 11, color: 'var(--text-secondary)' }}>Jours actifs</div>
         </div>
       </div>
 
@@ -211,7 +182,7 @@ export function WorkoutCalendar({ workouts }: { workouts: CalendarWorkoutLog[] }
 
         return (
           <div key={`${year}-${month}`} style={{ marginBottom: 20 }}>
-            <div style={{ fontSize: 13, fontWeight: 600, color: '#a0aec0', marginBottom: 8, textTransform: 'capitalize' }}>
+            <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 8, textTransform: 'capitalize' }}>
               {formatMonthLabel(year, month)}
             </div>
 
@@ -230,7 +201,7 @@ export function WorkoutCalendar({ workouts }: { workouts: CalendarWorkoutLog[] }
                   style={{
                     textAlign: 'center',
                     fontSize: 10,
-                    color: '#718096',
+                    color: 'var(--text-secondary)',
                     padding: '2px 0',
                   }}
                 >
@@ -255,8 +226,8 @@ export function WorkoutCalendar({ workouts }: { workouts: CalendarWorkoutLog[] }
               {days.map((day) => {
                 const level = getIntensityLevel(day.volume, maxVolume)
                 const isSelected = selectedDay === day.date
-                const isToday = day.date === new Date().toISOString().split('T')[0]
-                const isFuture = day.date > new Date().toISOString().split('T')[0]
+                const isToday = day.date === todayStr
+                const isFuture = day.date > todayStr
 
                 return (
                   <div
@@ -280,14 +251,14 @@ export function WorkoutCalendar({ workouts }: { workouts: CalendarWorkoutLog[] }
                       border: isSelected
                         ? '2px solid #f6ad55'
                         : isToday
-                          ? '2px solid #4a5568'
+                          ? '2px solid var(--text-secondary)'
                           : '2px solid transparent',
                       cursor: day.workoutCount > 0 && !isFuture ? 'pointer' : 'default',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       fontSize: 9,
-                      color: isFuture ? '#4a5568' : level > 0 ? '#fff' : '#4a5568',
+                      color: isFuture ? 'var(--text-secondary)' : level > 0 ? 'var(--text)' : 'var(--text-secondary)',
                       fontWeight: isToday ? 700 : 400,
                       transition: 'all 0.15s',
                       position: 'relative',
@@ -304,7 +275,7 @@ export function WorkoutCalendar({ workouts }: { workouts: CalendarWorkoutLog[] }
 
       {/* Legend */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 4, justifyContent: 'center', marginTop: 8 }}>
-        <span style={{ fontSize: 10, color: '#718096', marginRight: 4 }}>Moins</span>
+        <span style={{ fontSize: 10, color: 'var(--text-secondary)', marginRight: 4 }}>Moins</span>
         {[0, 1, 2, 3, 4, 5].map((level) => (
           <div
             key={level}
@@ -317,7 +288,7 @@ export function WorkoutCalendar({ workouts }: { workouts: CalendarWorkoutLog[] }
             }}
           />
         ))}
-        <span style={{ fontSize: 10, color: '#718096', marginLeft: 4 }}>Plus</span>
+        <span style={{ fontSize: 10, color: 'var(--text-secondary)', marginLeft: 4 }}>Plus</span>
       </div>
 
       {/* Selected day detail */}
@@ -325,7 +296,7 @@ export function WorkoutCalendar({ workouts }: { workouts: CalendarWorkoutLog[] }
         <div
           style={{
             marginTop: 16,
-            background: '#16213e',
+            background: 'var(--border)',
             borderRadius: 12,
             padding: 16,
             border: '1px solid #2d3748',
@@ -340,15 +311,15 @@ export function WorkoutCalendar({ workouts }: { workouts: CalendarWorkoutLog[] }
             })}
           </h4>
           <div style={{ display: 'flex', gap: 16, marginBottom: 8, fontSize: 13 }}>
-            <span style={{ color: '#a0aec0' }}>
-              Seances: <strong style={{ color: '#e2e8f0' }}>{selectedDayData.count}</strong>
+            <span style={{ color: 'var(--text-secondary)' }}>
+              Seances: <strong style={{ color: 'var(--text)' }}>{selectedDayData.count}</strong>
             </span>
-            <span style={{ color: '#a0aec0' }}>
-              Volume: <strong style={{ color: '#e2e8f0' }}>{Math.round(selectedDayData.volume)} kg</strong>
+            <span style={{ color: 'var(--text-secondary)' }}>
+              Volume: <strong style={{ color: 'var(--text)' }}>{Math.round(selectedDayData.volume)} kg</strong>
             </span>
           </div>
           {selectedWorkouts.map((w, i) => (
-            <div key={w.id} style={{ fontSize: 12, color: '#a0aec0', marginBottom: 4 }}>
+            <div key={w.id} style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 4 }}>
               Seance {i + 1}: {w.exercises.length} serie{w.exercises.length !== 1 ? 's' : ''}
             </div>
           ))}

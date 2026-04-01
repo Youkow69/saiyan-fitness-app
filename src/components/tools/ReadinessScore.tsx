@@ -7,7 +7,6 @@
 import { useMemo } from 'react'
 import { useAppState } from '../../context/AppContext'
 import { todayIso, daysAgoIso } from '../../lib'
-import type { ReadinessData } from './types_additions'
 
 // ---------------------------------------------------------------------------
 // Types

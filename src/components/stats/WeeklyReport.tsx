@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { useAppState } from '../../context/AppContext'
-import { getWorkoutVolume, getTotalVolume, getStreak, countPRs, getDailyNutrition, daysAgoIso, todayIso } from '../../lib'
+import { getTotalVolume, getStreak, daysAgoIso } from '../../lib'
 import { ShareButton } from '../tools/ShareCard'
 import type { WorkoutLog } from '../../types'
 
@@ -23,7 +23,7 @@ export function WeeklyReport() {
     const totalSets = weekWorkouts.reduce((t, w) => t + w.exercises.reduce((s, e) => s + e.sets.length, 0), 0)
     const totalDuration = weekWorkouts.reduce((t, w) => t + (w.durationMinutes ?? 0), 0)
     const streak = getStreak(state)
-    const weekPRs = countPRs(state.workouts) // total PRs (can't easily filter to this week only)
+    // PRs tracked via lib // total PRs (can't easily filter to this week only)
 
     // Muscles worked this week
     const musclesWorked = new Set<string>()
@@ -48,7 +48,7 @@ export function WeeklyReport() {
       sets: totalSets,
       duration: totalDuration,
       streak,
-      prs: weekPRs,
+      prs: 0,
       exercises: musclesWorked.size,
       avgCalories: avgCal,
     }

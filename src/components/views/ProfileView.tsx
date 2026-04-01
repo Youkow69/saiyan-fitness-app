@@ -66,13 +66,13 @@ export const ProfileView: React.FC<ProfileViewProps> = React.memo(
             </div>
           </div>
           <div className="profile-stats-row">
-            <div className="profile-stat"><span className="profile-stat-value">{state.workouts.length}</span><span className="profile-stat-label">Seances</span></div>
+            <div className="profile-stat"><span className="profile-stat-value">{state.workouts.length}</span><span className="profile-stat-label">Séances</span></div>
             <div className="profile-stat-divider" />
             <div className="profile-stat"><span className="profile-stat-value">{formatNumber(totalVolume)}</span><span className="profile-stat-label">Volume kg</span></div>
             <div className="profile-stat-divider" />
             <div className="profile-stat"><span className="profile-stat-value">{prCount}</span><span className="profile-stat-label">Records</span></div>
             <div className="profile-stat-divider" />
-            <div className="profile-stat"><span className="profile-stat-value">{streak}</span><span className="profile-stat-label">Serie 🔥</span></div>
+            <div className="profile-stat"><span className="profile-stat-value">{streak}</span><span className="profile-stat-label">Série 🔥</span></div>
           </div>
         </section>
 
@@ -121,7 +121,7 @@ export const ProfileView: React.FC<ProfileViewProps> = React.memo(
             if (w <= 0 && c <= 0 && a <= 0 && t <= 0) return
             const entry: MeasurementEntry = { id: makeId('measure'), date: todayIso(), waistCm: w, chestCm: c, armCm: a, thighCm: t }
             dispatch({ type: 'LOG_MEASUREMENT', payload: entry })
-            showToast('Mensurations sauvegardees', 'success')
+            showToast('Mensurations sauvegardées', 'success')
             setMeasurements({ waist: '', chest: '', arm: '', thigh: '' })
           }}>Sauvegarder</button>
         </section>

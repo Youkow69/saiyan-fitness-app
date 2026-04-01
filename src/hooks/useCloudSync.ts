@@ -1,9 +1,9 @@
 import { useCallback, useRef } from 'react'
-import { supabase } from './supabase'
+import { supabase } from '../supabase'
 import type { AppState } from '../types'
-import type { User } from '@supabase/supabase-js'
 
-export function useCloudSync(user: User | null) {
+
+export function useCloudSync(user: any) {
   const syncingRef = useRef(false)
 
   // Upload local state to cloud

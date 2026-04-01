@@ -2740,6 +2740,44 @@ function AppInner() {
     localStorage.setItem('sf_theme', theme)
   }, [theme])
 
+  // Saiyan-steps sync: read tracker data from localStorage
+  useEffect(() => {
+    const checkSync = () => {
+      try {
+        const raw = localStorage.getItem('saiyan_tracker_sync')
+        if (!raw) return
+        const sync = JSON.parse(raw)
+        if (sync.date !== todayIso()) return
+        const today = todayIso()
+        const existing = (state.dailyQuestProgress ?? []).find((d: { date: string }) => d.date === today)
+        // Auto-update step quest
+        if (sync.steps > 0) {
+          const currentSteps = existing?.quests['steps'] ?? 0
+          if (sync.steps > currentSteps) {
+            dispatch({ type: 'UPDATE_QUEST_PROGRESS', payload: { questId: 'steps', delta: sync.steps - currentSteps } })
+          }
+        }
+        // Auto-update water quest
+        if (sync.waterGlasses > 0) {
+          const currentWater = existing?.quests['water'] ?? 0
+          if (sync.waterGlasses > currentWater) {
+            dispatch({ type: 'UPDATE_QUEST_PROGRESS', payload: { questId: 'water', delta: sync.waterGlasses - currentWater } })
+          }
+        }
+        // Auto-update sleep quest
+        if (sync.sleepHours > 0) {
+          const currentSleep = existing?.quests['sleep'] ?? 0
+          if (sync.sleepHours > currentSleep) {
+            dispatch({ type: 'UPDATE_QUEST_PROGRESS', payload: { questId: 'sleep', delta: sync.sleepHours - currentSleep } })
+          }
+        }
+      } catch (e) { /* ignore parse errors */ }
+    }
+    checkSync()
+    const interval = setInterval(checkSync, 30000)
+    return () => clearInterval(interval)
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
   const selectedProgram = getProgramById(state.selectedProgramId)
   const nextIndex = state.programCursor[selectedProgram?.id ?? ''] ?? 0
   const nextSession =

@@ -24,6 +24,7 @@ import {
   todayIso,
 } from './lib'
 import { AppProvider, useAppState } from './context/AppContext'
+import { saveState } from './storage'
 import { ToastContainer, showToast } from './components/ui/Toast'
 import { ConfirmDialog } from './components/ui/ConfirmDialog'
 import { PlateCalculator } from './components/tools/PlateCalculator'
@@ -1388,7 +1389,7 @@ function DailyQuestsPanel({
                     gap: 6,
                   }}
                 >
-                  {isManual && !q.isComplete && q.id !== 'no_junk' && (
+                  {isManual && !q.isComplete && !['steps', 'water', 'sleep'].includes(q.id) && q.id !== 'no_junk' && (
                     <>
                       <button
                         type="button"
@@ -1427,6 +1428,9 @@ function DailyQuestsPanel({
                         +
                       </button>
                     </>
+                  )}
+                  {['steps', 'water', 'sleep'].includes(q.id) && !q.isComplete && (
+                    <span className="auto-badge" style={{ fontSize: '0.65rem' }}>SYNC</span>
                   )}
                   {(q.id === 'no_junk' || isAutoCalc) &&
                     !q.isComplete &&
@@ -1485,7 +1489,7 @@ function DailyQuestsPanel({
 // ── Main Objectives ───────────────────────────────────────────────────────────
 
 function MainObjectivesPanel({ state }: { state: AppState }) {
-  const objectives = useMemo(() => generateMainObjectives(state), [state])
+  const objectives = useMemo(() => generateMainObjectives(state), [state.workouts, state.bodyweightEntries, state.targets, state.foodEntries, state.profile])
   if (objectives.length === 0) return null
   return (
     <section className="hevy-card stack-md">
@@ -1637,7 +1641,7 @@ function MainObjectivesPanel({ state }: { state: AppState }) {
 // ── RP Volume Dashboard ───────────────────────────────────────────────────────
 
 function VolumeDashboard({ state }: { state: AppState }) {
-  const volumeTargets = useMemo(() => getWeeklySetsByMuscle(state), [state])
+  const volumeTargets = useMemo(() => getWeeklySetsByMuscle(state), [state.workouts])
   const statusColors = {
     none: 'var(--muted)',
     below_mev: 'var(--accent-red)',
@@ -1799,7 +1803,7 @@ function VolumeDashboard({ state }: { state: AppState }) {
 function AdaptiveTDEECard({ state }: { state: AppState }) {
   const { tdee, dailyDelta, status, hasEnoughData } = useMemo(
     () => getAdaptiveTDEEStatus(state),
-    [state]
+    [state.foodEntries, state.bodyweightEntries, state.profile, state.targets]
   )
   const todayNutrition = getDailyNutrition(state.foodEntries)
   const statusColor =
@@ -1879,15 +1883,15 @@ function HomeView({
   const { state, dispatch } = useAppState()
   const targets = state.targets!
   const nutrition = useMemo(() => getDailyNutrition(state.foodEntries), [state.foodEntries])
-  const tf = useMemo(() => getCurrentTransformationFull(state), [state])
+  const tf = useMemo(() => getCurrentTransformationFull(state), [state.workouts, state.bodyweightEntries, state.targets, state.foodEntries])
   const transformation = tf.current
   const weeklyWorkouts = useMemo(() => getWeeklyWorkouts(state.workouts), [state.workouts])
   const lastWorkout = state.workouts.length > 0 ? state.workouts[state.workouts.length - 1] : null
   const prCount = useMemo(() => countPRsFromWorkouts(state.workouts), [state.workouts])
-  const mesocycle = useMemo(() => getMesocycleStatus(state), [state])
-  const streak = useMemo(() => getStreak(state), [state])
-  const powerLevel = useMemo(() => getPowerLevel(state), [state])
-  const recommendation = useMemo(() => getPrimaryRecommendation(state), [state])
+  const mesocycle = useMemo(() => getMesocycleStatus(state), [state.workouts, state.sessionFeedback])
+  const streak = useMemo(() => getStreak(state), [state.workouts])
+  const powerLevel = useMemo(() => getPowerLevel(state), [state.workouts, state.bodyweightEntries, state.targets, state.foodEntries])
+  const recommendation = useMemo(() => getPrimaryRecommendation(state), [state.workouts, state.foodEntries, state.targets, state.profile, state.sessionFeedback])
 
   const selectedProgram = getProgramById(state.selectedProgramId)
   const nextIndex = state.programCursor[selectedProgram?.id ?? ''] ?? 0
@@ -1903,6 +1907,9 @@ function HomeView({
 
   return (
     <div className="page">
+      {/* Daily DBZ quote - top of page */}
+      <DailyQuote />
+
       {/* Hero power level card */}
       <section className="hevy-hero" style={{ borderColor: `${transformation.accent}44` }}>
         <div style={{ flex: 1 }}>
@@ -2002,9 +2009,6 @@ function HomeView({
         <ProgressBar label="Calories" value={nutrition.calories} target={targets.calories} accent="linear-gradient(90deg,#ffb400,#ff6a00)" />
         <ProgressBar label="Proteines" value={nutrition.protein} target={targets.protein} accent="linear-gradient(90deg,#00d4ff,#4fffb0)" />
       </section>
-
-      {/* Daily DBZ quote */}
-      <DailyQuote />
 
       <section className="hevy-card">
         <SectionTitle icon="🔍" label="Analyse Scouter" />
@@ -2157,12 +2161,25 @@ function TrainView({
         <div className="hero-badge" style={{ alignSelf: 'flex-start' }}>{selectedProgram.daysPerWeek} j/sem</div>
       </section>
 
-      <button className="libre-btn" onClick={onStartWorkout} type="button">
-        <span style={{ fontSize: '1.2rem' }}>+</span>
-        <span>Demarrer un Entrainement Libre</span>
+      {!activeWorkout && (
+        <section className="hevy-card stack-md">
+          <SectionTitle icon="🛠️" label="Outils" />
+          <details>
+            <summary style={{ cursor: 'pointer', fontSize: '0.85rem', color: 'var(--muted)', padding: '4px 0' }}>Chronometre & Calculateur de plaques</summary>
+            <div className="stack-md" style={{ marginTop: 12 }}>
+              <WorkoutTimer />
+              <PlateCalculator />
+            </div>
+          </details>
+        </section>
+      )}
+
+      <button className="secondary-btn" onClick={onStartWorkout} type="button" style={{ display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'center', width: '100%', padding: '12px 16px' }}>
+        <span style={{ fontSize: '1.2rem' }}>⚡</span>
+        <span>Seance rapide</span>
       </button>
 
-      <button className="libre-btn" onClick={() => setCreatingRoutine(true)} type="button">
+      <button className="primary-btn" onClick={() => setCreatingRoutine(true)} type="button" style={{ display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'center', width: '100%', padding: '14px 16px', fontSize: '1rem' }}>
         <span style={{ fontSize: '1.2rem' }}>➕</span>
         <span>Creer ma routine</span>
       </button>
@@ -2222,7 +2239,7 @@ function TrainView({
         </section>
       )}
 
-      <SectionTitle icon="📋" label="Seances du programme" />
+      <SectionTitle icon="📋" label="Seances pre-faites" />
 
       {selectedProgram.sessions.map((session, idx) => {
         const isNext = idx === nextIndex % selectedProgram.sessions.length
@@ -2299,17 +2316,64 @@ function NutritionView() {
   const [selectedFood, setSelectedFood] = useState(foods[0])
   const [grams, setGrams] = useState('100')
   const [category, setCategory] = useState<FoodEntry['category']>('lunch')
+  const [barcodeInput, setBarcodeInput] = useState('')
+  const [lookingUp, setLookingUp] = useState(false)
   const totals = useMemo(() => getDailyNutrition(state.foodEntries), [state.foodEntries])
-  const suggestions = useMemo(() => getRecommendedRecipes(state), [state])
+  const suggestions = useMemo(() => getRecommendedRecipes(state), [state.foodEntries, state.targets, state.profile])
 
   const addFood = (entry: FoodEntry) => {
     dispatch({ type: 'ADD_FOOD', payload: entry })
     showToast(`${entry.name} ajoute (+${entry.calories} kcal)`, 'success')
   }
 
+  const lookupBarcode = async (code: string) => {
+    if (!code.trim()) return
+    setLookingUp(true)
+    try {
+      const resp = await fetch(`https://world.openfoodfacts.org/api/v0/product/${code.trim()}.json`)
+      const data = await resp.json()
+      if (data.status === 1 && data.product) {
+        const p = data.product
+        const n = p.nutriments || {}
+        const name = p.product_name_fr || p.product_name || 'Produit inconnu'
+        const cal = Math.round(n['energy-kcal_100g'] || 0)
+        const prot = Math.round((n.proteins_100g || 0) * 10) / 10
+        const carb = Math.round((n.carbohydrates_100g || 0) * 10) / 10
+        const fat = Math.round((n.fat_100g || 0) * 10) / 10
+        addFood({
+          id: makeId('scan'),
+          date: todayIso(),
+          name,
+          category,
+          grams: 100,
+          calories: cal,
+          protein: prot,
+          carbs: carb,
+          fats: fat,
+        })
+        setBarcodeInput('')
+      } else {
+        showToast('Produit non trouve', 'error')
+      }
+    } catch {
+      showToast('Erreur de connexion', 'error')
+    }
+    setLookingUp(false)
+  }
+
   return (
     <div className="page">
       <AdaptiveTDEECard state={state} />
+      <section className="hevy-card stack-md">
+        <SectionTitle icon="📷" label="Scanner / Code-barres" />
+        <div className="inline-form">
+          <input value={barcodeInput} onChange={e => setBarcodeInput(e.target.value)} placeholder="Code-barres (ex: 3017620422003)" onKeyDown={e => e.key === 'Enter' && lookupBarcode(barcodeInput)} />
+          <button className="secondary-btn" onClick={() => lookupBarcode(barcodeInput)} type="button" disabled={lookingUp}>
+            {lookingUp ? '...' : 'Chercher'}
+          </button>
+        </div>
+        <p style={{ margin: 0, fontSize: '0.72rem', color: 'var(--muted)' }}>Utilise OpenFoodFacts pour trouver les valeurs nutritionnelles automatiquement.</p>
+      </section>
       <section className="hevy-card stack-md">
         <SectionTitle icon="🍽️" label="Nutrition aujourd'hui" />
         <ProgressBar label="Calories" value={totals.calories} target={state.targets?.calories ?? 1} accent="linear-gradient(90deg,#ffb400,#ff6a00)" />
@@ -2460,12 +2524,12 @@ function ProfileView({
   const [editingProfile, setEditingProfile] = useState(false)
   const [profileDraft, setProfileDraft] = useState(state.profile!)
 
-  const powerLevel = useMemo(() => getPowerLevel(state), [state])
+  const powerLevel = useMemo(() => getPowerLevel(state), [state.workouts, state.bodyweightEntries, state.targets, state.foodEntries])
   const transformation = getTransformation(powerLevel)
-  const streak = useMemo(() => getStreak(state), [state])
+  const streak = useMemo(() => getStreak(state), [state.workouts])
   const totalVolume = useMemo(() => state.workouts.reduce((s, w) => s + getWorkoutVolume(w), 0), [state.workouts])
   const prCount = useMemo(() => countPRsFromWorkouts(state.workouts), [state.workouts])
-  const tf = useMemo(() => getCurrentTransformationFull(state), [state])
+  const tf = useMemo(() => getCurrentTransformationFull(state), [state.workouts, state.bodyweightEntries, state.targets, state.foodEntries])
 
   return (
     <div className="page">
@@ -2619,9 +2683,6 @@ function ProfileView({
         </div>
       </section>
 
-      <PlateCalculator />
-      <WorkoutTimer />
-
       <p className="profile-footer">Propulse par Katrava ⚡</p>
     </div>
   )
@@ -2768,6 +2829,13 @@ function AppInner() {
     document.documentElement.setAttribute('data-theme', theme)
     localStorage.setItem('sf_theme', theme)
   }, [theme])
+
+  // Persist state on page unload
+  useEffect(() => {
+    const handleUnload = () => saveState(state)
+    window.addEventListener('beforeunload', handleUnload)
+    return () => window.removeEventListener('beforeunload', handleUnload)
+  }, [state])
 
   // Saiyan-steps sync: read tracker data from localStorage
   useEffect(() => {

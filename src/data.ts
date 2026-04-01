@@ -1,25 +1,14 @@
 import type {
-  Food,
   ProgramTemplate,
   Recipe,
   SavedMeal,
 } from './types'
 import { allExercises } from './data/exercises'
+import { allFoods } from './data/foods'
 
 export const exercises = allExercises
 
-export const foods: Food[] = [
-  { id: 'chicken', name: 'Blanc de poulet', servingGrams: 100, calories: 165, protein: 31, carbs: 0, fats: 4, tags: ['protein'] },
-  { id: 'rice', name: 'Riz cuit', servingGrams: 100, calories: 130, protein: 3, carbs: 28, fats: 0.3, tags: ['carb'] },
-  { id: 'oats', name: 'Flocons d\'avoine', servingGrams: 100, calories: 389, protein: 17, carbs: 66, fats: 7, tags: ['breakfast'] },
-  { id: 'banana', name: 'Banane', servingGrams: 100, calories: 89, protein: 1, carbs: 23, fats: 0.3, tags: ['fruit'] },
-  { id: 'salmon', name: 'Filet de saumon', servingGrams: 100, calories: 208, protein: 20, carbs: 0, fats: 13, tags: ['protein'] },
-  { id: 'greek_yogurt', name: 'Yaourt grec', servingGrams: 100, calories: 97, protein: 10, carbs: 4, fats: 5, tags: ['snack'] },
-  { id: 'egg', name: 'Oeufs entiers', servingGrams: 100, calories: 143, protein: 13, carbs: 1, fats: 10, tags: ['protein'] },
-  { id: 'potato', name: 'Patate douce', servingGrams: 100, calories: 86, protein: 2, carbs: 20, fats: 0.1, tags: ['carb'] },
-  { id: 'whey', name: 'Whey isolat', servingGrams: 30, calories: 116, protein: 25, carbs: 2, fats: 1, tags: ['protein'] },
-  { id: 'almonds', name: 'Amandes', servingGrams: 30, calories: 174, protein: 6, carbs: 6, fats: 15, tags: ['fat'] },
-]
+export const foods = allFoods
 
 export const recipes: Recipe[] = [
   { id: 'senzu_oats', name: 'Overnight oats Senzu', category: 'breakfast', prepMinutes: 8, calories: 480, protein: 34, carbs: 58, fats: 12, servings: 1, ingredients: ['80g flocons d\'avoine', '200g yaourt grec', 'fruits rouges'], steps: ['Mélanger', 'Réfrigérer', 'Déguster'], goalTags: ['muscle_gain', 'fat_loss', 'recomp', 'strength', 'endurance'] },

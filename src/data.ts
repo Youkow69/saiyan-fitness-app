@@ -1,30 +1,12 @@
 import type {
-  Exercise,
   Food,
   ProgramTemplate,
   Recipe,
   SavedMeal,
 } from './types'
+import { allExercises } from './data/exercises'
 
-export const exercises: Exercise[] = [
-  { id: 'bench_press', name: 'Développé couché', equipment: 'Barbell', pattern: 'Horizontal press', primaryMuscles: ['Chest'], secondaryMuscles: ['Shoulders', 'Triceps'], difficulty: 2, stimulusFatigue: 8, setupCues: ['Pieds bien à plat', 'Haut du dos contracté'], executionCues: ['Descente contrôlée', 'Poussée explosive'], alternatives: ['incline_db_press'] },
-  { id: 'incline_db_press', name: 'Développé incliné haltères', equipment: 'Dumbbells', pattern: 'Incline press', primaryMuscles: ['Chest'], secondaryMuscles: ['Shoulders', 'Triceps'], difficulty: 2, stimulusFatigue: 7, setupCues: ['Banc faible inclinaison'], executionCues: ['Monter sans hausser les épaules'], alternatives: ['bench_press'] },
-  { id: 'lat_pulldown', name: 'Tirage vertical', equipment: 'Cable', pattern: 'Vertical pull', primaryMuscles: ['Back'], secondaryMuscles: ['Biceps'], difficulty: 1, stimulusFatigue: 6, setupCues: ['Cuisses bloquées'], executionCues: ['Ramener les coudes vers le bas'], alternatives: ['pull_up'] },
-  { id: 'pull_up', name: 'Tractions', equipment: 'Bodyweight', pattern: 'Vertical pull', primaryMuscles: ['Back'], secondaryMuscles: ['Biceps', 'Core'], difficulty: 3, stimulusFatigue: 8, setupCues: ['Abdominaux gainés'], executionCues: ['Tirer les coudes vers les côtes'], alternatives: ['lat_pulldown'] },
-  { id: 'chest_supported_row', name: 'Row poitrine appuyée', equipment: 'Machine', pattern: 'Horizontal pull', primaryMuscles: ['Back'], secondaryMuscles: ['Biceps', 'Shoulders'], difficulty: 1, stimulusFatigue: 7, setupCues: ['Poitrine fixée'], executionCues: ['Maintenir la contraction'], alternatives: ['seated_row'] },
-  { id: 'seated_row', name: 'Row assis câble', equipment: 'Cable', pattern: 'Horizontal pull', primaryMuscles: ['Back'], secondaryMuscles: ['Biceps'], difficulty: 1, stimulusFatigue: 6, setupCues: ['Colonne neutre'], executionCues: ['Pause et retour contrôlé'], alternatives: ['chest_supported_row'] },
-  { id: 'overhead_press', name: 'Développé militaire', equipment: 'Barbell', pattern: 'Vertical press', primaryMuscles: ['Shoulders'], secondaryMuscles: ['Triceps', 'Core'], difficulty: 2, stimulusFatigue: 8, setupCues: ['Fessiers contractés'], executionCues: ['Pousser droit vers le haut'], alternatives: ['lateral_raise'] },
-  { id: 'lateral_raise', name: 'Élévation latérale', equipment: 'Dumbbells', pattern: 'Shoulder isolation', primaryMuscles: ['Shoulders'], secondaryMuscles: [], difficulty: 1, stimulusFatigue: 5, setupCues: ['Légère flexion des coudes'], executionCues: ['Mener avec les coudes'], alternatives: ['overhead_press'] },
-  { id: 'barbell_curl', name: 'Curl barre', equipment: 'Barbell', pattern: 'Elbow flexion', primaryMuscles: ['Biceps'], secondaryMuscles: [], difficulty: 1, stimulusFatigue: 4, setupCues: ['Abdominaux gainés'], executionCues: ['Descente contrôlée'], alternatives: ['hammer_curl'] },
-  { id: 'rope_pushdown', name: 'Pushdown corde', equipment: 'Cable', pattern: 'Elbow extension', primaryMuscles: ['Triceps'], secondaryMuscles: [], difficulty: 1, stimulusFatigue: 4, setupCues: ['Coudes plaqués'], executionCues: ['Écarter la corde en bas'], alternatives: ['overhead_extension'] },
-  { id: 'back_squat', name: 'Squat barre', equipment: 'Barbell', pattern: 'Squat', primaryMuscles: ['Quads', 'Glutes'], secondaryMuscles: ['Core', 'Hamstrings'], difficulty: 3, stimulusFatigue: 9, setupCues: ['Gainer avant la descente'], executionCues: ['Pousser à travers le milieu du pied'], alternatives: ['leg_press'] },
-  { id: 'leg_press', name: 'Presse à cuisses', equipment: 'Machine', pattern: 'Squat', primaryMuscles: ['Quads'], secondaryMuscles: ['Glutes', 'Hamstrings'], difficulty: 1, stimulusFatigue: 6, setupCues: ['Dos plaqué contre le dossier'], executionCues: ['Contrôler la profondeur'], alternatives: ['back_squat'] },
-  { id: 'romanian_deadlift', name: 'Soulevé de terre roumain', equipment: 'Barbell', pattern: 'Hip hinge', primaryMuscles: ['Hamstrings', 'Glutes'], secondaryMuscles: ['Back'], difficulty: 2, stimulusFatigue: 8, setupCues: ['Légère flexion des genoux'], executionCues: ['Pousser les hanches vers l\'arrière'], alternatives: ['hip_thrust'] },
-  { id: 'hip_thrust', name: 'Hip thrust', equipment: 'Barbell', pattern: 'Hip extension', primaryMuscles: ['Glutes'], secondaryMuscles: ['Hamstrings'], difficulty: 2, stimulusFatigue: 6, setupCues: ['Tibias verticaux'], executionCues: ['Pause et contraction en haut'], alternatives: ['romanian_deadlift'] },
-  { id: 'calf_raise', name: 'Mollets debout', equipment: 'Machine', pattern: 'Ankle extension', primaryMuscles: ['Calves'], secondaryMuscles: [], difficulty: 1, stimulusFatigue: 3, setupCues: ['Pied entier sur la plateforme'], executionCues: ['Contraction forte en haut'], alternatives: [] },
-  { id: 'cable_crunch', name: 'Crunch câble', equipment: 'Cable', pattern: 'Spinal flexion', primaryMuscles: ['Core'], secondaryMuscles: [], difficulty: 1, stimulusFatigue: 4, setupCues: ['Hanches fixes'], executionCues: ['Enrouler la colonne'], alternatives: ['hanging_leg_raise'] },
-  { id: 'hanging_leg_raise', name: 'Relevé de jambes suspendu', equipment: 'Bodyweight', pattern: 'Hip flexion', primaryMuscles: ['Core'], secondaryMuscles: [], difficulty: 2, stimulusFatigue: 5, setupCues: ['Bascule pelvienne postérieure'], executionCues: ['Éviter le balancement'], alternatives: ['cable_crunch'] },
-]
+export const exercises = allExercises
 
 export const foods: Food[] = [
   { id: 'chicken', name: 'Blanc de poulet', servingGrams: 100, calories: 165, protein: 31, carbs: 0, fats: 4, tags: ['protein'] },

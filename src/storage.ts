@@ -4,22 +4,26 @@ const STORAGE_KEY = 'saiyan-fitness-v1'
 
 export function loadState(): AppState | null {
   try {
-    const raw = window.localStorage.getItem(STORAGE_KEY)
+    const raw = localStorage.getItem(STORAGE_KEY)
     if (!raw) return null
-    return JSON.parse(raw) as AppState
-  } catch {
-    console.warn('[Saiyan] Failed to load state')
+    const parsed = JSON.parse(raw)
+    if (!parsed || typeof parsed !== 'object') return null
+    return parsed as AppState
+  } catch (e) {
+    console.warn('[Saiyan] Failed to load state:', e)
     return null
   }
 }
 
-export function saveState(state: AppState): void {
+export function saveState(state: AppState): boolean {
   try {
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
+    return true
   } catch (e) {
     if (e instanceof DOMException && e.name === 'QuotaExceededError') {
-      console.error('[Saiyan] localStorage full!')
+      console.error('[Saiyan] localStorage FULL!')
     }
+    return false
   }
 }
 

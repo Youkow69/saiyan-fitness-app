@@ -11,6 +11,7 @@ import {
 import { DailyQuote } from '../gamification/MotivationalQuotes'
 import { DailyQuestsPanel } from '../gamification/QuestSection'
 import { ProgressBar, SectionTitle } from '../ui/Shared'
+import MacroBar from '../ui/MacroBar'
 
 interface HomeViewProps {
   onStartWorkout: () => void
@@ -94,22 +95,28 @@ export const HomeView: React.FC<HomeViewProps> = React.memo(
               )}
             </div>
           </div>
-          <div>
+          <div style={{ position: 'relative' }}>
+            <div className="aura-ring" style={{
+              position: 'absolute', inset: -8, borderRadius: '50%',
+              background: `radial-gradient(circle, ${transformation.accent}33, transparent 70%)`,
+              animation: 'aura-pulse 2.5s ease-in-out infinite',
+            }} />
             <img
               src={transformation.image}
               alt={transformation.name}
               className="transformation-image"
               style={{
-                width: 110,
-                height: 110,
+                width: 100,
+                height: 100,
                 filter: `drop-shadow(0 0 20px ${transformation.accent}99)`,
+                position: 'relative',
               }}
             />
           </div>
         </section>
 
         {/* CTA button in sentence case */}
-        <button className="cta-button" onClick={onStartWorkout} type="button">
+        <button className="cta-button" onClick={onStartWorkout} type="button" style={{ fontFamily: "'Manrope', sans-serif", textTransform: 'none' as const, fontWeight: 700 }}>
           {state.activeWorkout ? "Reprendre l'entraînement" : "Commencer l'entraînement"}
         </button>
 
@@ -160,18 +167,10 @@ export const HomeView: React.FC<HomeViewProps> = React.memo(
         {/* Nutrition summary */}
         <section className="hevy-card stack-md">
           <SectionTitle icon="" label="Nutrition aujourd'hui" />
-          <ProgressBar
-            label="Calories"
-            value={nutrition.calories}
-            target={targets.calories}
-            accent="linear-gradient(90deg,#ffb400,#ff6a00)"
-          />
-          <ProgressBar
-            label="Protéines"
-            value={nutrition.protein}
-            target={targets.protein}
-            accent="linear-gradient(90deg,#00d4ff,#4fffb0)"
-          />
+          <MacroBar label="Calories" current={nutrition.calories} target={targets.calories} unit="kcal" color="calories" />
+          <MacroBar label="Protéines" current={nutrition.protein} target={targets.protein} unit="g" color="protein" />
+          <MacroBar label="Glucides" current={nutrition.carbs} target={targets.carbs} unit="g" color="carbs" />
+          <MacroBar label="Lipides" current={nutrition.fats} target={targets.fats} unit="g" color="fat" />
         </section>
       </div>
     )

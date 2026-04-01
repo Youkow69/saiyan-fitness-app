@@ -6,7 +6,7 @@ export const allExercises: Exercise[] = [
   // ========================
   {
     id: 'barbell_bench_press',
-    name: 'Developpe couche barre',
+    name: 'Développé couche barre',
     equipment: 'Barbell',
     pattern: 'horizontal_push',
     primaryMuscles: ['Chest'],
@@ -19,7 +19,7 @@ export const allExercises: Exercise[] = [
   },
   {
     id: 'incline_barbell_bench',
-    name: 'Developpe incline barre',
+    name: 'Développé incline barre',
     equipment: 'Barbell',
     pattern: 'incline_push',
     primaryMuscles: ['Chest'],
@@ -32,7 +32,7 @@ export const allExercises: Exercise[] = [
   },
   {
     id: 'decline_barbell_bench',
-    name: 'Developpe decline barre',
+    name: 'Développé decline barre',
     equipment: 'Barbell',
     pattern: 'decline_push',
     primaryMuscles: ['Chest'],
@@ -45,7 +45,7 @@ export const allExercises: Exercise[] = [
   },
   {
     id: 'db_bench_press',
-    name: 'Developpe couche halteres',
+    name: 'Développé couche halteres',
     equipment: 'Dumbbells',
     pattern: 'horizontal_push',
     primaryMuscles: ['Chest'],
@@ -58,7 +58,7 @@ export const allExercises: Exercise[] = [
   },
   {
     id: 'db_incline_press',
-    name: 'Developpe incline halteres',
+    name: 'Développé incline halteres',
     equipment: 'Dumbbells',
     pattern: 'incline_push',
     primaryMuscles: ['Chest'],
@@ -79,7 +79,7 @@ export const allExercises: Exercise[] = [
     difficulty: 2,
     stimulusFatigue: 5,
     setupCues: ['Allongez-vous sur le banc plat', 'Halteres au-dessus de la poitrine, paumes face a face', 'Legere flexion des coudes'],
-    executionCues: ['Ouvrez les bras en arc de cercle', 'Descendez jusqu a sentir l etirement', 'Remontez en serrant les pectoraux'],
+    executionCues: ['Ouvrez les bras en arc de cercle', 'Descendez jusqu a sentir l étirement', 'Remontez en serrant les pectoraux'],
     alternatives: ['cable_fly', 'pec_deck']
   },
   {
@@ -162,7 +162,7 @@ export const allExercises: Exercise[] = [
   },
   {
     id: 'floor_press',
-    name: 'Developpe au sol',
+    name: 'Développé au sol',
     equipment: 'Barbell',
     pattern: 'horizontal_push',
     primaryMuscles: ['Chest'],
@@ -214,7 +214,7 @@ export const allExercises: Exercise[] = [
   },
   {
     id: 'smith_incline_press',
-    name: 'Developpe incline Smith machine',
+    name: 'Développé incline Smith machine',
     equipment: 'Smith',
     pattern: 'incline_push',
     primaryMuscles: ['Chest'],
@@ -434,7 +434,7 @@ export const allExercises: Exercise[] = [
     difficulty: 2,
     stimulusFatigue: 8,
     setupCues: ['Placez la barre sur les supports du rack au niveau des genoux', 'Pieds largeur des hanches', 'Prise mixte ou double pronation'],
-    executionCues: ['Soulevez en poussant les hanches vers l avant', 'Verrouillez en haut', 'Reposez sur les supports en controlant'],
+    executionCues: ['Soulevéz en poussant les hanches vers l avant', 'Verrouillez en haut', 'Reposez sur les supports en controlant'],
     alternatives: ['deadlift', 'barbell_row']
   },
   {
@@ -456,7 +456,7 @@ export const allExercises: Exercise[] = [
   // ========================
   {
     id: 'overhead_press',
-    name: 'Developpe militaire barre',
+    name: 'Développé militaire barre',
     equipment: 'Barbell',
     pattern: 'vertical_push',
     primaryMuscles: ['Shoulders'],
@@ -469,7 +469,7 @@ export const allExercises: Exercise[] = [
   },
   {
     id: 'db_shoulder_press',
-    name: 'Developpe epaules halteres',
+    name: 'Développé epaules halteres',
     equipment: 'Dumbbells',
     pattern: 'vertical_push',
     primaryMuscles: ['Shoulders'],
@@ -573,7 +573,7 @@ export const allExercises: Exercise[] = [
   },
   {
     id: 'behind_neck_press',
-    name: 'Developpe nuque',
+    name: 'Développé nuque',
     equipment: 'Barbell',
     pattern: 'vertical_push',
     primaryMuscles: ['Shoulders'],
@@ -828,7 +828,7 @@ export const allExercises: Exercise[] = [
   },
   {
     id: 'close_grip_bench',
-    name: 'Developpe couche prise serree',
+    name: 'Développé couche prise serree',
     equipment: 'Barbell',
     pattern: 'horizontal_push',
     primaryMuscles: ['Triceps'],
@@ -1057,7 +1057,7 @@ export const allExercises: Exercise[] = [
   // ========================
   {
     id: 'romanian_deadlift',
-    name: 'Souleve de terre roumain',
+    name: 'Soulevé de terre roumain',
     equipment: 'Barbell',
     pattern: 'hip_hinge',
     primaryMuscles: ['Hamstrings'],
@@ -1117,12 +1117,12 @@ export const allExercises: Exercise[] = [
     difficulty: 2,
     stimulusFatigue: 7,
     setupCues: ['Barre sur les trapezes comme pour un squat', 'Pieds largeur des hanches', 'Genoux legerement flechis'],
-    executionCues: ['Penchez le buste en avant en poussant les hanches en arriere', 'Descendez jusqu a sentir l etirement des ischios', 'Remontez en contractant fessiers et ischios'],
+    executionCues: ['Penchez le buste en avant en poussant les hanches en arriere', 'Descendez jusqu a sentir l étirement des ischios', 'Remontez en contractant fessiers et ischios'],
     alternatives: ['romanian_deadlift', 'stiff_leg_deadlift']
   },
   {
     id: 'stiff_leg_deadlift',
-    name: 'Souleve de terre jambes tendues',
+    name: 'Soulevé de terre jambes tendues',
     equipment: 'Barbell',
     pattern: 'hip_hinge',
     primaryMuscles: ['Hamstrings'],
@@ -1135,7 +1135,7 @@ export const allExercises: Exercise[] = [
   },
   {
     id: 'single_leg_rdl',
-    name: 'Souleve de terre roumain unilateral',
+    name: 'Soulevé de terre roumain unilateral',
     equipment: 'Dumbbells',
     pattern: 'hip_hinge',
     primaryMuscles: ['Hamstrings'],
@@ -1161,7 +1161,7 @@ export const allExercises: Exercise[] = [
   },
   {
     id: 'db_rdl',
-    name: 'Souleve de terre roumain halteres',
+    name: 'Soulevé de terre roumain halteres',
     equipment: 'Dumbbells',
     pattern: 'hip_hinge',
     primaryMuscles: ['Hamstrings'],
@@ -1243,7 +1243,7 @@ export const allExercises: Exercise[] = [
   },
   {
     id: 'sumo_deadlift',
-    name: 'Souleve de terre sumo',
+    name: 'Soulevé de terre sumo',
     equipment: 'Barbell',
     pattern: 'hip_hinge',
     primaryMuscles: ['Glutes'],
@@ -1376,7 +1376,7 @@ export const allExercises: Exercise[] = [
     difficulty: 1,
     stimulusFatigue: 3,
     setupCues: ['Allonge sur le dos, genoux flechis', 'Mains derriere la tete ou sur la poitrine', 'Pieds a plat au sol'],
-    executionCues: ['Soulevez les epaules du sol en contractant les abdominaux', 'Ne tirez pas sur la nuque', 'Redescendez lentement'],
+    executionCues: ['Soulevéz les epaules du sol en contractant les abdominaux', 'Ne tirez pas sur la nuque', 'Redescendez lentement'],
     alternatives: ['cable_crunch', 'decline_crunch']
   },
   {
@@ -1441,7 +1441,7 @@ export const allExercises: Exercise[] = [
     difficulty: 1,
     stimulusFatigue: 3,
     setupCues: ['Sur le cote, avant-bras au sol', 'Pieds superposes ou decales', 'Corps droit'],
-    executionCues: ['Soulevez les hanches pour aligner le corps', 'Maintenez la position', 'Gardez les hanches hautes'],
+    executionCues: ['Soulevéz les hanches pour aligner le corps', 'Maintenez la position', 'Gardez les hanches hautes'],
     alternatives: ['pallof_press', 'woodchop']
   },
   {
@@ -1506,7 +1506,7 @@ export const allExercises: Exercise[] = [
     difficulty: 3,
     stimulusFatigue: 8,
     setupCues: ['Allonge sur un banc, mains derriere la tete', 'Saisissez le banc pour vous stabiliser', 'Corps droit'],
-    executionCues: ['Soulevez le corps entier en gardant seuls les omoplates au banc', 'Descendez lentement sans cambrer', 'Gardez le corps droit comme une planche'],
+    executionCues: ['Soulevéz le corps entier en gardant seuls les omoplates au banc', 'Descendez lentement sans cambrer', 'Gardez le corps droit comme une planche'],
     alternatives: ['hanging_leg_raise', 'ab_wheel']
   },
   {
@@ -1532,7 +1532,7 @@ export const allExercises: Exercise[] = [
     difficulty: 1,
     stimulusFatigue: 4,
     setupCues: ['Allonge sur le dos, genoux flechis', 'Pieds fixes ou libres', 'Mains sur la poitrine ou derriere la tete'],
-    executionCues: ['Soulevez le buste completement jusqu en position assise', 'Contractez les abdominaux', 'Redescendez lentement'],
+    executionCues: ['Soulevéz le buste completement jusqu en position assise', 'Contractez les abdominaux', 'Redescendez lentement'],
     alternatives: ['crunch', 'cable_crunch']
   },
   {
@@ -1554,7 +1554,7 @@ export const allExercises: Exercise[] = [
   // ========================
   {
     id: 'deadlift',
-    name: 'Souleve de terre conventionnel',
+    name: 'Soulevé de terre conventionnel',
     equipment: 'Barbell',
     pattern: 'hip_hinge',
     primaryMuscles: ['Back', 'Hamstrings'],
@@ -1606,7 +1606,7 @@ export const allExercises: Exercise[] = [
   },
   {
     id: 'trap_bar_deadlift',
-    name: 'Souleve de terre barre hexagonale',
+    name: 'Soulevé de terre barre hexagonale',
     equipment: 'Barbell',
     pattern: 'hip_hinge',
     primaryMuscles: ['Quads', 'Back'],
@@ -1710,7 +1710,7 @@ export const allExercises: Exercise[] = [
   },
   {
     id: 'decline_db_press',
-    name: 'Developpe decline halteres',
+    name: 'Développé decline halteres',
     equipment: 'Dumbbells',
     pattern: 'decline_push',
     primaryMuscles: ['Chest'],
@@ -1740,7 +1740,7 @@ export const allExercises: Exercise[] = [
   },
   {
     id: 'smith_bench_press',
-    name: 'Developpe couche Smith machine',
+    name: 'Développé couche Smith machine',
     equipment: 'Smith',
     pattern: 'horizontal_push',
     primaryMuscles: ['Chest'],
@@ -1792,7 +1792,7 @@ export const allExercises: Exercise[] = [
   },
   {
     id: 'seated_db_press',
-    name: 'Developpe assis halteres (neutre)',
+    name: 'Développé assis halteres (neutre)',
     equipment: 'Dumbbells',
     pattern: 'vertical_push',
     primaryMuscles: ['Shoulders'],
@@ -1805,7 +1805,7 @@ export const allExercises: Exercise[] = [
   },
   {
     id: 'machine_shoulder_press',
-    name: 'Developpe epaules machine',
+    name: 'Développé epaules machine',
     equipment: 'Machine',
     pattern: 'vertical_push',
     primaryMuscles: ['Shoulders'],
@@ -1961,7 +1961,7 @@ export const allExercises: Exercise[] = [
   },
   {
     id: 'snatch_grip_deadlift',
-    name: 'Souleve de terre prise d arrache',
+    name: 'Soulevé de terre prise d arrache',
     equipment: 'Barbell',
     pattern: 'hip_hinge',
     primaryMuscles: ['Back', 'Hamstrings'],
@@ -2013,7 +2013,7 @@ export const allExercises: Exercise[] = [
   },
   {
     id: 'deficit_deadlift',
-    name: 'Souleve de terre en deficit',
+    name: 'Soulevé de terre en deficit',
     equipment: 'Barbell',
     pattern: 'hip_hinge',
     primaryMuscles: ['Back', 'Hamstrings'],

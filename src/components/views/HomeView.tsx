@@ -110,7 +110,7 @@ export const HomeView: React.FC<HomeViewProps> = React.memo(
 
         {/* CTA button in sentence case */}
         <button className="cta-button" onClick={onStartWorkout} type="button">
-          {state.activeWorkout ? "Reprendre l'entra\u00EEnement" : "Commencer l'entra\u00EEnement"}
+          {state.activeWorkout ? "Reprendre l'entraînement" : "Commencer l'entraînement"}
         </button>
 
         {/* Daily quests */}
@@ -124,7 +124,7 @@ export const HomeView: React.FC<HomeViewProps> = React.memo(
         <section className="hevy-card" style={{ borderColor: `${mesocycle.color}33` }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div>
-              <SectionTitle icon="" label="M\u00E9socycle" />
+              <SectionTitle icon="" label="Mésocycle" />
               <p style={{ margin: '2px 0 0', fontWeight: 700, color: mesocycle.color, fontSize: '0.9rem' }}>
                 {mesocycle.label}
               </p>
@@ -167,7 +167,7 @@ export const HomeView: React.FC<HomeViewProps> = React.memo(
             accent="linear-gradient(90deg,#ffb400,#ff6a00)"
           />
           <ProgressBar
-            label="Prot\u00E9ines"
+            label="Protéines"
             value={nutrition.protein}
             target={targets.protein}
             accent="linear-gradient(90deg,#00d4ff,#4fffb0)"

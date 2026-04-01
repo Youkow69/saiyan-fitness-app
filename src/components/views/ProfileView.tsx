@@ -38,6 +38,11 @@ interface ProfileViewProps {
   onToggleTheme: () => void
   theme: 'dark' | 'light'
   onNavigate: (tab: TabId) => void
+  cloudUser?: any
+  cloudStatus?: 'idle' | 'syncing' | 'synced' | 'error'
+  lastSyncedAt?: string | null
+  onSignOut?: () => Promise<void>
+  onSyncNow?: () => Promise<void>
 }
 
 
@@ -50,7 +55,7 @@ const GOAL_FR: Record<string, string> = {
 }
 
 export const ProfileView: React.FC<ProfileViewProps> = React.memo(
-  function ProfileView({ onToggleTheme, theme, onNavigate }) {
+  function ProfileView({ onToggleTheme, theme, onNavigate, cloudUser, cloudStatus, lastSyncedAt, onSignOut, onSyncNow }) {
     const { state, dispatch } = useAppState()
     const [bodyweight, setBodyweight] = useState(String(state.profile?.weightKg ?? 0))
     const [measurements, setMeasurements] = useState({ waist: '', chest: '', arm: '', thigh: '' })
@@ -220,7 +225,28 @@ export const ProfileView: React.FC<ProfileViewProps> = React.memo(
           <ProgressPhotos />
         </section>
 
-        <p className="profile-footer">Propulsé par Katrava ⚡</p>
+        
+      {/* Cloud sync */}
+      {cloudUser && (
+        <section style={{ background: 'var(--bg-card)', borderRadius: 16, border: '1px solid var(--border)', padding: 16 }}>
+          <h3 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: '1.1rem', letterSpacing: '0.05em', textTransform: 'uppercase', color: 'var(--accent)', margin: '0 0 12px' }}>
+            Cloud Sync
+          </h3>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+            <span style={{ fontSize: '0.85rem' }}>{cloudUser.email}</span>
+            <span style={{ fontSize: '0.7rem', padding: '3px 10px', borderRadius: 8, background: cloudStatus === 'synced' ? 'rgba(34,197,94,0.1)' : 'rgba(255,140,0,0.1)', color: cloudStatus === 'synced' ? '#22c55e' : 'var(--accent)', fontWeight: 600 }}>
+              {cloudStatus === 'synced' ? 'Synchronise' : cloudStatus === 'syncing' ? 'Sync...' : cloudStatus === 'error' ? 'Erreur' : 'En attente'}
+            </span>
+          </div>
+          {lastSyncedAt && <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', marginBottom: 8 }}>Derniere sync : {new Date(lastSyncedAt).toLocaleString('fr-FR')}</div>}
+          <div style={{ display: 'flex', gap: 8 }}>
+            {onSyncNow && <button type="button" onClick={onSyncNow} style={{ flex: 1, padding: '10px', borderRadius: 10, border: '1px solid var(--accent)', background: 'rgba(255,140,0,0.08)', color: 'var(--accent)', fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer' }}>Synchroniser</button>}
+            {onSignOut && <button type="button" onClick={onSignOut} style={{ padding: '10px 16px', borderRadius: 10, border: '1px solid var(--border)', background: 'transparent', color: 'var(--text-secondary)', fontWeight: 600, fontSize: '0.85rem', cursor: 'pointer' }}>Deconnexion</button>}
+          </div>
+        </section>
+      )}
+
+      <p className="profile-footer">Propulsé par Katrava ⚡</p>
       </div>
     )
   }

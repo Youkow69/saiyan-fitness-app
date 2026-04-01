@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState, useCallback } from 'react'
-import { exercises, foods, programs, recipes } from './data'
+import { exercises, foods, programs } from './data'
 import {
-  calculateTargets,
   formatNumber,
   generateMainObjectives,
   getAdaptiveTDEEStatus,

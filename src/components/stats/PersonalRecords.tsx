@@ -178,7 +178,7 @@ export function PersonalRecords({
     padding: '10px 12px',
     textAlign: field === 'name' ? 'left' : 'right',
     fontSize: 11,
-    color: sortField === field ? '#ed8936' : '#a0aec0',
+    color: sortField === field ? '#ed8936' : 'var(--text-secondary)',
     cursor: 'pointer',
     fontWeight: sortField === field ? 700 : 600,
     textTransform: 'uppercase',
@@ -194,12 +194,12 @@ export function PersonalRecords({
   return (
     <div
       style={{
-        background: '#1a1a2e',
+        background: 'var(--bg-card)',
         borderRadius: 16,
         padding: 24,
         maxWidth: 700,
         margin: '0 auto',
-        color: '#e2e8f0',
+        color: 'var(--text)',
         fontFamily: "'Segoe UI', sans-serif",
       }}
     >
@@ -224,7 +224,7 @@ export function PersonalRecords({
           marginBottom: 20,
         }}
       >
-        <div style={{ fontSize: 12, color: '#718096', marginBottom: 4 }}>
+        <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 4 }}>
           NIVEAU DE PUISSANCE TOTAL
         </div>
         <div
@@ -241,7 +241,7 @@ export function PersonalRecords({
         >
           {formatPowerLevel(totalPowerLevel)}
         </div>
-        <div style={{ fontSize: 11, color: '#718096' }}>
+        <div style={{ fontSize: 11, color: 'var(--text-secondary)' }}>
           Somme estimee de tous les 1RM (kg)
         </div>
       </div>
@@ -258,8 +258,8 @@ export function PersonalRecords({
             padding: '10px 14px',
             borderRadius: 10,
             border: '2px solid #2d3748',
-            background: '#16213e',
-            color: '#e2e8f0',
+            background: 'var(--border)',
+            color: 'var(--text)',
             fontSize: 13,
             boxSizing: 'border-box',
             outline: 'none',
@@ -349,10 +349,10 @@ export function PersonalRecords({
                     textAlign: 'right',
                   }}
                 >
-                  <div style={{ fontWeight: 700, fontSize: 15, color: '#e2e8f0' }}>
+                  <div style={{ fontWeight: 700, fontSize: 15, color: 'var(--text)' }}>
                     {pr.bestWeight} kg
                   </div>
-                  <div style={{ fontSize: 10, color: '#718096' }}>
+                  <div style={{ fontSize: 10, color: 'var(--text-secondary)' }}>
                     {new Date(pr.bestWeightDate).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}
                   </div>
                 </td>
@@ -363,10 +363,10 @@ export function PersonalRecords({
                     textAlign: 'right',
                   }}
                 >
-                  <div style={{ fontWeight: 700, fontSize: 15, color: '#e2e8f0' }}>
+                  <div style={{ fontWeight: 700, fontSize: 15, color: 'var(--text)' }}>
                     {pr.bestReps} reps
                   </div>
-                  <div style={{ fontSize: 10, color: '#718096' }}>
+                  <div style={{ fontSize: 10, color: 'var(--text-secondary)' }}>
                     @ {pr.bestRepsWeight} kg
                   </div>
                 </td>
@@ -385,14 +385,14 @@ export function PersonalRecords({
                       letterSpacing: 1,
                       background: pr.isRecentPR
                         ? 'linear-gradient(135deg, #ecc94b, #ed8936)'
-                        : 'linear-gradient(135deg, #a0aec0, #e2e8f0)',
+                        : 'linear-gradient(135deg, var(--text-secondary), var(--text))',
                       WebkitBackgroundClip: 'text',
                       WebkitTextFillColor: 'transparent',
                     }}
                   >
                     {formatPowerLevel(pr.estimated1RM)}
                   </div>
-                  <div style={{ fontSize: 10, color: '#718096' }}>
+                  <div style={{ fontSize: 10, color: 'var(--text-secondary)' }}>
                     {new Date(pr.best1RMDate).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}
                   </div>
                 </td>
@@ -403,7 +403,7 @@ export function PersonalRecords({
       </div>
 
       {sorted.length === 0 && (
-        <div style={{ textAlign: 'center', padding: 32, color: '#718096', fontSize: 13 }}>
+        <div style={{ textAlign: 'center', padding: 32, color: 'var(--text-secondary)', fontSize: 13 }}>
           {filter
             ? 'Aucun exercice ne correspond a votre recherche.'
             : 'Aucun record enregistre. Commencez a vous entrainer !'}
@@ -420,7 +420,7 @@ export function PersonalRecords({
             gap: 8,
             justifyContent: 'center',
             fontSize: 11,
-            color: '#718096',
+            color: 'var(--text-secondary)',
           }}
         >
           <span

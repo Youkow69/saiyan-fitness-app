@@ -25,7 +25,7 @@ import {
   recommendProgram,
   todayIso,
 } from './lib'
-import { loadState, saveState } from './storage'
+import { loadState, debouncedSave } from './storage'
 import type {
   AppState,
   BodyweightEntry,
@@ -339,7 +339,7 @@ function OnboardingView({ onComplete }: { onComplete: (profile: UserProfile, ans
               ))}
             </div>
           </div>
-          <button className="primary-btn" onClick={() => setStep(2)} type="button">Suivant</button>
+          <button className="primary-btn" onClick={() => setStep(2)} type="button" disabled={draft.name.trim().length < 2 || draft.age < 13 || draft.age > 120 || draft.weightKg < 20 || draft.weightKg > 300 || draft.heightCm < 100 || draft.heightCm > 250}>Suivant</button>
         </section>
       )}
       {step === 2 && (
@@ -1214,8 +1214,10 @@ function NutritionView({ state, onAddFood }: { state: AppState; onAddFood: (entr
           </label>
         </div>
         <button className="secondary-btn" type="button" onClick={() => {
-          const ratio = Number(grams || 0) / selectedFood.servingGrams
-          onAddFood({ id: makeId('food'), date: todayIso(), name: selectedFood.name, category, grams: Number(grams || 0), calories: Math.round(selectedFood.calories * ratio), protein: Number((selectedFood.protein * ratio).toFixed(1)), carbs: Number((selectedFood.carbs * ratio).toFixed(1)), fats: Number((selectedFood.fats * ratio).toFixed(1)) })
+          const g = Number(grams || 0)
+          if (isNaN(g) || g <= 0) return
+          const ratio = g / selectedFood.servingGrams
+          onAddFood({ id: makeId('food'), date: todayIso(), name: selectedFood.name, category, grams: g, calories: Math.round(selectedFood.calories * ratio), protein: Number((selectedFood.protein * ratio).toFixed(1)), carbs: Number((selectedFood.carbs * ratio).toFixed(1)), fats: Number((selectedFood.fats * ratio).toFixed(1)) })
         }}>Ajouter</button>
       </section>
       <section className="hevy-card stack-md">
@@ -1371,7 +1373,7 @@ function ProfileView({ state, powerLevel, onLogBodyweight, onLogMeasurement, onC
             <span className="quick-card-icon">💪</span>
             <span className="quick-card-label">Exercices</span>
           </button>
-          <button className="quick-card" type="button" onClick={() => {}}>
+          <button className="quick-card" type="button" onClick={() => onNavigate('scouter')}>
             <span className="quick-card-icon">📏</span>
             <span className="quick-card-label">Mesures</span>
           </button>
@@ -1407,7 +1409,11 @@ function ProfileView({ state, powerLevel, onLogBodyweight, onLogMeasurement, onC
           <label><span>Bras</span><input value={measurements.arm} onChange={e => setMeasurements({ ...measurements, arm: e.target.value })} /></label>
           <label><span>Cuisse</span><input value={measurements.thigh} onChange={e => setMeasurements({ ...measurements, thigh: e.target.value })} /></label>
         </div>
-        <button className="secondary-btn" type="button" onClick={() => onLogMeasurement({ id: makeId('measure'), date: todayIso(), waistCm: Number(measurements.waist), chestCm: Number(measurements.chest), armCm: Number(measurements.arm), thighCm: Number(measurements.thigh) })}>Sauvegarder</button>
+        <button className="secondary-btn" type="button" onClick={() => {
+          const w = Number(measurements.waist), c = Number(measurements.chest), a = Number(measurements.arm), t = Number(measurements.thigh)
+          if (w <= 0 && c <= 0 && a <= 0 && t <= 0) return
+          onLogMeasurement({ id: makeId('measure'), date: todayIso(), waistCm: w, chestCm: c, armCm: a, thighCm: t })
+        }}>Sauvegarder</button>
       </section>
 
       {/* Programs */}
@@ -1451,18 +1457,18 @@ function ProfileView({ state, powerLevel, onLogBodyweight, onLogMeasurement, onC
 // ── Bottom Nav ────────────────────────────────────────────────────────────────
 
 function BottomNav({ tab, onChange }: { tab: TabId; onChange: (tab: TabId) => void }) {
-  const items: Array<{ id: TabId; icon: string; label: string }> = [
-    { id: 'home',      icon: '🏠', label: 'Accueil'   },
-    { id: 'train',     icon: '💪', label: 'Training'  },
-    { id: 'nutrition', icon: '🍽️', label: 'Nutrition' },
-    { id: 'scouter',   icon: '📊', label: 'Stats'     },
-    { id: 'profile',   icon: '👤', label: 'Profil'    },
+  const items: Array<{ id: TabId; icon: string; label: string; ariaLabel: string }> = [
+    { id: 'home',      icon: '🏠', label: 'Accueil',   ariaLabel: 'Accueil'        },
+    { id: 'train',     icon: '💪', label: 'Training',  ariaLabel: 'Entrainement'   },
+    { id: 'nutrition', icon: '🍽️', label: 'Nutrition', ariaLabel: 'Nutrition'      },
+    { id: 'scouter',   icon: '📊', label: 'Stats',     ariaLabel: 'Statistiques'   },
+    { id: 'profile',   icon: '👤', label: 'Profil',    ariaLabel: 'Profil'         },
   ]
   return (
-    <nav className="bottom-nav">
-      {items.map(({ id, icon, label }) => (
-        <button key={id} className={`nav-item ${tab === id ? 'nav-item--active' : ''}`} onClick={() => onChange(id)} type="button">
-          <span className="nav-icon">{icon}</span>
+    <nav className="bottom-nav" role="tablist" aria-label="Navigation principale">
+      {items.map(({ id, icon, label, ariaLabel }) => (
+        <button key={id} className={`nav-item ${tab === id ? 'nav-item--active' : ''}`} onClick={() => onChange(id)} type="button" role="tab" aria-selected={tab === id} aria-label={ariaLabel}>
+          <span className="nav-icon" aria-hidden="true">{icon}</span>
           <span className="nav-label">{label}</span>
         </button>
       ))}
@@ -1495,10 +1501,27 @@ function App() {
   const [pendingFeedback, setPendingFeedback] = useState<{ workoutId: string; muscles: MuscleGroup[] } | null>(null)
   const [theme, setTheme] = useState<'dark' | 'light'>(() => (localStorage.getItem('sf_theme') as 'dark' | 'light') || 'dark')
 
-  useEffect(() => saveState(state), [state])
+  useEffect(() => debouncedSave(state), [state])
   useEffect(() => {
     if (restTimer <= 0) return
-    const timer = window.setTimeout(() => setRestTimer(c => c - 1), 1000)
+    if (restTimer === 3) {
+      try { navigator.vibrate?.(100) } catch {}
+    }
+    const timer = window.setTimeout(() => {
+      if (restTimer === 1) {
+        try {
+          navigator.vibrate?.([200, 100, 200, 100, 200])
+          const ctx = new AudioContext()
+          const osc = ctx.createOscillator()
+          osc.type = 'sine'
+          osc.frequency.value = 880
+          osc.connect(ctx.destination)
+          osc.start()
+          osc.stop(ctx.currentTime + 0.5)
+        } catch {}
+      }
+      setRestTimer(c => c - 1)
+    }, 1000)
     return () => window.clearTimeout(timer)
   }, [restTimer])
   useEffect(() => {
@@ -1560,7 +1583,7 @@ function App() {
   }
 
   const addSet = (exerciseId: string, weightKg: number, reps: number, rir: number, setType: SetType) => {
-    if (!state.activeWorkout || reps <= 0) return
+    if (!state.activeWorkout || reps <= 0 || weightKg < 0) return
     const exerciseTarget = state.activeWorkout.exercises.find(e => e.exerciseId === exerciseId)?.target
     setState(c => ({
       ...c,
@@ -1633,7 +1656,16 @@ function App() {
   }
 
   const addFood = (entry: FoodEntry) => setState(c => ({ ...c, foodEntries: [...c.foodEntries, entry] }))
-  const logBodyweight = (entry: BodyweightEntry) => setState(c => ({ ...c, bodyweightEntries: [...c.bodyweightEntries, entry], profile: c.profile ? { ...c.profile, weightKg: entry.weightKg } : null }))
+  const logBodyweight = (entry: BodyweightEntry) => {
+    const today = todayIso()
+    setState(c => {
+      const existingIndex = c.bodyweightEntries.findIndex(e => e.date.slice(0, 10) === today)
+      const updatedEntries = existingIndex >= 0
+        ? c.bodyweightEntries.map((e, i) => i === existingIndex ? { ...e, weightKg: entry.weightKg } : e)
+        : [...c.bodyweightEntries, entry]
+      return { ...c, bodyweightEntries: updatedEntries, profile: c.profile ? { ...c.profile, weightKg: entry.weightKg } : null }
+    })
+  }
   const logMeasurement = (entry: MeasurementEntry) => setState(c => ({ ...c, measurementEntries: [...c.measurementEntries, entry] }))
   const chooseProgram = (programId: string) => setState(c => ({ ...c, selectedProgramId: programId }))
 

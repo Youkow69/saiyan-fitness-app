@@ -1,5 +1,4 @@
-import React, { useMemo, useCallback, useState } from 'react'
-import type { AppState, TabId } from '../../types'
+import React, { useMemo, useCallback } from 'react'
 import { useAppState } from '../../context/AppContext'
 import {
   formatNumber,
@@ -8,7 +7,6 @@ import {
   getMesocycleStatus,
   getPowerLevel,
   getStreak,
-  getWeeklyWorkouts,
 } from '../../lib'
 import { DailyQuote } from '../gamification/MotivationalQuotes'
 import { DailyQuestsPanel } from '../gamification/QuestSection'
@@ -16,11 +14,10 @@ import { ProgressBar, SectionTitle } from '../ui/Shared'
 
 interface HomeViewProps {
   onStartWorkout: () => void
-  onNavigate: (tab: TabId) => void
 }
 
 export const HomeView: React.FC<HomeViewProps> = React.memo(
-  function HomeView({ onStartWorkout, onNavigate }) {
+  function HomeView({ onStartWorkout }) {
     const { state, dispatch } = useAppState()
     const targets = state.targets!
     const nutrition = useMemo(
@@ -32,10 +29,6 @@ export const HomeView: React.FC<HomeViewProps> = React.memo(
       [state.workouts, state.bodyweightEntries, state.targets, state.foodEntries],
     )
     const transformation = tf.current
-    const weeklyWorkouts = useMemo(
-      () => getWeeklyWorkouts(state.workouts),
-      [state.workouts],
-    )
     const mesocycle = useMemo(
       () => getMesocycleStatus(state),
       [state.workouts, state.sessionFeedback],
@@ -45,8 +38,6 @@ export const HomeView: React.FC<HomeViewProps> = React.memo(
       () => getPowerLevel(state),
       [state.workouts, state.bodyweightEntries, state.targets, state.foodEntries],
     )
-
-    const [questsExpanded, setQuestsExpanded] = useState(false)
 
     const handleUpdateQuest = useCallback(
       (questId: string, delta: number) => {
@@ -61,9 +52,6 @@ export const HomeView: React.FC<HomeViewProps> = React.memo(
       },
       [dispatch],
     )
-
-    const dailyQuests = state.quests?.filter((q) => q.type === 'daily') ?? []
-    const visibleQuests = questsExpanded ? dailyQuests : dailyQuests.slice(0, 3)
 
     return (
       <div className="page">
@@ -125,31 +113,12 @@ export const HomeView: React.FC<HomeViewProps> = React.memo(
           {state.activeWorkout ? "Reprendre l'entra\u00EEnement" : "Commencer l'entra\u00EEnement"}
         </button>
 
-        {/* Daily quests - collapsed, max 3, expand toggle */}
-        <section className="hevy-card stack-md">
-          <SectionTitle icon="" label="Qu\u00EAtes du jour" />
-          {visibleQuests.length === 0 ? (
-            <p style={{ color: 'var(--muted)', fontSize: '0.85rem' }}>
-              Aucune qu\u00EAte active.
-            </p>
-          ) : (
-            <DailyQuestsPanel
-              state={{ ...state, quests: visibleQuests }}
-              onUpdateQuestProgress={handleUpdateQuest}
-              onCompleteQuest={handleCompleteQuest}
-            />
-          )}
-          {dailyQuests.length > 3 && (
-            <button
-              className="link-btn"
-              type="button"
-              onClick={() => setQuestsExpanded(!questsExpanded)}
-              style={{ fontSize: '0.82rem', marginTop: 4 }}
-            >
-              {questsExpanded ? 'Masquer' : 'Voir tout'}
-            </button>
-          )}
-        </section>
+        {/* Daily quests */}
+        <DailyQuestsPanel
+          state={state}
+          onUpdateQuestProgress={handleUpdateQuest}
+          onCompleteQuest={handleCompleteQuest}
+        />
 
         {/* Mesocycle compact card */}
         <section className="hevy-card" style={{ borderColor: `${mesocycle.color}33` }}>

@@ -165,7 +165,7 @@ export function getPowerLevel(state: AppState) {
   )
 }
 
-export type TransformationLevel = 'goku_base' | 'ssj' | 'ssj2' | 'ssj3' | 'kaioken' | 'god' | 'blue' | 'ui_sign' | 'mui'
+export type TransformationLevel = 'goku_base' | 'ssj' | 'ssj2' | 'ssj3' | 'god' | 'blue' | 'kaioken' | 'ui_sign' | 'mui'
 
 export interface Quest {
   id: string
@@ -198,7 +198,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     name: 'Super Saiyan',
     accent: 'var(--accent-gold)',
     image: 'images/goku_ssj.png',
-    powerThreshold: 1000,
+    powerThreshold: 2000,
     quests: [
       { id: 'ssj_q1', name: "L'Eveil de la Rage", description: 'Complete 5 seances', requirement: (s) => s.workouts.length, target: 5 },
       { id: 'ssj_q2', name: 'Depasse tes Limites', description: 'Souleve 1 000 kg au total', requirement: (s) => s.workouts.reduce((t, w) => t + getWorkoutVolume(w), 0), target: 1000 },
@@ -211,7 +211,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     name: 'Super Saiyan 2',
     accent: 'var(--accent-blue)',
     image: 'images/goku_ssj2.png',
-    powerThreshold: 5000,
+    powerThreshold: 8000,
     quests: [
       { id: 'ssj2_q1', name: 'Depasse ton Pere', description: 'Complete 15 seances', requirement: (s) => s.workouts.length, target: 15 },
       { id: 'ssj2_q2', name: 'Entrainement des Cell Games', description: 'Souleve 5 000 kg au total', requirement: (s) => s.workouts.reduce((t, w) => t + getWorkoutVolume(w), 0), target: 5000 },
@@ -225,7 +225,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     name: 'Super Saiyan 3',
     accent: 'var(--accent-orange)',
     image: 'images/goku_ssj3.png',
-    powerThreshold: 15000,
+    powerThreshold: 25000,
     quests: [
       { id: 'ssj3_q1', name: 'Au-dela de la Limite', description: 'Complete 30 seances', requirement: (s) => s.workouts.length, target: 30 },
       { id: 'ssj3_q2', name: 'Puissance du Genkidama', description: 'Souleve 15 000 kg au total', requirement: (s) => s.workouts.reduce((t, w) => t + getWorkoutVolume(w), 0), target: 15000 },
@@ -235,28 +235,14 @@ export const TRANSFORMATIONS: Transformation[] = [
     ],
   },
   {
-    level: 'kaioken',
-    name: 'Kaioken Divin',
-    accent: '#ff2222',
-    image: 'images/goku_kaioken.png',
-    powerThreshold: 30000,
-    quests: [
-      { id: 'kk_q1', name: 'Maitrise du Kaioken', description: 'Complete 45 seances', requirement: (s) => s.workouts.length, target: 45 },
-      { id: 'kk_q2', name: 'Surcharge Totale', description: 'Souleve 30 000 kg au total', requirement: (s) => s.workouts.reduce((t, w) => t + getWorkoutVolume(w), 0), target: 30000 },
-      { id: 'kk_q3', name: 'Depassement x20', description: 'Bats 20 records personnels', requirement: (s) => countPRs(s), target: 20 },
-      { id: 'kk_q4', name: 'Endurance Kaioken', description: 'Serie de 21 jours', requirement: (s) => getStreak(s), target: 21 },
-      { id: 'kk_daily', name: 'Corps en Feu', description: 'Complete 200 daily quests', requirement: (s) => countCompletedDailyQuests(s), target: 200 },
-    ],
-  },
-  {
     level: 'god',
     name: 'Super Saiyan God',
     accent: 'var(--accent-red)',
     image: 'images/goku_god.png',
-    powerThreshold: 50000,
+    powerThreshold: 60000,
     quests: [
-      { id: 'god_q1', name: 'Rituel des Saiyans', description: 'Complete 60 seances', requirement: (s) => s.workouts.length, target: 60 },
-      { id: 'god_q2', name: 'Entrainement Divin', description: 'Souleve 50 000 kg au total', requirement: (s) => s.workouts.reduce((t, w) => t + getWorkoutVolume(w), 0), target: 50000 },
+      { id: 'god_q1', name: 'Rituel des Saiyans', description: 'Complete 50 seances', requirement: (s) => s.workouts.length, target: 50 },
+      { id: 'god_q2', name: 'Entrainement Divin', description: 'Souleve 40 000 kg au total', requirement: (s) => s.workouts.reduce((t, w) => t + getWorkoutVolume(w), 0), target: 40000 },
       { id: 'god_q3', name: 'Records Divins', description: 'Bats 30 records personnels', requirement: (s) => countPRs(s), target: 30 },
       { id: 'god_q4', name: 'Volonte de Fer', description: 'Serie de 30 jours', requirement: (s) => getStreak(s), target: 30 },
       { id: 'god_daily', name: 'Rituel Divin', description: 'Complete 300 daily quests', requirement: (s) => countCompletedDailyQuests(s), target: 300 },
@@ -277,11 +263,25 @@ export const TRANSFORMATIONS: Transformation[] = [
     ],
   },
   {
+    level: 'kaioken',
+    name: 'Kaioken Divin',
+    accent: '#ff2222',
+    image: 'images/goku_kaioken.png',
+    powerThreshold: 350000,
+    quests: [
+      { id: 'kk_q1', name: 'Maitrise du Kaioken', description: 'Complete 80 seances', requirement: (s) => s.workouts.length, target: 80 },
+      { id: 'kk_q2', name: 'Surcharge Totale', description: 'Souleve 80 000 kg au total', requirement: (s) => s.workouts.reduce((t, w) => t + getWorkoutVolume(w), 0), target: 80000 },
+      { id: 'kk_q3', name: 'Depassement x20', description: 'Bats 40 records personnels', requirement: (s) => countPRs(s), target: 40 },
+      { id: 'kk_q4', name: 'Endurance Kaioken', description: 'Serie de 45 jours', requirement: (s) => getStreak(s), target: 45 },
+      { id: 'kk_daily', name: 'Corps en Feu', description: 'Complete 400 daily quests', requirement: (s) => countCompletedDailyQuests(s), target: 400 },
+    ],
+  },
+  {
     level: 'ui_sign',
     name: 'Ultra Instinct Sign',
     accent: '#c0c0c0',
     image: 'images/goku_ui_sign.png',
-    powerThreshold: 500000,
+    powerThreshold: 650000,
     quests: [
       { id: 'ui_q1', name: 'Tournoi du Pouvoir', description: 'Complete 200 seances', requirement: (s) => s.workouts.length, target: 200 },
       { id: 'ui_q2', name: 'Mouvement Autonome', description: 'Souleve 250 000 kg au total', requirement: (s) => s.workouts.reduce((t, w) => t + getWorkoutVolume(w), 0), target: 250000 },
@@ -295,7 +295,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     name: 'Mastered Ultra Instinct',
     accent: '#e8e8ff',
     image: 'images/goku_mui.png',
-    powerThreshold: 1000000,
+    powerThreshold: 1500000,
     quests: [
       { id: 'mui_q1', name: 'Maitre de Soi', description: 'Complete 365 seances', requirement: (s) => s.workouts.length, target: 365 },
       { id: 'mui_q2', name: 'Au-dela des Dieux', description: 'Souleve 500 000 kg au total', requirement: (s) => s.workouts.reduce((t, w) => t + getWorkoutVolume(w), 0), target: 500000 },

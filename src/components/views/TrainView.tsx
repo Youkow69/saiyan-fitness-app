@@ -10,6 +10,8 @@ import { WorkoutTimer } from '../tools/WorkoutTimer'
 import { ExerciseLibrary } from '../workout/ExerciseLibrary'
 import type { Exercise as LibExercise } from '../workout/ExerciseLibrary'
 import { SectionTitle } from '../ui/Shared'
+import { ProgressiveOverload } from '../tools/ProgressiveOverload'
+import { ExerciseVideoLink } from '../tools/ExerciseVideos'
 
 function getLastSet(workouts: AppState['workouts'], exerciseId: string) {
   for (let index = workouts.length - 1; index >= 0; index -= 1) {
@@ -104,7 +106,7 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
               <section className="hevy-card stack-md" key={exercise.id}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                   <div>
-                    <h3 style={{ margin: 0 }}>{exercise.name}</h3>
+                    <h3 style={{ margin: 0 }}>{exercise.name} <ExerciseVideoLink exerciseId={exercise.id} /></h3>
                     <p style={{ margin: '2px 0 0', fontSize: '0.78rem', color: 'var(--muted)' }}>{target.sets}×{target.repMin}-{target.repMax} — RIR {target.targetRir} — Repos {target.restSeconds}s</p>
                   </div>
                   {previous && <span className="badge" style={{ fontSize: '0.72rem' }}>Dernier: {previous.weightKg}×{previous.reps}</span>}
@@ -242,6 +244,10 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
               Sauvegarder la routine
             </button>
           </section>
+        )}
+
+        {nextSession && (
+          <ProgressiveOverload sessionExercises={nextSession.exercises} />
         )}
 
         <SectionTitle icon="📋" label="Séances pre-faites" />

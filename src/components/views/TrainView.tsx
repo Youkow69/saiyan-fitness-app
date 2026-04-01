@@ -113,20 +113,20 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
                   <label><span>Poids (kg)</span><input value={currentInput.weight} onChange={(e) => setDraftInputs({ ...draftInputs, [exercise.id]: { ...currentInput, weight: e.target.value } })} /></label>
                   <label><span>Reps</span><input value={currentInput.reps} onChange={(e) => setDraftInputs({ ...draftInputs, [exercise.id]: { ...currentInput, reps: e.target.value } })} /></label>
                   <label><span>RIR</span><input value={currentInput.rir} onChange={(e) => setDraftInputs({ ...draftInputs, [exercise.id]: { ...currentInput, rir: e.target.value } })} /></label>
-                  <label>
-                    <span>Type</span>
-                    <select value={currentInput.setType} onChange={(e) => setDraftInputs({ ...draftInputs, [exercise.id]: { ...currentInput, setType: e.target.value as SetType } })}>
-                      <option value="warmup">Echauffement</option>
-                      <option value="normal">Normal</option>
-                      <option value="top">Top set</option>
-                      <option value="backoff">Back-off</option>
-                      <option value="drop">Drop set</option>
-                      <option value="amrap">AMRAP</option>
-                    </select>
-                  </label>
+                  <div style={{ gridColumn: 'span 2' }}>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--muted)', marginBottom: 4, display: 'block' }}>Type</span>
+                    <div className="chip-row">
+                      {([['warmup', 'Échauffement'], ['normal', 'Normal'], ['top', 'Top set'], ['backoff', 'Back-off'], ['drop', 'Drop set'], ['amrap', 'AMRAP']] as [SetType, string][]).map(([val, label]) => (
+                        <button key={val} type="button"
+                          className={`chip chip--sm ${currentInput.setType === val ? 'chip--active' : ''}`}
+                          onClick={() => setDraftInputs({ ...draftInputs, [exercise.id]: { ...currentInput, setType: val } })}
+                        >{label}</button>
+                      ))}
+                    </div>
+                  </div>
                 </div>
                 <button className="secondary-btn" type="button" onClick={() => onAddSet(exercise.id, Number(currentInput.weight || 0), Number(currentInput.reps || 0), Number(currentInput.rir || target.targetRir), currentInput.setType)}>
-                  + Ajouter la serie
+                  + Ajouter la série
                 </button>
                 <div className="set-list">
                   {exerciseLog.sets.length === 0
@@ -170,7 +170,7 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
           <section className="hevy-card stack-md">
             <SectionTitle icon="🛠️" label="Outils" />
             <details>
-              <summary style={{ cursor: 'pointer', fontSize: '0.85rem', color: 'var(--muted)', padding: '4px 0' }}>Chronometre & Calculateur de plaques</summary>
+              <summary style={{ cursor: 'pointer', fontSize: '0.85rem', color: 'var(--muted)', padding: '4px 0' }}>Chronomètre & Calculateur de plaques</summary>
               <div className="stack-md" style={{ marginTop: 12 }}>
                 <WorkoutTimer />
                 <PlateCalculator />
@@ -186,7 +186,7 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
 
         <button className="primary-btn" onClick={() => setCreatingRoutine(true)} type="button" style={{ display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'center', width: '100%', padding: '14px 16px', fontSize: '1rem' }}>
           <span style={{ fontSize: '1.2rem' }}>➕</span>
-          <span>Creer ma routine</span>
+          <span>Créer ma routine</span>
         </button>
 
         <ExerciseLibrary exercises={exercises.map(e => ({ id: e.id, name: e.name, muscleGroups: e.primaryMuscles as string[], equipment: [e.equipment] })) as LibExercise[]} />
@@ -212,7 +212,7 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
             </div>
             {routineExercises.length > 0 && (
               <div className="stack-md">
-                <span className="eyebrow">Exercices ajoutes ({routineExercises.length})</span>
+                <span className="eyebrow">Exercices ajoutés ({routineExercises.length})</span>
                 {routineExercises.map((re, idx) => {
                   const ex = getExerciseById(re.exerciseId)
                   return (
@@ -263,7 +263,7 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
                 </p>
               </div>
               <button className="cta-button" style={{ fontSize: '1.1rem', padding: '0.9rem' }} onClick={() => onStartSession(idx)} type="button">
-                COMMENCER LA SEANCE
+                Commencer la séance
               </button>
             </section>
           )
@@ -286,7 +286,7 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
                 </div>
                 <div style={{ display: 'flex', gap: 10 }}>
                   <button className="cta-button" style={{ fontSize: '1.1rem', padding: '0.9rem', flex: 1 }} onClick={() => onStartCustomRoutine(routine)} type="button">
-                    COMMENCER
+                    Commencer
                   </button>
                   <button className="ghost-btn" style={{ minHeight: 48, padding: '8px 14px', borderRadius: 12 }} onClick={() => setConfirmDeleteId(routine.id)} type="button">🗑️</button>
                 </div>
@@ -298,13 +298,13 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
         <ConfirmDialog
           isOpen={confirmDeleteId !== null}
           title="Supprimer la routine"
-          message="Es-tu sur de vouloir supprimer cette routine ? Cette action est irreversible."
+          message="Es-tu sûr de vouloir supprimer cette routine ? Cette action est irréversible."
           confirmLabel="Supprimer"
           confirmColor="var(--accent-red)"
           onConfirm={() => {
             if (confirmDeleteId) {
               dispatch({ type: 'DELETE_CUSTOM_ROUTINE', payload: confirmDeleteId })
-              showToast('Routine supprimee', 'info')
+              showToast('Routine supprimée', 'info')
             }
             setConfirmDeleteId(null)
           }}

@@ -311,7 +311,7 @@ function LiftCard({
 
 export function StrengthStandards() {
   const { state } = useAppState()
-  const bodyweight = state.user?.bodyweightKg ?? 80
+  const bodyweight = state.profile?.weightKg ?? 80
 
   const results = useMemo(
     () => computeLiftResults(state.workouts, bodyweight),

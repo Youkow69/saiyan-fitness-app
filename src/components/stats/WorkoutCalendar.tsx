@@ -94,7 +94,7 @@ export function WorkoutCalendar({ workouts }: { workouts: CalendarWorkoutLog[] }
     return { months, dayMap, maxVolume, workoutDates, totalWorkouts: workouts.length }
   }, [workouts])
 
-  const streak = useMemo(() => getStreak(workoutDates), [workoutDates])
+  const streak = useMemo(() => getStreak({ workouts } as any), [workoutDates])
 
   const selectedDayData = selectedDay ? dayMap[selectedDay] : null
   const selectedWorkouts = selectedDay

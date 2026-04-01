@@ -3,9 +3,9 @@ import { AppProvider, useAppState } from './context/AppContext'
 import { saveState } from './storage'
 import { ToastContainer, showToast } from './components/ui/Toast'
 import { getExerciseById, getProgramById, makeId, todayIso } from './lib'
-import { useAuth } from './supabase/useAuth'
-import { useCloudSync } from './supabase/useCloudSync'
-import { AuthScreen } from './supabase/AuthScreen'
+import { useAuth } from './hooks/useAuth'
+import { useCloudSync } from './hooks/useCloudSync'
+import { AuthScreen } from './components/views/AuthScreen'
 import type {
   CustomRoutine,
   MuscleGroup,
@@ -101,7 +101,7 @@ function AppInner({ user, pushToCloud, pullFromCloud, syncSteps, signOut }: AppI
           const cloudWorkouts = (cloudState as any).workouts?.length ?? 0
           const localWorkouts = stateRef.current.workouts?.length ?? 0
           if (cloudWorkouts > localWorkouts) {
-            dispatch({ type: 'LOAD_STATE', payload: cloudState })
+            dispatch({ type: 'SET_STATE', payload: cloudState })
             showToast('Donn\u00E9es cloud r\u00E9cup\u00E9r\u00E9es', 'success')
           } else {
             // Push local state to cloud

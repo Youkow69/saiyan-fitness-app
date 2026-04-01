@@ -6,6 +6,7 @@ import type {
 import { allExercises } from './data/exercises'
 import { allFoods } from './data/foods'
 import { additionalPrograms } from './data/programs'
+import { specializedPrograms } from './data/additional_programs'
 
 export const exercises = allExercises
 

@@ -4,12 +4,46 @@
 // warm-up builder, busy-gym alternatives. French labels. Dark theme. ARIA.
 // =============================================================================
 
-import { useState, useCallback, useRef, useMemo } from 'react'
-import { useAppState } from '../../context/AppContext'
+import { useState, useCallback, useMemo } from 'react'
 import { getExerciseById, makeId } from '../../lib'
 import { exercises } from '../../data'
 import type { SetType } from '../../types'
-import type { EnhancedSetLog, Tempo, SupersetGroup, UndoAction } from './types_additions'
+
+// Inline type definitions (originally from ./types_additions)
+interface Tempo {
+  eccentric: number
+  pause: number
+  concentric: number
+  top: number
+}
+
+interface EnhancedSetLog {
+  id: string
+  exerciseId: string
+  setIndex: number
+  setType: SetType
+  weightKg: number
+  reps: number
+  rir: number
+  timestamp: string
+  note?: string
+  tempo?: Tempo
+  side?: 'left' | 'right'
+  supersetGroupId?: string
+}
+
+interface SupersetGroup {
+  id: string
+  type: 'superset' | 'giant_set' | 'rest_pause' | 'myo_reps'
+  exerciseIds: string[]
+}
+
+interface UndoAction {
+  type: 'ADD_SET' | 'DELETE_SET' | 'EDIT_SET'
+  exerciseId: string
+  set: EnhancedSetLog
+  timestamp: number
+}
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -296,7 +330,6 @@ export function PremiumSetLogger({
   existingSets,
   supersetGroup,
 }: PremiumSetLoggerProps) {
-  const { state } = useAppState()
   const exercise = getExerciseById(exerciseId)
 
   // Draft state
@@ -312,8 +345,6 @@ export function PremiumSetLogger({
 
   // Undo stack
   const [undoStack, setUndoStack] = useState<UndoAction[]>([])
-  const undoTimeout = useRef<ReturnType<typeof setTimeout> | null>(null)
-
   // Alternatives
   const alternatives = useMemo(() => getAlternatives(exerciseId), [exerciseId])
 

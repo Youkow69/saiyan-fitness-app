@@ -14,6 +14,23 @@ import type {
   WorkoutLog,
 } from './types'
 
+// ── Named Constants ─────────────────────────────────────────────────────────
+const BASE_POWER            = 1200
+const POWER_PER_WORKOUT     = 180
+const POWER_PER_VOLUME      = 0.22
+const POWER_PER_BODYWEIGHT  = 30
+const POWER_PROTEIN_BONUS   = 150
+const PROTEIN_HIT_THRESHOLD = 0.9
+
+const DELOAD_WORSE_THRESHOLD   = 1.5
+const DELOAD_SORENESS_THRESHOLD = 3.5
+const DELOAD_MIN_SESSIONS       = 3
+
+const KCAL_PER_KG_BODY_MASS = 7700
+const ADAPTIVE_TDEE_MIN     = 1200
+const ADAPTIVE_TDEE_MAX     = 5000
+const ADAPTIVE_WINDOW_DAYS  = 14
+
 const activityMultipliers: Record<ActivityLevel, number> = {
   sedentary: 1.2,
   light: 1.375,
@@ -115,10 +132,12 @@ export function formatNumber(value: number) {
 
 export function estimate1Rm(weight: number, reps: number) {
   if (weight <= 0 || reps <= 0) return 0
+  if (reps > 30 || weight > 1000) return 0
   return weight * (1 + reps / 30)
 }
 
 export function setVolume(weight: number, reps: number): number {
+  if (weight < 0 || reps <= 0) return 0
   return Math.max(0, weight * reps)
 }
 
@@ -164,14 +183,14 @@ export function getPowerLevel(state: AppState) {
   )
   const nutrition = getDailyNutrition(state.foodEntries)
   const proteinHits =
-    state.targets && nutrition.protein >= state.targets.protein * 0.9 ? 1 : 0
+    state.targets && nutrition.protein >= state.targets.protein * PROTEIN_HIT_THRESHOLD ? 1 : 0
 
   return Math.round(
-    1200 +
-      state.workouts.length * 180 +
-      volume * 0.22 +
-      state.bodyweightEntries.length * 30 +
-      proteinHits * 150,
+    BASE_POWER +
+      state.workouts.length * POWER_PER_WORKOUT +
+      volume * POWER_PER_VOLUME +
+      state.bodyweightEntries.length * POWER_PER_BODYWEIGHT +
+      proteinHits * POWER_PROTEIN_BONUS,
   )
 }
 
@@ -338,8 +357,8 @@ export function getStreak(state: AppState): number {
   const dates = [...new Set(state.workouts.map(w => w.date))].sort().reverse()
   let streak = 1
   for (let i = 0; i < dates.length - 1; i++) {
-    const d1 = new Date(dates[i])
-    const d2 = new Date(dates[i + 1])
+    const d1 = new Date(dates[i] + 'T12:00:00')
+    const d2 = new Date(dates[i + 1] + 'T12:00:00')
     const diff = (d1.getTime() - d2.getTime()) / 86400000
     if (diff <= 2) streak++
     else break
@@ -444,7 +463,7 @@ export function getVolumeStatus(currentSets: number, mev: number, mav: number, m
 // RP-style auto-deload detection from session feedback
 export function shouldDeload(state: AppState): boolean {
   const recentFeedback = (state.sessionFeedback ?? []).slice(-4)
-  if (recentFeedback.length < 3) return false
+  if (recentFeedback.length < DELOAD_MIN_SESSIONS) return false
 
   const avgWorseCount = recentFeedback.reduce((sum, fb) => {
     const worse = fb.muscleGroups.filter(m => m.performance === 'worse').length
@@ -456,7 +475,7 @@ export function shouldDeload(state: AppState): boolean {
     return sum + total / Math.max(1, fb.muscleGroups.length)
   }, 0) / recentFeedback.length
 
-  return avgWorseCount > 1.5 || avgSoreness > 3.5
+  return avgWorseCount > DELOAD_WORSE_THRESHOLD || avgSoreness > DELOAD_SORENESS_THRESHOLD
 }
 
 // MacroFactor-style adaptive TDEE from weight + calorie history
@@ -468,12 +487,12 @@ export function calculateAdaptiveTDEE(state: AppState): number {
     return state.targets?.tdee ?? 2500
   }
 
-  const last14Days = [...Array(14)].map((_, i) => daysAgoIso(i))
+  const last14Days = [...Array(ADAPTIVE_WINDOW_DAYS)].map((_, i) => daysAgoIso(i))
 
   const avgCalories = last14Days.reduce((sum, date) => {
     const dayCal = foodEntries.filter(f => f.date === date).reduce((s, f) => s + f.calories, 0)
     return sum + dayCal
-  }, 0) / 14
+  }, 0) / ADAPTIVE_WINDOW_DAYS
 
   const recentWeights = entries.slice(-14).map(e => e.weightKg)
   if (recentWeights.length < 2) return state.targets?.tdee ?? 2500
@@ -481,10 +500,10 @@ export function calculateAdaptiveTDEE(state: AppState): number {
   const weightChange = recentWeights[recentWeights.length - 1] - recentWeights[0]
   const weeklyChange = weightChange / (recentWeights.length / 7)
   // 1 kg body mass ~= 7700 kcal
-  const dailySurplus = (weeklyChange * 7700) / 7
+  const dailySurplus = (weeklyChange * KCAL_PER_KG_BODY_MASS) / 7
   const estimatedTDEE = Math.round(avgCalories - dailySurplus)
 
-  return Math.max(1200, Math.min(5000, estimatedTDEE))
+  return Math.max(ADAPTIVE_TDEE_MIN, Math.min(ADAPTIVE_TDEE_MAX, estimatedTDEE))
 }
 
 export function getAdaptiveTDEEStatus(state: AppState): { tdee: number; dailyDelta: number; status: 'surplus' | 'deficit' | 'maintenance'; hasEnoughData: boolean } {

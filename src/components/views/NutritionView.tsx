@@ -10,12 +10,12 @@ import SearchSelect from '../ui/SearchSelect'
 import MacroBar from '../ui/MacroBar'
 
 const MEAL_CATEGORIES: Array<{ value: FoodEntry['category']; label: string }> = [
-  { value: 'breakfast', label: 'Petit-d\u00E9jeuner' },
-  { value: 'lunch', label: 'D\u00E9jeuner' },
-  { value: 'dinner', label: 'D\u00EEner' },
+  { value: 'breakfast', label: 'Petit-déjeuner' },
+  { value: 'lunch', label: 'Déjeuner' },
+  { value: 'dinner', label: 'Dîner' },
   { value: 'snack', label: 'Collation' },
-  { value: 'pre_workout', label: 'Pr\u00E9-s\u00E9ance' },
-  { value: 'post_workout', label: 'Post-s\u00E9ance' },
+  { value: 'pre_workout', label: 'Pré-séance' },
+  { value: 'post_workout', label: 'Post-séance' },
 ]
 
 export const NutritionView: React.FC = React.memo(
@@ -34,7 +34,7 @@ export const NutritionView: React.FC = React.memo(
 
     const addFood = (entry: FoodEntry) => {
       dispatch({ type: 'ADD_FOOD', payload: entry })
-      showToast(`${entry.name} ajout\u00E9 (+${entry.calories} kcal)`, 'success')
+      showToast(`${entry.name} ajouté (+${entry.calories} kcal)`, 'success')
     }
 
     const lookupBarcode = async (code: string) => {
@@ -66,7 +66,7 @@ export const NutritionView: React.FC = React.memo(
           })
           setBarcodeInput('')
         } else {
-          showToast('Produit non trouv\u00E9', 'error')
+          showToast('Produit non trouvé', 'error')
         }
       } catch {
         showToast('Erreur de connexion', 'error')
@@ -108,7 +108,7 @@ export const NutritionView: React.FC = React.memo(
         <section className="hevy-card stack-md">
           <SectionTitle icon="" label="Nutrition aujourd'hui" />
           <MacroBar label="Calories" current={totals.calories} target={targets.calories} unit="kcal" color="calories" />
-          <MacroBar label="Prot\u00E9ines" current={totals.protein} target={targets.protein} unit="g" color="protein" />
+          <MacroBar label="Protéines" current={totals.protein} target={targets.protein} unit="g" color="protein" />
           <MacroBar label="Glucides" current={totals.carbs} target={targets.carbs} unit="g" color="carbs" />
           <MacroBar label="Lipides" current={totals.fats} target={targets.fats} unit="g" color="fat" />
         </section>
@@ -175,10 +175,10 @@ export const NutritionView: React.FC = React.memo(
 
         {/* Saved meals */}
         <section className="hevy-card stack-md">
-          <SectionTitle icon="" label="Repas sauvegard\u00E9s" />
+          <SectionTitle icon="" label="Repas sauvegardés" />
           {state.savedMeals.length === 0 ? (
             <div className="empty-state">
-              <p>Aucun repas sauvegard\u00E9.</p>
+              <p>Aucun repas sauvegardé.</p>
             </div>
           ) : (
             <div className="card-list">
@@ -213,7 +213,7 @@ export const NutritionView: React.FC = React.memo(
 
         {/* Suggested recipes */}
         <section className="hevy-card stack-md">
-          <SectionTitle icon="" label="Recettes sugg\u00E9r\u00E9es" />
+          <SectionTitle icon="" label="Recettes suggérées" />
           <div className="card-list">
             {suggestions.map((recipe) => (
               <button

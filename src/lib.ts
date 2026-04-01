@@ -237,7 +237,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     image: 'images/goku_ssj.png',
     powerThreshold: 2000,
     quests: [
-      { id: 'ssj_q1', name: "L'Eveil de la Rage", description: 'Complete 5 séances', requirement: (s) => s.workouts.length, target: 5 },
+      { id: 'ssj_q1', name: "L'Éveil de la Rage", description: 'Complete 5 séances', requirement: (s) => s.workouts.length, target: 5 },
       { id: 'ssj_q2', name: 'Dépasse tes Limites', description: 'Soulevé 1 000 kg au total', requirement: (s) => s.workouts.reduce((t, w) => t + getWorkoutVolume(w), 0), target: 1000 },
       { id: 'ssj_q3', name: 'Premier Sang', description: 'Bats 1 record personnel', requirement: (s) => countPRs(s), target: 1 },
       { id: 'ssj_daily', name: 'Discipline Saiyan', description: 'Complete 20 daily quests', requirement: (s) => countCompletedDailyQuests(s), target: 20 },
@@ -294,7 +294,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     quests: [
       { id: 'blue_q1', name: "Camp d'Entraînement de Whis", description: 'Complete 100 séances', requirement: (s) => s.workouts.length, target: 100 },
       { id: 'blue_q2', name: 'Puissance Universelle', description: 'Soulevé 100 000 kg au total', requirement: (s) => s.workouts.reduce((t, w) => t + getWorkoutVolume(w), 0), target: 100000 },
-      { id: 'blue_q3', name: 'Inarretable', description: 'Bats 50 records personnels', requirement: (s) => countPRs(s), target: 50 },
+      { id: 'blue_q3', name: 'Inarrêtable', description: 'Bats 50 records personnels', requirement: (s) => countPRs(s), target: 50 },
       { id: 'blue_q4', name: '60 Jours de Combat', description: 'Série de 60 jours', requirement: (s) => getStreak(s), target: 60 },
       { id: 'blue_daily', name: 'Ki Divin Maîtrise', description: 'Complete 500 daily quests', requirement: (s) => countCompletedDailyQuests(s), target: 500 },
     ],
@@ -322,7 +322,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     quests: [
       { id: 'ui_q1', name: 'Tournoi du Pouvoir', description: 'Complete 200 séances', requirement: (s) => s.workouts.length, target: 200 },
       { id: 'ui_q2', name: 'Mouvement Autonome', description: 'Soulevé 250 000 kg au total', requirement: (s) => s.workouts.reduce((t, w) => t + getWorkoutVolume(w), 0), target: 250000 },
-      { id: 'ui_q3', name: 'Statut Legendaire', description: 'Bats 100 records personnels', requirement: (s) => countPRs(s), target: 100 },
+      { id: 'ui_q3', name: 'Statut Légendaire', description: 'Bats 100 records personnels', requirement: (s) => countPRs(s), target: 100 },
       { id: 'ui_q4', name: '90 Jours Sans Faille', description: 'Série de 90 jours', requirement: (s) => getStreak(s), target: 90 },
       { id: 'ui_daily', name: 'Instinct Pur', description: 'Complete 1,000 daily quests', requirement: (s) => countCompletedDailyQuests(s), target: 1000 },
     ],
@@ -457,8 +457,8 @@ export function getVolumeRecommendation(muscle: MuscleGroup, currentSets: number
   if (currentSets === 0) return 'Aucun travail cette semaine'
   if (currentSets < landmarks.mev) return 'Sous le MEV — Augmenter'
   if (currentSets < landmarks.mav) return 'Zone productive'
-  if (currentSets < landmarks.mrv) return 'Volume eleve — Surveiller'
-  return 'Au-dessus du MRV — Reduire'
+  if (currentSets < landmarks.mrv) return 'Volume élevé — Surveiller'
+  return 'Au-dessus du MRV — Réduire'
 }
 
 export function getVolumeStatus(currentSets: number, mev: number, mav: number, mrv: number): 'none' | 'below_mev' | 'productive' | 'high' | 'above_mrv' {
@@ -531,11 +531,11 @@ export function getMesocycleStatus(state: AppState): { label: string; detail: st
   const streak = getStreak(state)
 
   if (deload) {
-    return { label: 'Deload recommande', detail: 'Performances en baisse — reduis le volume cette semaine', color: 'var(--accent-red)', weekNumber: 0 }
+    return { label: 'Deload recommandé', detail: 'Performances en baisse — réduis le volume cette semaine', color: 'var(--accent-red)', weekNumber: 0 }
   }
 
   if (totalWorkouts === 0) {
-    return { label: 'Debut du cycle', detail: 'Commence ta premiere séance pour lancer le mesocycle', color: 'var(--muted)', weekNumber: 0 }
+    return { label: 'Début du cycle', detail: 'Commence ta première séance pour lancer le mesocycle', color: 'var(--muted)', weekNumber: 0 }
   }
 
   const firstWorkoutDate = new Date(state.workouts[0].date)
@@ -548,10 +548,10 @@ export function getMesocycleStatus(state: AppState): { label: string; detail: st
     : 2
 
   if (avgSoreness > 3 || streak < 3) {
-    return { label: 'Fatigue montante', detail: 'Surveille ta recuperation — un deload approche peut-etre', color: 'var(--accent-gold)', weekNumber }
+    return { label: 'Fatigue montante', detail: 'Surveille ta récupération — un deload approche peut-etre', color: 'var(--accent-gold)', weekNumber }
   }
 
-  return { label: 'Semaine productive', detail: `Semaine ${weekNumber} — continue sur cette lancee`, color: '#4fffb0', weekNumber }
+  return { label: 'Semaine productive', detail: `Semaine ${weekNumber} — continue sur cette lancée`, color: '#4fffb0', weekNumber }
 }
 
 // ── Daily Quest System ────────────────────────────────────────────────────────
@@ -603,7 +603,7 @@ export function generateMainObjectives(state: AppState): MainObjective[] {
   const objectives: MainObjective[] = []
 
   objectives.push({
-    id: 'first_month', name: '30 Jours de Feu', description: 'Enchaine les entraînements pendant 30 jours',
+    id: 'first_month', name: '30 Jours de Feu', description: 'Enchaîne les entraînements pendant 30 jours',
     icon: 'F', completed: false,
     milestones: [
       { description: '7 jours', target: 7, unit: 'jours', check: s => getStreak(s) },
@@ -613,7 +613,7 @@ export function generateMainObjectives(state: AppState): MainObjective[] {
   })
 
   objectives.push({
-    id: 'volume_master', name: 'Maître du Volume', description: 'Accumule du volume total a la barre',
+    id: 'volume_master', name: 'Maître du Volume', description: 'Accumule du volume total à la barre',
     icon: 'V', completed: false,
     milestones: [
       { description: '10 000 kg', target: 10000, unit: 'kg', check: s => s.workouts.reduce((t, w) => t + getWorkoutVolume(w), 0) },
@@ -707,7 +707,7 @@ export function getPrimaryRecommendation(state: AppState) {
   const nutrition = getDailyNutrition(state.foodEntries)
 
   if (shouldDeload(state)) {
-    return 'Tes indicateurs de recuperation suggerent un deload. Reduis le volume de 40-50% cette semaine.'
+    return 'Tes indicateurs de récupération suggèrent un deload. Réduis le volume de 40-50% cette semaine.'
   }
 
   if (state.profile && weeklyWorkouts.length < state.profile.trainingDaysPerWeek) {
@@ -715,7 +715,7 @@ export function getPrimaryRecommendation(state: AppState) {
   }
 
   if (state.targets && nutrition.protein < state.targets.protein * 0.85) {
-    return 'Les proteines sont en retard aujourd\'hui. Ajoute un repas proteine ou un shake post-séance.'
+    return 'Les protéines sont en retard aujourd\'hui. Ajoute un repas protéiné ou un shake post-séance.'
   }
 
   const weeklyVolume = weeklyWorkouts.reduce(
@@ -726,6 +726,6 @@ export function getPrimaryRecommendation(state: AppState) {
     return 'Volume d\'entraînement hebdomadaire faible. Pousse tes mouvements principaux et finis tes accessoires.'
   }
 
-  return 'Recuperation et regularite au top. Continue la progression lente, propre et repeatable.'
+  return 'Recuperation et régularité au top. Continue la progression lente, propre et répétable.'
 }
 

@@ -172,7 +172,7 @@ export const ScouterView: React.FC = React.memo(
                     borderBottom: '1px solid var(--stroke)',
                   }}
                 >
-                  <span style={{ fontSize: '0.85rem' }}>{ex.name}</span>
+                  <span style={{ fontSize: '0.85rem' }}>{ex?.name ?? exerciseId.replace(/_/g, ' ')}</span>
                   <strong
                     style={{
                       color: best > 0 ? 'var(--accent-gold)' : 'var(--muted)',

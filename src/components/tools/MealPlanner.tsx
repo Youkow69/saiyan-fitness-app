@@ -1,6 +1,6 @@
 import { useMemo, useState, useCallback } from 'react'
 import { useAppState } from '../../context/AppContext'
-import { getDailyNutrition, todayIso } from '../../lib'
+import { getDailyNutrition, todayIso, makeId } from '../../lib'
 import { foods } from '../../data'
 
 // ---------------------------------------------------------------------------
@@ -335,14 +335,14 @@ const styles = {
 // Component
 // ---------------------------------------------------------------------------
 
-export default function MealPlanner() {
+export function MealPlanner() {
   const { state, dispatch } = useAppState()
   const [addedIndex, setAddedIndex] = useState<number | null>(null)
 
   const today = todayIso()
-  const dailyNutrition = useMemo(() => getDailyNutrition(state, today), [state, today])
+  const dailyNutrition = useMemo(() => getDailyNutrition(state.foodEntries, today), [state.foodEntries, today])
 
-  const targets = state.settings?.targets ?? {
+  const targets = state.targets ?? {
     calories: 2500,
     protein: 180,
     carbs: 280,
@@ -367,9 +367,15 @@ export default function MealPlanner() {
         dispatch({
           type: 'ADD_FOOD',
           payload: {
+            id: makeId('meal'),
             date: today,
-            foodId: item.foodId,
+            name: item.food,
+            category: 'snack' as const,
             grams: item.grams,
+            calories: item.calories,
+            protein: item.protein,
+            carbs: item.carbs,
+            fats: item.fat,
           },
         })
       })

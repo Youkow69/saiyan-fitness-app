@@ -1,0 +1,359 @@
+import { useMemo, useState } from 'react'
+
+export interface CalendarWorkoutLog {
+  id: string
+  date: string // ISO date string YYYY-MM-DD
+  exercises: { weight: number; reps: number }[]
+}
+
+interface DayData {
+  date: string
+  volume: number
+  workoutCount: number
+  dayOfWeek: number
+}
+
+function getDaysInMonth(year: number, month: number): number {
+  return new Date(year, month + 1, 0).getDate()
+}
+
+function formatMonthLabel(year: number, month: number): string {
+  return new Date(year, month, 1).toLocaleDateString('fr-FR', { month: 'short', year: 'numeric' })
+}
+
+function getIntensityLevel(volume: number, maxVolume: number): number {
+  if (volume === 0) return 0
+  const ratio = volume / maxVolume
+  if (ratio < 0.2) return 1
+  if (ratio < 0.4) return 2
+  if (ratio < 0.6) return 3
+  if (ratio < 0.8) return 4
+  return 5
+}
+
+const INTENSITY_COLORS: Record<number, string> = {
+  0: '#16213e',
+  1: 'rgba(237,137,54,0.2)',
+  2: 'rgba(237,137,54,0.4)',
+  3: 'rgba(237,137,54,0.6)',
+  4: 'rgba(237,137,54,0.8)',
+  5: '#ed8936',
+}
+
+const DAY_LABELS = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim']
+
+function calculateStreak(workoutDates: Set<string>): number {
+  let streak = 0
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+
+  // Check if today or yesterday had a workout (allow 1 day gap for current day)
+  const todayStr = today.toISOString().split('T')[0]
+  const yesterday = new Date(today)
+  yesterday.setDate(yesterday.getDate() - 1)
+  const yesterdayStr = yesterday.toISOString().split('T')[0]
+
+  let checkDate: Date
+  if (workoutDates.has(todayStr)) {
+    checkDate = new Date(today)
+  } else if (workoutDates.has(yesterdayStr)) {
+    checkDate = new Date(yesterday)
+  } else {
+    return 0
+  }
+
+  while (true) {
+    const dateStr = checkDate.toISOString().split('T')[0]
+    if (workoutDates.has(dateStr)) {
+      streak++
+      checkDate.setDate(checkDate.getDate() - 1)
+    } else {
+      break
+    }
+  }
+  return streak
+}
+
+export function WorkoutCalendar({ workouts }: { workouts: CalendarWorkoutLog[] }) {
+  const [selectedDay, setSelectedDay] = useState<string | null>(null)
+
+  const { months, dayMap, maxVolume, workoutDates, totalWorkouts } = useMemo(() => {
+    // Build day -> volume map
+    const dayMap: Record<string, { volume: number; count: number }> = {}
+    const workoutDates = new Set<string>()
+
+    workouts.forEach((w) => {
+      const dateKey = w.date.split('T')[0]
+      workoutDates.add(dateKey)
+      const volume = w.exercises.reduce((s, ex) => s + ex.weight * ex.reps, 0)
+      if (!dayMap[dateKey]) {
+        dayMap[dateKey] = { volume: 0, count: 0 }
+      }
+      dayMap[dateKey].volume += volume
+      dayMap[dateKey].count += 1
+    })
+
+    const maxVolume = Math.max(1, ...Object.values(dayMap).map((d) => d.volume))
+
+    // Generate last 3 months of data
+    const today = new Date()
+    const months: { year: number; month: number; days: DayData[] }[] = []
+
+    for (let m = 2; m >= 0; m--) {
+      const d = new Date(today.getFullYear(), today.getMonth() - m, 1)
+      const year = d.getFullYear()
+      const month = d.getMonth()
+      const daysInMonth = getDaysInMonth(year, month)
+      const days: DayData[] = []
+
+      for (let day = 1; day <= daysInMonth; day++) {
+        const date = new Date(year, month, day)
+        const dateStr = date.toISOString().split('T')[0]
+        const dayOfWeek = date.getDay() === 0 ? 6 : date.getDay() - 1 // Mon=0, Sun=6
+        const data = dayMap[dateStr]
+        days.push({
+          date: dateStr,
+          volume: data?.volume || 0,
+          workoutCount: data?.count || 0,
+          dayOfWeek,
+        })
+      }
+
+      months.push({ year, month, days })
+    }
+
+    return { months, dayMap, maxVolume, workoutDates, totalWorkouts: workouts.length }
+  }, [workouts])
+
+  const streak = useMemo(() => calculateStreak(workoutDates), [workoutDates])
+
+  const selectedDayData = selectedDay ? dayMap[selectedDay] : null
+  const selectedWorkouts = selectedDay
+    ? workouts.filter((w) => w.date.split('T')[0] === selectedDay)
+    : []
+
+  return (
+    <div
+      style={{
+        background: '#1a1a2e',
+        borderRadius: 16,
+        padding: 24,
+        maxWidth: 700,
+        margin: '0 auto',
+        color: '#e2e8f0',
+        fontFamily: "'Segoe UI', sans-serif",
+      }}
+    >
+      <h2
+        style={{
+          textAlign: 'center',
+          margin: '0 0 16px',
+          fontSize: 22,
+          background: 'linear-gradient(135deg, #f6ad55, #ed8936)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+        }}
+      >
+        Calendrier d&apos;Entrainement
+      </h2>
+
+      {/* Stats row */}
+      <div
+        style={{
+          display: 'flex',
+          gap: 12,
+          justifyContent: 'center',
+          marginBottom: 20,
+          flexWrap: 'wrap',
+        }}
+      >
+        <div
+          style={{
+            background: '#16213e',
+            borderRadius: 10,
+            padding: '10px 20px',
+            textAlign: 'center',
+          }}
+        >
+          <div style={{ fontSize: 24, fontWeight: 800, color: '#ed8936' }}>{streak}</div>
+          <div style={{ fontSize: 11, color: '#a0aec0' }}>Jours de suite</div>
+        </div>
+        <div
+          style={{
+            background: '#16213e',
+            borderRadius: 10,
+            padding: '10px 20px',
+            textAlign: 'center',
+          }}
+        >
+          <div style={{ fontSize: 24, fontWeight: 800, color: '#3182ce' }}>{totalWorkouts}</div>
+          <div style={{ fontSize: 11, color: '#a0aec0' }}>Seances (3 mois)</div>
+        </div>
+        <div
+          style={{
+            background: '#16213e',
+            borderRadius: 10,
+            padding: '10px 20px',
+            textAlign: 'center',
+          }}
+        >
+          <div style={{ fontSize: 24, fontWeight: 800, color: '#38a169' }}>
+            {workoutDates.size}
+          </div>
+          <div style={{ fontSize: 11, color: '#a0aec0' }}>Jours actifs</div>
+        </div>
+      </div>
+
+      {/* Calendar grid */}
+      {months.map(({ year, month, days }) => {
+        const firstDayOfWeek = days[0].dayOfWeek
+        const emptyCells = firstDayOfWeek
+
+        return (
+          <div key={`${year}-${month}`} style={{ marginBottom: 20 }}>
+            <div style={{ fontSize: 13, fontWeight: 600, color: '#a0aec0', marginBottom: 8, textTransform: 'capitalize' }}>
+              {formatMonthLabel(year, month)}
+            </div>
+
+            {/* Day labels */}
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(7, 1fr)',
+                gap: 3,
+                marginBottom: 4,
+              }}
+            >
+              {DAY_LABELS.map((label) => (
+                <div
+                  key={label}
+                  style={{
+                    textAlign: 'center',
+                    fontSize: 10,
+                    color: '#718096',
+                    padding: '2px 0',
+                  }}
+                >
+                  {label}
+                </div>
+              ))}
+            </div>
+
+            {/* Day cells */}
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(7, 1fr)',
+                gap: 3,
+              }}
+            >
+              {/* Empty cells for alignment */}
+              {Array.from({ length: emptyCells }).map((_, i) => (
+                <div key={`empty-${i}`} style={{ aspectRatio: '1', borderRadius: 4 }} />
+              ))}
+
+              {days.map((day) => {
+                const level = getIntensityLevel(day.volume, maxVolume)
+                const isSelected = selectedDay === day.date
+                const isToday = day.date === new Date().toISOString().split('T')[0]
+                const isFuture = day.date > new Date().toISOString().split('T')[0]
+
+                return (
+                  <div
+                    key={day.date}
+                    onClick={() => {
+                      if (!isFuture && day.workoutCount > 0) {
+                        setSelectedDay(selectedDay === day.date ? null : day.date)
+                      }
+                    }}
+                    title={
+                      day.volume > 0
+                        ? `${new Date(day.date).toLocaleDateString('fr-FR')}: ${Math.round(day.volume)} kg volume`
+                        : new Date(day.date).toLocaleDateString('fr-FR')
+                    }
+                    style={{
+                      aspectRatio: '1',
+                      borderRadius: 4,
+                      background: isFuture
+                        ? 'rgba(255,255,255,0.02)'
+                        : INTENSITY_COLORS[level],
+                      border: isSelected
+                        ? '2px solid #f6ad55'
+                        : isToday
+                          ? '2px solid #4a5568'
+                          : '2px solid transparent',
+                      cursor: day.workoutCount > 0 && !isFuture ? 'pointer' : 'default',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: 9,
+                      color: isFuture ? '#4a5568' : level > 0 ? '#fff' : '#4a5568',
+                      fontWeight: isToday ? 700 : 400,
+                      transition: 'all 0.15s',
+                      position: 'relative',
+                    }}
+                  >
+                    {new Date(day.date).getDate()}
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        )
+      })}
+
+      {/* Legend */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 4, justifyContent: 'center', marginTop: 8 }}>
+        <span style={{ fontSize: 10, color: '#718096', marginRight: 4 }}>Moins</span>
+        {[0, 1, 2, 3, 4, 5].map((level) => (
+          <div
+            key={level}
+            style={{
+              width: 14,
+              height: 14,
+              borderRadius: 3,
+              background: INTENSITY_COLORS[level],
+              border: '1px solid rgba(255,255,255,0.05)',
+            }}
+          />
+        ))}
+        <span style={{ fontSize: 10, color: '#718096', marginLeft: 4 }}>Plus</span>
+      </div>
+
+      {/* Selected day detail */}
+      {selectedDay && selectedDayData && (
+        <div
+          style={{
+            marginTop: 16,
+            background: '#16213e',
+            borderRadius: 12,
+            padding: 16,
+            border: '1px solid #2d3748',
+          }}
+        >
+          <h4 style={{ margin: '0 0 8px', fontSize: 14, color: '#ed8936' }}>
+            {new Date(selectedDay).toLocaleDateString('fr-FR', {
+              weekday: 'long',
+              day: 'numeric',
+              month: 'long',
+              year: 'numeric',
+            })}
+          </h4>
+          <div style={{ display: 'flex', gap: 16, marginBottom: 8, fontSize: 13 }}>
+            <span style={{ color: '#a0aec0' }}>
+              Seances: <strong style={{ color: '#e2e8f0' }}>{selectedDayData.count}</strong>
+            </span>
+            <span style={{ color: '#a0aec0' }}>
+              Volume: <strong style={{ color: '#e2e8f0' }}>{Math.round(selectedDayData.volume)} kg</strong>
+            </span>
+          </div>
+          {selectedWorkouts.map((w, i) => (
+            <div key={w.id} style={{ fontSize: 12, color: '#a0aec0', marginBottom: 4 }}>
+              Seance {i + 1}: {w.exercises.length} serie{w.exercises.length !== 1 ? 's' : ''}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}

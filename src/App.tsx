@@ -3,6 +3,9 @@ import { AppProvider, useAppState } from './context/AppContext'
 import { saveState } from './storage'
 import { ToastContainer, showToast } from './components/ui/Toast'
 import { getExerciseById, getProgramById, makeId, todayIso } from './lib'
+import { useAuth } from './supabase/useAuth'
+import { useCloudSync } from './supabase/useCloudSync'
+import { AuthScreen } from './supabase/AuthScreen'
 import type {
   CustomRoutine,
   MuscleGroup,
@@ -18,6 +21,7 @@ import type {
 
 const DEFAULT_REST_SECONDS = 90
 const SYNC_INTERVAL_MS = 30000
+const CLOUD_SYNC_INTERVAL_MS = 60000
 
 // ── Components ───────────────────────────────────────────────────────────────
 
@@ -55,7 +59,15 @@ function checkForPR(
 
 // ── AppInner (uses context) ──────────────────────────────────────────────────
 
-function AppInner() {
+interface AppInnerProps {
+  user: ReturnType<typeof useAuth>['user']
+  pushToCloud: ReturnType<typeof useCloudSync>['pushToCloud']
+  pullFromCloud: ReturnType<typeof useCloudSync>['pullFromCloud']
+  syncSteps: ReturnType<typeof useCloudSync>['syncSteps']
+  signOut: ReturnType<typeof useAuth>['signOut']
+}
+
+function AppInner({ user, pushToCloud, pullFromCloud, syncSteps, signOut }: AppInnerProps) {
   const { state, dispatch } = useAppState()
   const [tab, setTab] = useState<TabId>('home')
   const [restTimer, setRestTimer] = useState(0)
@@ -66,10 +78,64 @@ function AppInner() {
   const [theme, setTheme] = useState<'dark' | 'light'>(
     () => (localStorage.getItem('sf_theme') as 'dark' | 'light') || 'dark'
   )
+  const [cloudStatus, setCloudStatus] = useState<'idle' | 'syncing' | 'synced' | 'error'>('idle')
+  const [lastSyncedAt, setLastSyncedAt] = useState<string | null>(null)
+  const hasPulledRef = useRef(false)
 
   // Ref to avoid stale closure in sync effect
   const stateRef = useRef(state)
   stateRef.current = state
+
+  // ── Cloud sync: pull on first login ────────────────────────────────────────
+  useEffect(() => {
+    if (!user || hasPulledRef.current) return
+    hasPulledRef.current = true
+
+    ;(async () => {
+      try {
+        setCloudStatus('syncing')
+        const cloudState = await pullFromCloud()
+        if (cloudState) {
+          // Merge strategy: if cloud has more workouts, use cloud state
+          // Otherwise keep local state and push it up
+          const cloudWorkouts = (cloudState as any).workouts?.length ?? 0
+          const localWorkouts = stateRef.current.workouts?.length ?? 0
+          if (cloudWorkouts > localWorkouts) {
+            dispatch({ type: 'LOAD_STATE', payload: cloudState })
+            showToast('Donn\u00E9es cloud r\u00E9cup\u00E9r\u00E9es', 'success')
+          } else {
+            // Push local state to cloud
+            await pushToCloud(stateRef.current)
+          }
+          setCloudStatus('synced')
+          setLastSyncedAt(new Date().toISOString())
+        } else {
+          // No cloud data yet, push current local state
+          await pushToCloud(stateRef.current)
+          setCloudStatus('synced')
+          setLastSyncedAt(new Date().toISOString())
+        }
+      } catch {
+        setCloudStatus('error')
+      }
+    })()
+  }, [user, pullFromCloud, pushToCloud, dispatch])
+
+  // ── Cloud sync: periodic push ──────────────────────────────────────────────
+  useEffect(() => {
+    if (!user) return
+    const interval = setInterval(async () => {
+      try {
+        setCloudStatus('syncing')
+        await pushToCloud(stateRef.current)
+        setCloudStatus('synced')
+        setLastSyncedAt(new Date().toISOString())
+      } catch {
+        setCloudStatus('error')
+      }
+    }, CLOUD_SYNC_INTERVAL_MS)
+    return () => clearInterval(interval)
+  }, [user, pushToCloud])
 
   // Rest timer effect
   useEffect(() => {
@@ -139,12 +205,17 @@ function AppInner() {
             dispatch({ type: 'UPDATE_QUEST_PROGRESS', payload: { questId: 'sleep', delta: sync.sleepHours - currentSleep } })
           }
         }
+
+        // Also sync steps to cloud if user is logged in
+        if (user && (sync.steps > 0 || sync.sleepHours > 0 || sync.waterGlasses > 0)) {
+          syncSteps(today, sync.steps ?? 0, sync.sleepHours ?? 0, sync.waterGlasses ?? 0)
+        }
       } catch { /* ignore parse errors */ }
     }
     checkSync()
     const interval = setInterval(checkSync, SYNC_INTERVAL_MS)
     return () => clearInterval(interval)
-  }, [dispatch])
+  }, [dispatch, user, syncSteps])
 
   const selectedProgram = getProgramById(state.selectedProgramId)
   const nextIndex = state.programCursor[selectedProgram?.id ?? ''] ?? 0
@@ -252,7 +323,7 @@ function AppInner() {
           'pr'
         )
       } else {
-        showToast(`Série ajoutée: ${weightKg}kg x ${reps}`, 'success')
+        showToast(`S\u00E9rie ajout\u00E9e: ${weightKg}kg x ${reps}`, 'success')
       }
     },
     [dispatch, state.activeWorkout, state.workouts]
@@ -264,7 +335,7 @@ function AppInner() {
     // Empty workout check
     const validExercises = state.activeWorkout.exercises.filter(e => e.sets.length > 0)
     if (validExercises.length === 0) {
-      showToast('Aucun exercice enregistré', 'error')
+      showToast('Aucun exercice enregistr\u00E9', 'error')
       return
     }
 
@@ -277,7 +348,7 @@ function AppInner() {
         (r) => r.id === state.activeWorkout!.sessionId
       )
       sessionName =
-        cr?.name ?? state.activeWorkout.sessionName ?? 'Séance libre'
+        cr?.name ?? state.activeWorkout.sessionName ?? 'S\u00E9ance libre'
       programId = 'custom'
     } else {
       if (!selectedProgram) return
@@ -325,9 +396,14 @@ function AppInner() {
     })
     setRestTimer(0)
     showToast(
-      `Séance terminée ! ${workout.durationMinutes} min`,
+      `S\u00E9ance termin\u00E9e ! ${workout.durationMinutes} min`,
       'success'
     )
+
+    // Push to cloud immediately after finishing a workout
+    if (user) {
+      setTimeout(() => pushToCloud(stateRef.current), 500)
+    }
 
     if (musclesWorked.size > 0) {
       setPendingFeedback({
@@ -343,6 +419,8 @@ function AppInner() {
     selectedProgram,
     nextSession,
     dispatch,
+    user,
+    pushToCloud,
   ])
 
   const saveFeedback = useCallback(
@@ -350,10 +428,22 @@ function AppInner() {
       dispatch({ type: 'SAVE_FEEDBACK', payload: feedback })
       setPendingFeedback(null)
       setTab('home')
-      showToast('Feedback sauvegardé', 'success')
+      showToast('Feedback sauvegard\u00E9', 'success')
     },
     [dispatch]
   )
+
+  const handleSignOut = useCallback(async () => {
+    // Push final state before signing out
+    if (user) {
+      try {
+        await pushToCloud(stateRef.current)
+      } catch { /* ignore */ }
+    }
+    await signOut()
+    localStorage.removeItem('sf_local_mode')
+    showToast('D\u00E9connect\u00E9', 'success')
+  }, [user, pushToCloud, signOut])
 
   // ── Render ─────────────────────────────────────────────────────────────────
 
@@ -400,6 +490,22 @@ function AppInner() {
           }
           theme={theme}
           onNavigate={setTab}
+          cloudUser={user}
+          cloudStatus={cloudStatus}
+          lastSyncedAt={lastSyncedAt}
+          onSignOut={handleSignOut}
+          onSyncNow={async () => {
+            if (!user) return
+            setCloudStatus('syncing')
+            try {
+              await pushToCloud(stateRef.current)
+              setCloudStatus('synced')
+              setLastSyncedAt(new Date().toISOString())
+              showToast('Synchronis\u00E9', 'success')
+            } catch {
+              setCloudStatus('error')
+            }
+          }}
         />
       )}
 
@@ -408,12 +514,56 @@ function AppInner() {
   )
 }
 
-// ── App root (wrapped with provider) ─────────────────────────────────────────
+// ── App root (wrapped with provider + auth) ──────────────────────────────────
 
 function App() {
+  const { user, loading, signIn, signUp, signOut } = useAuth()
+  const [localMode, setLocalMode] = useState(() => localStorage.getItem('sf_local_mode') === '1')
+  const { pushToCloud, pullFromCloud, syncSteps } = useCloudSync(user)
+
+  // Show auth screen if not logged in and not in local mode
+  if (!loading && !user && !localMode) {
+    return (
+      <AuthScreen
+        onSignIn={async (email, password) => {
+          await signIn(email, password)
+        }}
+        onSignUp={async (email, password, name) => {
+          await signUp(email, password, name)
+        }}
+        onSkip={() => {
+          setLocalMode(true)
+          localStorage.setItem('sf_local_mode', '1')
+        }}
+        loading={loading}
+      />
+    )
+  }
+
+  // Show loading spinner while checking auth
+  if (loading) {
+    return (
+      <div style={{
+        minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center',
+        background: 'var(--bg, #0c0c14)', color: 'var(--text, #f0f0f5)',
+      }}>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ fontSize: '2rem', marginBottom: 8 }}>⚡</div>
+          <p style={{ color: 'var(--text-secondary, #a0a8c0)', fontSize: '0.9rem' }}>Chargement...</p>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <AppProvider>
-      <AppInner />
+      <AppInner
+        user={user}
+        pushToCloud={pushToCloud}
+        pullFromCloud={pullFromCloud}
+        syncSteps={syncSteps}
+        signOut={signOut}
+      />
     </AppProvider>
   )
 }

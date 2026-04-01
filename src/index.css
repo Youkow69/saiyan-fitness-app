@@ -9,7 +9,7 @@
   --panel-2: rgba(10, 15, 25, 0.88);
   --stroke: rgba(255, 255, 255, 0.08);
   --text: #f5f8ff;
-  --muted: #98a7c2;
+  --muted: #a0b0cc;
   --accent-gold: #ffc83d;
   --accent-orange: #ff7a00;
   --accent-blue: #37b7ff;
@@ -37,7 +37,7 @@
   --stroke: rgba(0, 0, 0, 0.08);
   --text: #1a1a2e;
   --muted: #555577;
-  --accent-gold: #B8860B;
+  --accent-gold: #996A00;
   --accent-orange: #E67600;
   --gradient-ki: linear-gradient(135deg, #FFB800, #FF8C00, #FF5500);
   --shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
@@ -1127,3 +1127,30 @@ select:focus {
   clip: rect(0, 0, 0, 0);
   border: 0;
 }
+
+/* ── Toast ────────────────────────────────────────────────────────────────── */
+
+.toast-container { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 8px; pointer-events: none; width: 90%; max-width: 380px; }
+.toast { background: var(--panel); color: var(--text); padding: 12px 20px; border-radius: 12px; font-size: 0.85rem; box-shadow: 0 4px 20px rgba(0,0,0,0.4); pointer-events: auto; animation: toastIn 0.3s ease; border: 1px solid var(--stroke); }
+.toast-pr { border-left: 3px solid #FFD700; }
+.toast-error { border-left: 3px solid #ef4444; }
+.toast-success { border-left: 3px solid #22c55e; }
+@keyframes toastIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ── Modal ────────────────────────────────────────────────────────────────── */
+
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 10000; }
+.modal-box { background: var(--bg-elev); border: 1px solid var(--stroke); border-radius: 16px; padding: 24px; max-width: 340px; width: 90%; }
+.modal-actions { display: flex; gap: 12px; margin-top: 20px; }
+.modal-btn { flex: 1; padding: 10px; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; }
+.modal-btn.cancel { background: rgba(255,255,255,0.06); color: var(--text); }
+.modal-btn.confirm { background: var(--accent-gold); color: #000; }
+.modal-btn.danger { background: #ef4444; color: #fff; }
+
+/* ── Nav Badge ────────────────────────────────────────────────────────────── */
+
+.nav-badge { position: absolute; top: 2px; right: 2px; background: var(--accent-gold); color: #000; font-size: 0.55rem; padding: 1px 4px; border-radius: 6px; font-weight: 700; }
+
+/* ── Loading ──────────────────────────────────────────────────────────────── */
+
+.loading { display: flex; align-items: center; justify-content: center; height: 60vh; color: var(--muted); font-size: 1rem; }

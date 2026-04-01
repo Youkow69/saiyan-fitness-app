@@ -183,7 +183,7 @@ export function PersonalRecords({
     fontWeight: sortField === field ? 700 : 600,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
-    borderBottom: '2px solid #2d3748',
+    borderBottom: '2px solid var(--stroke)',
     whiteSpace: 'nowrap',
     userSelect: 'none',
   })
@@ -242,7 +242,7 @@ export function PersonalRecords({
           {formatPowerLevel(totalPowerLevel)}
         </div>
         <div style={{ fontSize: 11, color: 'var(--text-secondary)' }}>
-          Somme estimee de tous les 1RM (kg)
+          Somme estimée de tous les 1RM (kg)
         </div>
       </div>
 
@@ -257,7 +257,7 @@ export function PersonalRecords({
             width: '100%',
             padding: '10px 14px',
             borderRadius: 10,
-            border: '2px solid #2d3748',
+            border: '2px solid var(--stroke)',
             background: 'var(--border)',
             color: 'var(--text)',
             fontSize: 13,
@@ -288,7 +288,7 @@ export function PersonalRecords({
                 Meilleures Reps{sortArrow('reps')}
               </th>
               <th style={headerStyle('1rm')} onClick={() => handleSort('1rm')}>
-                1RM estime{sortArrow('1rm')}
+                1RM estimé{sortArrow('1rm')}
               </th>
             </tr>
           </thead>
@@ -316,7 +316,7 @@ export function PersonalRecords({
                 <td
                   style={{
                     padding: '12px 12px',
-                    borderBottom: '1px solid #2d3748',
+                    borderBottom: '1px solid var(--stroke)',
                     fontWeight: 600,
                   }}
                 >
@@ -334,7 +334,7 @@ export function PersonalRecords({
                           fontSize: 10,
                           flexShrink: 0,
                         }}
-                        title="Record recent (7 jours)"
+                        title="Record récent (7 jours)"
                       >
                         ★
                       </span>
@@ -345,7 +345,7 @@ export function PersonalRecords({
                 <td
                   style={{
                     padding: '12px 12px',
-                    borderBottom: '1px solid #2d3748',
+                    borderBottom: '1px solid var(--stroke)',
                     textAlign: 'right',
                   }}
                 >
@@ -359,7 +359,7 @@ export function PersonalRecords({
                 <td
                   style={{
                     padding: '12px 12px',
-                    borderBottom: '1px solid #2d3748',
+                    borderBottom: '1px solid var(--stroke)',
                     textAlign: 'right',
                   }}
                 >
@@ -373,7 +373,7 @@ export function PersonalRecords({
                 <td
                   style={{
                     padding: '12px 12px',
-                    borderBottom: '1px solid #2d3748',
+                    borderBottom: '1px solid var(--stroke)',
                     textAlign: 'right',
                   }}
                 >
@@ -405,8 +405,8 @@ export function PersonalRecords({
       {sorted.length === 0 && (
         <div style={{ textAlign: 'center', padding: 32, color: 'var(--text-secondary)', fontSize: 13 }}>
           {filter
-            ? 'Aucun exercice ne correspond a votre recherche.'
-            : 'Aucun record enregistre. Commencez a vous entrainer !'}
+            ? 'Aucun exercice ne correspond à votre recherche.'
+            : 'Aucun record enregistré. Commencez à vous entraîner !'}
         </div>
       )}
 

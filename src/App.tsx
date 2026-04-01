@@ -360,7 +360,7 @@ function AppInner() {
 
       <Suspense fallback={<div style={{display:'flex',alignItems:'center',justifyContent:'center',height:'60vh',color:'var(--muted)'}}>Chargement...</div>}>
         {tab === 'home' && (
-          <HomeView onStartWorkout={startWorkout} onNavigate={setTab} />
+          <HomeView onStartWorkout={startWorkout} />
         )}
         {tab === 'train' && (
           <TrainView

@@ -236,7 +236,7 @@ function validateAppState(data: unknown): boolean {
   const obj = data as Record<string, unknown>
   return (
     Array.isArray(obj.foodEntries) ||
-    Array.isArray(obj.workoutLogs) ||
+    Array.isArray(obj.workouts) ||
     Array.isArray(obj.programs) ||
     typeof obj.targets === 'object'
   )
@@ -305,23 +305,21 @@ export function ImportExport() {
                   (e: { id: string }) => !state.foodEntries.some((s: { id: string }) => s.id === e.id)
                 ),
               ],
-              workoutLogs: [
-                ...state.workoutLogs,
-                ...(data.workoutLogs || []).filter(
-                  (e: { id: string }) => !state.workoutLogs.some((s: { id: string }) => s.id === e.id)
+              workouts: [
+                ...state.workouts,
+                ...(data.workouts || []).filter(
+                  (e: { id: string }) => !state.workouts.some((s: { id: string }) => s.id === e.id)
                 ),
               ],
               programs: [
-                ...state.programs,
                 ...(data.programs || []).filter(
-                  (e: { id: string }) => !state.programs.some((s: { id: string }) => s.id === e.id)
                 ),
               ],
             }
             dispatch({ type: 'SET_STATE', payload: mergedState })
             const counts = []
             if (data.foodEntries) counts.push(`${data.foodEntries.length} repas`)
-            if (data.workoutLogs) counts.push(`${data.workoutLogs.length} seances`)
+            if (data.workouts) counts.push(`${data.workouts.length} seances`)
             setImportResult({
               message: `Donnees fusionnees : ${counts.join(', ') || 'aucune donnee'}.`,
               type: 'success',
@@ -368,12 +366,12 @@ export function ImportExport() {
           }
 
           const mergedWorkouts = [
-            ...state.workoutLogs,
+            ...state.workouts,
             ...workouts.filter(
-              (w: { id: string }) => !state.workoutLogs.some((s: { id: string }) => s.id === w.id)
+              (w: { id: string }) => !state.workouts.some((s: { id: string }) => s.id === w.id)
             ),
           ]
-          dispatch({ type: 'SET_STATE', payload: { ...state, workoutLogs: mergedWorkouts } })
+          dispatch({ type: 'SET_STATE', payload: { ...state, workouts: mergedWorkouts } })
           const totalSets = workouts.reduce(
             (sum, w) => sum + w.exercises.reduce((s, ex) => s + ex.sets.length, 0),
             0
@@ -417,12 +415,12 @@ export function ImportExport() {
           }
 
           const mergedWorkouts = [
-            ...state.workoutLogs,
+            ...state.workouts,
             ...workouts.filter(
-              (w: { id: string }) => !state.workoutLogs.some((s: { id: string }) => s.id === w.id)
+              (w: { id: string }) => !state.workouts.some((s: { id: string }) => s.id === w.id)
             ),
           ]
-          dispatch({ type: 'SET_STATE', payload: { ...state, workoutLogs: mergedWorkouts } })
+          dispatch({ type: 'SET_STATE', payload: { ...state, workouts: mergedWorkouts } })
           const totalSets = workouts.reduce(
             (sum, w) => sum + w.exercises.reduce((s, ex) => s + ex.sets.length, 0),
             0

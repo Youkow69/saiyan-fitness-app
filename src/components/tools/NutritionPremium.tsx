@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback, useEffect } from 'react'
+import { useState, useMemo, useCallback } from 'react'
 import { useAppState } from '../../context/AppContext'
 import { getDailyNutrition, todayIso, daysAgoIso, makeId } from '../../lib'
 import type { FoodEntry } from '../../types'
@@ -468,7 +468,7 @@ export function AdherenceScore() {
             7 derniers jours
           </div>
           <div style={{ display: 'flex', alignItems: 'flex-end', gap: 4, height: 60 }}>
-            {scores.details.map((d, i) => {
+            {scores.details.map((d) => {
               const dayDate = new Date(d.date)
               const dayName = dayLabels[dayDate.getDay()]
               const barH = Math.max(4, (d.score / 100) * 50)

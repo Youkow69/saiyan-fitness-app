@@ -1,10 +1,10 @@
 import { useState, useEffect, useCallback } from 'react'
-import { supabase } from './supabase'
-import type { User, Session } from '@supabase/supabase-js'
+import { supabase } from '../supabase'
+
 
 interface AuthState {
-  user: User | null
-  session: Session | null
+  user: any
+  session: any
   loading: boolean
 }
 

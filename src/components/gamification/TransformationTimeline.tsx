@@ -18,9 +18,19 @@ export const TransformationTimeline: React.FC<TransformationTimelineProps> = Rea
             <div
               key={t.level}
               className={`timeline-node ${isActive ? 'active' : ''} ${isLocked ? 'locked' : ''}`}
+              data-level={t.level}
             >
               <div className="timeline-img-wrap">
-                <img src={t.image} alt={t.name} />
+                <img
+                  src={t.image}
+                  alt={t.name}
+                  className="transformation-icon"
+                  style={{
+                    filter: isActive
+                      ? `drop-shadow(0 0 12px ${t.accent ?? 'var(--accent-gold)'})`
+                      : undefined,
+                  }}
+                />
               </div>
               <span className="timeline-label">
                 {t.name
@@ -33,5 +43,5 @@ export const TransformationTimeline: React.FC<TransformationTimelineProps> = Rea
         })}
       </div>
     )
-  }
+  },
 )

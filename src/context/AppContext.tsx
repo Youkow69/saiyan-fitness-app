@@ -16,6 +16,11 @@ import { loadState, debouncedSave, saveState } from '../storage'
 import { calculateTargets, makeId, todayIso, recommendProgram } from '../lib'
 import { savedMeals } from '../data'
 
+// ── Constants ────────────────────────────────────────────────────────────────
+
+const MAX_REPS_PER_SET = 100
+const MAX_WEIGHT_KG = 1000
+
 // ── Action types ──────────────────────────────────────────────────────────────
 
 type Action =
@@ -71,12 +76,13 @@ function appReducer(state: AppState, action: Action): AppState {
       const targets = calculateTargets(profile)
       const rec = recommendProgram(profile)
       return {
-        ...defaultState,
+        ...state,
         profile,
         targets,
         selectedProgramId: rec.id,
-        savedMeals,
+        savedMeals: state.savedMeals?.length ? state.savedMeals : savedMeals,
         bodyweightEntries: [
+          ...state.bodyweightEntries,
           { id: makeId('bw'), date: todayIso(), weightKg: profile.weightKg },
         ],
         onboardingAnswers: answers,
@@ -91,7 +97,7 @@ function appReducer(state: AppState, action: Action): AppState {
       const { exerciseId, weightKg, reps, rir, setType } = action.payload
       const w = action.payload.weightKg
       const r = action.payload.reps
-      if (typeof w !== 'number' || typeof r !== 'number' || isNaN(w) || isNaN(r) || w < 0 || r <= 0 || r > 100 || w > 1000) {
+      if (typeof w !== 'number' || typeof r !== 'number' || isNaN(w) || isNaN(r) || w < 0 || r <= 0 || r > MAX_REPS_PER_SET || w > MAX_WEIGHT_KG) {
         return state
       }
       return {
@@ -299,8 +305,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const flush = () => saveState(stateRef.current)
+    const handleVisibility = () => { if (document.visibilityState === 'hidden') flush() }
     window.addEventListener('beforeunload', flush)
-    return () => window.removeEventListener('beforeunload', flush)
+    document.addEventListener('visibilitychange', handleVisibility)
+    return () => {
+      window.removeEventListener('beforeunload', flush)
+      document.removeEventListener('visibilitychange', handleVisibility)
+    }
   }, [])
 
   return (

@@ -30,9 +30,13 @@ import { PlateCalculator } from './components/tools/PlateCalculator'
 import { WorkoutTimer } from './components/tools/WorkoutTimer'
 import { DailyQuote } from './components/gamification/MotivationalQuotes'
 import { WeightChart, VolumeChart, MacroPieChart } from './components/stats/ProgressCharts'
+import type { BodyweightEntry as ChartBWEntry, WorkoutLog as ChartWorkoutLog, NutritionData, NutritionTargets } from './components/stats/ProgressCharts'
 import { ExerciseLibrary } from './components/workout/ExerciseLibrary'
+import type { Exercise as LibExercise } from './components/workout/ExerciseLibrary'
 import { WorkoutCalendar } from './components/stats/WorkoutCalendar'
+import type { CalendarWorkoutLog } from './components/stats/WorkoutCalendar'
 import { PersonalRecords } from './components/stats/PersonalRecords'
+import type { PRWorkoutLog, PRExercise } from './components/stats/PersonalRecords'
 import type {
   AppState,
   BodyweightEntry,
@@ -2163,7 +2167,7 @@ function TrainView({
         <span>Creer ma routine</span>
       </button>
 
-      <ExerciseLibrary exercises={exercises} />
+      <ExerciseLibrary exercises={exercises.map(e => ({ id: e.id, name: e.name, muscleGroups: e.primaryMuscles as string[], equipment: [e.equipment] })) as LibExercise[]} />
 
       {creatingRoutine && (
         <section className="hevy-card stack-md">
@@ -2409,11 +2413,15 @@ function ScouterView() {
         )}
       </section>
 
-      <MacroPieChart nutrition={getDailyNutrition(state.foodEntries)} targets={state.targets ?? { calories: 2500, protein: 150, carbs: 300, fats: 70, bmr: 1800, tdee: 2500 }} />
-      <WeightChart entries={state.bodyweightEntries} />
-      <VolumeChart workouts={state.workouts} />
-      <WorkoutCalendar workouts={state.workouts} />
-      <PersonalRecords workouts={state.workouts} exercises={exercises} />
+      {(() => {
+        const n = getDailyNutrition(state.foodEntries)
+        const t = state.targets ?? { calories: 2500, protein: 150, carbs: 300, fats: 70, bmr: 1800, tdee: 2500 }
+        return <MacroPieChart nutrition={{ protein: n.protein, carbs: n.carbs, fat: n.fats ?? 0 } as NutritionData} targets={{ protein: t.protein, carbs: t.carbs, fat: t.fats, calories: t.calories } as NutritionTargets} />
+      })()}
+      <WeightChart entries={state.bodyweightEntries.map(e => ({ date: e.date, weight: e.weightKg })) as ChartBWEntry[]} />
+      <VolumeChart workouts={state.workouts.map(w => ({ id: w.id, date: w.date, exercises: w.exercises.flatMap(ex => ex.sets.map(s => ({ exerciseId: ex.exerciseId, weight: s.weightKg, reps: s.reps }))) })) as ChartWorkoutLog[]} />
+      <WorkoutCalendar workouts={state.workouts.map(w => ({ id: w.id, date: w.date, exercises: w.exercises.flatMap(ex => ex.sets.map(s => ({ weight: s.weightKg, reps: s.reps }))) })) as CalendarWorkoutLog[]} />
+      <PersonalRecords workouts={state.workouts.map(w => ({ id: w.id, date: w.date, exercises: w.exercises.flatMap(ex => ex.sets.map(s => ({ exerciseId: ex.exerciseId, weight: s.weightKg, reps: s.reps }))) })) as PRWorkoutLog[]} exercises={exercises.map(e => ({ id: e.id, name: e.name })) as PRExercise[]} />
 
       <section className="hevy-card stack-md">
         <SectionTitle icon="💪" label="1RM estimes" />

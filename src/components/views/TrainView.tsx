@@ -91,6 +91,7 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
           </section>
           {activeWorkout.exercises.map((exerciseLog) => {
             const exercise = getExerciseById(exerciseLog.exerciseId)
+            if (!exercise) return null
             const target = exerciseLog.target
             const previous = getLastSet(state.workouts, exercise.id)
             const currentInput = draftInputs[exercise.id] ?? {
@@ -143,7 +144,7 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
                 {exercise.alternatives.length > 0 && (
                   <div className="chip-row">
                     {exercise.alternatives.map((altId) => (
-                      <span className="chip chip--static" key={altId} style={{ fontSize: '0.72rem' }}>{getExerciseById(altId).name}</span>
+                      <span className="chip chip--static" key={altId} style={{ fontSize: '0.72rem' }}>{getExerciseById(altId)?.name ?? altId.replace(/_/g, ' ')}</span>
                     ))}
                   </div>
                 )}
@@ -217,7 +218,7 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
                   return (
                     <div key={re.exerciseId} style={{ background: 'rgba(255,255,255,0.03)', borderRadius: 12, padding: '10px 12px', border: '1px solid var(--stroke)' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                        <strong style={{ fontSize: '0.85rem' }}>{ex.name}</strong>
+                        <strong style={{ fontSize: '0.85rem' }}>{ex?.name ?? re.exerciseId.replace(/_/g, ' ')}</strong>
                         <button type="button" onClick={() => setRoutineExercises((prev) => prev.filter((_, i) => i !== idx))} style={{ background: 'transparent', border: 'none', color: 'var(--accent-red)', cursor: 'pointer', fontSize: '1rem', padding: '2px 6px' }}>✕</button>
                       </div>
                       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 6 }}>
@@ -247,7 +248,7 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
 
         {selectedProgram.sessions.map((session, idx) => {
           const isNext = idx === nextIndex % selectedProgram.sessions.length
-          const exerciseNames = session.exercises.slice(0, 3).map((e) => getExerciseById(e.exerciseId).name).join(', ')
+          const exerciseNames = session.exercises.slice(0, 3).map((e) => getExerciseById(e.exerciseId)?.name ?? e.exerciseId.replace(/_/g, ' ')).join(', ')
           const moreCount = session.exercises.length - 3
           return (
             <section key={session.id} className={`routine-card ${isNext ? 'routine-card--next' : ''}`}>
@@ -279,7 +280,7 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
                     <span className="next-badge" style={{ background: 'var(--accent-blue)', color: '#fff' }}>PERSO</span>
                   </div>
                   <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--muted)' }}>
-                    {routine.exercises.slice(0, 3).map((e) => getExerciseById(e.exerciseId).name).join(', ')}
+                    {routine.exercises.slice(0, 3).map((e) => getExerciseById(e.exerciseId)?.name ?? e.exerciseId.replace(/_/g, ' ')).join(', ')}
                     {routine.exercises.length > 3 ? ` +${routine.exercises.length - 3} exercices` : ''}
                   </p>
                 </div>

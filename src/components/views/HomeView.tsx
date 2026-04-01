@@ -10,7 +10,7 @@ import {
 } from '../../lib'
 import { DailyQuote } from '../gamification/MotivationalQuotes'
 import { DailyQuestsPanel } from '../gamification/QuestSection'
-import { ProgressBar, SectionTitle } from '../ui/Shared'
+import { SectionTitle } from '../ui/Shared'
 import MacroBar from '../ui/MacroBar'
 
 interface HomeViewProps {

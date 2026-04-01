@@ -22,8 +22,15 @@ const activityMultipliers: Record<ActivityLevel, number> = {
   athlete: 1.9,
 }
 
-export function todayIso() {
-  return new Date().toISOString().slice(0, 10)
+export function todayIso(): string {
+  const d = new Date()
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+}
+
+export function daysAgoIso(n: number): string {
+  const d = new Date()
+  d.setDate(d.getDate() - n)
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
 }
 
 export function makeId(prefix: string) {
@@ -63,9 +70,7 @@ export function calculateTargets(profile: UserProfile): GoalTargets {
   const bmr = Math.round(mifflinStJeor(profile))
   const tdee = Math.round(bmr * activityMultipliers[profile.activityLevel])
   const calories = tdee + goalCalorieAdjustment(profile.goal, tdee)
-  const protein = Math.round(
-    profile.weightKg * (profile.goal === 'fat_loss' ? 2.2 : 1.9),
-  )
+  const protein = Math.max(50, Math.round(profile.weightKg * (profile.goal === 'fat_loss' ? 2.2 : 1.9)))
   const fats = Math.round(profile.weightKg * 0.75)
   const carbs = Math.max(80, Math.round((calories - protein * 4 - fats * 9) / 4))
   return { bmr, tdee, calories, protein, carbs, fats }
@@ -96,7 +101,12 @@ export function getProgramById(id: string | null) {
 }
 
 export function getExerciseById(id: string): Exercise {
-  return exercises.find((exercise) => exercise.id === id) ?? exercises[0]
+  const found = exercises.find((exercise) => exercise.id === id)
+  if (!found) {
+    console.warn(`[Saiyan] Exercise not found: ${id}`)
+    return exercises[0]
+  }
+  return found
 }
 
 export function formatNumber(value: number) {
@@ -108,8 +118,8 @@ export function estimate1Rm(weight: number, reps: number) {
   return weight * (1 + reps / 30)
 }
 
-export function setVolume(weight: number, reps: number) {
-  return weight * reps
+export function setVolume(weight: number, reps: number): number {
+  return Math.max(0, weight * reps)
 }
 
 export function getWorkoutVolume(workout: WorkoutLog) {
@@ -458,11 +468,7 @@ export function calculateAdaptiveTDEE(state: AppState): number {
     return state.targets?.tdee ?? 2500
   }
 
-  const last14Days = [...Array(14)].map((_, i) => {
-    const d = new Date()
-    d.setDate(d.getDate() - i)
-    return d.toISOString().slice(0, 10)
-  })
+  const last14Days = [...Array(14)].map((_, i) => daysAgoIso(i))
 
   const avgCalories = last14Days.reduce((sum, date) => {
     const dayCal = foodEntries.filter(f => f.date === date).reduce((s, f) => s + f.calories, 0)

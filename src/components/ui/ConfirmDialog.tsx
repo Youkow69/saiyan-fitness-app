@@ -1,3 +1,5 @@
+import { useEffect, useRef, useCallback } from 'react'
+
 interface Props {
   isOpen: boolean
   title: string
@@ -17,6 +19,52 @@ export function ConfirmDialog({
   onConfirm,
   onCancel,
 }: Props) {
+  const dialogRef = useRef<HTMLDivElement>(null)
+  const cancelBtnRef = useRef<HTMLButtonElement>(null)
+  const confirmBtnRef = useRef<HTMLButtonElement>(null)
+
+  // Auto-focus first button on open
+  useEffect(() => {
+    if (isOpen && cancelBtnRef.current) {
+      cancelBtnRef.current.focus()
+    }
+  }, [isOpen])
+
+  // Escape key handler
+  useEffect(() => {
+    if (!isOpen) return
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.preventDefault()
+        onCancel()
+      }
+    }
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [isOpen, onCancel])
+
+  // Focus trap on Tab key
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key !== 'Tab') return
+    const focusable = dialogRef.current?.querySelectorAll<HTMLElement>(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    )
+    if (!focusable || focusable.length === 0) return
+    const first = focusable[0]
+    const last = focusable[focusable.length - 1]
+    if (e.shiftKey) {
+      if (document.activeElement === first) {
+        e.preventDefault()
+        last.focus()
+      }
+    } else {
+      if (document.activeElement === last) {
+        e.preventDefault()
+        first.focus()
+      }
+    }
+  }, [])
+
   if (!isOpen) return null
 
   return (
@@ -31,8 +79,16 @@ export function ConfirmDialog({
         justifyContent: 'center',
         padding: 24,
       }}
+      onClick={onCancel}
     >
       <div
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="confirm-title"
+        aria-describedby="confirm-desc"
+        onKeyDown={handleKeyDown}
+        onClick={(e) => e.stopPropagation()}
         style={{
           background: 'var(--bg-elev)',
           border: '1px solid var(--stroke)',
@@ -44,6 +100,7 @@ export function ConfirmDialog({
         }}
       >
         <h3
+          id="confirm-title"
           style={{
             margin: '0 0 8px',
             fontFamily: 'Bebas Neue, sans-serif',
@@ -53,6 +110,7 @@ export function ConfirmDialog({
           {title}
         </h3>
         <p
+          id="confirm-desc"
           style={{
             margin: '0 0 20px',
             color: 'var(--muted)',
@@ -64,6 +122,7 @@ export function ConfirmDialog({
         </p>
         <div style={{ display: 'flex', gap: 10 }}>
           <button
+            ref={cancelBtnRef}
             onClick={onCancel}
             type="button"
             className="ghost-btn"
@@ -72,6 +131,7 @@ export function ConfirmDialog({
             Annuler
           </button>
           <button
+            ref={confirmBtnRef}
             onClick={onConfirm}
             type="button"
             style={{

@@ -8,6 +8,8 @@ import { AdaptiveTDEECard } from '../workout/AdaptiveTDEECard'
 import { SectionTitle } from '../ui/Shared'
 import SearchSelect from '../ui/SearchSelect'
 import MacroBar from '../ui/MacroBar'
+import { MealPlanner } from '../tools/MealPlanner'
+import { MicronutrientEstimate } from '../tools/Micronutrients'
 
 const MEAL_CATEGORIES: Array<{ value: FoodEntry['category']; label: string }> = [
   { value: 'breakfast', label: 'Petit-déjeuner' },
@@ -113,6 +115,9 @@ export const NutritionView: React.FC = React.memo(
           <MacroBar label="Lipides" current={totals.fats} target={targets.fats} unit="g" color="fat" />
         </section>
 
+        {/* Micronutrient estimate */}
+        <MicronutrientEstimate />
+
         {/* Add food form */}
         <section className="hevy-card stack-md">
           <SectionTitle icon="" label="Ajouter un aliment" />
@@ -172,6 +177,9 @@ export const NutritionView: React.FC = React.memo(
             Ajouter
           </button>
         </section>
+
+        {/* Meal planner */}
+        <MealPlanner />
 
         {/* Saved meals */}
         <section className="hevy-card stack-md">

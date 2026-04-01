@@ -15,6 +15,7 @@ import {
 import { showToast } from '../ui/Toast'
 import { SectionTitle } from '../ui/Shared'
 import { ProgressPhotos } from '../tools/ProgressPhotos'
+import { ImportExport } from '../tools/ImportExport'
 import type { AppState } from '../../types'
 
 function countPRsFromWorkouts(workouts: AppState['workouts']): number {
@@ -226,6 +227,11 @@ export const ProfileView: React.FC<ProfileViewProps> = React.memo(
         </section>
 
         
+      {/* Import/Export */}
+      <section className="hevy-card stack-md">
+        <ImportExport />
+      </section>
+
       {/* Cloud sync */}
       {cloudUser && (
         <section style={{ background: 'var(--bg-card)', borderRadius: 16, border: '1px solid var(--border)', padding: 16 }}>

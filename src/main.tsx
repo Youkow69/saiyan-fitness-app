@@ -21,7 +21,12 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boole
             <button onClick={() => window.location.reload()} style={{ padding: '12px 24px', borderRadius: 12, border: 'none', background: 'linear-gradient(135deg, #FFD700, #FF8C00)', color: '#06090f', fontWeight: 700, fontSize: '0.9rem', cursor: 'pointer' }}>
               Recharger l'app
             </button>
-            <button onClick={() => { localStorage.removeItem('saiyan-fitness-v1'); window.location.reload() }} style={{ padding: '12px 24px', borderRadius: 12, border: '1px solid rgba(255,95,118,0.4)', background: 'rgba(255,95,118,0.1)', color: '#ff5f76', fontWeight: 700, fontSize: '0.9rem', cursor: 'pointer' }}>
+            <button onClick={() => {
+              if (window.confirm('ATTENTION : Ceci supprimera TOUTES tes donn\u00e9es. Cette action est IRREVERSIBLE. Continuer ?')) {
+                localStorage.removeItem('saiyan-fitness-v1');
+                window.location.reload();
+              }
+            }} style={{ padding: '12px 24px', borderRadius: 12, border: '1px solid rgba(255,95,118,0.4)', background: 'rgba(255,95,118,0.1)', color: '#ff5f76', fontWeight: 700, fontSize: '0.9rem', cursor: 'pointer' }}>
               Reset complet
             </button>
           </div>

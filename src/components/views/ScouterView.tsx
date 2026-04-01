@@ -24,7 +24,7 @@ import { MetricCard, ProgressBar, SectionTitle } from '../ui/Shared'
 const MUSCLE_FR: Record<string, string> = {
   Chest: 'Pectoraux',
   Back: 'Dos',
-  Shoulders: '\u00C9paules',
+  Shoulders: 'Épaules',
   Quads: 'Quadriceps',
   Hamstrings: 'Ischio-jambiers',
   Glutes: 'Fessiers',
@@ -146,7 +146,7 @@ export const ScouterView: React.FC = React.memo(
 
         {/* 1RM board */}
         <section className="hevy-card stack-md">
-          <SectionTitle icon="" label="1RM estim\u00E9s" />
+          <SectionTitle icon="" label="1RM estimés" />
           {['bench_press', 'back_squat', 'romanian_deadlift', 'pull_up'].map(
             (exerciseId) => {
               let best = 0
@@ -179,7 +179,7 @@ export const ScouterView: React.FC = React.memo(
                       fontSize: '0.9rem',
                     }}
                   >
-                    {best > 0 ? `~${Math.round(best)} kg` : '\u2014'}
+                    {best > 0 ? `~${Math.round(best)} kg` : '—'}
                   </strong>
                 </div>
               )
@@ -192,7 +192,7 @@ export const ScouterView: React.FC = React.memo(
           <SectionTitle icon="" label="Tonnage par muscle" />
           {volumeByMuscle.length === 0 ? (
             <div className="empty-state">
-              <p>Compl\u00E8te ta premi\u00E8re semaine pour voir la map musculaire.</p>
+              <p>Complète ta première semaine pour voir la map musculaire.</p>
             </div>
           ) : (
             volumeByMuscle.map(([muscle, volume]) => (
@@ -214,7 +214,7 @@ export const ScouterView: React.FC = React.memo(
           <SectionTitle icon="" label="Vue d'ensemble" />
           <div className="metrics-grid">
             <MetricCard
-              label="S\u00E9ances total"
+              label="Séances total"
               value={String(state.workouts.length)}
               accent="var(--accent-gold)"
             />

@@ -8,6 +8,7 @@ import {
   getPowerLevel,
   getStreak,
 } from '../../lib'
+import { WeeklyReport } from '../stats/WeeklyReport'
 import { DailyQuote } from '../gamification/MotivationalQuotes'
 import { DailyQuestsPanel } from '../gamification/QuestSection'
 import { SectionTitle } from '../ui/Shared'
@@ -163,6 +164,9 @@ export const HomeView: React.FC<HomeViewProps> = React.memo(
             </div>
           </div>
         </section>
+
+        {/* Weekly report */}
+        <WeeklyReport />
 
         {/* Nutrition summary */}
         <section className="hevy-card stack-md">

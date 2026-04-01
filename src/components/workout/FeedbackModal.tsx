@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import type { MuscleGroup, SessionFeedback } from '../../types'
 import { todayIso } from '../../lib'
 
@@ -29,6 +29,17 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = React.memo(
     })
     const [entries, setEntries] =
       useState<Record<string, FeedbackEntry>>(initEntries)
+
+    // Escape key handler
+    useEffect(() => {
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') {
+          onSkip()
+        }
+      }
+      window.addEventListener('keydown', handleKeyDown)
+      return () => window.removeEventListener('keydown', handleKeyDown)
+    }, [onSkip])
 
     const set = (muscle: string, key: keyof FeedbackEntry, val: unknown) => {
       setEntries((prev) => ({
@@ -83,6 +94,9 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = React.memo(
 
     return (
       <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="feedback-title"
         style={{
           position: 'fixed',
           inset: 0,
@@ -118,6 +132,7 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = React.memo(
             <div>
               <span className="eyebrow">Feedback post-seance</span>
               <h3
+                id="feedback-title"
                 style={{
                   margin: 0,
                   fontFamily: 'Bebas Neue, sans-serif',

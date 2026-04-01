@@ -6,8 +6,8 @@ import { getDailyNutrition, getRecommendedRecipes, makeId, todayIso } from '../.
 import { showToast } from '../ui/Toast'
 import { AdaptiveTDEECard } from '../workout/AdaptiveTDEECard'
 import { SectionTitle } from '../ui/Shared'
-import { SearchSelect } from '../ui/SearchSelect'
-import { MacroBar } from '../ui/MacroBar'
+import SearchSelect from '../ui/SearchSelect'
+import MacroBar from '../ui/MacroBar'
 
 const MEAL_CATEGORIES: Array<{ value: FoodEntry['category']; label: string }> = [
   { value: 'breakfast', label: 'Petit-d\u00E9jeuner' },
@@ -107,10 +107,10 @@ export const NutritionView: React.FC = React.memo(
         {/* Macro bars */}
         <section className="hevy-card stack-md">
           <SectionTitle icon="" label="Nutrition aujourd'hui" />
-          <MacroBar label="Calories" value={totals.calories} target={targets.calories} unit="kcal" color="#ffb400" />
-          <MacroBar label="Prot\u00E9ines" value={totals.protein} target={targets.protein} unit="g" color="#00d4ff" />
-          <MacroBar label="Glucides" value={totals.carbs} target={targets.carbs} unit="g" color="#a855f7" />
-          <MacroBar label="Lipides" value={totals.fats} target={targets.fats} unit="g" color="#f59e0b" />
+          <MacroBar label="Calories" current={totals.calories} target={targets.calories} unit="kcal" color="calories" />
+          <MacroBar label="Prot\u00E9ines" current={totals.protein} target={targets.protein} unit="g" color="protein" />
+          <MacroBar label="Glucides" current={totals.carbs} target={targets.carbs} unit="g" color="carbs" />
+          <MacroBar label="Lipides" current={totals.fats} target={targets.fats} unit="g" color="fat" />
         </section>
 
         {/* Add food form */}
@@ -122,7 +122,7 @@ export const NutritionView: React.FC = React.memo(
               <SearchSelect
                 options={foods.map((f) => ({ value: f.id, label: f.name }))}
                 value={selectedFood.id}
-                onChange={(val) =>
+                onChange={(val: string) =>
                   setSelectedFood(foods.find((f) => f.id === val) ?? foods[0])
                 }
                 placeholder="Rechercher un aliment..."

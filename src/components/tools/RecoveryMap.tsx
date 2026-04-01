@@ -96,7 +96,7 @@ function computeRecovery(
     for (const ex of workouts[i].exercises) {
       const info = getExerciseById(ex.exerciseId)
       if (!info?.primaryMuscles) continue
-      for (const muscle of info.primaryMuscles as MuscleGroup[]) {
+      for (const muscle of info.primaryMuscles as unknown as MuscleGroup[]) {
         if (ALL_MUSCLES.includes(muscle)) {
           const existing = lastHit[muscle]
           if (existing === null || wDate > existing) {

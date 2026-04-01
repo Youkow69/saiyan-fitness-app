@@ -26,6 +26,13 @@ import {
 import { AppProvider, useAppState } from './context/AppContext'
 import { ToastContainer, showToast } from './components/ui/Toast'
 import { ConfirmDialog } from './components/ui/ConfirmDialog'
+import { PlateCalculator } from './components/tools/PlateCalculator'
+import { WorkoutTimer } from './components/tools/WorkoutTimer'
+import { DailyQuote } from './components/gamification/MotivationalQuotes'
+import { WeightChart, VolumeChart, MacroPieChart } from './components/stats/ProgressCharts'
+import { ExerciseLibrary } from './components/workout/ExerciseLibrary'
+import { WorkoutCalendar } from './components/stats/WorkoutCalendar'
+import { PersonalRecords } from './components/stats/PersonalRecords'
 import type {
   AppState,
   BodyweightEntry,
@@ -1992,6 +1999,9 @@ function HomeView({
         <ProgressBar label="Proteines" value={nutrition.protein} target={targets.protein} accent="linear-gradient(90deg,#00d4ff,#4fffb0)" />
       </section>
 
+      {/* Daily DBZ quote */}
+      <DailyQuote />
+
       <section className="hevy-card">
         <SectionTitle icon="🔍" label="Analyse Scouter" />
         <p style={{ margin: '8px 0 0', color: 'var(--muted)', fontSize: '0.85rem' }}>{recommendation}</p>
@@ -2152,6 +2162,8 @@ function TrainView({
         <span style={{ fontSize: '1.2rem' }}>➕</span>
         <span>Creer ma routine</span>
       </button>
+
+      <ExerciseLibrary exercises={exercises} />
 
       {creatingRoutine && (
         <section className="hevy-card stack-md">
@@ -2397,6 +2409,12 @@ function ScouterView() {
         )}
       </section>
 
+      <MacroPieChart nutrition={getDailyNutrition(state.foodEntries)} targets={state.targets ?? { calories: 2500, protein: 150, carbs: 300, fats: 70, bmr: 1800, tdee: 2500 }} />
+      <WeightChart entries={state.bodyweightEntries} />
+      <VolumeChart workouts={state.workouts} />
+      <WorkoutCalendar workouts={state.workouts} />
+      <PersonalRecords workouts={state.workouts} exercises={exercises} />
+
       <section className="hevy-card stack-md">
         <SectionTitle icon="💪" label="1RM estimes" />
         {['bench_press', 'back_squat', 'romanian_deadlift', 'pull_up'].map((exerciseId) => {
@@ -2592,6 +2610,9 @@ function ProfileView({
           </button>
         </div>
       </section>
+
+      <PlateCalculator />
+      <WorkoutTimer />
 
       <p className="profile-footer">Propulse par Katrava ⚡</p>
     </div>

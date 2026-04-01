@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, lazy, Suspense } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { AppProvider, useAppState } from './context/AppContext'
 import { saveState } from './storage'
 import { ToastContainer, showToast } from './components/ui/Toast'
@@ -20,10 +20,10 @@ import { BottomNav } from './components/layout/BottomNav'
 import { FeedbackModal } from './components/workout/FeedbackModal'
 import { HomeView } from './components/views/HomeView'
 import { TrainView } from './components/views/TrainView'
-const OnboardingView = lazy(() => import('./components/views/OnboardingView').then(m => ({ default: m.OnboardingView })))
-const NutritionView = lazy(() => import('./components/views/NutritionView').then(m => ({ default: m.NutritionView })))
-const ScouterView = lazy(() => import('./components/views/ScouterView').then(m => ({ default: m.ScouterView })))
-const ProfileView = lazy(() => import('./components/views/ProfileView').then(m => ({ default: m.ProfileView })))
+import { OnboardingView } from './components/views/OnboardingView'
+import { NutritionView } from './components/views/NutritionView'
+import { ScouterView } from './components/views/ScouterView'
+import { ProfileView } from './components/views/ProfileView'
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -242,7 +242,7 @@ function AppInner() {
           'pr'
         )
       } else {
-        showToast(`Serie ajoutee: ${weightKg}kg x ${reps}`, 'success')
+        showToast(`Série ajoutée: ${weightKg}kg x ${reps}`, 'success')
       }
     },
     [dispatch, state.activeWorkout, state.workouts]
@@ -259,7 +259,7 @@ function AppInner() {
         (r) => r.id === state.activeWorkout!.sessionId
       )
       sessionName =
-        cr?.name ?? state.activeWorkout.sessionName ?? 'Seance libre'
+        cr?.name ?? state.activeWorkout.sessionName ?? 'Séance libre'
       programId = 'custom'
     } else {
       if (!selectedProgram) return
@@ -307,7 +307,7 @@ function AppInner() {
     })
     setRestTimer(0)
     showToast(
-      `Seance terminee ! ${workout.durationMinutes} min`,
+      `Séance terminée ! ${workout.durationMinutes} min`,
       'success'
     )
 
@@ -332,7 +332,7 @@ function AppInner() {
       dispatch({ type: 'SAVE_FEEDBACK', payload: feedback })
       setPendingFeedback(null)
       setTab('home')
-      showToast('Feedback sauvegarde', 'success')
+      showToast('Feedback sauvegardé', 'success')
     },
     [dispatch]
   )
@@ -359,33 +359,31 @@ function AppInner() {
         />
       )}
 
-      <Suspense fallback={<div style={{display:'flex',alignItems:'center',justifyContent:'center',height:'60vh',color:'var(--muted)'}}>Chargement...</div>}>
-        {tab === 'home' && (
-          <HomeView onStartWorkout={startWorkout} />
-        )}
-        {tab === 'train' && (
-          <TrainView
-            onStartWorkout={startWorkout}
-            onStartSession={startSession}
-            onStartCustomRoutine={startCustomRoutine}
-            onAddSet={addSet}
-            onFinishWorkout={finishWorkout}
-            restTimer={restTimer}
-            onSkipTimer={() => setRestTimer(0)}
-          />
-        )}
-        {tab === 'nutrition' && <NutritionView />}
-        {tab === 'scouter' && <ScouterView />}
-        {tab === 'profile' && (
-          <ProfileView
-            onToggleTheme={() =>
-              setTheme((t) => (t === 'dark' ? 'light' : 'dark'))
-            }
-            theme={theme}
-            onNavigate={setTab}
-          />
-        )}
-      </Suspense>
+      {tab === 'home' && (
+        <HomeView onStartWorkout={startWorkout} />
+      )}
+      {tab === 'train' && (
+        <TrainView
+          onStartWorkout={startWorkout}
+          onStartSession={startSession}
+          onStartCustomRoutine={startCustomRoutine}
+          onAddSet={addSet}
+          onFinishWorkout={finishWorkout}
+          restTimer={restTimer}
+          onSkipTimer={() => setRestTimer(0)}
+        />
+      )}
+      {tab === 'nutrition' && <NutritionView />}
+      {tab === 'scouter' && <ScouterView />}
+      {tab === 'profile' && (
+        <ProfileView
+          onToggleTheme={() =>
+            setTheme((t) => (t === 'dark' ? 'light' : 'dark'))
+          }
+          theme={theme}
+          onNavigate={setTab}
+        />
+      )}
 
       <BottomNav tab={tab} onChange={setTab} restTimer={restTimer} />
     </div>

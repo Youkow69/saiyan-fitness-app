@@ -37,7 +37,7 @@
   --stroke: rgba(0, 0, 0, 0.08);
   --text: #1a1a2e;
   --muted: #555577;
-  --accent-gold: #E6A800;
+  --accent-gold: #B8860B;
   --accent-orange: #E67600;
   --gradient-ki: linear-gradient(135deg, #FFB800, #FF8C00, #FF5500);
   --shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
@@ -1109,4 +1109,21 @@ select:focus {
   .set-row {
     grid-template-columns: 48px 1fr;
   }
+}
+
+/* ── Accessibility ── */
+*:focus-visible {
+  outline: 2px solid var(--accent-gold);
+  outline-offset: 2px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
 }

@@ -119,24 +119,19 @@ export function getProgramById(id: string | null) {
   return programs.find((program) => program.id === id) ?? null
 }
 
-export function getExerciseById(id: string): Exercise {
-  const found = exercises.find((exercise) => exercise.id === id)
-  if (!found) {
-    console.warn(`[Saiyan] Exercise not found: ${id}`)
-    return exercises[0]
-  }
-  return found
+export function getExerciseById(id: string): Exercise | null {
+  return exercises.find(e => e.id === id) ?? null
 }
 
 export function formatNumber(value: number) {
   return new Intl.NumberFormat('fr-FR').format(Math.round(value))
 }
 
-export function estimate1Rm(weight: number, reps: number) {
-  if (isNaN(weight) || isNaN(reps)) return 0
-  if (weight <= 0 || reps <= 0) return 0
-  if (reps > 30 || weight > 1000) return 0
-  return weight * (1 + reps / 30)
+export function estimate1Rm(weight: number, reps: number): number {
+  if (weight <= 0 || reps <= 0 || isNaN(weight) || isNaN(reps)) return 0
+  if (weight > 1000) return 0
+  const effectiveReps = Math.min(reps, 20)
+  return weight * (1 + effectiveReps / 30)
 }
 
 export function setVolume(weight: number, reps: number): number {
@@ -159,6 +154,13 @@ export function getWorkoutVolume(workout: WorkoutLog) {
 
 export function getTotalVolume(workouts: WorkoutLog[]): number {
   return workouts.reduce((t, w) => t + getWorkoutVolume(w), 0)
+}
+
+export function getEffectiveWeight(weightKg: number, exerciseId: string, bodyweightKg: number): number {
+  if (weightKg > 0) return weightKg
+  const bwExercises = ['pull_ups', 'chin_ups', 'dips', 'push_ups', 'bodyweight_squat', 'pike_push_ups', 'inverted_rows', 'lunges']
+  if (bwExercises.includes(exerciseId) && bodyweightKg > 0) return bodyweightKg
+  return weightKg
 }
 
 export function getWeeklyWorkouts(workouts: WorkoutLog[]) {
@@ -343,32 +345,43 @@ export const TRANSFORMATIONS: Transformation[] = [
   },
 ]
 
-function countPRs(state: AppState): number {
-  const bestByExercise = new Map<string, number>()
+export function countPRs(state: AppState): number {
+  const workouts = state.workouts
+  if (workouts.length === 0) return 0
+  const sorted = [...workouts].sort((a, b) => (a.date ?? '').localeCompare(b.date ?? ''))
+  const bestByExercise: Record<string, number> = {}
   let prCount = 0
-  const sorted = [...state.workouts].sort((a, b) => a.date.localeCompare(b.date))
-  sorted.forEach(w => {
-    w.exercises.forEach(ex => {
-      ex.sets.forEach(set => {
+  for (const workout of sorted) {
+    const workoutBests: Record<string, number> = {}
+    for (const ex of workout.exercises) {
+      let bestInWorkout = 0
+      for (const set of ex.sets) {
         const e1rm = estimate1Rm(set.weightKg, set.reps)
-        const prev = bestByExercise.get(ex.exerciseId) ?? 0
-        if (e1rm > prev && prev > 0) prCount++
-        if (e1rm > prev) bestByExercise.set(ex.exerciseId, e1rm)
-      })
-    })
-  })
+        if (e1rm > bestInWorkout) bestInWorkout = e1rm
+      }
+      if (bestInWorkout > 0) workoutBests[ex.exerciseId] = bestInWorkout
+    }
+    for (const [exId, best] of Object.entries(workoutBests)) {
+      const prev = bestByExercise[exId] ?? 0
+      if (prev > 0 && best > prev) prCount++
+      if (best > (bestByExercise[exId] ?? 0)) bestByExercise[exId] = best
+    }
+  }
   return prCount
 }
 
 export function getStreak(state: AppState): number {
-  if (state.workouts.length === 0) return 0
-  const dates = [...new Set(state.workouts.map(w => w.date))].sort().reverse()
+  const dates = [...new Set(state.workouts.map(w => w.date?.slice(0, 10)).filter(Boolean))].sort().reverse()
+  if (dates.length === 0) return 0
+  const today = todayIso()
+  const yesterday = daysAgoIso(1)
+  if (dates[0] !== today && dates[0] !== yesterday) return 0
   let streak = 1
-  for (let i = 0; i < dates.length - 1; i++) {
-    const d1 = new Date(dates[i] + 'T12:00:00')
-    const d2 = new Date(dates[i + 1] + 'T12:00:00')
-    const diff = (d1.getTime() - d2.getTime()) / 86400000
-    if (diff <= 1) streak++
+  for (let i = 1; i < dates.length; i++) {
+    const d1 = new Date(dates[i - 1] + 'T12:00:00')
+    const d2 = new Date(dates[i] + 'T12:00:00')
+    const diffDays = Math.round((d1.getTime() - d2.getTime()) / 86400000)
+    if (diffDays <= 2) streak++
     else break
   }
   return streak
@@ -497,16 +510,28 @@ export function calculateAdaptiveTDEE(state: AppState): number {
 
   const last14Days = [...Array(ADAPTIVE_WINDOW_DAYS)].map((_, i) => daysAgoIso(i))
 
-  const avgCalories = last14Days.reduce((sum, date) => {
+  let totalCalories = 0
+  let daysWithFood = 0
+  for (const date of last14Days) {
     const dayCal = foodEntries.filter(f => f.date === date).reduce((s, f) => s + f.calories, 0)
-    return sum + dayCal
-  }, 0) / ADAPTIVE_WINDOW_DAYS
+    if (dayCal > 0) {
+      totalCalories += dayCal
+      daysWithFood++
+    }
+  }
+  if (daysWithFood === 0) return state.targets?.tdee ?? 2500
+  const avgCalories = totalCalories / daysWithFood
 
   const recentWeights = entries.slice(-14).map(e => e.weightKg)
   if (recentWeights.length < 2) return state.targets?.tdee ?? 2500
 
+  const firstDate = entries[Math.max(0, entries.length - 14)].date
+  const lastDate = entries[entries.length - 1].date
+  const spanMs = new Date(lastDate).getTime() - new Date(firstDate).getTime()
+  const spanDays = Math.max(1, spanMs / 86400000)
+
   const weightChange = recentWeights[recentWeights.length - 1] - recentWeights[0]
-  const weeklyChange = weightChange / (recentWeights.length / 7)
+  const weeklyChange = weightChange / (spanDays / 7)
   // 1 kg body mass ~= 7700 kcal
   const dailySurplus = (weeklyChange * KCAL_PER_KG_BODY_MASS) / 7
   const estimatedTDEE = Math.round(avgCalories - dailySurplus)
@@ -572,6 +597,7 @@ export function countCompletedDailyQuests(state: AppState): number {
 }
 
 export function getDailyQuestStatus(state: AppState) {
+  const targets = state.targets ?? { calories: 2000, protein: 100, carbs: 250, fats: 60, bmr: 1800, tdee: 2500 }
   const today = todayIso()
   const progress = (state.dailyQuestProgress ?? []).find(d => d.date === today)
   const completed = (state.completedDailyQuests ?? {})[today] ?? []
@@ -581,10 +607,10 @@ export function getDailyQuestStatus(state: AppState) {
   return DAILY_QUESTS.map(quest => {
     let current = progress?.quests[quest.id] ?? 0
 
-    if (quest.id === 'protein' && state.targets) {
-      current = state.targets.protein > 0 ? Math.round((nutrition.protein / state.targets.protein) * 100) : 0
-    } else if (quest.id === 'calories' && state.targets) {
-      const ratio = state.targets.calories > 0 ? nutrition.calories / state.targets.calories : 0
+    if (quest.id === 'protein') {
+      current = targets.protein > 0 ? Math.round((nutrition.protein / targets.protein) * 100) : 0
+    } else if (quest.id === 'calories') {
+      const ratio = targets.calories > 0 ? nutrition.calories / targets.calories : 0
       current = (ratio >= 0.9 && ratio <= 1.1) ? 100 : Math.round(ratio * 100)
     } else if (quest.id === 'training') {
       current = todayWorkouts.length > 0 ? 1 : 0

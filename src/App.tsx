@@ -44,7 +44,7 @@ import type {
 } from './types'
 
 const defaultProfile: UserProfile = {
-  name: 'Warrior',
+  name: 'Guerrier',
   age: 28,
   sex: 'male',
   weightKg: 78,
@@ -1354,7 +1354,7 @@ function ProfileView({ state, powerLevel, onLogBodyweight, onLogMeasurement, onC
           <div className="profile-stat-divider" />
           <div className="profile-stat">
             <span className="profile-stat-value">{streak}</span>
-            <span className="profile-stat-label">Streak 🔥</span>
+            <span className="profile-stat-label">Série 🔥</span>
           </div>
         </div>
       </section>
@@ -1387,7 +1387,7 @@ function ProfileView({ state, powerLevel, onLogBodyweight, onLogMeasurement, onC
         <SectionTitle icon="⚖️" label="Poids corporel" />
         <div className="inline-form">
           <input value={bodyweight} onChange={e => setBodyweight(e.target.value)} placeholder="kg" />
-          <button className="secondary-btn" type="button" onClick={() => onLogBodyweight({ id: makeId('bw'), date: todayIso(), weightKg: Number(bodyweight) })}>Log</button>
+          <button className="secondary-btn" type="button" onClick={() => onLogBodyweight({ id: makeId('bw'), date: todayIso(), weightKg: Number(bodyweight) })}>Journal</button>
         </div>
         {state.bodyweightEntries.length >= 2 && (
           <div style={{ display: 'flex', gap: 12, fontSize: '0.78rem', color: 'var(--muted)' }}>

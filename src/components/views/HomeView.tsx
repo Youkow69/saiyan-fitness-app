@@ -14,6 +14,7 @@ import { DailyQuestsPanel } from '../gamification/QuestSection'
 import { SectionTitle } from '../ui/Shared'
 import MacroBar from '../ui/MacroBar'
 import { RecoveryMap } from '../tools/RecoveryMap'
+import { ReadinessScore } from '../tools/ReadinessScore'
 
 interface HomeViewProps {
   onStartWorkout: () => void
@@ -165,6 +166,9 @@ export const HomeView: React.FC<HomeViewProps> = React.memo(
             </div>
           </div>
         </section>
+
+        {/* Readiness score */}
+        <ReadinessScore />
 
         {/* Weekly report */}
         <WeeklyReport />

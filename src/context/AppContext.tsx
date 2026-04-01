@@ -1,4 +1,4 @@
-import { createContext, useContext, useReducer, useEffect, type ReactNode } from 'react'
+import { createContext, useContext, useReducer, useEffect, useRef, type ReactNode } from 'react'
 import type {
   AppState,
   BodyweightEntry,
@@ -12,7 +12,7 @@ import type {
   WorkoutDraft,
   WorkoutLog,
 } from '../types'
-import { loadState, debouncedSave } from '../storage'
+import { loadState, debouncedSave, saveState } from '../storage'
 import { calculateTargets, makeId, todayIso, recommendProgram } from '../lib'
 import { savedMeals } from '../data'
 
@@ -89,6 +89,11 @@ function appReducer(state: AppState, action: Action): AppState {
     case 'ADD_SET': {
       if (!state.activeWorkout) return state
       const { exerciseId, weightKg, reps, rir, setType } = action.payload
+      const w = action.payload.weightKg
+      const r = action.payload.reps
+      if (typeof w !== 'number' || typeof r !== 'number' || isNaN(w) || isNaN(r) || w < 0 || r <= 0 || r > 100 || w > 1000) {
+        return state
+      }
       return {
         ...state,
         activeWorkout: {
@@ -118,6 +123,9 @@ function appReducer(state: AppState, action: Action): AppState {
     }
 
     case 'FINISH_WORKOUT': {
+      if (!state.activeWorkout) return state
+      const hasAnySets = state.activeWorkout.exercises.some(e => e.sets.length > 0)
+      if (!hasAnySets) return state
       const { workout, isCustom } = action.payload
       return {
         ...state,
@@ -263,6 +271,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(appReducer, null, () => {
     const loaded = loadState()
     if (!loaded) return defaultState
+    // Merge new default savedMeals for existing users
+    const existingIds = new Set(loaded.savedMeals?.map((m: { id: string }) => m.id) ?? [])
+    const newMeals = savedMeals.filter(m => !existingIds.has(m.id))
+    loaded.savedMeals = [...(loaded.savedMeals ?? []), ...newMeals]
     return {
       ...defaultState,
       ...loaded,
@@ -278,9 +290,18 @@ export function AppProvider({ children }: { children: ReactNode }) {
     }
   })
 
+  const stateRef = useRef(state)
+  stateRef.current = state
+
   useEffect(() => {
     debouncedSave(state)
   }, [state])
+
+  useEffect(() => {
+    const flush = () => saveState(stateRef.current)
+    window.addEventListener('beforeunload', flush)
+    return () => window.removeEventListener('beforeunload', flush)
+  }, [])
 
   return (
     <AppContext.Provider value={{ state, dispatch }}>

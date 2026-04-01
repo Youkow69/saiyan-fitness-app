@@ -291,13 +291,34 @@ export function ImportExport() {
           }
 
           if (mode === 'replace') {
-            dispatch({ type: 'IMPORT_STATE_REPLACE', payload: data })
+            dispatch({ type: 'SET_STATE', payload: data })
             setImportResult({
               message: 'Donnees importees (remplacement complet).',
               type: 'success',
             })
           } else {
-            dispatch({ type: 'IMPORT_STATE_MERGE', payload: data })
+            const mergedState = {
+              ...state,
+              foodEntries: [
+                ...state.foodEntries,
+                ...(data.foodEntries || []).filter(
+                  (e: { id: string }) => !state.foodEntries.some((s: { id: string }) => s.id === e.id)
+                ),
+              ],
+              workoutLogs: [
+                ...state.workoutLogs,
+                ...(data.workoutLogs || []).filter(
+                  (e: { id: string }) => !state.workoutLogs.some((s: { id: string }) => s.id === e.id)
+                ),
+              ],
+              programs: [
+                ...state.programs,
+                ...(data.programs || []).filter(
+                  (e: { id: string }) => !state.programs.some((s: { id: string }) => s.id === e.id)
+                ),
+              ],
+            }
+            dispatch({ type: 'SET_STATE', payload: mergedState })
             const counts = []
             if (data.foodEntries) counts.push(`${data.foodEntries.length} repas`)
             if (data.workoutLogs) counts.push(`${data.workoutLogs.length} seances`)
@@ -322,7 +343,7 @@ export function ImportExport() {
 
       reader.readAsText(file)
     },
-    [dispatch, mode]
+    [dispatch, mode, state]
   )
 
   // ── Import Strong CSV ──
@@ -346,7 +367,13 @@ export function ImportExport() {
             return
           }
 
-          dispatch({ type: 'IMPORT_WORKOUTS', payload: workouts })
+          const mergedWorkouts = [
+            ...state.workoutLogs,
+            ...workouts.filter(
+              (w: { id: string }) => !state.workoutLogs.some((s: { id: string }) => s.id === w.id)
+            ),
+          ]
+          dispatch({ type: 'SET_STATE', payload: { ...state, workoutLogs: mergedWorkouts } })
           const totalSets = workouts.reduce(
             (sum, w) => sum + w.exercises.reduce((s, ex) => s + ex.sets.length, 0),
             0
@@ -365,7 +392,7 @@ export function ImportExport() {
 
       reader.readAsText(file)
     },
-    [dispatch]
+    [dispatch, state]
   )
 
   // ── Import Hevy CSV ──
@@ -389,7 +416,13 @@ export function ImportExport() {
             return
           }
 
-          dispatch({ type: 'IMPORT_WORKOUTS', payload: workouts })
+          const mergedWorkouts = [
+            ...state.workoutLogs,
+            ...workouts.filter(
+              (w: { id: string }) => !state.workoutLogs.some((s: { id: string }) => s.id === w.id)
+            ),
+          ]
+          dispatch({ type: 'SET_STATE', payload: { ...state, workoutLogs: mergedWorkouts } })
           const totalSets = workouts.reduce(
             (sum, w) => sum + w.exercises.reduce((s, ex) => s + ex.sets.length, 0),
             0
@@ -408,7 +441,7 @@ export function ImportExport() {
 
       reader.readAsText(file)
     },
-    [dispatch]
+    [dispatch, state]
   )
 
   // ── File handler ──

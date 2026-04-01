@@ -14,6 +14,7 @@ import {
 } from '../../lib'
 import { showToast } from '../ui/Toast'
 import { SectionTitle } from '../ui/Shared'
+import { ProgressPhotos } from '../tools/ProgressPhotos'
 import type { AppState } from '../../types'
 
 function countPRsFromWorkouts(workouts: AppState['workouts']): number {
@@ -213,6 +214,10 @@ export const ProfileView: React.FC<ProfileViewProps> = React.memo(
               </span>
             </button>
           </div>
+        </section>
+
+        <section className="hevy-card stack-md" style={{ background: 'var(--bg-card)', borderRadius: 16, border: '1px solid var(--border)', padding: 16 }}>
+          <ProgressPhotos />
         </section>
 
         <p className="profile-footer">Propulsé par Katrava ⚡</p>

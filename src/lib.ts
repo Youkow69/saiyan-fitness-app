@@ -652,25 +652,6 @@ export function getVolumeByMuscle(workouts: WorkoutLog[]) {
   return Array.from(volumeMap.entries()).sort((a, b) => b[1] - a[1])
 }
 
-export function getRecoveryMap(workouts: WorkoutLog[]) {
-  const latestByMuscle = new Map<string, number>()
-  const now = Date.now()
-
-  workouts.slice(-8).forEach((workout) => {
-    const workoutTime = new Date(workout.date).getTime()
-    workout.exercises.forEach((exerciseLog) => {
-      const exercise = getExerciseById(exerciseLog.exerciseId)
-      ;[...exercise.primaryMuscles, ...exercise.secondaryMuscles].forEach((muscle) => {
-        const elapsedHours = (now - workoutTime) / 36e5
-        const recovery = Math.max(10, Math.min(100, Math.round(elapsedHours * 5)))
-        const current = latestByMuscle.get(muscle)
-        latestByMuscle.set(muscle, current === undefined ? recovery : Math.min(current, recovery))
-      })
-    })
-  })
-
-  return Array.from(latestByMuscle.entries()).sort((a, b) => a[0].localeCompare(b[0]))
-}
 
 export function getPrimaryRecommendation(state: AppState) {
   const weeklyWorkouts = getWeeklyWorkouts(state.workouts)
@@ -699,23 +680,3 @@ export function getPrimaryRecommendation(state: AppState) {
   return 'Recuperation et regularite au top. Continue la progression lente, propre et repeatable.'
 }
 
-export function getTopLiftState(workouts: WorkoutLog[]) {
-  const topLifts = ['bench_press', 'back_squat', 'romanian_deadlift', 'pull_up']
-  return topLifts.map((exerciseId) => {
-    let best = 0
-    workouts.forEach((workout) => {
-      workout.exercises
-        .filter((exerciseLog) => exerciseLog.exerciseId === exerciseId)
-        .forEach((exerciseLog) => {
-          exerciseLog.sets.forEach((set) => {
-            best = Math.max(best, estimate1Rm(set.weightKg, set.reps))
-          })
-        })
-    })
-
-    return {
-      exercise: getExerciseById(exerciseId),
-      estimated1Rm: Math.round(best),
-    }
-  })
-}

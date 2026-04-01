@@ -676,9 +676,9 @@ export function PremiumSetLogger({
                 textDecoration: draft.side === side ? 'none' : 'underline',
               }}
               aria-pressed={draft.side === side}
-              aria-label={side === 'both' ? 'Deux cotes' : side === 'left' ? 'Cote gauche' : 'Cote droit'}
+              aria-label={(side as string) === 'both' ? 'Deux cotes' : side === 'left' ? 'Cote gauche' : 'Cote droit'}
             >
-              {side === 'both' ? 'Deux' : side === 'left' ? 'Gauche' : 'Droit'}
+              {(side as string) === 'both' ? 'Deux' : side === 'left' ? 'Gauche' : 'Droit'}
             </button>
           ))}
         </div>

@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useRef } from 'react'
 import { AppProvider, useAppState } from './context/AppContext'
 import { saveState } from './storage'
 import { ToastContainer, showToast } from './components/ui/Toast'
@@ -13,6 +13,11 @@ import type {
   UserProfile,
   WorkoutDraft,
 } from './types'
+
+// ── Constants ───────────────────────────────────────────────────────────────
+
+const DEFAULT_REST_SECONDS = 90
+const SYNC_INTERVAL_MS = 30000
 
 // ── Components ───────────────────────────────────────────────────────────────
 
@@ -62,6 +67,10 @@ function AppInner() {
     () => (localStorage.getItem('sf_theme') as 'dark' | 'light') || 'dark'
   )
 
+  // Ref to avoid stale closure in sync effect
+  const stateRef = useRef(state)
+  stateRef.current = state
+
   // Rest timer effect
   useEffect(() => {
     if (restTimer <= 0) return
@@ -105,12 +114,13 @@ function AppInner() {
   useEffect(() => {
     const checkSync = () => {
       try {
+        const current = stateRef.current
         const raw = localStorage.getItem('saiyan_tracker_sync')
         if (!raw) return
         const sync = JSON.parse(raw)
         if (sync.date !== todayIso()) return
         const today = todayIso()
-        const existing = (state.dailyQuestProgress ?? []).find((d: { date: string }) => d.date === today)
+        const existing = (current.dailyQuestProgress ?? []).find((d: { date: string }) => d.date === today)
         if (sync.steps > 0) {
           const currentSteps = existing?.quests['steps'] ?? 0
           if (sync.steps > currentSteps) {
@@ -132,9 +142,9 @@ function AppInner() {
       } catch { /* ignore parse errors */ }
     }
     checkSync()
-    const interval = setInterval(checkSync, 30000)
+    const interval = setInterval(checkSync, SYNC_INTERVAL_MS)
     return () => clearInterval(interval)
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [dispatch])
 
   const selectedProgram = getProgramById(state.selectedProgramId)
   const nextIndex = state.programCursor[selectedProgram?.id ?? ''] ?? 0
@@ -234,7 +244,7 @@ function AppInner() {
       const exerciseTarget = state.activeWorkout.exercises.find(
         (e) => e.exerciseId === exerciseId
       )?.target
-      setRestTimer(exerciseTarget?.restSeconds ?? 90)
+      setRestTimer(exerciseTarget?.restSeconds ?? DEFAULT_REST_SECONDS)
       if (isPR) {
         const exName = getExerciseById(exerciseId)?.name ?? exerciseId.replace(/_/g, ' ')
         showToast(
@@ -250,6 +260,14 @@ function AppInner() {
 
   const finishWorkout = useCallback(() => {
     if (!state.activeWorkout) return
+
+    // Empty workout check
+    const validExercises = state.activeWorkout.exercises.filter(e => e.sets.length > 0)
+    if (validExercises.length === 0) {
+      showToast('Aucun exercice enregistré', 'error')
+      return
+    }
+
     const isCustom = state.activeWorkout.programId === 'custom'
     let sessionName: string
     let programId: string
@@ -292,7 +310,7 @@ function AppInner() {
         (e) => e.sets.length > 0
       ),
       durationMinutes: Math.max(
-        25,
+        1,
         Math.round(
           (Date.now() -
             new Date(state.activeWorkout.startedAt).getTime()) /

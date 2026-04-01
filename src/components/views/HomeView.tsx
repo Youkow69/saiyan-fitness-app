@@ -13,6 +13,7 @@ import { DailyQuote } from '../gamification/MotivationalQuotes'
 import { DailyQuestsPanel } from '../gamification/QuestSection'
 import { SectionTitle } from '../ui/Shared'
 import MacroBar from '../ui/MacroBar'
+import { RecoveryMap } from '../tools/RecoveryMap'
 
 interface HomeViewProps {
   onStartWorkout: () => void
@@ -167,6 +168,9 @@ export const HomeView: React.FC<HomeViewProps> = React.memo(
 
         {/* Weekly report */}
         <WeeklyReport />
+
+        {/* Recovery map */}
+        <RecoveryMap />
 
         {/* Nutrition summary */}
         <section className="hevy-card stack-md">

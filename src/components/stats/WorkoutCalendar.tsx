@@ -94,7 +94,7 @@ export function WorkoutCalendar({ workouts }: { workouts: CalendarWorkoutLog[] }
     return { months, dayMap, maxVolume, workoutDates, totalWorkouts: workouts.length }
   }, [workouts])
 
-  const streak = useMemo(() => getStreak({ workouts } as any), [workouts])
+  const streak = useMemo(() => getStreak(workoutDates), [workoutDates])
 
   const selectedDayData = selectedDay ? dayMap[selectedDay] : null
   const selectedWorkouts = selectedDay
@@ -125,7 +125,7 @@ export function WorkoutCalendar({ workouts }: { workouts: CalendarWorkoutLog[] }
           WebkitTextFillColor: 'transparent',
         }}
       >
-        Calendrier d'Entrainement
+        Calendrier d'Entraînement
       </h2>
 
       {/* Stats row */}
@@ -158,7 +158,7 @@ export function WorkoutCalendar({ workouts }: { workouts: CalendarWorkoutLog[] }
           }}
         >
           <div style={{ fontSize: 24, fontWeight: 800, color: '#3182ce' }}>{totalWorkouts}</div>
-          <div style={{ fontSize: 11, color: 'var(--text-secondary)' }}>Seances (3 mois)</div>
+          <div style={{ fontSize: 11, color: 'var(--text-secondary)' }}>Séances (3 mois)</div>
         </div>
         <div
           style={{
@@ -299,7 +299,7 @@ export function WorkoutCalendar({ workouts }: { workouts: CalendarWorkoutLog[] }
             background: 'var(--border)',
             borderRadius: 12,
             padding: 16,
-            border: '1px solid #2d3748',
+            border: '1px solid var(--stroke)',
           }}
         >
           <h4 style={{ margin: '0 0 8px', fontSize: 14, color: '#ed8936' }}>
@@ -312,7 +312,7 @@ export function WorkoutCalendar({ workouts }: { workouts: CalendarWorkoutLog[] }
           </h4>
           <div style={{ display: 'flex', gap: 16, marginBottom: 8, fontSize: 13 }}>
             <span style={{ color: 'var(--text-secondary)' }}>
-              Seances: <strong style={{ color: 'var(--text)' }}>{selectedDayData.count}</strong>
+              Séances : <strong style={{ color: 'var(--text)' }}>{selectedDayData.count}</strong>
             </span>
             <span style={{ color: 'var(--text-secondary)' }}>
               Volume: <strong style={{ color: 'var(--text)' }}>{Math.round(selectedDayData.volume)} kg</strong>
@@ -320,7 +320,7 @@ export function WorkoutCalendar({ workouts }: { workouts: CalendarWorkoutLog[] }
           </div>
           {selectedWorkouts.map((w, i) => (
             <div key={w.id} style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 4 }}>
-              Seance {i + 1}: {w.exercises.length} serie{w.exercises.length !== 1 ? 's' : ''}
+              Séance {i + 1}: {w.exercises.length} serie{w.exercises.length !== 1 ? 's' : ''}
             </div>
           ))}
         </div>

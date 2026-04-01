@@ -5,6 +5,7 @@ import type {
 } from './types'
 import { allExercises } from './data/exercises'
 import { allFoods } from './data/foods'
+import { additionalPrograms } from './data/programs'
 
 export const exercises = allExercises
 
@@ -91,4 +92,5 @@ export const programs: ProgramTemplate[] = [
       { id: 'legs', name: 'Jambes', focus: 'Quadriceps, fessiers, abdominaux', exercises: [{ exerciseId: 'back_squat', sets: 4, repMin: 5, repMax: 7, targetRir: 2, restSeconds: 150 }, { exerciseId: 'romanian_deadlift', sets: 3, repMin: 6, repMax: 8, targetRir: 2, restSeconds: 120 }, { exerciseId: 'leg_press', sets: 3, repMin: 10, repMax: 12, targetRir: 1, restSeconds: 90 }, { exerciseId: 'cable_crunch', sets: 3, repMin: 12, repMax: 18, targetRir: 1, restSeconds: 60 }] },
     ],
   },
+  ...additionalPrograms,
 ]

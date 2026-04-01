@@ -20,6 +20,7 @@ import type { CalendarWorkoutLog } from '../stats/WorkoutCalendar'
 import { PersonalRecords } from '../stats/PersonalRecords'
 import type { PRWorkoutLog, PRExercise } from '../stats/PersonalRecords'
 import { MetricCard, ProgressBar, SectionTitle } from '../ui/Shared'
+import { StrengthStandards } from '../tools/StrengthStandards'
 
 const MUSCLE_FR: Record<string, string> = {
   Chest: 'Pectoraux',
@@ -186,6 +187,9 @@ export const ScouterView: React.FC = React.memo(
             },
           )}
         </section>
+
+        {/* Strength standards */}
+        <StrengthStandards />
 
         {/* Muscle volume dashboard - translated to French */}
         <section className="hevy-card stack-md">

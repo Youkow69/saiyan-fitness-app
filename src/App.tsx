@@ -236,7 +236,7 @@ function AppInner() {
       )?.target
       setRestTimer(exerciseTarget?.restSeconds ?? 90)
       if (isPR) {
-        const exName = getExerciseById(exerciseId).name
+        const exName = getExerciseById(exerciseId)?.name ?? exerciseId.replace(/_/g, ' ')
         showToast(
           `NOUVEAU RECORD sur ${exName} ! ${weightKg}kg x ${reps}`,
           'pr'
@@ -275,9 +275,10 @@ function AppInner() {
     const musclesWorked = new Set<MuscleGroup>()
     state.activeWorkout.exercises.forEach((ex) => {
       if (ex.sets.filter((s) => s.setType !== 'warmup').length > 0) {
-        getExerciseById(ex.exerciseId).primaryMuscles.forEach((m) =>
-          musclesWorked.add(m)
-        )
+        const exData = getExerciseById(ex.exerciseId)
+        if (exData) {
+          exData.primaryMuscles.forEach((m) => musclesWorked.add(m))
+        }
       }
     })
 

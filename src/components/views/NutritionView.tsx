@@ -10,6 +10,7 @@ import SearchSelect from '../ui/SearchSelect'
 import MacroBar from '../ui/MacroBar'
 import { MealPlanner } from '../tools/MealPlanner'
 import { MicronutrientEstimate } from '../tools/Micronutrients'
+import { RecentFoods, QuickAddMacros, AdherenceScore, GroceryList } from '../tools/NutritionPremium'
 
 const MEAL_CATEGORIES: Array<{ value: FoodEntry['category']; label: string }> = [
   { value: 'breakfast', label: 'Petit-déjeuner' },
@@ -106,6 +107,9 @@ export const NutritionView: React.FC = React.memo(
           </p>
         </section>
 
+        {/* Quick add macros */}
+        <QuickAddMacros onAdd={(entry) => addFood({ ...entry, id: makeId('quick'), date: todayIso(), category })} />
+
         {/* Macro bars */}
         <section className="hevy-card stack-md">
           <SectionTitle icon="" label="Nutrition aujourd'hui" />
@@ -113,10 +117,14 @@ export const NutritionView: React.FC = React.memo(
           <MacroBar label="Protéines" current={totals.protein} target={targets.protein} unit="g" color="protein" />
           <MacroBar label="Glucides" current={totals.carbs} target={targets.carbs} unit="g" color="carbs" />
           <MacroBar label="Lipides" current={totals.fats} target={targets.fats} unit="g" color="fat" />
+          <AdherenceScore />
         </section>
 
         {/* Micronutrient estimate */}
         <MicronutrientEstimate />
+
+        {/* Recent foods */}
+        <RecentFoods foods={state.foodEntries} onSelect={(food) => addFood({ ...food, id: makeId('recent'), date: todayIso() })} />
 
         {/* Add food form */}
         <section className="hevy-card stack-md">
@@ -250,6 +258,8 @@ export const NutritionView: React.FC = React.memo(
             ))}
           </div>
         </section>
+        {/* Grocery list */}
+        <GroceryList />
       </div>
     )
   },

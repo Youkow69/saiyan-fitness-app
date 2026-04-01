@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react'
+import { useState, useCallback } from 'react'
 
 interface ShareData {
   type: 'pr' | 'workout' | 'weekly' | 'transformation' | 'streak'
@@ -10,7 +10,6 @@ interface ShareData {
 }
 
 export function useShareCard() {
-  const canvasRef = useRef<HTMLCanvasElement | null>(null)
 
   const generateCard = useCallback(async (data: ShareData): Promise<Blob | null> => {
     const canvas = document.createElement('canvas')

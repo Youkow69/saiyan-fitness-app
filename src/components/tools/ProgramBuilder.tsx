@@ -681,7 +681,7 @@ function ExercisePickerModal({
     >
       <div style={pickerContainerStyle}>
         <div style={pickerHeaderStyle}>
-          <h3 style={{ margin: 0, color: '#fff', fontSize: 16 }}>
+          <h3 style={{ margin: 0, color: 'var(--text)', fontSize: 16 }}>
             Choisir un exercice
           </h3>
           <button
@@ -706,7 +706,7 @@ function ExercisePickerModal({
 
         <div style={pickerListStyle}>
           {exList.length === 0 && (
-            <p style={{ color: '#888', textAlign: 'center', padding: 20 }}>
+            <p style={{ color: 'var(--text-secondary)', textAlign: 'center', padding: 20 }}>
               Aucun exercice trouve.
             </p>
           )}
@@ -725,7 +725,7 @@ function ExercisePickerModal({
                 disabled={isAdded}
               >
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ color: '#fff', fontSize: 14, fontWeight: 500 }}>
+                  <div style={{ color: 'var(--text)', fontSize: 14, fontWeight: 500 }}>
                     {ex.name}
                   </div>
                   <div style={{ color: '#aaa', fontSize: 12, marginTop: 2 }}>
@@ -734,9 +734,9 @@ function ExercisePickerModal({
                   </div>
                 </div>
                 {isAdded ? (
-                  <span style={{ color: '#666', fontSize: 12, flexShrink: 0 }}>Deja ajoute</span>
+                  <span style={{ color: 'var(--text-secondary)', fontSize: 12, flexShrink: 0 }}>Deja ajoute</span>
                 ) : (
-                  <span style={{ color: '#4ecdc4', fontSize: 18, flexShrink: 0 }}>+</span>
+                  <span style={{ color: 'var(--info)', fontSize: 18, flexShrink: 0 }}>+</span>
                 )}
               </button>
             )
@@ -761,7 +761,7 @@ const overlayStyle: CSSProperties = {
 }
 
 const containerStyle: CSSProperties = {
-  background: '#1a1a2e',
+  background: 'var(--bg-card)',
   borderRadius: 16,
   width: '100%',
   maxWidth: 680,
@@ -781,7 +781,7 @@ const headerStyle: CSSProperties = {
 }
 
 const titleStyle: CSSProperties = {
-  color: '#fff',
+  color: 'var(--text)',
   fontSize: 20,
   fontWeight: 700,
   margin: 0,
@@ -802,10 +802,10 @@ const labelStyle: CSSProperties = {
 }
 
 const inputStyle: CSSProperties = {
-  background: '#16162a',
+  background: 'var(--bg-card)',
   border: '1px solid #333',
   borderRadius: 8,
-  color: '#fff',
+  color: 'var(--text)',
   padding: '8px 12px',
   fontSize: 14,
   outline: 'none',
@@ -820,7 +820,7 @@ const chipRowStyle: CSSProperties = {
 }
 
 const chipStyle: CSSProperties = {
-  background: '#16162a',
+  background: 'var(--bg-card)',
   border: '1px solid #333',
   borderRadius: 20,
   color: '#aaa',
@@ -831,9 +831,9 @@ const chipStyle: CSSProperties = {
 }
 
 const chipActiveStyle: CSSProperties = {
-  background: '#4ecdc4',
+  background: 'var(--info)',
   color: '#000',
-  borderColor: '#4ecdc4',
+  borderColor: 'var(--info)',
   fontWeight: 600,
 }
 
@@ -851,7 +851,7 @@ const tabStyle: CSSProperties = {
   background: 'transparent',
   border: 'none',
   borderBottom: '2px solid transparent',
-  color: '#888',
+  color: 'var(--text-secondary)',
   padding: '10px 16px',
   fontSize: 13,
   cursor: 'pointer',
@@ -860,8 +860,8 @@ const tabStyle: CSSProperties = {
 }
 
 const tabActiveStyle: CSSProperties = {
-  color: '#4ecdc4',
-  borderBottomColor: '#4ecdc4',
+  color: 'var(--info)',
+  borderBottomColor: 'var(--info)',
   fontWeight: 600,
 }
 
@@ -869,7 +869,7 @@ const addTabBtnStyle: CSSProperties = {
   background: 'transparent',
   border: '1px dashed #444',
   borderRadius: 6,
-  color: '#4ecdc4',
+  color: 'var(--info)',
   width: 32,
   height: 32,
   fontSize: 18,
@@ -898,7 +898,7 @@ const sessionHeaderStyle: CSSProperties = {
 }
 
 const smallBtnStyle: CSSProperties = {
-  background: '#16162a',
+  background: 'var(--bg-card)',
   border: '1px solid #333',
   borderRadius: 6,
   color: '#aaa',
@@ -915,14 +915,14 @@ const exerciseListStyle: CSSProperties = {
 }
 
 const emptyTextStyle: CSSProperties = {
-  color: '#666',
+  color: 'var(--text-secondary)',
   textAlign: 'center',
   padding: '24px 0',
   fontSize: 14,
 }
 
 const exerciseCardStyle: CSSProperties = {
-  background: '#16162a',
+  background: 'var(--bg-card)',
   borderRadius: 10,
   border: '1px solid #2a2a3e',
   padding: 12,
@@ -936,7 +936,7 @@ const exHeaderStyle: CSSProperties = {
 }
 
 const exNameStyle: CSSProperties = {
-  color: '#fff',
+  color: 'var(--text)',
   fontSize: 14,
   fontWeight: 600,
   overflow: 'hidden',
@@ -945,13 +945,13 @@ const exNameStyle: CSSProperties = {
 }
 
 const exMusclesStyle: CSSProperties = {
-  color: '#4ecdc4',
+  color: 'var(--info)',
   fontSize: 11,
   marginTop: 2,
 }
 
 const arrowBtnStyle: CSSProperties = {
-  background: '#1a1a2e',
+  background: 'var(--bg-card)',
   border: '1px solid #333',
   borderRadius: 4,
   color: '#aaa',
@@ -978,17 +978,17 @@ const configCellStyle: CSSProperties = {
 }
 
 const configLabelStyle: CSSProperties = {
-  color: '#888',
+  color: 'var(--text-secondary)',
   fontSize: 10,
   fontWeight: 600,
   textTransform: 'uppercase',
 }
 
 const configInputStyle: CSSProperties = {
-  background: '#1a1a2e',
+  background: 'var(--bg-card)',
   border: '1px solid #333',
   borderRadius: 6,
-  color: '#fff',
+  color: 'var(--text)',
   padding: '6px 4px',
   fontSize: 13,
   textAlign: 'center',
@@ -1001,7 +1001,7 @@ const addExerciseBtnStyle: CSSProperties = {
   background: 'transparent',
   border: '1px dashed #4ecdc4',
   borderRadius: 10,
-  color: '#4ecdc4',
+  color: 'var(--info)',
   padding: '12px 0',
   fontSize: 14,
   fontWeight: 600,
@@ -1029,7 +1029,7 @@ const footerStyle: CSSProperties = {
 }
 
 const cancelBtnStyle: CSSProperties = {
-  background: '#16162a',
+  background: 'var(--bg-card)',
   border: '1px solid #333',
   borderRadius: 10,
   color: '#aaa',
@@ -1039,7 +1039,7 @@ const cancelBtnStyle: CSSProperties = {
 }
 
 const saveBtnStyle: CSSProperties = {
-  background: '#4ecdc4',
+  background: 'var(--info)',
   border: 'none',
   borderRadius: 10,
   color: '#000',
@@ -1063,7 +1063,7 @@ const pickerOverlayStyle: CSSProperties = {
 }
 
 const pickerContainerStyle: CSSProperties = {
-  background: '#1a1a2e',
+  background: 'var(--bg-card)',
   borderRadius: 14,
   width: '100%',
   maxWidth: 480,
@@ -1085,17 +1085,17 @@ const pickerHeaderStyle: CSSProperties = {
 const pickerCloseBtnStyle: CSSProperties = {
   background: 'transparent',
   border: 'none',
-  color: '#888',
+  color: 'var(--text-secondary)',
   fontSize: 18,
   cursor: 'pointer',
   padding: 4,
 }
 
 const pickerSearchStyle: CSSProperties = {
-  background: '#16162a',
+  background: 'var(--bg-card)',
   border: 'none',
   borderBottom: '1px solid #2a2a3e',
-  color: '#fff',
+  color: 'var(--text)',
   padding: '10px 16px',
   fontSize: 14,
   outline: 'none',

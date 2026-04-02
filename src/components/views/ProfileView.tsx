@@ -230,6 +230,33 @@ export const ProfileView: React.FC<ProfileViewProps> = React.memo(
       {/* Import/Export */}
       <section className="hevy-card stack-md">
         <ImportExport />
+
+        {/* Reset Account */}
+        <section className="hevy-card" style={{ padding: '14px', borderColor: 'rgba(239,68,68,0.2)' }}>
+          <button
+            onClick={() => {
+              if (window.confirm('ATTENTION : Ceci va supprimer TOUTES tes donn\u00e9es (workouts, nutrition, profil). Cette action est irr\u00e9versible. Continuer ?')) {
+                if (window.confirm('Derni\u00e8re chance ! Tout sera perdu. Vraiment r\u00e9initialiser ?')) {
+                  dispatch({ type: 'RESET_ACCOUNT' })
+                  window.location.reload()
+                }
+              }
+            }}
+            type="button"
+            style={{
+              width: '100%', padding: '10px', borderRadius: 10,
+              border: '1px solid var(--accent-red)', background: 'transparent',
+              color: 'var(--accent-red)', fontWeight: 600, fontSize: '0.82rem',
+              cursor: 'pointer',
+            }}
+          >
+            R\u00e9initialiser mon compte
+          </button>
+          <p style={{ margin: '6px 0 0', fontSize: '0.7rem', color: 'var(--muted)', textAlign: 'center' }}>
+            Supprime toutes les donn\u00e9es et recommence \u00e0 z\u00e9ro
+          </p>
+        </section>
+
       </section>
 
       {/* Cloud sync */}

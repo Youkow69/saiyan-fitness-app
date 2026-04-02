@@ -108,18 +108,24 @@ function AppInner({ user, pushToCloud, pullFromCloud, syncSteps, signOut }: AppI
         setCloudStatus('syncing')
         const cloudState = await pullFromCloud()
         if (cloudState && (cloudState as any).profile) {
-          const cloudWorkouts = (cloudState as any).workouts?.length ?? 0
-          const localWorkouts = stateRef.current.workouts?.length ?? 0
-          if (cloudWorkouts > localWorkouts) {
-            dispatch({ type: 'SET_STATE', payload: cloudState })
-            showToast('Données cloud récupérées', 'success')
-          } else {
-            await pushToCloud(stateRef.current)
-          }
+          // Cloud has data with a profile -> restore it
+          dispatch({ type: 'SET_STATE', payload: cloudState })
+          showToast('Données restaurées depuis le cloud', 'success')
           setCloudStatus('synced')
           setLastSyncedAt(new Date().toISOString())
         } else {
-          await pushToCloud(stateRef.current)
+          // Cloud is empty (new user) -> reset local state to force onboarding
+          // Use the display name from Supabase signup metadata
+          const userName = (user as any)?.user_metadata?.display_name || ''
+          if (userName && (!stateRef.current.profile || stateRef.current.profile.name === 'Guerrier')) {
+            // New user just signed up - clear profile to trigger onboarding
+            dispatch({ type: 'SET_STATE', payload: { ...stateRef.current, profile: null, targets: null } })
+            showToast('Bienvenue ' + userName + ' ! Configure ton profil.', 'info')
+          } else if (stateRef.current.profile) {
+            // Existing local user linking to a new account - push their data
+            await pushToCloud(stateRef.current)
+            showToast('Données locales synchronisées', 'success')
+          }
           setCloudStatus('synced')
           setLastSyncedAt(new Date().toISOString())
         }
@@ -275,6 +281,10 @@ function AppInner({ user, pushToCloud, pullFromCloud, syncSteps, signOut }: AppI
         type: 'COMPLETE_ONBOARDING',
         payload: { profile, answers },
       })
+      // Push to cloud immediately after onboarding
+      setTimeout(() => {
+        if (user) pushToCloud(stateRef.current)
+      }, 500)
     },
     [dispatch]
   )

@@ -178,7 +178,7 @@ export function PersonalRecords({
     padding: '10px 12px',
     textAlign: field === 'name' ? 'left' : 'right',
     fontSize: 11,
-    color: sortField === field ? '#ed8936' : 'var(--text-secondary)',
+    color: sortField === field ? 'var(--accent-orange)' : 'var(--text-secondary)',
     cursor: 'pointer',
     fontWeight: sortField === field ? 700 : 600,
     textTransform: 'uppercase',
@@ -209,7 +209,7 @@ export function PersonalRecords({
           textAlign: 'center',
           margin: '0 0 8px',
           fontSize: 22,
-          background: 'linear-gradient(135deg, #f6ad55, #ed8936)',
+          background: 'linear-gradient(135deg, var(--accent-orange), var(--accent))',
           WebkitBackgroundClip: 'text',
           WebkitTextFillColor: 'transparent',
         }}
@@ -231,7 +231,7 @@ export function PersonalRecords({
           style={{
             fontSize: 40,
             fontWeight: 900,
-            background: 'linear-gradient(135deg, #ecc94b, #ed8936, #e53e3e)',
+            background: 'linear-gradient(135deg, var(--accent-gold), var(--accent-orange), var(--accent-red))',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
             textShadow: 'none',
@@ -330,7 +330,7 @@ export function PersonalRecords({
                           width: 20,
                           height: 20,
                           borderRadius: '50%',
-                          background: 'linear-gradient(135deg, #ecc94b, #ed8936)',
+                          background: 'linear-gradient(135deg, var(--accent-gold), var(--accent-orange))',
                           fontSize: 10,
                           flexShrink: 0,
                         }}
@@ -384,7 +384,7 @@ export function PersonalRecords({
                       fontFamily: "'Impact', 'Arial Black', sans-serif",
                       letterSpacing: 1,
                       background: pr.isRecentPR
-                        ? 'linear-gradient(135deg, #ecc94b, #ed8936)'
+                        ? 'linear-gradient(135deg, var(--accent-gold), var(--accent-orange))'
                         : 'linear-gradient(135deg, var(--text-secondary), var(--text))',
                       WebkitBackgroundClip: 'text',
                       WebkitTextFillColor: 'transparent',
@@ -431,7 +431,7 @@ export function PersonalRecords({
               width: 16,
               height: 16,
               borderRadius: '50%',
-              background: 'linear-gradient(135deg, #ecc94b, #ed8936)',
+              background: 'linear-gradient(135deg, var(--accent-gold), var(--accent-orange))',
               fontSize: 8,
             }}
           >

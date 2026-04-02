@@ -101,7 +101,7 @@ export function ExerciseDetail({
         aria-label="Detail exercice"
       >
         <div style={cardStyle} onClick={(e) => e.stopPropagation()}>
-          <p style={{ color: '#ff6b6b', textAlign: 'center', margin: 20 }}>
+          <p style={{ color: 'var(--danger)', textAlign: 'center', margin: 20 }}>
             Exercice non trouve
           </p>
           <button type="button" onClick={onClose} style={closeBtnStyle}>
@@ -144,7 +144,7 @@ export function ExerciseDetail({
               </span>
               <span style={difficultyStyle} title={DIFFICULTY_LABELS[exercise.difficulty]}>
                 {difficultyStars(exercise.difficulty)}{' '}
-                <span style={{ fontSize: 11, color: '#aaa' }}>
+                <span style={{ fontSize: 11, color: 'var(--text-secondary)' }}>
                   {DIFFICULTY_LABELS[exercise.difficulty]}
                 </span>
               </span>
@@ -170,7 +170,7 @@ export function ExerciseDetail({
                   key={m}
                   style={{
                     ...muscleBadgeStyle,
-                    background: MUSCLE_COLORS[m] ?? '#555',
+                    background: MUSCLE_COLORS[m] ?? 'var(--text-secondary)',
                   }}
                 >
                   {translateMuscle(m)}
@@ -186,7 +186,7 @@ export function ExerciseDetail({
                       key={m}
                       style={{
                         ...muscleBadgeStyle,
-                        background: MUSCLE_COLORS[m] ?? '#555',
+                        background: MUSCLE_COLORS[m] ?? 'var(--text-secondary)',
                         opacity: 0.7,
                       }}
                     >
@@ -313,7 +313,7 @@ export function ExerciseDetail({
 const overlayStyle: CSSProperties = {
   position: 'fixed',
   inset: 0,
-  background: 'rgba(0,0,0,0.8)',
+  background: 'var(--panel-2)',
   zIndex: 1000,
   display: 'flex',
   alignItems: 'center',
@@ -359,7 +359,7 @@ const metaRowStyle: CSSProperties = {
 
 const equipBadgeStyle: CSSProperties = {
   background: 'var(--bg-card)',
-  color: '#ccc',
+  color: 'var(--text-secondary)',
   padding: '3px 10px',
   borderRadius: 12,
   fontSize: 11,
@@ -367,7 +367,7 @@ const equipBadgeStyle: CSSProperties = {
 }
 
 const difficultyStyle: CSSProperties = {
-  color: '#f1c40f',
+  color: 'var(--accent-gold)',
   fontSize: 14,
   display: 'flex',
   alignItems: 'center',
@@ -432,7 +432,7 @@ const cueListStyle: CSSProperties = {
 }
 
 const cueItemStyle: CSSProperties = {
-  color: '#ddd',
+  color: 'var(--text-secondary)',
   fontSize: 13,
   lineHeight: 1.6,
 }
@@ -468,7 +468,7 @@ const altBtnStyle: CSSProperties = {
   background: 'var(--bg-card)',
   border: '1px solid #2a2a3e',
   borderRadius: 8,
-  color: '#ddd',
+  color: 'var(--text-secondary)',
   padding: '8px 12px',
   fontSize: 13,
   cursor: 'pointer',
@@ -491,7 +491,7 @@ const addToWorkoutBtnStyle: CSSProperties = {
   background: 'var(--info)',
   border: 'none',
   borderRadius: 10,
-  color: '#000',
+  color: 'var(--bg)',
   padding: '10px 20px',
   fontSize: 14,
   fontWeight: 700,
@@ -502,7 +502,7 @@ const closeBtnStyle: CSSProperties = {
   background: 'var(--bg-card)',
   border: '1px solid #333',
   borderRadius: 10,
-  color: '#aaa',
+  color: 'var(--text-secondary)',
   padding: '10px 20px',
   fontSize: 14,
   cursor: 'pointer',

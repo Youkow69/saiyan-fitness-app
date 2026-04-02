@@ -90,7 +90,7 @@ export function Leaderboard() {
   const volume = useMemo(() => getTotalVolume(state.workouts), [state.workouts])
 
   const userId = useMemo(() => getUserId(), [])
-  const userName = state.userName || 'Guerrier anonyme'
+  const userName = state.profile?.name || 'Guerrier anonyme'
 
   // Build own warrior card
   const myCard: Omit<WarriorCard, 'addedAt'> = useMemo(

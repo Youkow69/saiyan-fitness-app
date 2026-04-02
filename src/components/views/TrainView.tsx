@@ -93,7 +93,7 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
                   </div>
                   <div style={{ display: 'flex', gap: 10 }}>
                     <button className="primary-btn" style={{ flex: 1 }} onClick={() => onStartCustomRoutine(routine)} type="button">Commencer</button>
-                    <button className="ghost-btn" style={{ padding: '8px 14px' }} onClick={() => onDeleteCustomRoutine(routine.id)} type="button">🗑️</button>
+                    <button className="ghost-btn" style={{ padding: '8px 14px' }} onClick={() => { if (window.confirm('Supprimer cette routine ?')) dispatch({ type: 'DELETE_CUSTOM_ROUTINE', payload: routine.id }) }} type="button">🗑️</button>
                   </div>
                 </section>
               ))}

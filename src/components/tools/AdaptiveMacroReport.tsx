@@ -1,9 +1,9 @@
 // src/components/tools/AdaptiveMacroReport.tsx
 // Weekly macro adaptation report - "Rapport de Bulma"
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useAppState } from '../../context/AppContext'
-import { calculateAdaptiveTDEE, getAdaptiveTDEEStatus, getDailyNutrition } from '../../lib'
+import { getAdaptiveTDEEStatus } from '../../lib'
 
 export function AdaptiveMacroReport() {
   const { state } = useAppState()
@@ -27,7 +27,7 @@ export function AdaptiveMacroReport() {
     : avgRecent
 
   const weeklyChange = avgRecent - avgPrev
-  const targetChange = profile.goal === 'fat_loss' ? -0.5 : profile.goal === 'muscle_gain' ? 0.25 : 0
+  const _targetChange = profile.goal === 'fat_loss' ? -0.5 : profile.goal === 'muscle_gain' ? 0.25 : 0
 
   // Calculate adjustment
   let calorieAdjust = 0

@@ -114,18 +114,23 @@ function AppInner({ user, pushToCloud, pullFromCloud, syncSteps, signOut }: AppI
           showToast('Données restaurées depuis le cloud', 'success')
           setCloudStatus('synced')
           setLastSyncedAt(new Date().toISOString())
+        } else if (cloudState && !(cloudState as any).profile) {
+          // Cloud row exists but profile is null -> profile was deliberately reset
+          // Force onboarding by clearing local profile
+          dispatch({ type: 'SET_STATE', payload: { ...stateRef.current, profile: null, targets: null } })
+          showToast('Configure ton profil pour commencer !', 'info')
+          setCloudStatus('synced')
+          setLastSyncedAt(new Date().toISOString())
         } else {
-          // Cloud is empty (new user) -> reset local state to force onboarding
-          // Use the display name from Supabase signup metadata
+          // No cloud data at all (new user or no row)
           const userName = (user as any)?.user_metadata?.display_name || ''
-          if (userName && (!stateRef.current.profile || stateRef.current.profile.name === 'Guerrier')) {
-            // New user just signed up - clear profile to trigger onboarding
-            dispatch({ type: 'SET_STATE', payload: { ...stateRef.current, profile: null, targets: null } })
-            showToast('Bienvenue ' + userName + ' ! Configure ton profil.', 'info')
-          } else if (stateRef.current.profile) {
-            // Existing local user linking to a new account - push their data
+          if (stateRef.current.profile) {
+            // Has local data -> push it to cloud
             await pushToCloud(stateRef.current)
             showToast('Données locales synchronisées', 'success')
+          } else if (userName) {
+            // New user, no local data -> show welcome
+            showToast('Bienvenue ' + userName + ' ! Configure ton profil.', 'info')
           }
           setCloudStatus('synced')
           setLastSyncedAt(new Date().toISOString())

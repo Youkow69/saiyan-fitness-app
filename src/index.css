@@ -73,26 +73,62 @@
 /* ── B) Light Theme Variables ────────────────────────────────────────────── */
 
 [data-theme="light"] {
-  --bg: #f0f2f5;
+  /* Backgrounds */
+  --bg: #f5f5fa;
   --bg-card: #ffffff;
   --bg-elev: #ffffff;
   --panel: rgba(255, 255, 255, 0.95);
   --panel-2: rgba(240, 242, 247, 0.95);
+
+  /* Stroke & Text */
   --stroke: rgba(0, 0, 0, 0.08);
+  --border: rgba(0, 0, 0, 0.08);
   --text: #1a1a2e;
+  --text-secondary: #555577;
   --muted: #555577;
-  --accent: #E67600;
+
+  /* Accent */
+  --accent: #E07000;
+  --accent-light: #FF9633;
+  --accent-glow: rgba(224, 112, 0, 0.15);
   --accent-gold: #996A00;
   --accent-orange: #E67600;
+  --accent-blue: #2563eb;
+  --accent-red: #dc2626;
+  --accent-green: #16a34a;
+  --accent-purple: #7c3aed;
+  --accent-calm: #64748b;
+
+  /* Gradient */
   --gradient-ki: linear-gradient(135deg, #FFB800, #FF8C00, #FF5500);
-  --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.06);
-  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.08);
-  --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.1);
-  --shadow-glow: 0 0 16px rgba(230, 118, 0, 0.1);
-  background: radial-gradient(circle at top, rgba(255, 180, 0, 0.06), transparent 28%),
-    radial-gradient(circle at 80% 0%, rgba(55, 183, 255, 0.06), transparent 22%),
-    var(--bg);
+
+  /* Shadows */
+  --shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.12);
+  --shadow-glow: 0 0 20px rgba(224, 112, 0, 0.08);
+
+  /* Semantic */
+  --success: #16a34a;
+  --success-bg: rgba(22, 163, 74, 0.1);
+  --warning: #d97706;
+  --warning-bg: rgba(217, 119, 6, 0.1);
+  --danger: #dc2626;
+  --danger-bg: rgba(220, 38, 38, 0.1);
+  --info: #2563eb;
+  --info-bg: rgba(37, 99, 235, 0.1);
+
+  /* Macro Colors */
+  --calories: #E07000;
+  --protein: #dc2626;
+  --carbs: #2563eb;
+  --fat: #d97706;
+
+  background: #f5f5fa;
 }
+
+/* ── Light mode: card & panel backgrounds ──────────────────────────────── */
 
 [data-theme="light"] .card,
 [data-theme="light"] .hero-card,
@@ -102,10 +138,11 @@
 [data-theme="light"] .routine-card,
 [data-theme="light"] .metric-card,
 [data-theme="light"] .mini-card,
+[data-theme="light"] .quest-card,
 [data-theme="light"] .power-card {
-  background: #ffffff;
-  border-color: rgba(0, 0, 0, 0.08);
-  box-shadow: var(--shadow-md);
+  background: var(--bg-card);
+  border-color: var(--border);
+  box-shadow: var(--shadow-sm);
 }
 
 [data-theme="light"] .profile-hero {
@@ -114,11 +151,15 @@
   box-shadow: var(--shadow-md);
 }
 
+/* ── Light mode: bottom nav ────────────────────────────────────────────── */
+
 [data-theme="light"] .bottom-nav {
   background: #ffffff;
   border-color: rgba(0, 0, 0, 0.08);
   box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
 }
+
+/* ── Light mode: form inputs ───────────────────────────────────────────── */
 
 [data-theme="light"] input,
 [data-theme="light"] select,
@@ -128,20 +169,34 @@
   border-color: rgba(0, 0, 0, 0.12);
 }
 
+/* ── Light mode: set rows ──────────────────────────────────────────────── */
+
 [data-theme="light"] .set-row {
-  background: rgba(0, 0, 0, 0.03);
+  background: rgba(0, 0, 0, 0.02);
 }
 
-[data-theme="light"] .quest-card {
-  background: #ffffff;
-  border-color: rgba(0, 0, 0, 0.08);
+[data-theme="light"] .set-row:hover {
+  background: rgba(0, 0, 0, 0.04);
 }
+
+[data-theme="light"] .set-row--completed {
+  background: rgba(22, 163, 74, 0.06);
+}
+
+/* ── Light mode: quick cards ───────────────────────────────────────────── */
 
 [data-theme="light"] .quick-card {
   background: #ffffff;
   border-color: rgba(0, 0, 0, 0.06);
-  color: #1a1a2e;
+  color: var(--text);
 }
+
+[data-theme="light"] .quick-card:hover {
+  background: #fafafa;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* ── Light mode: libre button ──────────────────────────────────────────── */
 
 [data-theme="light"] .libre-btn {
   background: rgba(0, 0, 0, 0.03);
@@ -149,17 +204,30 @@
   border-style: solid;
 }
 
+[data-theme="light"] .libre-btn:hover {
+  background: rgba(0, 0, 0, 0.05);
+  border-color: var(--accent);
+}
+
+/* ── Light mode: workout summary ───────────────────────────────────────── */
+
 [data-theme="light"] .workout-summary-card {
   background: rgba(0, 0, 0, 0.03);
 }
+
+/* ── Light mode: section title ─────────────────────────────────────────── */
 
 [data-theme="light"] .section-title-text {
   color: #E67600;
 }
 
+/* ── Light mode: CTA button ────────────────────────────────────────────── */
+
 [data-theme="light"] .cta-button {
   color: #ffffff;
 }
+
+/* ── Light mode: nav items ─────────────────────────────────────────────── */
 
 [data-theme="light"] .nav-item {
   color: #888899;
@@ -170,22 +238,38 @@
   background: rgba(230, 118, 0, 0.08);
 }
 
+/* ── Light mode: eyebrow & field title ─────────────────────────────────── */
+
 [data-theme="light"] .eyebrow,
 [data-theme="light"] .field-title {
   color: #E6A800;
 }
+
+/* ── Light mode: timeline ──────────────────────────────────────────────── */
 
 [data-theme="light"] .timeline-img-wrap {
   background: rgba(255, 255, 255, 0.9);
   border-color: rgba(0, 0, 0, 0.10);
 }
 
+/* ── Light mode: badges & chips ────────────────────────────────────────── */
+
 [data-theme="light"] .hero-badge,
 [data-theme="light"] .badge,
 [data-theme="light"] .chip {
   background: rgba(0, 0, 0, 0.04);
-  border-color: rgba(0, 0, 0, 0.10);
+  border-color: rgba(0, 0, 0, 0.1);
+  color: var(--text);
 }
+
+[data-theme="light"] .chip-active,
+[data-theme="light"] .chip--active {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+
+/* ── Light mode: ghost button ──────────────────────────────────────────── */
 
 [data-theme="light"] .ghost-btn {
   background: rgba(0, 0, 0, 0.04);
@@ -193,18 +277,138 @@
   border-color: rgba(0, 0, 0, 0.10);
 }
 
+[data-theme="light"] .ghost-btn:hover {
+  background: rgba(0, 0, 0, 0.07);
+}
+
+/* ── Light mode: next badge ────────────────────────────────────────────── */
+
 [data-theme="light"] .next-badge {
   background: #E6A800;
   color: #ffffff;
 }
+
+/* ── Light mode: search select ─────────────────────────────────────────── */
 
 [data-theme="light"] .search-select-dropdown {
   background: #ffffff;
   border-color: rgba(0, 0, 0, 0.12);
 }
 
+[data-theme="light"] .search-select-trigger {
+  background: #f5f5f7;
+}
+
+[data-theme="light"] .search-select-search {
+  background: #f5f5f7;
+}
+
+[data-theme="light"] .search-select-option:hover,
+[data-theme="light"] .search-select-option--focused {
+  background: rgba(224, 112, 0, 0.08);
+}
+
+/* ── Light mode: macro bar track ───────────────────────────────────────── */
+
 [data-theme="light"] .macro-bar-track {
   background: rgba(0, 0, 0, 0.06);
+}
+
+/* ── Light mode: progress bar ──────────────────────────────────────────── */
+
+[data-theme="light"] .progress-shell {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="light"] .quest-progress-bar {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+/* ── Light mode: activity grid ─────────────────────────────────────────── */
+
+[data-theme="light"] .activity-grid-cell {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+/* ── Light mode: modals ────────────────────────────────────────────────── */
+
+[data-theme="light"] .modal-overlay {
+  background: rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="light"] .modal-box {
+  background: #ffffff;
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="light"] .modal-btn.cancel {
+  background: rgba(0, 0, 0, 0.05);
+  color: var(--text);
+}
+
+/* ── Light mode: toasts ────────────────────────────────────────────────── */
+
+[data-theme="light"] .toast {
+  background: #ffffff;
+  border-color: rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+}
+
+/* ── Light mode: routine card next variant ─────────────────────────────── */
+
+[data-theme="light"] .routine-card--next {
+  border-color: rgba(230, 168, 0, 0.4);
+  background: linear-gradient(180deg, #fffdf5, #fff8e6);
+}
+
+/* ── Light mode: secondary button ──────────────────────────────────────── */
+
+[data-theme="light"] .secondary-btn {
+  background: rgba(37, 99, 235, 0.08);
+  color: var(--text);
+}
+
+/* ── Light mode: primary button ────────────────────────────────────────── */
+
+[data-theme="light"] .primary-btn {
+  color: #ffffff;
+}
+
+/* ── Light mode: badge pills ───────────────────────────────────────────── */
+
+[data-theme="light"] .badge-pill {
+  background: rgba(224, 112, 0, 0.08);
+}
+
+[data-theme="light"] .badge-streak {
+  background: linear-gradient(135deg, rgba(153, 106, 0, 0.1), rgba(224, 112, 0, 0.1));
+  border-color: rgba(153, 106, 0, 0.25);
+}
+
+/* ── Light mode: timer panel ───────────────────────────────────────────── */
+
+[data-theme="light"] .timer-panel {
+  background: linear-gradient(135deg, rgba(224, 112, 0, 0.1), rgba(153, 106, 0, 0.06));
+}
+
+/* ── Light mode: mini-card selected ────────────────────────────────────── */
+
+[data-theme="light"] .mini-card--selected {
+  border-color: rgba(224, 112, 0, 0.5);
+  background: rgba(224, 112, 0, 0.06);
+}
+
+/* ── Light mode: system notification ───────────────────────────────────── */
+
+[data-theme="light"] .system-notification {
+  background: rgba(255, 255, 255, 0.98);
+  color: var(--accent);
+}
+
+/* ── Light mode: theme toggle ──────────────────────────────────────────── */
+
+[data-theme="light"] .theme-toggle {
+  background: rgba(0, 0, 0, 0.08);
 }
 
 /* ── Reset ──────────────────────────────────────────────────────────────── */

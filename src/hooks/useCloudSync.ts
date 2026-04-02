@@ -14,9 +14,9 @@ const RETRY_DELAYS = [5000, 15000, 30000] // exponential backoff
 
 export function useCloudSync(user: any) {
   const syncingRef = useRef(false)
-  const retryTimeoutRef = useRef<ReturnType<typeof setTimeout>>()
+  const retryTimeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
   const [syncStatus, setSyncStatus] = useState<SyncStatus>({
-    state: 'idle', lastSyncedAt: null, error: null, retryCount: 0,
+    state: 'idle', lastSyncedAt: null, error: null, retryCount: 0 as number,
   })
 
   // Upload local state to cloud with retry logic

@@ -7,8 +7,7 @@ import { showToast } from '../ui/Toast'
 import { ConfirmDialog } from '../ui/ConfirmDialog'
 import { PlateCalculator } from '../tools/PlateCalculator'
 import { WorkoutTimer } from '../tools/WorkoutTimer'
-import { ExerciseLibrary } from '../workout/ExerciseLibrary'
-import type { Exercise as LibExercise } from '../workout/ExerciseLibrary'
+import ExerciseLibrary from '../workout/ExerciseLibrary'
 import { SectionTitle } from '../ui/Shared'
 import { ProgressiveOverload } from '../tools/ProgressiveOverload'
 import { ExerciseVideoLink } from '../tools/ExerciseVideos'
@@ -223,7 +222,7 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
           <span>Créer ma routine</span>
         </button>
 
-        <ExerciseLibrary exercises={exercises.map(e => ({ id: e.id, name: e.name, muscleGroups: e.primaryMuscles as string[], equipment: [e.equipment] })) as LibExercise[]} />
+        <ExerciseLibrary exercises={exercises.map(e => ({ id: e.id, name: e.name, muscleGroups: e.primaryMuscles as string[], equipment: [e.equipment] })) as Exercise[]} />
 
         {creatingRoutine && (
           <section className="hevy-card stack-md">

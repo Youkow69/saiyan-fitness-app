@@ -41,7 +41,7 @@ function toggleFavoriteStorage(foodId: string): string[] {
 }
 
 // ─────────────────────────────────────────────
-// Adherence calculation
+// Adhérence calculation
 // ─────────────────────────────────────────────
 interface MacroValues {
   calories: number
@@ -50,7 +50,7 @@ interface MacroValues {
   fats: number
 }
 
-function calculateAdherence(nutrition: MacroValues, targets: MacroValues): number {
+function calculateAdhérence(nutrition: MacroValues, targets: MacroValues): number {
   if (!targets || targets.calories <= 0) return 0
 
   const calAccuracy = 100 - Math.min(
@@ -138,7 +138,7 @@ export function RecentFoods({ foods, onSelect }: RecentFoodsProps) {
   if (favFoods.length === 0 && recentFoods.length === 0) {
     return (
       <div style={{ padding: 12, color: '#9ca3af', fontSize: 13, textAlign: 'center' }}>
-        Aucun aliment favori ou recent. Ajoutez-en pour les retrouver ici.
+        Aucun aliment favori ou recent. Ajoutéz-en pour les retrouver ici.
       </div>
     )
   }
@@ -180,7 +180,7 @@ export function RecentFoods({ foods, onSelect }: RecentFoodsProps) {
           color: isFav ? '#f59e0b' : '#6b7280',
           transition: 'color 0.15s',
         }}
-        title={isFav ? 'Retirer des favoris' : 'Ajouter aux favoris'}
+        title={isFav ? 'Retirer des favoris' : 'Ajoutér aux favoris'}
       >
         {isFav ? '\u2605' : '\u2606'}
       </button>
@@ -200,7 +200,7 @@ export function RecentFoods({ foods, onSelect }: RecentFoodsProps) {
       {recentFoods.length > 0 && (
         <div>
           <div style={{ fontSize: 12, fontWeight: 600, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 6, paddingLeft: 4 }}>
-            Recents
+            Récents
           </div>
           {recentFoods.slice(0, 10).map(f => renderFoodRow(f, false))}
         </div>
@@ -348,7 +348,7 @@ export function QuickAddMacros({ onAdd }: QuickAddMacrosProps) {
             transition: 'opacity 0.15s',
           }}
         >
-          Ajouter
+          Ajoutér
         </button>
         <button
           onClick={() => setExpanded(false)}
@@ -374,9 +374,9 @@ export function QuickAddMacros({ onAdd }: QuickAddMacrosProps) {
 }
 
 // ─────────────────────────────────────────────
-// Component 3: Adherence Score
+// Component 3: Adhérence Score
 // ─────────────────────────────────────────────
-export function AdherenceScore() {
+export function AdhérenceScore() {
   const { state } = useAppState()
 
   const scores = useMemo(() => {
@@ -384,7 +384,7 @@ export function AdherenceScore() {
     if (!targets) return { today: 0, week: 0, details: [] as { date: string; score: number }[] }
 
     const todayNut = getDailyNutrition(state.foodEntries, todayIso())
-    const todayScore = calculateAdherence(todayNut, targets)
+    const todayScore = calculateAdhérence(todayNut, targets)
 
     let weekTotal = 0
     let daysWithData = 0
@@ -394,7 +394,7 @@ export function AdherenceScore() {
       const date = daysAgoIso(i)
       const dayNut = getDailyNutrition(state.foodEntries, date)
       if (dayNut.calories > 0) {
-        const score = calculateAdherence(dayNut, targets)
+        const score = calculateAdhérence(dayNut, targets)
         weekTotal += score
         daysWithData++
         details.push({ date, score })
@@ -413,7 +413,7 @@ export function AdherenceScore() {
   return (
     <div style={{ padding: 16, borderRadius: 14, background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', marginBottom: 16 }}>
       <div style={{ fontSize: 13, fontWeight: 600, color: '#e5e7eb', marginBottom: 14 }}>
-        Score d'adherence
+        Score d'adhérence
       </div>
 
       {/* Today's score circle */}
@@ -571,7 +571,7 @@ export function GroceryList() {
           Liste de courses
         </div>
         <div style={{ fontSize: 12, color: '#6b7280', textAlign: 'center', padding: 12 }}>
-          Aucun aliment enregistre cette semaine. Ajoute des repas pour generer ta liste.
+          Aucun aliment enregistre cette semaine. Ajouté des repas pour générer ta liste.
         </div>
       </div>
     )

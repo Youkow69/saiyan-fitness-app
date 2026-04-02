@@ -34,7 +34,7 @@ const DARK_VARS = {
 }
 
 const LIGHT_VARS = {
-  '--bg': '#f8f6f2',
+  '--bg': '#FFF8F0',
   '--bg-card': '#ffffff',
   '--bg-hover': '#f0ebe4',
   '--text': '#1a1a1a',

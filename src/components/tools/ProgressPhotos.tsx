@@ -12,14 +12,14 @@ const PHOTOS_KEY = 'saiyan-progrèss-photos'
 const MAX_PHOTOS = 52 // ~1 per week for a year
 const TARGET_WIDTH = 400 // compress to this width
 
-function loadPhotos(): ProgrèssPhoto[] {
+function loadPhotos(): ProgressPhoto[] {
   try {
     const raw = localStorage.getItem(PHOTOS_KEY)
     return raw ? JSON.parse(raw) : []
   } catch { return [] }
 }
 
-function savePhotos(photos: ProgrèssPhoto[]) {
+function savePhotos(photos: ProgressPhoto[]) {
   try {
     localStorage.setItem(PHOTOS_KEY, JSON.stringify(photos))
   } catch (e) {
@@ -44,16 +44,16 @@ async function compressImage(file: File): Promise<string> {
   })
 }
 
-export function ProgrèssPhotos() {
-  const [photos, setPhotos] = useState<ProgrèssPhoto[]>(loadPhotos)
-  const [selectedPhoto, setSelectedPhoto] = useState<ProgrèssPhoto | null>(null)
+export function ProgressPhotos() {
+  const [photos, setPhotos] = useState<ProgressPhoto[]>(loadPhotos)
+  const [selectedPhoto, setSelectedPhoto] = useState<ProgressPhoto | null>(null)
   const [compareMode, setCompareMode] = useState(false)
   const [compareIdx, setCompareIdx] = useState<[number, number]>([0, 0])
   const inputRef = useRef<HTMLInputElement>(null)
 
   const addPhoto = useCallback(async (file: File) => {
     const dataUrl = await compressImage(file)
-    const photo: ProgrèssPhoto = {
+    const photo: ProgressPhoto = {
       id: makeId(),
       date: todayIso(),
       dataUrl,

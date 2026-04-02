@@ -20,7 +20,7 @@ const items: Array<{
   { id: 'train', icon: IconDumbbell, label: 'Training', ariaLabel: 'Entraînement' },
   { id: 'nutrition', icon: IconBowl, label: 'Nutrition', ariaLabel: 'Nutrition' },
   { id: 'scouter', icon: IconChart, label: 'Stats', ariaLabel: 'Statistiques' },
-  { id: 'coach', label: 'Coach', icon: '\uD83E\uDD4A' },
+  { id: 'coach', icon: IconCoach, label: 'Coach', ariaLabel: 'Coach IA' },
     { id: 'profile', icon: IconUser, label: 'Profil', ariaLabel: 'Profil' },
 ]
 

@@ -46,7 +46,7 @@ export type MuscleGroup =
   | 'Calves'
   | 'Core'
 
-export type TabId = 'home' | 'train' | 'nutrition' | 'scouter' | 'profile'
+export type TabId = 'home' | 'train' | 'nutrition' | 'scouter' | 'coach' | 'profile'
 
 export interface UserProfile {
   name: string

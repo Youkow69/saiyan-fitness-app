@@ -127,3 +127,14 @@ export const IconBarcode: React.FC<IconProps> = ({ size = 24 }) => (
     <path d="M19 5v14" />
   </svg>
 );
+
+export function IconCoach({ size = 24 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M20 21v-2a4 4 0 0 0-3-3.87" />
+      <path d="M4 21v-2a4 4 0 0 1 3-3.87" />
+      <circle cx="12" cy="7" r="4" />
+      <path d="M12 14l-2-2 2-2 2 2-2 2z" />
+    </svg>
+  )
+}

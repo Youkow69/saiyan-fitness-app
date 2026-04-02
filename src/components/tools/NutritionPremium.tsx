@@ -50,7 +50,7 @@ interface MacroValues {
   fats: number
 }
 
-function calculateAdhérence(nutrition: MacroValues, targets: MacroValues): number {
+function calculateAdherence(nutrition: MacroValues, targets: MacroValues): number {
   if (!targets || targets.calories <= 0) return 0
 
   const calAccuracy = 100 - Math.min(
@@ -376,7 +376,7 @@ export function QuickAddMacros({ onAdd }: QuickAddMacrosProps) {
 // ─────────────────────────────────────────────
 // Component 3: Adhérence Score
 // ─────────────────────────────────────────────
-export function AdhérenceScore() {
+export function AdherenceScore() {
   const { state } = useAppState()
 
   const scores = useMemo(() => {
@@ -384,7 +384,7 @@ export function AdhérenceScore() {
     if (!targets) return { today: 0, week: 0, details: [] as { date: string; score: number }[] }
 
     const todayNut = getDailyNutrition(state.foodEntries, todayIso())
-    const todayScore = calculateAdhérence(todayNut, targets)
+    const todayScore = calculateAdherence(todayNut, targets)
 
     let weekTotal = 0
     let daysWithData = 0
@@ -394,7 +394,7 @@ export function AdhérenceScore() {
       const date = daysAgoIso(i)
       const dayNut = getDailyNutrition(state.foodEntries, date)
       if (dayNut.calories > 0) {
-        const score = calculateAdhérence(dayNut, targets)
+        const score = calculateAdherence(dayNut, targets)
         weekTotal += score
         daysWithData++
         details.push({ date, score })

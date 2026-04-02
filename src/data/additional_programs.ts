@@ -1019,5 +1019,5 @@ export const specializedPrograms: ProgramTemplate[] = [
         ],
       },
     ],
-  },
+  }
 ]

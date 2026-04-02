@@ -7,6 +7,7 @@ import { useMemo, useState, useEffect } from 'react'
 import { useAppState } from '../../context/AppContext'
 import { getWorkoutVolume, estimate1Rm, getExerciseById, getPowerLevel } from '../../lib'
 import type { WorkoutLog } from '../../types'
+import { Confetti } from '../ui/Confetti'
 
 // ── Props ────────────────────────────────────────────────────────────────────
 

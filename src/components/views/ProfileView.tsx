@@ -36,7 +36,7 @@ function countPRsFromWorkouts(workouts: AppState['workouts']): number {
 }
 
 interface ProfileViewProps {
-  onToggleThème: () => void
+  onToggleTheme: () => void
   theme: 'dark' | 'light'
   onNavigate: (tab: TabId) => void
   cloudUser?: any
@@ -56,7 +56,7 @@ const GOAL_FR: Record<string, string> = {
 }
 
 export const ProfileView: React.FC<ProfileViewProps> = React.memo(
-  function ProfileView({ onToggleThème, theme, onNavigate, cloudUser, cloudStatus, lastSyncedAt, onSignOut, onSyncNow }) {
+  function ProfileView({ onToggleTheme, theme, onNavigate, cloudUser, cloudStatus, lastSyncedAt, onSignOut, onSyncNow }) {
     const { state, dispatch } = useAppState()
     const [bodyweight, setBodyweight] = useState(String(state.profile?.weightKg ?? 0))
     const [measurements, setMeasurements] = useState({ waist: '', chest: '', arm: '', thigh: '' })
@@ -214,7 +214,7 @@ export const ProfileView: React.FC<ProfileViewProps> = React.memo(
           <SectionTitle icon="⚙️" label="Paramètres" />
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 0' }}>
             <span style={{ fontSize: '0.9rem' }}>{theme === 'dark' ? '🌙 Mode sombre' : '☀️ Mode clair'}</span>
-            <button type="button" onClick={onToggleThème} className="theme-toggle" aria-label="Changer le thème">
+            <button type="button" onClick={onToggleTheme} className="theme-toggle" aria-label="Changer le thème">
               <span className="theme-toggle-knob" style={{ transform: theme === 'light' ? 'translateX(24px)' : 'translateX(0)' }}>
                 {theme === 'dark' ? '🌙' : '☀️'}
               </span>

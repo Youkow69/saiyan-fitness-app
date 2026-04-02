@@ -41,7 +41,7 @@ function toggleFavoriteStorage(foodId: string): string[] {
 }
 
 // ─────────────────────────────────────────────
-// Adhérence calculation
+// Adherence calculation
 // ─────────────────────────────────────────────
 interface MacroValues {
   calories: number
@@ -138,7 +138,7 @@ export function RecentFoods({ foods, onSelect }: RecentFoodsProps) {
   if (favFoods.length === 0 && recentFoods.length === 0) {
     return (
       <div style={{ padding: 12, color: '#9ca3af', fontSize: 13, textAlign: 'center' }}>
-        Aucun aliment favori ou recent. Ajoutéz-en pour les retrouver ici.
+        Aucun aliment favori ou recent. Ajoutez-en pour les retrouver ici.
       </div>
     )
   }
@@ -200,7 +200,7 @@ export function RecentFoods({ foods, onSelect }: RecentFoodsProps) {
       {recentFoods.length > 0 && (
         <div>
           <div style={{ fontSize: 12, fontWeight: 600, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 6, paddingLeft: 4 }}>
-            Récents
+            Recents
           </div>
           {recentFoods.slice(0, 10).map(f => renderFoodRow(f, false))}
         </div>
@@ -348,7 +348,7 @@ export function QuickAddMacros({ onAdd }: QuickAddMacrosProps) {
             transition: 'opacity 0.15s',
           }}
         >
-          Ajoutér
+          Ajouter
         </button>
         <button
           onClick={() => setExpanded(false)}
@@ -374,7 +374,7 @@ export function QuickAddMacros({ onAdd }: QuickAddMacrosProps) {
 }
 
 // ─────────────────────────────────────────────
-// Component 3: Adhérence Score
+// Component 3: Adherence Score
 // ─────────────────────────────────────────────
 export function AdherenceScore() {
   const { state } = useAppState()

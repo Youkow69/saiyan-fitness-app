@@ -139,7 +139,6 @@ export function getVolumeByMuscle(workouts: WorkoutLog[]) {
 
 // ── FEAT-F5: Generation intelligente de seance basee sur la fatigue ──────────
 
-import { allExercises } from '../data/exercises'
 import type { WorkoutDraft, LoggedExercise, ProgramExercise } from '../types'
 
 /** Calcule la fatigue par groupe musculaire sur les 7 derniers jours (0-100%). */

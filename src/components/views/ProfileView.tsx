@@ -18,7 +18,6 @@ import { ProgressPhotos } from '../tools/ProgressPhotos'
 import { ImportExport } from '../tools/ImportExport'
 import type { AppState } from '../../types'
 import { BodyweightChart } from '../stats/BodyweightChart'
-import { ThemeSwitcher } from '../ui/ThemeSwitcher'
 
 function countPRsFromWorkouts(workouts: AppState['workouts']): number {
   const bestByExercise = new Map<string, number>()

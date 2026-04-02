@@ -151,7 +151,7 @@ function computeReadiness(state: any): ReadinessResult {
     name: "Charge d'entrainement",
     score: loadScore,
     maxScore: 15,
-    detail: `${last7Workouts} seance${last7Workouts > 1 ? 's' : ''} cette semaine`,
+    detail: `${last7Workouts} séance${last7Workouts > 1 ? 's' : ''} cette semaine`,
   })
 
   // ---- Aggregate ----
@@ -162,7 +162,7 @@ function computeReadiness(state: any): ReadinessResult {
   let explanation: string
 
   if (totalScore >= 80) {
-    label = 'Pret a tout donner'
+    label = 'Prêt a tout donner'
     recommendation = 'push'
     explanation =
       'Tes indicateurs sont bons. Tu peux viser des performances elevees aujourd\'hui.'
@@ -170,17 +170,17 @@ function computeReadiness(state: any): ReadinessResult {
     label = 'Bonne forme'
     recommendation = 'normal'
     explanation =
-      'Entrainement normal recommande. Ecoute ton corps pendant la seance.'
+      'Entrainement normal recommande. Ecoute ton corps pendant la séance.'
   } else if (totalScore >= 40) {
     label = 'Recuperation en cours'
     recommendation = 'easy'
     explanation =
-      'Privilegie une seance legere ou technique. La recuperation est aussi de l\'entrainement.'
+      'Privilegie une séance legere ou technique. La recuperation est aussi de l\'entrainement.'
   } else if (totalScore >= 20) {
     label = 'Fatigue'
     recommendation = 'deload'
     explanation =
-      'Un deload ou une seance tres legere serait plus productif qu\'une seance intense.'
+      'Un deload ou une séance tres legere serait plus productif qu\'une séance intense.'
   } else {
     label = 'Repos recommande'
     recommendation = 'rest'

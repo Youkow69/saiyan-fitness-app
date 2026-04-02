@@ -47,7 +47,7 @@ export function calculateTargets(profile: UserProfile): GoalTargets {
   const calories = tdee + goalCalorieAdjustment(profile.goal, tdee)
   const protein = Math.max(50, Math.round(profile.weightKg * (profile.goal === 'fat_loss' ? 2.2 : 1.9)))
   const fats = Math.round(profile.weightKg * 0.75)
-  const carbs = Math.max(80, Math.round((calories - protein * 4 - fats * 9) / 4))
+  const carbs = Math.max(0, Math.round((calories - protein * 4 - fats * 9) / 4))
   return { bmr, tdee, calories, protein, carbs, fats }
 }
 
@@ -121,4 +121,12 @@ export function getRecommendedRecipes(state: AppState) {
     .sort((a, b) => a.score - b.score)
     .slice(0, 4)
     .map((item) => item.recipe)
+}
+
+
+export function getLowCarbWarning(carbsG: number): string | null {
+  if (carbsG < 50) {
+    return '\u26A0\uFE0F Tes glucides sont tr\u00e8s bas (' + Math.round(carbsG) + 'g). Consulte un nutritionniste.'
+  }
+  return null
 }

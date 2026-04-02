@@ -27,7 +27,6 @@ export function AdaptiveMacroReport() {
     : avgRecent
 
   const weeklyChange = avgRecent - avgPrev
-  const _targetChange = profile.goal === 'fat_loss' ? -0.5 : profile.goal === 'muscle_gain' ? 0.25 : 0
 
   // Calculate adjustment
   let calorieAdjust = 0

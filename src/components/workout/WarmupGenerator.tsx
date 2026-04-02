@@ -7,7 +7,7 @@ interface Props {
   onAddWarmups: (sets: { weight: number; reps: number }[]) => void
 }
 
-export function WarmupGenerator({ workingWeight, exerciseId, onAddWarmups }: Props) {
+export function WarmupGenerator({ workingWeight, exerciseId: _exerciseId, onAddWarmups }: Props) {
   if (workingWeight <= 0) return null
 
   const generateWarmups = () => {

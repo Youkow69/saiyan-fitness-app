@@ -13,12 +13,12 @@ import { MicronutrientEstimate } from '../tools/Micronutrients'
 import { RecentFoods, QuickAddMacros, AdherenceScore, GroceryList } from '../tools/NutritionPremium'
 
 const MEAL_CATEGORIES: Array<{ value: FoodEntry['category']; label: string }> = [
-  { value: 'breakfast', label: 'Petit-d\u00E9jeuner' },
-  { value: 'lunch', label: 'D\u00E9jeuner' },
-  { value: 'dinner', label: 'D\u00EEner' },
+  { value: 'breakfast', label: 'Petit-déjeuner' },
+  { value: 'lunch', label: 'Déjeuner' },
+  { value: 'dinner', label: 'Dîner' },
   { value: 'snack', label: 'Collation' },
-  { value: 'pre_workout', label: 'Pr\u00E9-s\u00E9ance' },
-  { value: 'post_workout', label: 'Post-s\u00E9ance' },
+  { value: 'pre_workout', label: 'Pré-séance' },
+  { value: 'post_workout', label: 'Post-séance' },
 ]
 
 const accordionStyle: React.CSSProperties = {
@@ -46,7 +46,7 @@ export const NutritionView: React.FC = React.memo(
 
     const addFood = (entry: FoodEntry) => {
       dispatch({ type: 'ADD_FOOD', payload: entry })
-      showToast(`${entry.name} ajout\u00E9 (+${entry.calories} kcal)`, 'success')
+      showToast(`${entry.name} ajouté (+${entry.calories} kcal)`, 'success')
     }
 
     const lookupBarcode = async (code: string) => {
@@ -69,7 +69,7 @@ export const NutritionView: React.FC = React.memo(
           })
           setBarcodeInput('')
         } else {
-          showToast('Produit non trouv\u00E9', 'error')
+          showToast('Produit non trouvé', 'error')
         }
       } catch {
         showToast('Erreur de connexion', 'error')
@@ -79,18 +79,16 @@ export const NutritionView: React.FC = React.memo(
 
     return (
       <div className="page">
-        <AdaptiveTDEECard state={state} />
-
-        {/* Macro bars — always visible */}
+        {/* Macro bars - always visible */}
         <section className="hevy-card stack-md" style={{ padding: '10px 14px' }}>
           <SectionTitle icon="" label="Nutrition aujourd'hui" />
           <MacroBar label="Calories" current={totals.calories} target={targets.calories} unit="kcal" color="calories" />
-          <MacroBar label="Prot\u00E9ines" current={totals.protein} target={targets.protein} unit="g" color="protein" />
+          <MacroBar label="Protéines" current={totals.protein} target={targets.protein} unit="g" color="protein" />
           <MacroBar label="Glucides" current={totals.carbs} target={targets.carbs} unit="g" color="carbs" />
           <MacroBar label="Lipides" current={totals.fats} target={targets.fats} unit="g" color="fat" />
         </section>
 
-        {/* Add food form — always visible */}
+        {/* Add food form - always visible */}
         <section className="hevy-card stack-md">
           <SectionTitle icon="" label="Ajouter un aliment" />
           <div className="field-grid compact-grid">
@@ -139,33 +137,35 @@ export const NutritionView: React.FC = React.memo(
           >
             Ajouter
           </button>
-          <QuickAddMacros onAdd={(entry) => addFood({ ...entry, id: makeId('quick'), date: todayIso(), category })} />
         </section>
 
-        {/* Accordion sections */}
-        <details>
-          <summary style={accordionStyle}>{'\uD83D\uDCF7'} Scanner / Code-barres</summary>
-          <section className="hevy-card stack-md" style={{ marginTop: 0, borderTopLeftRadius: 0, borderTopRightRadius: 0 }}>
-            <div className="inline-form">
-              <input
-                value={barcodeInput}
-                onChange={(e) => setBarcodeInput(e.target.value)}
-                placeholder="Code-barres (ex: 3017620422003)"
-                onKeyDown={(e) => e.key === 'Enter' && lookupBarcode(barcodeInput)}
-              />
-              <button className="secondary-btn" onClick={() => lookupBarcode(barcodeInput)} type="button" disabled={lookingUp}>
-                {lookingUp ? '...' : 'Chercher'}
-              </button>
-            </div>
-            <p style={{ margin: 0, fontSize: '0.72rem', color: 'var(--muted)' }}>
-              Utilise OpenFoodFacts pour trouver les valeurs nutritionnelles automatiquement.
-            </p>
-          </section>
+        {/* Accordion: Scanner */}
+        <details style={{ marginBottom: 8 }}>
+          <summary style={accordionStyle}>{'��'} Scanner / Code-barres</summary>
+          <div style={{ padding: '12px 0' }}>
+            <section className="hevy-card stack-md" style={{ marginTop: 0, borderTopLeftRadius: 0, borderTopRightRadius: 0 }}>
+              <div className="inline-form">
+                <input
+                  value={barcodeInput}
+                  onChange={(e) => setBarcodeInput(e.target.value)}
+                  placeholder="Code-barres (ex: 3017620422003)"
+                  onKeyDown={(e) => e.key === 'Enter' && lookupBarcode(barcodeInput)}
+                />
+                <button className="secondary-btn" onClick={() => lookupBarcode(barcodeInput)} type="button" disabled={lookingUp}>
+                  {lookingUp ? '...' : 'Chercher'}
+                </button>
+              </div>
+              <p style={{ margin: 0, fontSize: '0.72rem', color: 'var(--muted)' }}>
+                Utilise OpenFoodFacts pour trouver les valeurs nutritionnelles automatiquement.
+              </p>
+            </section>
+          </div>
         </details>
 
-        <details>
-          <summary style={accordionStyle}>{'\u2B50'} Récents et favoris</summary>
-          <div style={{ marginBottom: 6 }}>
+        {/* Accordion: Recent foods */}
+        <details style={{ marginBottom: 8 }}>
+          <summary style={accordionStyle}>{'⭐'} Récents et favoris</summary>
+          <div style={{ padding: '12px 0' }}>
             <RecentFoods
               foods={state.foodEntries}
               onSelect={(food: any) => addFood({
@@ -176,74 +176,108 @@ export const NutritionView: React.FC = React.memo(
           </div>
         </details>
 
-        <details>
-          <summary style={accordionStyle}>{'\uD83C\uDF73'} Recettes suggérées</summary>
-          <section className="hevy-card stack-md" style={{ marginTop: 0 }}>
-            <div className="card-list">
-              {suggestions.map((recipe) => (
-                <button
-                  className="mini-card mini-card--button"
-                  key={recipe.id}
-                  type="button"
-                  onClick={() => addFood({
-                    id: makeId('recipe'), date: todayIso(), name: recipe.name,
-                    category: recipe.category, grams: 1, calories: recipe.calories,
-                    protein: recipe.protein, carbs: recipe.carbs, fats: recipe.fats,
-                  })}
-                >
-                  <strong>{recipe.name}</strong>
-                  <span>{recipe.prepMinutes} min — {recipe.calories} kcal — {recipe.protein}P</span>
-                </button>
-              ))}
-            </div>
-          </section>
-        </details>
-
-        <details>
-          <summary style={accordionStyle}>{'\uD83E\uDD61'} Repas sauvegardés</summary>
-          <section className="hevy-card stack-md" style={{ marginTop: 0 }}>
-            {state.savedMeals.length === 0 ? (
-              <div className="empty-state"><p>Aucun repas sauvegardé.</p></div>
-            ) : (
+        {/* Accordion: Recipes */}
+        <details style={{ marginBottom: 8 }}>
+          <summary style={accordionStyle}>{'��'} Recettes suggérées</summary>
+          <div style={{ padding: '12px 0' }}>
+            <section className="hevy-card stack-md" style={{ marginTop: 0 }}>
               <div className="card-list">
-                {state.savedMeals.map((meal) => (
+                {suggestions.map((recipe) => (
                   <button
                     className="mini-card mini-card--button"
-                    key={meal.id}
+                    key={recipe.id}
                     type="button"
                     onClick={() => addFood({
-                      id: makeId('meal'), date: todayIso(), name: meal.name,
-                      category: meal.category, grams: 1, calories: meal.calories,
-                      protein: meal.protein, carbs: meal.carbs, fats: meal.fats,
+                      id: makeId('recipe'), date: todayIso(), name: recipe.name,
+                      category: recipe.category, grams: 1, calories: recipe.calories,
+                      protein: recipe.protein, carbs: recipe.carbs, fats: recipe.fats,
                     })}
                   >
-                    <strong>{meal.name}</strong>
-                    <span>{meal.calories} kcal — {meal.protein}P</span>
+                    <strong>{recipe.name}</strong>
+                    <span>{recipe.prepMinutes} min — {recipe.calories} kcal — {recipe.protein}P</span>
                   </button>
                 ))}
               </div>
-            )}
-          </section>
+            </section>
+          </div>
         </details>
 
-        <details>
-          <summary style={accordionStyle}>{'\uD83D\uDCCA'} Score adhérence</summary>
-          <div style={{ marginBottom: 6 }}><AdherenceScore /></div>
+        {/* Accordion: Saved meals */}
+        <details style={{ marginBottom: 8 }}>
+          <summary style={accordionStyle}>{'��'} Repas sauvegardés</summary>
+          <div style={{ padding: '12px 0' }}>
+            <section className="hevy-card stack-md" style={{ marginTop: 0 }}>
+              {state.savedMeals.length === 0 ? (
+                <div className="empty-state"><p>Aucun repas sauvegardé.</p></div>
+              ) : (
+                <div className="card-list">
+                  {state.savedMeals.map((meal) => (
+                    <button
+                      className="mini-card mini-card--button"
+                      key={meal.id}
+                      type="button"
+                      onClick={() => addFood({
+                        id: makeId('meal'), date: todayIso(), name: meal.name,
+                        category: meal.category, grams: 1, calories: meal.calories,
+                        protein: meal.protein, carbs: meal.carbs, fats: meal.fats,
+                      })}
+                    >
+                      <strong>{meal.name}</strong>
+                      <span>{meal.calories} kcal — {meal.protein}P</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </section>
+          </div>
         </details>
 
-        <details>
-          <summary style={accordionStyle}>{'\uD83E\uDD6C'} Micronutriments</summary>
-          <div style={{ marginBottom: 6 }}><MicronutrientEstimate /></div>
+        {/* Accordion: Adherence score */}
+        <details style={{ marginBottom: 8 }}>
+          <summary style={accordionStyle}>{'��'} Score adhérence</summary>
+          <div style={{ padding: '12px 0' }}>
+            <AdherenceScore />
+          </div>
         </details>
 
-        <details>
-          <summary style={accordionStyle}>{'\uD83D\uDED2'} Liste de courses</summary>
-          <div style={{ marginBottom: 6 }}><GroceryList /></div>
+        {/* Accordion: Micronutrients */}
+        <details style={{ marginBottom: 8 }}>
+          <summary style={accordionStyle}>{'��'} Micronutriments</summary>
+          <div style={{ padding: '12px 0' }}>
+            <MicronutrientEstimate />
+          </div>
         </details>
 
-        <details>
-          <summary style={accordionStyle}>{'\uD83C\uDF7D\uFE0F'} Planificateur de repas</summary>
-          <div style={{ marginBottom: 6 }}><MealPlanner /></div>
+        {/* Accordion: Grocery list */}
+        <details style={{ marginBottom: 8 }}>
+          <summary style={accordionStyle}>{'��'} Liste de courses</summary>
+          <div style={{ padding: '12px 0' }}>
+            <GroceryList />
+          </div>
+        </details>
+
+        {/* Accordion: Meal planner */}
+        <details style={{ marginBottom: 8 }}>
+          <summary style={accordionStyle}>{'��️'} Planificateur de repas</summary>
+          <div style={{ padding: '12px 0' }}>
+            <MealPlanner />
+          </div>
+        </details>
+
+        {/* Accordion: Quick add macros */}
+        <details style={{ marginBottom: 8 }}>
+          <summary style={accordionStyle}>{'⚡'} Ajout rapide macros</summary>
+          <div style={{ padding: '12px 0' }}>
+            <QuickAddMacros onAdd={(entry) => addFood({ ...entry, id: makeId('quick'), date: todayIso(), category })} />
+          </div>
+        </details>
+
+        {/* Accordion: TDEE */}
+        <details style={{ marginBottom: 8 }}>
+          <summary style={accordionStyle}>{'��'} TDEE adaptatif</summary>
+          <div style={{ padding: '12px 0' }}>
+            <AdaptiveTDEECard state={state} />
+          </div>
         </details>
       </div>
     )

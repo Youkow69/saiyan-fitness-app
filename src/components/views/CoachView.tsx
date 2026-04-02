@@ -3,6 +3,9 @@ import { useAppState } from '../../context/AppContext'
 import { getDailyNutrition, getPowerLevel, getStreak, getWeeklyWorkouts } from '../../lib'
 import { supabase } from '../../supabase'
 
+const SUPABASE_URL = 'https://kwgqkycuviybgzyharwb.supabase.co'
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt3Z3FreWN1dml5Ymd6eWhhcndiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDMzMjgzMzIsImV4cCI6MjA1ODkwNDMzMn0.a2AKBI3R2dSdEdaHBRzpHdeE_F5JBhFtBadLvqTelEY'
+
 interface Message {
   role: 'user' | 'assistant'
   content: string
@@ -118,12 +121,13 @@ export const CoachView: React.FC = React.memo(function CoachView() {
       if (!session) throw new Error('Non connecté')
 
       const resp = await fetch(
-        `https://kwgqkycuviybgzyharwb.supabase.co/functions/v1/coach-ai`,
+        `${SUPABASE_URL}/functions/v1/coach-ai`,
         {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${session.access_token}`,
+            'apikey': SUPABASE_ANON_KEY,
           },
           body: JSON.stringify({
             message: text,

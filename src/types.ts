@@ -161,6 +161,8 @@ export interface Food {
   carbs: number
   fats: number
   tags: string[]
+  servings?: { name: string; grams: number }[]
+  isCustom?: boolean
 }
 
 export interface Recipe {
@@ -335,4 +337,5 @@ export interface AppState {
   adaptiveTDEE: AdaptiveTDEE[]
   weeklyMuscleVolume: Record<string, number>
   customRoutines: CustomRoutine[]
+  customFoods: Food[]
 }

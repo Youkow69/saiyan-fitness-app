@@ -13,13 +13,21 @@ import { MicronutrientEstimate } from '../tools/Micronutrients'
 import { RecentFoods, QuickAddMacros, AdherenceScore, GroceryList } from '../tools/NutritionPremium'
 
 const MEAL_CATEGORIES: Array<{ value: FoodEntry['category']; label: string }> = [
-  { value: 'breakfast', label: 'Petit-déjeuner' },
-  { value: 'lunch', label: 'Déjeuner' },
-  { value: 'dinner', label: 'Dîner' },
+  { value: 'breakfast', label: 'Petit-d\u00E9jeuner' },
+  { value: 'lunch', label: 'D\u00E9jeuner' },
+  { value: 'dinner', label: 'D\u00EEner' },
   { value: 'snack', label: 'Collation' },
-  { value: 'pre_workout', label: 'Pré-séance' },
-  { value: 'post_workout', label: 'Post-séance' },
+  { value: 'pre_workout', label: 'Pr\u00E9-s\u00E9ance' },
+  { value: 'post_workout', label: 'Post-s\u00E9ance' },
 ]
+
+const accordionStyle: React.CSSProperties = {
+  padding: '10px 14px', cursor: 'pointer', fontWeight: 600,
+  fontSize: '0.85rem', color: 'var(--text)', display: 'flex',
+  alignItems: 'center', gap: 8, listStyle: 'none',
+  background: 'var(--bg-card)', borderRadius: 12,
+  border: '1px solid var(--border)', marginBottom: 6,
+}
 
 export const NutritionView: React.FC = React.memo(
   function NutritionView() {
@@ -34,19 +42,18 @@ export const NutritionView: React.FC = React.memo(
       () => getRecommendedRecipes(state),
       [state.foodEntries, state.targets, state.profile],
     )
+    const targets = state.targets ?? { calories: 2500, protein: 150, carbs: 300, fats: 70 }
 
     const addFood = (entry: FoodEntry) => {
       dispatch({ type: 'ADD_FOOD', payload: entry })
-      showToast(`${entry.name} ajouté (+${entry.calories} kcal)`, 'success')
+      showToast(`${entry.name} ajout\u00E9 (+${entry.calories} kcal)`, 'success')
     }
 
     const lookupBarcode = async (code: string) => {
       if (!code.trim()) return
       setLookingUp(true)
       try {
-        const resp = await fetch(
-          `https://world.openfoodfacts.org/api/v0/product/${code.trim()}.json`,
-        )
+        const resp = await fetch(`https://world.openfoodfacts.org/api/v0/product/${code.trim()}.json`)
         const data = await resp.json()
         if (data.status === 1 && data.product) {
           const p = data.product
@@ -57,19 +64,12 @@ export const NutritionView: React.FC = React.memo(
           const carb = Math.round((n.carbohydrates_100g || 0) * 10) / 10
           const fat = Math.round((n.fat_100g || 0) * 10) / 10
           addFood({
-            id: makeId('scan'),
-            date: todayIso(),
-            name,
-            category,
-            grams: 100,
-            calories: cal,
-            protein: prot,
-            carbs: carb,
-            fats: fat,
+            id: makeId('scan'), date: todayIso(), name, category,
+            grams: 100, calories: cal, protein: prot, carbs: carb, fats: fat,
           })
           setBarcodeInput('')
         } else {
-          showToast('Produit non trouvé', 'error')
+          showToast('Produit non trouv\u00E9', 'error')
         }
       } catch {
         showToast('Erreur de connexion', 'error')
@@ -77,56 +77,20 @@ export const NutritionView: React.FC = React.memo(
       setLookingUp(false)
     }
 
-    const targets = state.targets ?? { calories: 2500, protein: 150, carbs: 300, fats: 70 }
-
     return (
       <div className="page">
         <AdaptiveTDEECard state={state} />
 
-        {/* Barcode scanner */}
-        <section className="hevy-card stack-md">
-          <SectionTitle icon="" label="Scanner / Code-barres" />
-          <div className="inline-form">
-            <input
-              value={barcodeInput}
-              onChange={(e) => setBarcodeInput(e.target.value)}
-              placeholder="Code-barres (ex: 3017620422003)"
-              onKeyDown={(e) => e.key === 'Enter' && lookupBarcode(barcodeInput)}
-            />
-            <button
-              className="secondary-btn"
-              onClick={() => lookupBarcode(barcodeInput)}
-              type="button"
-              disabled={lookingUp}
-            >
-              {lookingUp ? '...' : 'Chercher'}
-            </button>
-          </div>
-          <p style={{ margin: 0, fontSize: '0.72rem', color: 'var(--muted)' }}>
-            Utilise OpenFoodFacts pour trouver les valeurs nutritionnelles automatiquement.
-          </p>
-        </section>
-
-        {/* Quick add macros */}
-        <QuickAddMacros onAdd={(entry) => addFood({ ...entry, id: makeId('quick'), date: todayIso(), category })} />
-
-        {/* Macro bars */}
-        <section className="hevy-card stack-md">
+        {/* Macro bars — always visible */}
+        <section className="hevy-card stack-md" style={{ padding: '10px 14px' }}>
           <SectionTitle icon="" label="Nutrition aujourd'hui" />
           <MacroBar label="Calories" current={totals.calories} target={targets.calories} unit="kcal" color="calories" />
-          <MacroBar label="Protéines" current={totals.protein} target={targets.protein} unit="g" color="protein" />
+          <MacroBar label="Prot\u00E9ines" current={totals.protein} target={targets.protein} unit="g" color="protein" />
           <MacroBar label="Glucides" current={totals.carbs} target={targets.carbs} unit="g" color="carbs" />
           <MacroBar label="Lipides" current={totals.fats} target={targets.fats} unit="g" color="fat" />
-          <AdherenceScore />
         </section>
 
-        {/* Micronutrient estimate */}
-        <MicronutrientEstimate />
-
-        {/* Recent foods */}
-        <RecentFoods foods={state.foodEntries} onSelect={(food: any) => addFood({ ...food, id: makeId('recent'), date: todayIso(), category: food.category || 'snack', grams: food.grams || 100 })} />
-
-        {/* Add food form */}
+        {/* Add food form — always visible */}
         <section className="hevy-card stack-md">
           <SectionTitle icon="" label="Ajouter un aliment" />
           <div className="field-grid compact-grid">
@@ -135,9 +99,7 @@ export const NutritionView: React.FC = React.memo(
               <SearchSelect
                 options={foods.map((f) => ({ value: f.id, label: f.name }))}
                 value={selectedFood.id}
-                onChange={(val: string) =>
-                  setSelectedFood(foods.find((f) => f.id === val) ?? foods[0])
-                }
+                onChange={(val: string) => setSelectedFood(foods.find((f) => f.id === val) ?? foods[0])}
                 placeholder="Rechercher un aliment..."
               />
             </label>
@@ -146,8 +108,6 @@ export const NutritionView: React.FC = React.memo(
               <input value={grams} onChange={(e) => setGrams(e.target.value)} />
             </label>
           </div>
-
-          {/* Meal category chips */}
           <div className="chip-row" style={{ marginTop: 8 }}>
             {MEAL_CATEGORIES.map((cat) => (
               <button
@@ -160,7 +120,6 @@ export const NutritionView: React.FC = React.memo(
               </button>
             ))}
           </div>
-
           <button
             className="secondary-btn"
             type="button"
@@ -170,12 +129,8 @@ export const NutritionView: React.FC = React.memo(
               if (isNaN(g) || g <= 0) return
               const ratio = g / selectedFood.servingGrams
               addFood({
-                id: makeId('food'),
-                date: todayIso(),
-                name: selectedFood.name,
-                category,
-                grams: g,
-                calories: Math.round(selectedFood.calories * ratio),
+                id: makeId('food'), date: todayIso(), name: selectedFood.name, category,
+                grams: g, calories: Math.round(selectedFood.calories * ratio),
                 protein: Number((selectedFood.protein * ratio).toFixed(1)),
                 carbs: Number((selectedFood.carbs * ratio).toFixed(1)),
                 fats: Number((selectedFood.fats * ratio).toFixed(1)),
@@ -184,82 +139,112 @@ export const NutritionView: React.FC = React.memo(
           >
             Ajouter
           </button>
+          <QuickAddMacros onAdd={(entry) => addFood({ ...entry, id: makeId('quick'), date: todayIso(), category })} />
         </section>
 
-        {/* Meal planner */}
-        <MealPlanner />
-
-        {/* Saved meals */}
-        <section className="hevy-card stack-md">
-          <SectionTitle icon="" label="Repas sauvegardés" />
-          {state.savedMeals.length === 0 ? (
-            <div className="empty-state">
-              <p>Aucun repas sauvegardé.</p>
+        {/* Accordion sections */}
+        <details>
+          <summary style={accordionStyle}>{'\uD83D\uDCF7'} Scanner / Code-barres</summary>
+          <section className="hevy-card stack-md" style={{ marginTop: 0, borderTopLeftRadius: 0, borderTopRightRadius: 0 }}>
+            <div className="inline-form">
+              <input
+                value={barcodeInput}
+                onChange={(e) => setBarcodeInput(e.target.value)}
+                placeholder="Code-barres (ex: 3017620422003)"
+                onKeyDown={(e) => e.key === 'Enter' && lookupBarcode(barcodeInput)}
+              />
+              <button className="secondary-btn" onClick={() => lookupBarcode(barcodeInput)} type="button" disabled={lookingUp}>
+                {lookingUp ? '...' : 'Chercher'}
+              </button>
             </div>
-          ) : (
+            <p style={{ margin: 0, fontSize: '0.72rem', color: 'var(--muted)' }}>
+              Utilise OpenFoodFacts pour trouver les valeurs nutritionnelles automatiquement.
+            </p>
+          </section>
+        </details>
+
+        <details>
+          <summary style={accordionStyle}>{'\u2B50'} Récents et favoris</summary>
+          <div style={{ marginBottom: 6 }}>
+            <RecentFoods
+              foods={state.foodEntries}
+              onSelect={(food: any) => addFood({
+                ...food, id: makeId('recent'), date: todayIso(),
+                category: food.category || 'snack', grams: food.grams || 100,
+              })}
+            />
+          </div>
+        </details>
+
+        <details>
+          <summary style={accordionStyle}>{'\uD83C\uDF73'} Recettes suggérées</summary>
+          <section className="hevy-card stack-md" style={{ marginTop: 0 }}>
             <div className="card-list">
-              {state.savedMeals.map((meal) => (
+              {suggestions.map((recipe) => (
                 <button
                   className="mini-card mini-card--button"
-                  key={meal.id}
+                  key={recipe.id}
                   type="button"
-                  onClick={() =>
-                    addFood({
-                      id: makeId('meal'),
-                      date: todayIso(),
-                      name: meal.name,
-                      category: meal.category,
-                      grams: 1,
-                      calories: meal.calories,
-                      protein: meal.protein,
-                      carbs: meal.carbs,
-                      fats: meal.fats,
-                    })
-                  }
+                  onClick={() => addFood({
+                    id: makeId('recipe'), date: todayIso(), name: recipe.name,
+                    category: recipe.category, grams: 1, calories: recipe.calories,
+                    protein: recipe.protein, carbs: recipe.carbs, fats: recipe.fats,
+                  })}
                 >
-                  <strong>{meal.name}</strong>
-                  <span>
-                    {meal.calories} kcal — {meal.protein}P
-                  </span>
+                  <strong>{recipe.name}</strong>
+                  <span>{recipe.prepMinutes} min — {recipe.calories} kcal — {recipe.protein}P</span>
                 </button>
               ))}
             </div>
-          )}
-        </section>
+          </section>
+        </details>
 
-        {/* Suggested recipes */}
-        <section className="hevy-card stack-md">
-          <SectionTitle icon="" label="Recettes suggérées" />
-          <div className="card-list">
-            {suggestions.map((recipe) => (
-              <button
-                className="mini-card mini-card--button"
-                key={recipe.id}
-                type="button"
-                onClick={() =>
-                  addFood({
-                    id: makeId('recipe'),
-                    date: todayIso(),
-                    name: recipe.name,
-                    category: recipe.category,
-                    grams: 1,
-                    calories: recipe.calories,
-                    protein: recipe.protein,
-                    carbs: recipe.carbs,
-                    fats: recipe.fats,
-                  })
-                }
-              >
-                <strong>{recipe.name}</strong>
-                <span>
-                  {recipe.prepMinutes} min — {recipe.calories} kcal — {recipe.protein}P
-                </span>
-              </button>
-            ))}
-          </div>
-        </section>
-        {/* Grocery list */}
-        <GroceryList />
+        <details>
+          <summary style={accordionStyle}>{'\uD83E\uDD61'} Repas sauvegardés</summary>
+          <section className="hevy-card stack-md" style={{ marginTop: 0 }}>
+            {state.savedMeals.length === 0 ? (
+              <div className="empty-state"><p>Aucun repas sauvegardé.</p></div>
+            ) : (
+              <div className="card-list">
+                {state.savedMeals.map((meal) => (
+                  <button
+                    className="mini-card mini-card--button"
+                    key={meal.id}
+                    type="button"
+                    onClick={() => addFood({
+                      id: makeId('meal'), date: todayIso(), name: meal.name,
+                      category: meal.category, grams: 1, calories: meal.calories,
+                      protein: meal.protein, carbs: meal.carbs, fats: meal.fats,
+                    })}
+                  >
+                    <strong>{meal.name}</strong>
+                    <span>{meal.calories} kcal — {meal.protein}P</span>
+                  </button>
+                ))}
+              </div>
+            )}
+          </section>
+        </details>
+
+        <details>
+          <summary style={accordionStyle}>{'\uD83D\uDCCA'} Score adhérence</summary>
+          <div style={{ marginBottom: 6 }}><AdherenceScore /></div>
+        </details>
+
+        <details>
+          <summary style={accordionStyle}>{'\uD83E\uDD6C'} Micronutriments</summary>
+          <div style={{ marginBottom: 6 }}><MicronutrientEstimate /></div>
+        </details>
+
+        <details>
+          <summary style={accordionStyle}>{'\uD83D\uDED2'} Liste de courses</summary>
+          <div style={{ marginBottom: 6 }}><GroceryList /></div>
+        </details>
+
+        <details>
+          <summary style={accordionStyle}>{'\uD83C\uDF7D\uFE0F'} Planificateur de repas</summary>
+          <div style={{ marginBottom: 6 }}><MealPlanner /></div>
+        </details>
       </div>
     )
   },

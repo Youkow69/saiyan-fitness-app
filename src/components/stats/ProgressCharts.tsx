@@ -184,8 +184,8 @@ export function WeightChart({ entries }: { entries: BodyweightEntry[] }) {
         )}
       </svg>
       <div style={{ display: 'flex', gap: 16, justifyContent: 'center', marginTop: 8, fontSize: 11 }}>
-        <span style={{ color: '#ed8936' }}>-- Poids</span>
-        <span style={{ color: '#f6ad55', opacity: 0.7 }}>--- Moyenne mobile</span>
+        <span style={{ color: 'var(--accent-orange)' }}>-- Poids</span>
+        <span style={{ color: 'var(--accent-orange)', opacity: 0.7 }}>--- Moyenne mobile</span>
       </div>
     </ChartContainer>
   )
@@ -304,7 +304,7 @@ export function MacroPieChart({
 
   const slices = [
     { label: 'Proteines', value: proteinCal, color: '#e53e3e', grams: nutrition.protein, target: targets.protein, unit: 'g' },
-    { label: 'Glucides', value: carbsCal, color: '#3182ce', grams: nutrition.carbs, target: targets.carbs, unit: 'g' },
+    { label: 'Glucides', value: carbsCal, color: 'var(--accent-blue)', grams: nutrition.carbs, target: targets.carbs, unit: 'g' },
     { label: 'Lipides', value: fatCal, color: '#ecc94b', grams: nutrition.fat, target: targets.fat, unit: 'g' },
   ]
 
@@ -380,7 +380,7 @@ export function MacroPieChart({
                     {s.grams}{s.unit} / {s.target}{s.unit} ({pct}%)
                   </span>
                 </div>
-                <div style={{ height: 6, background: '#2d3748', borderRadius: 3 }}>
+                <div style={{ height: 6, background: 'var(--border)', borderRadius: 3 }}>
                   <div
                     style={{
                       height: '100%',
@@ -531,7 +531,7 @@ function ChartContainer({
           margin: '0 0 16px',
           fontSize: 15,
           fontWeight: 700,
-          background: 'linear-gradient(135deg, #f6ad55, #ed8936)',
+          background: 'linear-gradient(135deg, var(--accent-orange), var(--accent))',
           WebkitBackgroundClip: 'text',
           WebkitTextFillColor: 'transparent',
         }}

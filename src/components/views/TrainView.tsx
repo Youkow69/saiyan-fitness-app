@@ -53,6 +53,8 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
     const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null)
     const [showBuilder, setShowBuilder] = useState(false)
     const [detailExerciseId, setDetailExerciseId] = useState<string | null>(null)
+    const [showLibrary, setShowLibrary] = useState(false)
+    const [showTools, setShowTools] = useState(false)
 
     const selectedProgram = getProgramById(state.selectedProgramId)
     const nextIndex = state.programCursor[selectedProgram?.id ?? ''] ?? 0
@@ -63,15 +65,19 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
     if (!selectedProgram) {
       return (
         <div className="page">
-          {/* Outils */}
+          {/* Outils button */}
           {!activeWorkout && (
-            <details style={{ marginBottom: 12 }}>
-              <summary style={{ cursor: 'pointer', fontWeight: 700, fontSize: '0.85rem', color: 'var(--accent)', padding: '10px 0' }}>⚙️ Outils</summary>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 10, padding: '10px 0' }}>
-                <PlateCalculator />
-                <WorkoutTimer />
-              </div>
-            </details>
+            <>
+              <button onClick={() => setShowTools(!showTools)} type="button" style={{ padding: '10px 16px', borderRadius: 12, border: '1px solid var(--border)', background: 'var(--bg-card)', color: 'var(--text)', fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12, width: '100%' }}>
+                ⚙️ Outils (calculateur, timer)
+              </button>
+              {showTools && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 12 }}>
+                  <PlateCalculator />
+                  <WorkoutTimer />
+                </div>
+              )}
+            </>
           )}
 
           <section style={{ background: 'var(--bg-card)', borderRadius: 16, border: '1px solid var(--border)', padding: 16, marginBottom: 12, textAlign: 'center' }}>
@@ -100,9 +106,50 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
             </>
           )}
 
-          <ExerciseLibrary />
+          <button onClick={() => setShowLibrary(true)} type="button" style={{ width: '100%', padding: '12px 16px', borderRadius: 12, border: '1px solid var(--border)', background: 'var(--bg-card)', color: 'var(--text)', fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+            📖 Bibliothèque d'exercices (153)
+          </button>
+
+          {showLibrary && (
+            <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.8)', zIndex: 1000, display: 'flex', flexDirection: 'column', padding: '16px 0 0' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 16px 12px' }}>
+                <h3 style={{ margin: 0, color: 'var(--text)', fontSize: '1rem' }}>Bibliothèque d'exercices</h3>
+                <button onClick={() => setShowLibrary(false)} type="button" style={{ background: 'none', border: 'none', color: 'var(--text)', fontSize: '1.5rem', cursor: 'pointer' }}>✕</button>
+              </div>
+              <div style={{ flex: 1, overflowY: 'auto', padding: '0 16px 16px', background: 'var(--bg)' }}>
+                <ExerciseLibrary />
+              </div>
+            </div>
+          )}
 
           {showBuilder && <ProgramBuilder onClose={() => setShowBuilder(false)} />}
+
+          {/* Quick tool buttons during workout */}
+          <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+            <button onClick={() => setShowTools(!showTools)} type="button" style={{ flex: 1, padding: '10px', borderRadius: 10, border: '1px solid var(--border)', background: 'var(--bg-card)', color: 'var(--text-secondary)', fontSize: '0.78rem', fontWeight: 600, cursor: 'pointer' }}>
+              ⚙️ Outils
+            </button>
+            <button onClick={() => setShowLibrary(true)} type="button" style={{ flex: 1, padding: '10px', borderRadius: 10, border: '1px solid var(--border)', background: 'var(--bg-card)', color: 'var(--text-secondary)', fontSize: '0.78rem', fontWeight: 600, cursor: 'pointer' }}>
+              📖 Exercices
+            </button>
+          </div>
+          {showTools && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 8 }}>
+              <PlateCalculator />
+              <WorkoutTimer />
+            </div>
+          )}
+          {showLibrary && (
+            <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.8)', zIndex: 1000, display: 'flex', flexDirection: 'column', padding: '16px 0 0' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 16px 12px' }}>
+                <h3 style={{ margin: 0, color: 'var(--text)', fontSize: '1rem' }}>Bibliothèque</h3>
+                <button onClick={() => setShowLibrary(false)} type="button" style={{ background: 'none', border: 'none', color: 'var(--text)', fontSize: '1.5rem', cursor: 'pointer' }}>✕</button>
+              </div>
+              <div style={{ flex: 1, overflowY: 'auto', padding: '0 16px 16px', background: 'var(--bg)' }}>
+                <ExerciseLibrary />
+              </div>
+            </div>
+          )}
           {detailExerciseId && <ExerciseDetail exerciseId={detailExerciseId} onClose={() => setDetailExerciseId(null)} />}
         </div>
       )
@@ -209,6 +256,33 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
           })}
 
           {showBuilder && <ProgramBuilder onClose={() => setShowBuilder(false)} />}
+
+          {/* Quick tool buttons during workout */}
+          <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+            <button onClick={() => setShowTools(!showTools)} type="button" style={{ flex: 1, padding: '10px', borderRadius: 10, border: '1px solid var(--border)', background: 'var(--bg-card)', color: 'var(--text-secondary)', fontSize: '0.78rem', fontWeight: 600, cursor: 'pointer' }}>
+              ⚙️ Outils
+            </button>
+            <button onClick={() => setShowLibrary(true)} type="button" style={{ flex: 1, padding: '10px', borderRadius: 10, border: '1px solid var(--border)', background: 'var(--bg-card)', color: 'var(--text-secondary)', fontSize: '0.78rem', fontWeight: 600, cursor: 'pointer' }}>
+              📖 Exercices
+            </button>
+          </div>
+          {showTools && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 8 }}>
+              <PlateCalculator />
+              <WorkoutTimer />
+            </div>
+          )}
+          {showLibrary && (
+            <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.8)', zIndex: 1000, display: 'flex', flexDirection: 'column', padding: '16px 0 0' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 16px 12px' }}>
+                <h3 style={{ margin: 0, color: 'var(--text)', fontSize: '1rem' }}>Bibliothèque</h3>
+                <button onClick={() => setShowLibrary(false)} type="button" style={{ background: 'none', border: 'none', color: 'var(--text)', fontSize: '1.5rem', cursor: 'pointer' }}>✕</button>
+              </div>
+              <div style={{ flex: 1, overflowY: 'auto', padding: '0 16px 16px', background: 'var(--bg)' }}>
+                <ExerciseLibrary />
+              </div>
+            </div>
+          )}
           {detailExerciseId && <ExerciseDetail exerciseId={detailExerciseId} onClose={() => setDetailExerciseId(null)} />}
         </div>
       )

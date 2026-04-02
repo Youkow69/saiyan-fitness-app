@@ -12,6 +12,7 @@ import { MealPlanner } from '../tools/MealPlanner'
 import { BarcodeScanner } from '../tools/BarcodeScanner'
 import { MicronutrientEstimate } from '../tools/Micronutrients'
 import { RecentFoods, QuickAddMacros, AdherenceScore, GroceryList } from '../tools/NutritionPremium'
+import { NutritionCharts, exportNutritionData } from '../tools/NutritionCharts'
 
 const MEAL_CATEGORIES: Array<{ value: FoodEntry['category']; label: string }> = [
   { value: 'breakfast', label: 'Petit-déjeuner' },

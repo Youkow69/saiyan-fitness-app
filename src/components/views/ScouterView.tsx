@@ -21,6 +21,8 @@ import { PersonalRecords } from '../stats/PersonalRecords'
 import type { PRWorkoutLog, PRExercise } from '../stats/PersonalRecords'
 import { MetricCard, SectionTitle } from '../ui/Shared'
 import { StrengthStandards } from '../tools/StrengthStandards'
+import { FeedView } from './FeedView'
+import { Leaderboard } from '../stats/Leaderboard'
 
 
 
@@ -178,7 +180,32 @@ export const ScouterView: React.FC = React.memo(
               {id === 'calendar' ? '�� Calendrier' : id === 'records' ? '�� Records' : id === 'recap' ? '�� Récap' : id === 'volume' ? '�� Volume' : '�� Charts'}
             </button>
           ))}
-        </div>
+        
+              <button
+                onClick={() => setModal(modal === 'feed' ? null : 'feed')}
+                type="button"
+                style={{
+                  flex: 1, padding: '12px', borderRadius: 12,
+                  background: modal === 'feed' ? 'var(--accent)' : 'var(--bg-card)',
+                  color: modal === 'feed' ? '#000' : 'var(--text-secondary)',
+                  border: '1px solid var(--border)', fontWeight: 600,
+                  fontSize: '0.78rem', cursor: 'pointer',
+                }}>
+                {'🔥'} Feed
+              </button>
+              <button
+                onClick={() => setModal(modal === 'leaderboard' ? null : 'leaderboard')}
+                type="button"
+                style={{
+                  flex: 1, padding: '12px', borderRadius: 12,
+                  background: modal === 'leaderboard' ? 'var(--accent)' : 'var(--bg-card)',
+                  color: modal === 'leaderboard' ? '#000' : 'var(--text-secondary)',
+                  border: '1px solid var(--border)', fontWeight: 600,
+                  fontSize: '0.78rem', cursor: 'pointer',
+                }}>
+                {'🏆'} Classement
+              </button>
+            </div>
 
         {/* Modal overlay */}
         {modal && (
@@ -203,6 +230,8 @@ export const ScouterView: React.FC = React.memo(
               {modal === 'records' && <PersonalRecords workouts={prWorkouts} exercises={prExercises} />}
               {modal === 'recap' && <MonthlyRecap />}
               {modal === 'volume' && <VolumeDashboard state={state} />}
+              {modal === 'feed' && <FeedView />}
+              {modal === 'leaderboard' && <Leaderboard />}
               {modal === 'charts' && (
                 <>
                   <WeightChart entries={chartBWEntries} />

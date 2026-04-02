@@ -5,3 +5,5 @@ export * from './progression'
 export * from './gamification'
 export * from './recommendations'
 export * from './utils'
+
+export { getDeloadAdvice } from './progression'

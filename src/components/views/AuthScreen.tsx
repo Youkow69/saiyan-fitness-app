@@ -49,9 +49,9 @@ export function AuthScreen({ onSignIn, onSignUp, onSkip, loading }: Props) {
       if (mode === 'login') {
         await onSignIn(email, password)
       } else {
-        if (name.trim().length < 2) { setError('Nom trop court (2 caract\u00E8res min)'); setSubmitting(false); return }
+        if (name.trim().length < 2) { setError('Nom trop court (2 caractères min)'); setSubmitting(false); return }
         if (!isEmailValid) { setError('Adresse email invalide'); setSubmitting(false); return }
-        if (!isPasswordValid) { setError('Mot de passe trop court (6 caract\u00E8res min)'); setSubmitting(false); return }
+        if (!isPasswordValid) { setError('Mot de passe trop court (6 caractères min)'); setSubmitting(false); return }
         await onSignUp(email, password, name)
         // If we reach here without error, signup succeeded
         setSignupSuccess(true)
@@ -74,7 +74,7 @@ export function AuthScreen({ onSignIn, onSignUp, onSkip, loading }: Props) {
           background: '#ef4444', color: '#fff', padding: '8px 16px',
           textAlign: 'center', fontSize: '0.8rem', fontWeight: 600,
         }}>
-          Mode hors ligne \u2014 pas de connexion internet
+          Mode hors ligne — pas de connexion internet
         </div>
       )}
 
@@ -85,7 +85,7 @@ export function AuthScreen({ onSignIn, onSignUp, onSkip, loading }: Props) {
           background: 'rgba(255,140,0,0.9)', color: '#000', padding: '6px 16px',
           textAlign: 'center', fontSize: '0.75rem', fontWeight: 600,
         }}>
-          V\u00E9rification de la connexion...
+          Vérification de la connexion...
         </div>
       )}
 
@@ -107,7 +107,7 @@ export function AuthScreen({ onSignIn, onSignUp, onSkip, loading }: Props) {
           background: 'rgba(34, 197, 94, 0.15)', border: '1px solid rgba(34, 197, 94, 0.3)',
           color: '#22c55e', fontSize: '0.85rem', textAlign: 'center',
         }}>
-          Compte cr\u00E9\u00E9 ! V\u00E9rifie ton email pour confirmer ton inscription, puis connecte-toi.
+          Compte créé ! Vérifie ton email pour confirmer ton inscription, puis connecte-toi.
         </div>
       )}
 
@@ -171,11 +171,11 @@ export function AuthScreen({ onSignIn, onSignUp, onSkip, loading }: Props) {
             aria-label={showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
             tabIndex={-1}
           >
-            {showPassword ? '\uD83D\uDE48' : '\uD83D\uDC41\uFE0F'}
+            {showPassword ? '\uDE48' : '\uDC41\uFE0F'}
           </button>
           {passwordTouched && password && !isPasswordValid && (
             <div style={{ color: '#ef4444', fontSize: '0.7rem', marginTop: 4, paddingLeft: 4 }}>
-              6 caract\u00E8res minimum
+              6 caractères minimum
             </div>
           )}
         </div>
@@ -199,7 +199,7 @@ export function AuthScreen({ onSignIn, onSignUp, onSkip, loading }: Props) {
           padding: '10px', borderRadius: 12, border: '1px solid var(--border, rgba(255,255,255,0.06))',
           background: 'transparent', color: 'var(--text-secondary, #a0a8c0)', fontSize: '0.85rem', cursor: 'pointer',
         }}>
-          {mode === 'login' ? "Pas de compte ? S'inscrire" : "D\u00E9j\u00E0 un compte ? Se connecter"}
+          {mode === 'login' ? "Pas de compte ? S'inscrire" : "Déjà un compte ? Se connecter"}
         </button>
 
         <button type="button" onClick={onSkip} style={{

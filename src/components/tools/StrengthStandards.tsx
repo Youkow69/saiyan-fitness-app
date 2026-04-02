@@ -22,7 +22,7 @@ interface Standard {
 const STANDARDS: Standard[] = [
   {
     exerciseId: 'barbell_bench_press',
-    name: 'Developpe couche',
+    name: 'Développé couche',
     ratio: { beginner: 0.5, intermediate: 1.0, advanced: 1.5, elite: 2.0 },
   },
   {
@@ -37,7 +37,7 @@ const STANDARDS: Standard[] = [
   },
   {
     exerciseId: 'overhead_press',
-    name: 'Developpe militaire',
+    name: 'Développé militaire',
     ratio: { beginner: 0.35, intermediate: 0.65, advanced: 1.0, elite: 1.35 },
   },
   {
@@ -52,9 +52,9 @@ type LevelKey = keyof LevelRatios
 const LEVEL_ORDER: LevelKey[] = ['beginner', 'intermediate', 'advanced', 'elite']
 
 const LEVEL_LABELS: Record<LevelKey, string> = {
-  beginner: 'Debutant',
-  intermediate: 'Intermediaire',
-  advanced: 'Avance',
+  beginner: 'Débutant',
+  intermediate: 'Intermédiaire',
+  advanced: 'Avancé',
   elite: 'Elite',
 }
 

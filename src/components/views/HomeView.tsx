@@ -7,11 +7,11 @@ import {
   getMesocycleStatus,
   getPowerLevel,
   getStreak,
-  getDailyQuestStatus,
-} from '../../lib'
+} , getDailyQuestStatus} from '../../lib'
 import { WeeklyReport } from '../stats/WeeklyReport'
 import { DailyQuote } from '../gamification/MotivationalQuotes'
 import { DailyQuestsPanel } from '../gamification/QuestSection'
+import { SectionTitle } from '../ui/Shared'
 import MacroBar from '../ui/MacroBar'
 import { RecoveryMap } from '../tools/RecoveryMap'
 import { ReadinessScore } from '../tools/ReadinessScore'

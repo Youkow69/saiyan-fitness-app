@@ -9,6 +9,7 @@ import { SectionTitle } from '../ui/Shared'
 import SearchSelect from '../ui/SearchSelect'
 import MacroBar from '../ui/MacroBar'
 import { MealPlanner } from '../tools/MealPlanner'
+import { BarcodeScanner } from '../tools/BarcodeScanner'
 import { MicronutrientEstimate } from '../tools/Micronutrients'
 import { RecentFoods, QuickAddMacros, AdherenceScore, GroceryList } from '../tools/NutritionPremium'
 
@@ -37,6 +38,7 @@ export const NutritionView: React.FC = React.memo(
     const [category, setCategory] = useState<FoodEntry['category']>('lunch')
     const [barcodeInput, setBarcodeInput] = useState('')
     const [lookingUp, setLookingUp] = useState(false)
+    const [showScanner, setShowScanner] = useState(false)
     const totals = useMemo(() => getDailyNutrition(state.foodEntries), [state.foodEntries])
     const suggestions = useMemo(
       () => getRecommendedRecipes(state),
@@ -155,7 +157,17 @@ export const NutritionView: React.FC = React.memo(
                   {lookingUp ? '...' : 'Chercher'}
                 </button>
               </div>
-              <p style={{ margin: 0, fontSize: '0.72rem', color: 'var(--muted)' }}>
+              <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+                <button
+                  className="secondary-btn"
+                  onClick={() => setShowScanner(true)}
+                  type="button"
+                  style={{ flex: 1 }}
+                >
+                  Scanner avec la caméra
+                </button>
+              </div>
+              <p style={{ margin: '6px 0 0', fontSize: '0.72rem', color: 'var(--muted)' }}>
                 Utilise OpenFoodFacts pour trouver les valeurs nutritionnelles automatiquement.
               </p>
             </section>
@@ -279,6 +291,17 @@ export const NutritionView: React.FC = React.memo(
             <AdaptiveTDEECard state={state} />
           </div>
         </details>
+
+        {showScanner && (
+          <BarcodeScanner
+            onDetected={(code) => {
+              setShowScanner(false)
+              setBarcodeInput(code)
+              lookupBarcode(code)
+            }}
+            onClose={() => setShowScanner(false)}
+          />
+        )}
       </div>
     )
   },

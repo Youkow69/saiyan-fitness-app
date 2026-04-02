@@ -670,6 +670,9 @@ export function InlineSetLogger({ exerciseId, target, onSetAdded }: Props) {
           {'🏋️'} Plaques
         </button>
       </div>
+      {showPlates && (
+        <MiniPlateCalc weight={parseFloat(draft.weight) || 0} />
+      )}
       {showNotes && (
         <textarea
           value={exerciseNotes}

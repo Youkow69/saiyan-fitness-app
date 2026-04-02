@@ -253,7 +253,7 @@ export function ExerciseDetail({
           {history.totalSets === 0 && (
             <section style={sectionStyle}>
               <h3 style={sectionTitleStyle}>Votre historique</h3>
-              <p style={{ color: '#666', fontSize: 13, margin: 0 }}>
+              <p style={{ color: 'var(--text-secondary)', fontSize: 13, margin: 0 }}>
                 Aucune donnee enregistree pour cet exercice.
               </p>
             </section>
@@ -277,7 +277,7 @@ export function ExerciseDetail({
                     aria-label={`Voir ${alt.name}`}
                   >
                     {alt.name}
-                    <span style={{ color: '#4ecdc4', marginLeft: 'auto', flexShrink: 0 }}>
+                    <span style={{ color: 'var(--info)', marginLeft: 'auto', flexShrink: 0 }}>
                       →
                     </span>
                   </button>
@@ -322,7 +322,7 @@ const overlayStyle: CSSProperties = {
 }
 
 const cardStyle: CSSProperties = {
-  background: '#1a1a2e',
+  background: 'var(--bg-card)',
   borderRadius: 16,
   width: '100%',
   maxWidth: 480,
@@ -342,7 +342,7 @@ const cardHeaderStyle: CSSProperties = {
 }
 
 const nameStyle: CSSProperties = {
-  color: '#fff',
+  color: 'var(--text)',
   fontSize: 18,
   fontWeight: 700,
   margin: 0,
@@ -358,7 +358,7 @@ const metaRowStyle: CSSProperties = {
 }
 
 const equipBadgeStyle: CSSProperties = {
-  background: '#2a2a3e',
+  background: 'var(--bg-card)',
   color: '#ccc',
   padding: '3px 10px',
   borderRadius: 12,
@@ -377,7 +377,7 @@ const difficultyStyle: CSSProperties = {
 const headerCloseBtnStyle: CSSProperties = {
   background: 'transparent',
   border: 'none',
-  color: '#888',
+  color: 'var(--text-secondary)',
   fontSize: 20,
   cursor: 'pointer',
   padding: 4,
@@ -395,7 +395,7 @@ const sectionStyle: CSSProperties = {
 }
 
 const sectionTitleStyle: CSSProperties = {
-  color: '#4ecdc4',
+  color: 'var(--info)',
   fontSize: 13,
   fontWeight: 700,
   textTransform: 'uppercase',
@@ -404,7 +404,7 @@ const sectionTitleStyle: CSSProperties = {
 }
 
 const subTitleStyle: CSSProperties = {
-  color: '#888',
+  color: 'var(--text-secondary)',
   fontSize: 11,
   fontWeight: 600,
   textTransform: 'uppercase',
@@ -418,7 +418,7 @@ const badgeRowStyle: CSSProperties = {
 }
 
 const muscleBadgeStyle: CSSProperties = {
-  color: '#fff',
+  color: 'var(--text)',
   padding: '4px 12px',
   borderRadius: 14,
   fontSize: 12,
@@ -444,7 +444,7 @@ const statsGridStyle: CSSProperties = {
 }
 
 const statCardStyle: CSSProperties = {
-  background: '#16162a',
+  background: 'var(--bg-card)',
   borderRadius: 10,
   padding: '10px 12px',
   textAlign: 'center',
@@ -452,20 +452,20 @@ const statCardStyle: CSSProperties = {
 }
 
 const statValueStyle: CSSProperties = {
-  color: '#fff',
+  color: 'var(--text)',
   fontSize: 16,
   fontWeight: 700,
 }
 
 const statLabelStyle: CSSProperties = {
-  color: '#888',
+  color: 'var(--text-secondary)',
   fontSize: 11,
   marginTop: 2,
   textTransform: 'uppercase',
 }
 
 const altBtnStyle: CSSProperties = {
-  background: '#16162a',
+  background: 'var(--bg-card)',
   border: '1px solid #2a2a3e',
   borderRadius: 8,
   color: '#ddd',
@@ -488,7 +488,7 @@ const cardFooterStyle: CSSProperties = {
 }
 
 const addToWorkoutBtnStyle: CSSProperties = {
-  background: '#4ecdc4',
+  background: 'var(--info)',
   border: 'none',
   borderRadius: 10,
   color: '#000',
@@ -499,7 +499,7 @@ const addToWorkoutBtnStyle: CSSProperties = {
 }
 
 const closeBtnStyle: CSSProperties = {
-  background: '#16162a',
+  background: 'var(--bg-card)',
   border: '1px solid #333',
   borderRadius: 10,
   color: '#aaa',

@@ -7,7 +7,8 @@ import {
   getMesocycleStatus,
   getPowerLevel,
   getStreak,
-, getDailyQuestStatus} from '../../lib'
+  getDailyQuestStatus,
+} from '../../lib'
 import { WeeklyReport } from '../stats/WeeklyReport'
 import { DailyQuote } from '../gamification/MotivationalQuotes'
 import { DailyQuestsPanel } from '../gamification/QuestSection'

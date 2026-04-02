@@ -1,4 +1,4 @@
-const CACHE = 'saiyan-fitness-v1';
+const CACHE = 'saiyan-fitness-v2';
 const FONT_CACHE = 'saiyan-fonts-v1';
 
 self.addEventListener('install', e => {
@@ -20,6 +20,35 @@ self.addEventListener('activate', e => {
   self.clients.claim();
 });
 
+// Handle notification actions
+self.addEventListener('notificationclick', e => {
+  e.notification.close();
+  e.waitUntil(
+    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(clients => {
+      if (clients.length > 0) {
+        clients[0].focus();
+      } else {
+        self.clients.openWindow('/saiyan-fitness-app/');
+      }
+    })
+  );
+});
+
+// Handle messages from the app (timer notification)
+self.addEventListener('message', e => {
+  if (e.data && e.data.type === 'TIMER_DONE') {
+    self.registration.showNotification('Saiyan Fitness', {
+      body: e.data.message || 'Repos termin\u00e9 ! Reprends ta s\u00e9rie !',
+      icon: '/saiyan-fitness-app/icon-192.png',
+      badge: '/saiyan-fitness-app/icon-192.png',
+      vibrate: [200, 100, 200, 100, 200],
+      tag: 'rest-timer',
+      renotify: true,
+      requireInteraction: false,
+    });
+  }
+});
+
 self.addEventListener('fetch', e => {
   const url = new URL(e.request.url);
 
@@ -37,6 +66,12 @@ self.addEventListener('fetch', e => {
 
   // OpenFoodFacts API - network only
   if (url.hostname.includes('openfoodfacts.org')) {
+    e.respondWith(fetch(e.request));
+    return;
+  }
+
+  // Supabase API - network only
+  if (url.hostname.includes('supabase.co')) {
     e.respondWith(fetch(e.request));
     return;
   }

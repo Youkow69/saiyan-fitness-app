@@ -230,6 +230,7 @@ function setTypeBadge(t: SetType) {
     backoff: { bg: 'rgba(168,85,247,0.15)', fg: '#a855f7' },
     drop:    { bg: 'rgba(236,72,153,0.15)', fg: '#ec4899' },
     amrap:   { bg: 'rgba(34,197,94,0.15)', fg: 'var(--success)' },
+    superset: { bg: 'rgba(155,89,182,0.15)', fg: 'var(--accent-purple)' },
   }
   const c = colors[t] ?? colors.normal
   return (

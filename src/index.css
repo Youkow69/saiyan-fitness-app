@@ -18,6 +18,8 @@
   --stroke: rgba(255, 255, 255, 0.08);
   --text: #f5f8ff;
   --muted: #a0b0cc;
+  --text-secondary: #a0b0cc;
+  --border: rgba(255, 255, 255, 0.08);
 
   /* Accent */
   --accent: #FF8C00;

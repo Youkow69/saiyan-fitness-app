@@ -17,6 +17,7 @@ import { DailyQuote } from '../gamification/MotivationalQuotes'
 import { DailyQuestsPanel } from '../gamification/QuestSection'
 import { RecoveryMap } from '../tools/RecoveryMap'
 import { ReadinessScore } from '../tools/ReadinessScore'
+import { WeeklyNutritionReport } from '../tools/WeeklyNutritionReport'
 
 interface HomeViewProps {
   onStartWorkout: () => void
@@ -205,6 +206,9 @@ export const HomeView: React.FC<HomeViewProps> = React.memo(
             />
           </div>
         </section>
+
+        {/* Weekly nutrition report */}
+        <WeeklyNutritionReport state={state} />
 
         {/* Deload warning */}
         {deloadAdvice && deloadAdvice.needed && (

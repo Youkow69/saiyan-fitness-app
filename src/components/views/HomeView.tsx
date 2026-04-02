@@ -2,6 +2,7 @@ import React, { useMemo, useCallback, useState } from 'react'
 import { useAppState } from '../../context/AppContext'
 import {
   formatNumber,
+  getDailyNutrition,
   getCurrentTransformationFull,
   getDailyQuestStatus,
   getMesocycleStatus,
@@ -41,6 +42,12 @@ export const HomeView: React.FC<HomeViewProps> = React.memo(
       () => getPowerLevel(state),
       [state.workouts, state.bodyweightEntries, state.targets, state.foodEntries],
     )
+
+    const nutrition = useMemo(
+      () => getDailyNutrition(state.foodEntries),
+      [state.foodEntries],
+    )
+    const targets = state.targets
 
     const questsDone = useMemo(() => {
       const statuses = getDailyQuestStatus(state)
@@ -222,7 +229,31 @@ export const HomeView: React.FC<HomeViewProps> = React.memo(
           </div>
         </section>
 
-        {/* 5. Saiyan Steps promo */}
+        {/* 5. Compact calories today */}
+        {targets && (
+          <section className="hevy-card" style={{ padding: '8px 14px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+              <span style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--text)' }}>Calories</span>
+              <span style={{ fontSize: '0.72rem', color: 'var(--muted)' }}>
+                {nutrition.calories} / {targets.calories} kcal
+              </span>
+            </div>
+            <div style={{
+              height: 6, borderRadius: 3, background: 'var(--stroke)', overflow: 'hidden',
+            }}>
+              <div style={{
+                height: '100%', borderRadius: 3,
+                width: `${Math.min(100, (nutrition.calories / targets.calories) * 100)}%`,
+                background: nutrition.calories > targets.calories
+                  ? 'var(--accent-red)'
+                  : 'var(--accent-orange)',
+                transition: 'width 0.5s ease',
+              }} />
+            </div>
+          </section>
+        )}
+
+        {/* 6. Saiyan Steps promo */}
         <a
           href="https://youkow69.github.io/saiyan-steps/"
           target="_blank"

@@ -35,7 +35,7 @@ export const AdaptiveTDEECard: React.FC<AdaptiveTDEECardProps> = React.memo(
         <SectionTitle icon="🔥" label="TDEE Adaptatif" />
         <div className="metrics-grid">
           <article className="metric-card">
-            <span className="eyebrow">TDEE estime</span>
+            <span className="eyebrow">TDEE estimé</span>
             <strong style={{ color: 'var(--accent-gold)' }}>
               {formatNumber(tdee)}
             </strong>

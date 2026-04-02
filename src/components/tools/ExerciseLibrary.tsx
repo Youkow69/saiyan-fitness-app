@@ -3,11 +3,10 @@
 
 import { useState, useMemo } from 'react'
 import { useAppState } from '../../context/AppContext'
-import { exercises as allExercises } from '../../data/exercises'
+import { allExercises } from '../../data/exercises'
 import type { Exercise, MuscleGroup } from '../../types'
 
 const EQUIPMENT_OPTIONS = ['Barbell', 'Dumbbell', 'Cable', 'Machine', 'Bodyweight', 'EZ-bar', 'Kettlebell']
-const PATTERN_OPTIONS = ['push', 'pull', 'squat', 'hinge', 'lunge', 'carry', 'isolation', 'plank']
 const MUSCLE_OPTIONS: MuscleGroup[] = ['Chest', 'Back', 'Shoulders', 'Biceps', 'Triceps', 'Quads', 'Hamstrings', 'Glutes', 'Calves', 'Core']
 
 interface Props {

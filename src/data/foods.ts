@@ -116,7 +116,7 @@ export const allFoods: Food[] = [
   },
   {
     id: 'whey_protein',
-    name: 'Whey proteine',
+    name: 'Whey protéine',
     servingGrams: 30,
     calories: 120,
     protein: 24,
@@ -250,7 +250,7 @@ export const allFoods: Food[] = [
   },
   {
     id: 'pasta',
-    name: 'Pates (cuites)',
+    name: 'Pâtes (cuites)',
     servingGrams: 100,
     calories: 131,
     protein: 5,
@@ -772,7 +772,7 @@ export const allFoods: Food[] = [
   },
   {
     id: 'cream',
-    name: 'Creme fraiche epaisse',
+    name: 'Crème fraiche epaisse',
     servingGrams: 100,
     calories: 292,
     protein: 2.1,
@@ -1038,7 +1038,7 @@ export const allFoods: Food[] = [
   },
   {
     id: 'protein_bar',
-    name: 'Barre proteinee',
+    name: 'Barre protéinee',
     servingGrams: 60,
     calories: 220,
     protein: 20,

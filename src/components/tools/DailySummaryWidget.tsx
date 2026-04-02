@@ -5,7 +5,7 @@
 
 import { useMemo } from 'react'
 import { useAppState } from '../../context/AppContext'
-import { getWorkoutVolume, getPowerLevel, getExerciseById, todayIso, getDailyNutrition } from '../../lib'
+import { getPowerLevel, todayIso, getDailyNutrition } from '../../lib'
 
 export function DailySummaryWidget() {
   const { state } = useAppState()

@@ -1020,3 +1020,443 @@ export const specializedPrograms: ProgramTemplate[] = [
     ],
   }
 ]
+
+
+// ── 8 programmes celebres avec theme DBZ ────────────────────────────────────
+
+export const famousPrograms: ProgramTemplate[] = [
+  // ── 1. Starting Strength 3J "Les Debuts de Goku" ──
+  {
+    id: 'starting_strength_3j',
+    name: 'Starting Strength 3J "Les D\u00e9buts de Goku"',
+    saga: 'Saga Saiyan',
+    split: 'Full Body A/B',
+    goalTags: ['strength'],
+    levelTags: ['beginner'],
+    equipmentTags: ['full_gym'],
+    daysPerWeek: 3,
+    description: 'Le programme de Mark Rippetoe pour debutants. Alternance A/B, 3x5 sur les mouvements composes. Comme Goku qui apprend les bases du combat.',
+    sessions: [
+      {
+        id: 'ss_a', name: 'Jour A', focus: 'Squat, Developpe couche, Deadlift',
+        exercises: [
+          { exerciseId: 'back_squat', sets: 3, repMin: 5, repMax: 5, targetRir: 2, restSeconds: 180 },
+          { exerciseId: 'barbell_bench_press', sets: 3, repMin: 5, repMax: 5, targetRir: 2, restSeconds: 180 },
+          { exerciseId: 'deadlift', sets: 1, repMin: 5, repMax: 5, targetRir: 2, restSeconds: 240 },
+        ],
+      },
+      {
+        id: 'ss_b', name: 'Jour B', focus: 'Squat, Developpe militaire, Power Clean',
+        exercises: [
+          { exerciseId: 'back_squat', sets: 3, repMin: 5, repMax: 5, targetRir: 2, restSeconds: 180 },
+          { exerciseId: 'overhead_press', sets: 3, repMin: 5, repMax: 5, targetRir: 2, restSeconds: 180 },
+          { exerciseId: 'power_clean', sets: 5, repMin: 3, repMax: 3, targetRir: 2, restSeconds: 150 },
+        ],
+      },
+    ],
+  },
+
+  // ── 2. StrongLifts 5x5 3J "Entrainement de Tortue Geniale" ──
+  {
+    id: 'stronglifts_5x5_3j',
+    name: 'StrongLifts 5\u00d75 3J "Entra\u00eenement de Tortue G\u00e9niale"',
+    saga: 'Saga Tortue Geniale',
+    split: 'Full Body A/B',
+    goalTags: ['strength', 'muscle_gain'],
+    levelTags: ['beginner'],
+    equipmentTags: ['full_gym'],
+    daysPerWeek: 3,
+    description: 'Le classique 5x5 de Mehdi. Alternance A/B avec surcharge progressive simple. Tortue Geniale forge les guerriers avec les bases.',
+    sessions: [
+      {
+        id: 'sl_a', name: 'Jour A', focus: 'Squat, Bench, Row',
+        exercises: [
+          { exerciseId: 'back_squat', sets: 5, repMin: 5, repMax: 5, targetRir: 2, restSeconds: 180 },
+          { exerciseId: 'barbell_bench_press', sets: 5, repMin: 5, repMax: 5, targetRir: 2, restSeconds: 180 },
+          { exerciseId: 'barbell_row', sets: 5, repMin: 5, repMax: 5, targetRir: 2, restSeconds: 150 },
+        ],
+      },
+      {
+        id: 'sl_b', name: 'Jour B', focus: 'Squat, OHP, Deadlift',
+        exercises: [
+          { exerciseId: 'back_squat', sets: 5, repMin: 5, repMax: 5, targetRir: 2, restSeconds: 180 },
+          { exerciseId: 'overhead_press', sets: 5, repMin: 5, repMax: 5, targetRir: 2, restSeconds: 180 },
+          { exerciseId: 'deadlift', sets: 1, repMin: 5, repMax: 5, targetRir: 2, restSeconds: 240 },
+        ],
+      },
+    ],
+  },
+
+  // ── 3. nSuns 5/3/1 LP 5J "Gravite x100 (Namek)" ──
+  {
+    id: 'nsuns_531_5j',
+    name: 'nSuns 5/3/1 LP 5J "Gravit\u00e9 \u00d7100 (Namek)"',
+    saga: 'Saga Namek',
+    split: 'T1+T2 par jour',
+    goalTags: ['strength'],
+    levelTags: ['intermediate'],
+    equipmentTags: ['full_gym'],
+    daysPerWeek: 5,
+    description: 'Programme de progression lineaire intense base sur le 5/3/1. Un mouvement principal T1 et un mouvement secondaire T2 chaque jour. La gravite de Namek forge les vrais guerriers.',
+    sessions: [
+      {
+        id: 'ns_d1', name: 'Jour 1 - Bench/OHP', focus: 'Developpe couche + militaire',
+        exercises: [
+          { exerciseId: 'barbell_bench_press', sets: 9, repMin: 3, repMax: 8, targetRir: 1, restSeconds: 150 },
+          { exerciseId: 'overhead_press', sets: 8, repMin: 3, repMax: 8, targetRir: 1, restSeconds: 120 },
+          { exerciseId: 'lat_pulldown_wide', sets: 4, repMin: 8, repMax: 12, targetRir: 2, restSeconds: 90 },
+          { exerciseId: 'face_pull', sets: 3, repMin: 15, repMax: 20, targetRir: 1, restSeconds: 60 },
+        ],
+      },
+      {
+        id: 'ns_d2', name: 'Jour 2 - Squat/Sumo', focus: 'Squat + Sumo deadlift',
+        exercises: [
+          { exerciseId: 'back_squat', sets: 9, repMin: 3, repMax: 8, targetRir: 1, restSeconds: 180 },
+          { exerciseId: 'sumo_deadlift', sets: 8, repMin: 3, repMax: 8, targetRir: 1, restSeconds: 150 },
+          { exerciseId: 'leg_extension', sets: 3, repMin: 10, repMax: 15, targetRir: 1, restSeconds: 60 },
+          { exerciseId: 'lying_leg_curl', sets: 3, repMin: 10, repMax: 15, targetRir: 1, restSeconds: 60 },
+        ],
+      },
+      {
+        id: 'ns_d3', name: 'Jour 3 - OHP/Incline', focus: 'Militaire + Incline',
+        exercises: [
+          { exerciseId: 'overhead_press', sets: 9, repMin: 3, repMax: 8, targetRir: 1, restSeconds: 150 },
+          { exerciseId: 'db_incline_press', sets: 8, repMin: 5, repMax: 10, targetRir: 1, restSeconds: 120 },
+          { exerciseId: 'barbell_row', sets: 4, repMin: 6, repMax: 10, targetRir: 2, restSeconds: 90 },
+          { exerciseId: 'lateral_raise_db', sets: 4, repMin: 12, repMax: 18, targetRir: 1, restSeconds: 60 },
+        ],
+      },
+      {
+        id: 'ns_d4', name: 'Jour 4 - Deadlift/Front Squat', focus: 'Souleve de terre + Front squat',
+        exercises: [
+          { exerciseId: 'deadlift', sets: 9, repMin: 3, repMax: 8, targetRir: 1, restSeconds: 180 },
+          { exerciseId: 'front_squat', sets: 8, repMin: 3, repMax: 8, targetRir: 1, restSeconds: 150 },
+          { exerciseId: 'barbell_hip_thrust', sets: 3, repMin: 8, repMax: 12, targetRir: 1, restSeconds: 90 },
+          { exerciseId: 'hanging_leg_raise', sets: 3, repMin: 10, repMax: 15, targetRir: 1, restSeconds: 60 },
+        ],
+      },
+      {
+        id: 'ns_d5', name: 'Jour 5 - Bench/CG Bench', focus: 'Bench + Close Grip',
+        exercises: [
+          { exerciseId: 'barbell_bench_press', sets: 9, repMin: 3, repMax: 8, targetRir: 1, restSeconds: 150 },
+          { exerciseId: 'close_grip_bench', sets: 8, repMin: 3, repMax: 8, targetRir: 1, restSeconds: 120 },
+          { exerciseId: 'pull_ups', sets: 4, repMin: 5, repMax: 10, targetRir: 2, restSeconds: 90 },
+          { exerciseId: 'barbell_curl', sets: 3, repMin: 8, repMax: 12, targetRir: 1, restSeconds: 60 },
+        ],
+      },
+    ],
+  },
+
+  // ── 4. GZCLP 4J "Maitrise du Ki (Ginyu)" ──
+  {
+    id: 'gzclp_4j',
+    name: 'GZCLP 4J "Ma\u00eetrise du Ki (Ginyu)"',
+    saga: 'Saga Ginyu',
+    split: 'T1/T2/T3',
+    goalTags: ['strength', 'muscle_gain'],
+    levelTags: ['beginner', 'intermediate'],
+    equipmentTags: ['full_gym'],
+    daysPerWeek: 4,
+    description: 'La methode GZCL en version lineaire. T1 lourd (5x3), T2 moyen (3x10), T3 leger (3x15). Comme le Commando Ginyu, chaque tier a son role.',
+    sessions: [
+      {
+        id: 'gz_d1', name: 'Jour 1', focus: 'T1 Squat',
+        exercises: [
+          { exerciseId: 'back_squat', sets: 5, repMin: 3, repMax: 3, targetRir: 2, restSeconds: 180 },
+          { exerciseId: 'barbell_bench_press', sets: 3, repMin: 10, repMax: 10, targetRir: 2, restSeconds: 120 },
+          { exerciseId: 'lat_pulldown_wide', sets: 3, repMin: 15, repMax: 15, targetRir: 1, restSeconds: 60 },
+          { exerciseId: 'face_pull', sets: 3, repMin: 15, repMax: 15, targetRir: 1, restSeconds: 60 },
+        ],
+      },
+      {
+        id: 'gz_d2', name: 'Jour 2', focus: 'T1 OHP',
+        exercises: [
+          { exerciseId: 'overhead_press', sets: 5, repMin: 3, repMax: 3, targetRir: 2, restSeconds: 180 },
+          { exerciseId: 'deadlift', sets: 3, repMin: 10, repMax: 10, targetRir: 2, restSeconds: 150 },
+          { exerciseId: 'barbell_row', sets: 3, repMin: 15, repMax: 15, targetRir: 1, restSeconds: 60 },
+          { exerciseId: 'barbell_curl', sets: 3, repMin: 15, repMax: 15, targetRir: 1, restSeconds: 60 },
+        ],
+      },
+      {
+        id: 'gz_d3', name: 'Jour 3', focus: 'T1 Bench',
+        exercises: [
+          { exerciseId: 'barbell_bench_press', sets: 5, repMin: 3, repMax: 3, targetRir: 2, restSeconds: 180 },
+          { exerciseId: 'back_squat', sets: 3, repMin: 10, repMax: 10, targetRir: 2, restSeconds: 150 },
+          { exerciseId: 'cable_fly', sets: 3, repMin: 15, repMax: 15, targetRir: 1, restSeconds: 60 },
+          { exerciseId: 'lateral_raise_db', sets: 3, repMin: 15, repMax: 15, targetRir: 1, restSeconds: 60 },
+        ],
+      },
+      {
+        id: 'gz_d4', name: 'Jour 4', focus: 'T1 Deadlift',
+        exercises: [
+          { exerciseId: 'deadlift', sets: 5, repMin: 3, repMax: 3, targetRir: 2, restSeconds: 240 },
+          { exerciseId: 'overhead_press', sets: 3, repMin: 10, repMax: 10, targetRir: 2, restSeconds: 120 },
+          { exerciseId: 'pull_ups', sets: 3, repMin: 15, repMax: 15, targetRir: 1, restSeconds: 60 },
+          { exerciseId: 'rope_pushdown', sets: 3, repMin: 15, repMax: 15, targetRir: 1, restSeconds: 60 },
+        ],
+      },
+    ],
+  },
+
+  // ── 5. PPL Reddit 6J "Preparation Cell Games" ──
+  {
+    id: 'ppl_reddit_6j',
+    name: 'PPL Reddit 6J "Pr\u00e9paration Cell Games"',
+    saga: 'Saga Cell',
+    split: 'Push/Pull/Legs x2',
+    goalTags: ['muscle_gain'],
+    levelTags: ['intermediate'],
+    equipmentTags: ['full_gym'],
+    daysPerWeek: 6,
+    description: 'Le celebre PPL de r/Fitness en double rotation. 6 jours intenses pour se preparer au Cell Games. Volume optimal pour hypertrophie.',
+    sessions: [
+      {
+        id: 'ppl_push1', name: 'Push 1', focus: 'Pectoraux, epaules, triceps',
+        exercises: [
+          { exerciseId: 'barbell_bench_press', sets: 4, repMin: 5, repMax: 5, targetRir: 2, restSeconds: 150 },
+          { exerciseId: 'overhead_press', sets: 3, repMin: 8, repMax: 12, targetRir: 2, restSeconds: 120 },
+          { exerciseId: 'db_incline_press', sets: 3, repMin: 8, repMax: 12, targetRir: 1, restSeconds: 90 },
+          { exerciseId: 'lateral_raise_db', sets: 4, repMin: 12, repMax: 20, targetRir: 0, restSeconds: 45 },
+          { exerciseId: 'rope_pushdown', sets: 3, repMin: 10, repMax: 15, targetRir: 1, restSeconds: 60 },
+          { exerciseId: 'overhead_tricep_extension', sets: 3, repMin: 10, repMax: 15, targetRir: 1, restSeconds: 60 },
+        ],
+      },
+      {
+        id: 'ppl_pull1', name: 'Pull 1', focus: 'Dos, biceps, arriere epaule',
+        exercises: [
+          { exerciseId: 'barbell_row', sets: 4, repMin: 5, repMax: 5, targetRir: 2, restSeconds: 150 },
+          { exerciseId: 'pull_ups', sets: 3, repMin: 6, repMax: 10, targetRir: 2, restSeconds: 120 },
+          { exerciseId: 'cable_row_seated', sets: 3, repMin: 8, repMax: 12, targetRir: 1, restSeconds: 90 },
+          { exerciseId: 'face_pull', sets: 4, repMin: 15, repMax: 20, targetRir: 1, restSeconds: 45 },
+          { exerciseId: 'barbell_curl', sets: 3, repMin: 8, repMax: 12, targetRir: 1, restSeconds: 60 },
+          { exerciseId: 'hammer_curl', sets: 3, repMin: 8, repMax: 12, targetRir: 1, restSeconds: 60 },
+        ],
+      },
+      {
+        id: 'ppl_legs1', name: 'Legs 1', focus: 'Quadriceps, ischio, mollets',
+        exercises: [
+          { exerciseId: 'back_squat', sets: 4, repMin: 5, repMax: 5, targetRir: 2, restSeconds: 180 },
+          { exerciseId: 'romanian_deadlift', sets: 3, repMin: 8, repMax: 12, targetRir: 2, restSeconds: 120 },
+          { exerciseId: 'leg_press', sets: 3, repMin: 10, repMax: 15, targetRir: 1, restSeconds: 90 },
+          { exerciseId: 'leg_extension', sets: 3, repMin: 12, repMax: 15, targetRir: 1, restSeconds: 60 },
+          { exerciseId: 'lying_leg_curl', sets: 3, repMin: 10, repMax: 15, targetRir: 1, restSeconds: 60 },
+          { exerciseId: 'standing_calf_raise', sets: 4, repMin: 12, repMax: 18, targetRir: 1, restSeconds: 45 },
+        ],
+      },
+      {
+        id: 'ppl_push2', name: 'Push 2', focus: 'Volume poussee',
+        exercises: [
+          { exerciseId: 'db_bench_press', sets: 4, repMin: 8, repMax: 12, targetRir: 1, restSeconds: 90 },
+          { exerciseId: 'db_shoulder_press', sets: 3, repMin: 8, repMax: 12, targetRir: 1, restSeconds: 90 },
+          { exerciseId: 'cable_fly', sets: 3, repMin: 12, repMax: 15, targetRir: 1, restSeconds: 60 },
+          { exerciseId: 'cable_lateral_raise', sets: 4, repMin: 12, repMax: 18, targetRir: 1, restSeconds: 45 },
+          { exerciseId: 'dips_triceps', sets: 3, repMin: 8, repMax: 12, targetRir: 1, restSeconds: 60 },
+          { exerciseId: 'skullcrusher', sets: 3, repMin: 8, repMax: 12, targetRir: 1, restSeconds: 60 },
+        ],
+      },
+      {
+        id: 'ppl_pull2', name: 'Pull 2', focus: 'Volume tirage',
+        exercises: [
+          { exerciseId: 'lat_pulldown_wide', sets: 4, repMin: 8, repMax: 12, targetRir: 1, restSeconds: 90 },
+          { exerciseId: 'db_row', sets: 3, repMin: 8, repMax: 12, targetRir: 1, restSeconds: 90 },
+          { exerciseId: 'chest_supported_row', sets: 3, repMin: 10, repMax: 14, targetRir: 1, restSeconds: 90 },
+          { exerciseId: 'reverse_fly_db', sets: 3, repMin: 12, repMax: 18, targetRir: 1, restSeconds: 45 },
+          { exerciseId: 'ez_curl', sets: 3, repMin: 8, repMax: 12, targetRir: 1, restSeconds: 60 },
+          { exerciseId: 'incline_db_curl', sets: 3, repMin: 10, repMax: 14, targetRir: 1, restSeconds: 60 },
+        ],
+      },
+      {
+        id: 'ppl_legs2', name: 'Legs 2', focus: 'Volume jambes',
+        exercises: [
+          { exerciseId: 'front_squat', sets: 3, repMin: 6, repMax: 10, targetRir: 2, restSeconds: 150 },
+          { exerciseId: 'barbell_hip_thrust', sets: 3, repMin: 8, repMax: 12, targetRir: 1, restSeconds: 90 },
+          { exerciseId: 'hack_squat', sets: 3, repMin: 10, repMax: 14, targetRir: 1, restSeconds: 90 },
+          { exerciseId: 'walking_lunges', sets: 3, repMin: 10, repMax: 14, targetRir: 1, restSeconds: 90 },
+          { exerciseId: 'seated_calf_raise', sets: 4, repMin: 12, repMax: 18, targetRir: 1, restSeconds: 45 },
+          { exerciseId: 'cable_crunch', sets: 3, repMin: 12, repMax: 18, targetRir: 1, restSeconds: 60 },
+        ],
+      },
+    ],
+  },
+
+  // ── 6. PHUL 4J "Power + Hypertrophie (Buu)" ──
+  {
+    id: 'phul_4j',
+    name: 'PHUL 4J "Power + Hypertrophie (Buu)"',
+    saga: 'Saga Buu',
+    split: 'Upper/Lower Power + Hyp',
+    goalTags: ['muscle_gain', 'strength'],
+    levelTags: ['intermediate'],
+    equipmentTags: ['full_gym'],
+    daysPerWeek: 4,
+    description: 'Power Upper/Lower + Hypertrophy Upper/Lower. La puissance brute de Buu combinee avec le volume. Le meilleur des deux mondes.',
+    sessions: [
+      {
+        id: 'phul_up', name: 'Haut Power', focus: 'Force haut du corps',
+        exercises: [
+          { exerciseId: 'barbell_bench_press', sets: 4, repMin: 3, repMax: 5, targetRir: 2, restSeconds: 180 },
+          { exerciseId: 'barbell_row', sets: 4, repMin: 3, repMax: 5, targetRir: 2, restSeconds: 150 },
+          { exerciseId: 'overhead_press', sets: 3, repMin: 5, repMax: 8, targetRir: 2, restSeconds: 150 },
+          { exerciseId: 'pull_ups', sets: 3, repMin: 5, repMax: 8, targetRir: 2, restSeconds: 120 },
+          { exerciseId: 'barbell_curl', sets: 2, repMin: 6, repMax: 10, targetRir: 2, restSeconds: 90 },
+          { exerciseId: 'skullcrusher', sets: 2, repMin: 6, repMax: 10, targetRir: 2, restSeconds: 90 },
+        ],
+      },
+      {
+        id: 'phul_lp', name: 'Bas Power', focus: 'Force bas du corps',
+        exercises: [
+          { exerciseId: 'back_squat', sets: 4, repMin: 3, repMax: 5, targetRir: 2, restSeconds: 180 },
+          { exerciseId: 'deadlift', sets: 4, repMin: 3, repMax: 5, targetRir: 2, restSeconds: 240 },
+          { exerciseId: 'leg_press', sets: 3, repMin: 8, repMax: 12, targetRir: 2, restSeconds: 120 },
+          { exerciseId: 'lying_leg_curl', sets: 3, repMin: 6, repMax: 10, targetRir: 2, restSeconds: 90 },
+          { exerciseId: 'standing_calf_raise', sets: 3, repMin: 6, repMax: 10, targetRir: 2, restSeconds: 90 },
+        ],
+      },
+      {
+        id: 'phul_uh', name: 'Haut Hypertrophie', focus: 'Volume haut du corps',
+        exercises: [
+          { exerciseId: 'db_incline_press', sets: 4, repMin: 8, repMax: 12, targetRir: 1, restSeconds: 90 },
+          { exerciseId: 'cable_row_seated', sets: 4, repMin: 8, repMax: 12, targetRir: 1, restSeconds: 90 },
+          { exerciseId: 'cable_fly', sets: 3, repMin: 12, repMax: 15, targetRir: 1, restSeconds: 60 },
+          { exerciseId: 'lat_pulldown_wide', sets: 3, repMin: 10, repMax: 14, targetRir: 1, restSeconds: 90 },
+          { exerciseId: 'lateral_raise_db', sets: 4, repMin: 12, repMax: 20, targetRir: 0, restSeconds: 45 },
+          { exerciseId: 'hammer_curl', sets: 3, repMin: 10, repMax: 14, targetRir: 1, restSeconds: 60 },
+          { exerciseId: 'rope_pushdown', sets: 3, repMin: 10, repMax: 15, targetRir: 1, restSeconds: 60 },
+        ],
+      },
+      {
+        id: 'phul_lh', name: 'Bas Hypertrophie', focus: 'Volume bas du corps',
+        exercises: [
+          { exerciseId: 'front_squat', sets: 4, repMin: 8, repMax: 12, targetRir: 1, restSeconds: 120 },
+          { exerciseId: 'romanian_deadlift', sets: 4, repMin: 8, repMax: 12, targetRir: 1, restSeconds: 120 },
+          { exerciseId: 'leg_extension', sets: 3, repMin: 12, repMax: 15, targetRir: 1, restSeconds: 60 },
+          { exerciseId: 'barbell_hip_thrust', sets: 3, repMin: 10, repMax: 14, targetRir: 1, restSeconds: 90 },
+          { exerciseId: 'seated_calf_raise', sets: 4, repMin: 12, repMax: 18, targetRir: 1, restSeconds: 45 },
+          { exerciseId: 'cable_crunch', sets: 3, repMin: 12, repMax: 18, targetRir: 1, restSeconds: 60 },
+        ],
+      },
+    ],
+  },
+
+  // ── 7. 5/3/1 BBB 4J "Entrainement de Whis" ──
+  {
+    id: 'bbb_531_4j',
+    name: '5/3/1 BBB 4J "Entra\u00eenement de Whis"',
+    saga: 'Saga DBS',
+    split: '5/3/1 + BBB',
+    goalTags: ['strength', 'muscle_gain'],
+    levelTags: ['intermediate', 'advanced'],
+    equipmentTags: ['full_gym'],
+    daysPerWeek: 4,
+    description: 'Le 5/3/1 de Jim Wendler avec 5x10 Boring But Big. La sagesse de Whis : patience et volume. Progression lente mais inarretable.',
+    sessions: [
+      {
+        id: 'bbb_d1', name: 'Jour 1 - Squat', focus: '5/3/1 Squat + BBB',
+        exercises: [
+          { exerciseId: 'back_squat', sets: 3, repMin: 3, repMax: 5, targetRir: 1, restSeconds: 180 },
+          { exerciseId: 'back_squat', sets: 5, repMin: 10, repMax: 10, targetRir: 2, restSeconds: 90, note: 'BBB 50-60% du TM' },
+          { exerciseId: 'lying_leg_curl', sets: 3, repMin: 10, repMax: 15, targetRir: 1, restSeconds: 60 },
+          { exerciseId: 'hanging_leg_raise', sets: 3, repMin: 10, repMax: 15, targetRir: 1, restSeconds: 60 },
+        ],
+      },
+      {
+        id: 'bbb_d2', name: 'Jour 2 - Bench', focus: '5/3/1 Bench + BBB',
+        exercises: [
+          { exerciseId: 'barbell_bench_press', sets: 3, repMin: 3, repMax: 5, targetRir: 1, restSeconds: 180 },
+          { exerciseId: 'barbell_bench_press', sets: 5, repMin: 10, repMax: 10, targetRir: 2, restSeconds: 90, note: 'BBB 50-60% du TM' },
+          { exerciseId: 'db_row', sets: 3, repMin: 10, repMax: 15, targetRir: 1, restSeconds: 60 },
+          { exerciseId: 'face_pull', sets: 3, repMin: 15, repMax: 20, targetRir: 1, restSeconds: 45 },
+        ],
+      },
+      {
+        id: 'bbb_d3', name: 'Jour 3 - Deadlift', focus: '5/3/1 Deadlift + BBB',
+        exercises: [
+          { exerciseId: 'deadlift', sets: 3, repMin: 3, repMax: 5, targetRir: 1, restSeconds: 240 },
+          { exerciseId: 'deadlift', sets: 5, repMin: 10, repMax: 10, targetRir: 2, restSeconds: 120, note: 'BBB 50-60% du TM' },
+          { exerciseId: 'leg_press', sets: 3, repMin: 10, repMax: 15, targetRir: 1, restSeconds: 90 },
+          { exerciseId: 'cable_crunch', sets: 3, repMin: 12, repMax: 18, targetRir: 1, restSeconds: 60 },
+        ],
+      },
+      {
+        id: 'bbb_d4', name: 'Jour 4 - OHP', focus: '5/3/1 OHP + BBB',
+        exercises: [
+          { exerciseId: 'overhead_press', sets: 3, repMin: 3, repMax: 5, targetRir: 1, restSeconds: 180 },
+          { exerciseId: 'overhead_press', sets: 5, repMin: 10, repMax: 10, targetRir: 2, restSeconds: 90, note: 'BBB 50-60% du TM' },
+          { exerciseId: 'lat_pulldown_wide', sets: 3, repMin: 10, repMax: 15, targetRir: 1, restSeconds: 60 },
+          { exerciseId: 'barbell_curl', sets: 3, repMin: 10, repMax: 14, targetRir: 1, restSeconds: 60 },
+        ],
+      },
+    ],
+  },
+
+  // ── 8. PHAT 5J "Tournoi du Pouvoir" ──
+  {
+    id: 'phat_5j',
+    name: 'PHAT 5J "Tournoi du Pouvoir"',
+    saga: 'Saga Tournoi du Pouvoir',
+    split: 'Power + Hypertrophie',
+    goalTags: ['muscle_gain', 'strength'],
+    levelTags: ['advanced'],
+    equipmentTags: ['full_gym'],
+    daysPerWeek: 5,
+    description: 'Le PHAT de Layne Norton. 2 jours Power (haut/bas) + 3 jours Hypertrophie (dos-epaules/poitrine-bras/jambes). Le Tournoi du Pouvoir exige tout.',
+    sessions: [
+      {
+        id: 'phat_up', name: 'Haut Power', focus: 'Force haut du corps',
+        exercises: [
+          { exerciseId: 'barbell_bench_press', sets: 4, repMin: 3, repMax: 5, targetRir: 2, restSeconds: 180 },
+          { exerciseId: 'barbell_row', sets: 4, repMin: 3, repMax: 5, targetRir: 2, restSeconds: 150 },
+          { exerciseId: 'overhead_press', sets: 3, repMin: 5, repMax: 8, targetRir: 2, restSeconds: 150 },
+          { exerciseId: 'pull_ups', sets: 3, repMin: 5, repMax: 8, targetRir: 2, restSeconds: 120 },
+          { exerciseId: 'barbell_curl', sets: 2, repMin: 6, repMax: 10, targetRir: 2, restSeconds: 90 },
+          { exerciseId: 'rope_pushdown', sets: 2, repMin: 6, repMax: 10, targetRir: 2, restSeconds: 90 },
+        ],
+      },
+      {
+        id: 'phat_lp', name: 'Bas Power', focus: 'Force bas du corps',
+        exercises: [
+          { exerciseId: 'back_squat', sets: 4, repMin: 3, repMax: 5, targetRir: 2, restSeconds: 180 },
+          { exerciseId: 'deadlift', sets: 3, repMin: 3, repMax: 5, targetRir: 2, restSeconds: 240 },
+          { exerciseId: 'leg_press', sets: 3, repMin: 6, repMax: 10, targetRir: 2, restSeconds: 120 },
+          { exerciseId: 'lying_leg_curl', sets: 3, repMin: 6, repMax: 10, targetRir: 2, restSeconds: 120 },
+          { exerciseId: 'standing_calf_raise', sets: 3, repMin: 6, repMax: 10, targetRir: 2, restSeconds: 90 },
+        ],
+      },
+      {
+        id: 'phat_back_sh', name: 'Dos & Epaules Hyp', focus: 'Volume dos et epaules',
+        exercises: [
+          { exerciseId: 'barbell_row', sets: 3, repMin: 8, repMax: 12, targetRir: 1, restSeconds: 90 },
+          { exerciseId: 'lat_pulldown_wide', sets: 4, repMin: 8, repMax: 12, targetRir: 1, restSeconds: 90 },
+          { exerciseId: 'cable_row_seated', sets: 3, repMin: 10, repMax: 14, targetRir: 1, restSeconds: 75 },
+          { exerciseId: 'db_shoulder_press', sets: 3, repMin: 8, repMax: 12, targetRir: 1, restSeconds: 90 },
+          { exerciseId: 'lateral_raise_db', sets: 4, repMin: 12, repMax: 20, targetRir: 0, restSeconds: 45 },
+          { exerciseId: 'face_pull', sets: 3, repMin: 15, repMax: 20, targetRir: 1, restSeconds: 45 },
+        ],
+      },
+      {
+        id: 'phat_chest_arms', name: 'Poitrine & Bras Hyp', focus: 'Volume pectoraux et bras',
+        exercises: [
+          { exerciseId: 'db_incline_press', sets: 4, repMin: 8, repMax: 12, targetRir: 1, restSeconds: 90 },
+          { exerciseId: 'cable_fly', sets: 3, repMin: 12, repMax: 15, targetRir: 1, restSeconds: 60 },
+          { exerciseId: 'pec_deck', sets: 3, repMin: 12, repMax: 18, targetRir: 0, restSeconds: 60 },
+          { exerciseId: 'barbell_curl', sets: 3, repMin: 8, repMax: 12, targetRir: 1, restSeconds: 60 },
+          { exerciseId: 'hammer_curl', sets: 3, repMin: 10, repMax: 14, targetRir: 1, restSeconds: 60 },
+          { exerciseId: 'skullcrusher', sets: 3, repMin: 8, repMax: 12, targetRir: 1, restSeconds: 60 },
+          { exerciseId: 'overhead_tricep_extension', sets: 3, repMin: 10, repMax: 14, targetRir: 1, restSeconds: 60 },
+        ],
+      },
+      {
+        id: 'phat_legs_h', name: 'Jambes Hyp', focus: 'Volume jambes',
+        exercises: [
+          { exerciseId: 'front_squat', sets: 3, repMin: 8, repMax: 12, targetRir: 1, restSeconds: 120 },
+          { exerciseId: 'hack_squat', sets: 3, repMin: 10, repMax: 15, targetRir: 1, restSeconds: 90 },
+          { exerciseId: 'romanian_deadlift', sets: 3, repMin: 8, repMax: 12, targetRir: 1, restSeconds: 120 },
+          { exerciseId: 'leg_extension', sets: 3, repMin: 12, repMax: 15, targetRir: 1, restSeconds: 60 },
+          { exerciseId: 'lying_leg_curl', sets: 3, repMin: 10, repMax: 15, targetRir: 1, restSeconds: 60 },
+          { exerciseId: 'seated_calf_raise', sets: 4, repMin: 12, repMax: 18, targetRir: 1, restSeconds: 45 },
+        ],
+      },
+    ],
+  },
+]
+

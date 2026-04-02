@@ -6,7 +6,6 @@ import { exercises } from '../../data'
 import {
   formatNumber,
   getExerciseById,
-  getVolumeByMuscle,
   getWeeklyWorkouts,
   getWorkoutVolume,
 } from '../../lib'
@@ -29,9 +28,6 @@ const MUSCLE_FR: Record<string, string> = {
   Calves: 'Mollets', Core: 'Abdominaux', Biceps: 'Biceps', Triceps: 'Triceps',
 }
 
-function translateMuscle(name: string): string {
-  return MUSCLE_FR[name] ?? name
-}
 
 function countPRsFromWorkouts(workouts: AppState['workouts']): number {
   const bestByExercise = new Map<string, number>()

@@ -1,25 +1,25 @@
 import { useState, useCallback, useRef } from 'react'
 import { todayIso, makeId } from '../../lib'
 
-interface ProgressPhoto {
+interface ProgrèssPhoto {
   id: string
   date: string
   dataUrl: string // compressed base64
   note?: string
 }
 
-const PHOTOS_KEY = 'saiyan-progress-photos'
+const PHOTOS_KEY = 'saiyan-progrèss-photos'
 const MAX_PHOTOS = 52 // ~1 per week for a year
 const TARGET_WIDTH = 400 // compress to this width
 
-function loadPhotos(): ProgressPhoto[] {
+function loadPhotos(): ProgrèssPhoto[] {
   try {
     const raw = localStorage.getItem(PHOTOS_KEY)
     return raw ? JSON.parse(raw) : []
   } catch { return [] }
 }
 
-function savePhotos(photos: ProgressPhoto[]) {
+function savePhotos(photos: ProgrèssPhoto[]) {
   try {
     localStorage.setItem(PHOTOS_KEY, JSON.stringify(photos))
   } catch (e) {
@@ -44,16 +44,16 @@ async function compressImage(file: File): Promise<string> {
   })
 }
 
-export function ProgressPhotos() {
-  const [photos, setPhotos] = useState<ProgressPhoto[]>(loadPhotos)
-  const [selectedPhoto, setSelectedPhoto] = useState<ProgressPhoto | null>(null)
+export function ProgrèssPhotos() {
+  const [photos, setPhotos] = useState<ProgrèssPhoto[]>(loadPhotos)
+  const [selectedPhoto, setSelectedPhoto] = useState<ProgrèssPhoto | null>(null)
   const [compareMode, setCompareMode] = useState(false)
   const [compareIdx, setCompareIdx] = useState<[number, number]>([0, 0])
   const inputRef = useRef<HTMLInputElement>(null)
 
   const addPhoto = useCallback(async (file: File) => {
     const dataUrl = await compressImage(file)
-    const photo: ProgressPhoto = {
+    const photo: ProgrèssPhoto = {
       id: makeId(),
       date: todayIso(),
       dataUrl,
@@ -74,7 +74,7 @@ export function ProgressPhotos() {
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
         <h3 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: '1.1rem', letterSpacing: '0.05em', textTransform: 'uppercase', color: 'var(--accent)' }}>
-          Photos de progression
+          Photos de progrèssion
         </h3>
         <div style={{ display: 'flex', gap: 6 }}>
           {photos.length >= 2 && (
@@ -148,7 +148,7 @@ export function ProgressPhotos() {
             marginTop: 12, padding: '8px 20px', borderRadius: 10, border: '1px solid #ef4444',
             background: 'rgba(239,68,68,0.15)', color: '#ef4444', fontWeight: 700, cursor: 'pointer',
           }}>
-            Supprimer
+            Supprimér
           </button>
         </div>
       )}

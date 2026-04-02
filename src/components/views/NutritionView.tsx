@@ -143,7 +143,7 @@ export const NutritionView: React.FC = React.memo(
 
         {/* Accordion: Scanner */}
         <details style={{ marginBottom: 8 }}>
-          <summary style={accordionStyle}>{'��'} Scanner / Code-barres</summary>
+          <summary style={accordionStyle}>{'📷'} Scanner / Code-barres</summary>
           <div style={{ padding: '12px 0' }}>
             <section className="hevy-card stack-md" style={{ marginTop: 0, borderTopLeftRadius: 0, borderTopRightRadius: 0 }}>
               <div className="inline-form">
@@ -190,7 +190,7 @@ export const NutritionView: React.FC = React.memo(
 
         {/* Accordion: Recipes */}
         <details style={{ marginBottom: 8 }}>
-          <summary style={accordionStyle}>{'��'} Recettes suggérées</summary>
+          <summary style={accordionStyle}>{'🍳'} Recettes suggérées</summary>
           <div style={{ padding: '12px 0' }}>
             <section className="hevy-card stack-md" style={{ marginTop: 0 }}>
               <div className="card-list">
@@ -216,7 +216,7 @@ export const NutritionView: React.FC = React.memo(
 
         {/* Accordion: Saved meals */}
         <details style={{ marginBottom: 8 }}>
-          <summary style={accordionStyle}>{'��'} Repas sauvegardés</summary>
+          <summary style={accordionStyle}>{'📦'} Repas sauvegardés</summary>
           <div style={{ padding: '12px 0' }}>
             <section className="hevy-card stack-md" style={{ marginTop: 0 }}>
               {state.savedMeals.length === 0 ? (
@@ -246,7 +246,7 @@ export const NutritionView: React.FC = React.memo(
 
         {/* Accordion: Adherence score */}
         <details style={{ marginBottom: 8 }}>
-          <summary style={accordionStyle}>{'��'} Score adhérence</summary>
+          <summary style={accordionStyle}>{'📈'} Score adhérence</summary>
           <div style={{ padding: '12px 0' }}>
             <AdherenceScore />
           </div>
@@ -254,7 +254,7 @@ export const NutritionView: React.FC = React.memo(
 
         {/* Accordion: Micronutrients */}
         <details style={{ marginBottom: 8 }}>
-          <summary style={accordionStyle}>{'��'} Micronutriments</summary>
+          <summary style={accordionStyle}>{'🧪'} Micronutriments</summary>
           <div style={{ padding: '12px 0' }}>
             <MicronutrientEstimate />
           </div>
@@ -262,7 +262,7 @@ export const NutritionView: React.FC = React.memo(
 
         {/* Accordion: Grocery list */}
         <details style={{ marginBottom: 8 }}>
-          <summary style={accordionStyle}>{'��'} Liste de courses</summary>
+          <summary style={accordionStyle}>{'🛒'} Liste de courses</summary>
           <div style={{ padding: '12px 0' }}>
             <GroceryList />
           </div>
@@ -270,7 +270,7 @@ export const NutritionView: React.FC = React.memo(
 
         {/* Accordion: Meal planner */}
         <details style={{ marginBottom: 8 }}>
-          <summary style={accordionStyle}>{'��️'} Planificateur de repas</summary>
+          <summary style={accordionStyle}>{'🗓'} Planificateur de repas</summary>
           <div style={{ padding: '12px 0' }}>
             <MealPlanner />
           </div>
@@ -286,7 +286,7 @@ export const NutritionView: React.FC = React.memo(
 
         {/* Accordion: TDEE */}
         <details style={{ marginBottom: 8 }}>
-          <summary style={accordionStyle}>{'��'} TDEE adaptatif</summary>
+          <summary style={accordionStyle}>{'🔥'} TDEE adaptatif</summary>
           <div style={{ padding: '12px 0' }}>
             <AdaptiveTDEECard state={state} />
           </div>

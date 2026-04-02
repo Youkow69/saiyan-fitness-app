@@ -177,7 +177,7 @@ export const HomeView: React.FC<HomeViewProps> = React.memo(
               </span>
               {streak > 0 && (
                 <span className="hero-badge" style={{ color: 'var(--accent-orange)', borderColor: 'var(--accent-orange)' }}>
-                  {streak}j
+                  <span className="streak-fire">{'🔥'}</span> {streak}j
                 </span>
               )}
             </div>

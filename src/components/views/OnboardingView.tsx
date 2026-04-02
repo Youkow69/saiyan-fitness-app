@@ -57,7 +57,8 @@ export const OnboardingView: React.FC<OnboardingViewProps> = React.memo(
     const stepTitles = [
       'Profil de base',
       'Entrainement',
-      'Objectifs profonds',
+      'Ton corps en detail',
+      'Mode de vie',
       'Cibles quotidiennes',
     ]
 
@@ -77,7 +78,7 @@ export const OnboardingView: React.FC<OnboardingViewProps> = React.memo(
           <h1>Saiyan Fitness</h1>
           <p style={{ marginBottom: 0 }}>{stepTitles[step - 1]}</p>
           <div style={{ display: 'flex', gap: 6, marginTop: 12 }}>
-            {[1, 2, 3, 4].map((s) => (
+            {[1, 2, 3, 4, 5].map((s) => (
               <div
                 key={s}
                 style={{
@@ -336,7 +337,7 @@ export const OnboardingView: React.FC<OnboardingViewProps> = React.memo(
             </div>
           </section>
         )}
-        {step === 3 && (
+        {step === 5 && (
           <section className="panel stack-lg">
             <div className="choice-group">
               <span className="field-title">Points faibles a cibler</span>
@@ -486,7 +487,7 @@ export const OnboardingView: React.FC<OnboardingViewProps> = React.memo(
               <button
                 className="primary-btn"
                 style={{ flex: 2 }}
-                onClick={() => setStep(4)}
+                onClick={() => setStep(5)}
                 type="button"
               >
                 Suivant
@@ -494,7 +495,88 @@ export const OnboardingView: React.FC<OnboardingViewProps> = React.memo(
             </div>
           </section>
         )}
-        {step === 4 && (
+
+        {step === 3 && (
+          <section className="panel stack-lg">
+            <div className="choice-group">
+              <span className="field-title">Points faibles musculaires</span>
+              <div className="chip-row">
+                {weakPointOptions.map((wp) => (
+                  <button
+                    key={wp}
+                    className={`chip ${answers.weakPoints.includes(wp) ? 'chip--active' : ''}`}
+                    onClick={() => setAnswers({ ...answers, weakPoints: toggle(answers.weakPoints, wp) })}
+                    type="button"
+                  >
+                    {wp}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="choice-group">
+              <span className="field-title">Blessures passees ou actuelles</span>
+              <div className="chip-row">
+                {injuryOptions.map((inj) => (
+                  <button
+                    key={inj}
+                    className={`chip ${answers.pastInjuries.includes(inj) ? 'chip--active' : ''}`}
+                    onClick={() => setAnswers({ ...answers, pastInjuries: toggle(answers.pastInjuries, inj) })}
+                    type="button"
+                  >
+                    {inj}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <label>
+              <span className="field-title">Notes sur les blessures (optionnel)</span>
+              <textarea
+                value={draft.injuryNotes}
+                onChange={(e) => setDraft({ ...draft, injuryNotes: e.target.value })}
+                placeholder="Decris tes blessures, limitations ou douleurs..."
+                style={{ width: '100%', minHeight: 60, resize: 'vertical', boxSizing: 'border-box' }}
+              />
+            </label>
+            <div className="choice-group">
+              <span className="field-title">Supplements utilises</span>
+              <div className="chip-row">
+                {supplementOptions.map((sup) => (
+                  <button
+                    key={sup}
+                    className={`chip ${answers.supplementsUsed.includes(sup) ? 'chip--active' : ''}`}
+                    onClick={() => setAnswers({ ...answers, supplementsUsed: toggle(answers.supplementsUsed, sup) })}
+                    type="button"
+                  >
+                    {sup}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <label>
+              <span className="field-title">Objectif detaille</span>
+              <textarea
+                value={answers.primaryGoalDetail}
+                onChange={(e) => setAnswers({ ...answers, primaryGoalDetail: e.target.value })}
+                placeholder="Decris ton objectif en detail (ex: prendre 5kg de muscle en 6 mois, descendre a 12% de gras...)"
+                style={{ width: '100%', minHeight: 60, resize: 'vertical', boxSizing: 'border-box' }}
+              />
+            </label>
+            <label>
+              <span className="field-title">Taux de gras cible (%)</span>
+              <input
+                value={answers.targetBodyfat}
+                onChange={(e) => setAnswers({ ...answers, targetBodyfat: e.target.value })}
+                placeholder="Ex: 12%, 15%, je ne sais pas..."
+              />
+            </label>
+            <div className="nav-buttons">
+              <button className="ghost-btn" onClick={() => setStep(2)} type="button">Retour</button>
+              <button className="primary-btn" onClick={() => setStep(4)} type="button">Suivant</button>
+            </div>
+          </section>
+        )}
+
+                {step === 4 && (
           <section className="panel stack-lg">
             <div className="choice-group">
               <span className="field-title">Objectif de pas quotidien</span>

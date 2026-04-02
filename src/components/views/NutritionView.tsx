@@ -48,8 +48,6 @@ export const NutritionView: React.FC = React.memo(
     const [customProt, setCustomProt] = useState('')
     const [customCarbs, setCustomCarbs] = useState('')
     const [customFats, setCustomFats] = useState('')
-    const [_customFiber, _setCustomFiber] = useState('')
-    const [_customPortions, _setCustomPortions] = useState<Array<{ name: string; grams: number }>>([])
     const totals = useMemo(() => {
       const filtered = state.foodEntries.filter(e => e.date === selectedDate)
       return getDailyNutrition(filtered)

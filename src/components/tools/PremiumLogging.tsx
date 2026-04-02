@@ -75,7 +75,7 @@ const SET_TYPE_LABELS: Record<SetType, string> = {
   top: 'Top set',
   backoff: 'Back-off',
   drop: 'Drop set',
-  amrap: 'AMRAP',
+  amrap: 'AMRAP', superset: 'Superset',
 }
 
 function parseTempo(raw: string): Tempo | undefined {

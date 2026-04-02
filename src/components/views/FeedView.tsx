@@ -5,7 +5,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { useAppState } from '../../context/AppContext'
-import { getExerciseById, getWorkoutVolume, estimate1Rm } from '../../lib'
+import { getExerciseById, getWorkoutVolume } from '../../lib'
 import { supabase } from '../../supabase'
 import { showToast } from '../ui/Toast'
 import type { WorkoutLog } from '../../types'
@@ -65,11 +65,22 @@ export function FeedView() {
         .map(ex => getExerciseById(ex.exerciseId)?.name || ex.exerciseId)
         .join(', ')
 
+      // Detect PRs: check if any set beats previous max for that exercise
       const prs: string[] = []
       workout.exercises.forEach(ex => {
         const name = getExerciseById(ex.exerciseId)?.name || ex.exerciseId
+        // Find previous max for this exercise
+        let prevMax = 0
+        state.workouts.forEach(w => {
+          if (w.date >= workout.date) return
+          const prevEx = w.exercises.find(e => e.exerciseId === ex.exerciseId)
+          if (prevEx) prevEx.sets.forEach(s => { if (s.weightKg > prevMax) prevMax = s.weightKg })
+        })
         ex.sets.forEach(s => {
-          if (s.isPR) prs.push(`${name}: ${s.weightKg}kg x ${s.reps}`)
+          if (s.weightKg > prevMax && prevMax > 0) {
+            prs.push(name + ': ' + s.weightKg + 'kg x ' + s.reps)
+            prevMax = s.weightKg // only count once per exercise
+          }
         })
       })
 

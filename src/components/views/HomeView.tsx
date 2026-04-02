@@ -206,6 +206,24 @@ export const HomeView: React.FC<HomeViewProps> = React.memo(
           </div>
         </section>
 
+        {/* Deload warning */}
+        {deloadAdvice && deloadAdvice.needed && (
+          <div style={{
+            background: 'linear-gradient(135deg, rgba(255,69,0,0.15), rgba(255,140,0,0.1))',
+            border: '1px solid var(--accent-red)',
+            borderRadius: 12,
+            padding: '10px 14px',
+            marginBottom: 10,
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+              <span style={{ fontSize: '1.2rem' }}>{'⚠️'}</span>
+              <strong style={{ color: 'var(--accent-red)', fontSize: '0.85rem' }}>Senzu Bean recommandé !</strong>
+            </div>
+            <p style={{ color: 'var(--text)', fontSize: '0.78rem', margin: '0 0 4px' }}>{deloadAdvice.reason}</p>
+            <p style={{ color: 'var(--muted)', fontSize: '0.72rem', margin: 0 }}>{deloadAdvice.suggestion}</p>
+          </div>
+        )}
+
         {/* 3. CTA button */}
         <button
           className={`cta-button ${!hasWorkoutToday && !state.activeWorkout ? 'cta-button--pulse' : ''}`}

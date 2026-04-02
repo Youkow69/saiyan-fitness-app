@@ -12,9 +12,9 @@ const PLATE_COLORS: Record<number, string> = {
   20: '#3182ce',
   15: '#ecc94b',
   10: '#38a169',
-  5: '#e2e8f0',
+  5: 'var(--text)',
   2.5: '#c53030',
-  1.25: '#718096',
+  1.25: 'var(--text-secondary)',
 }
 
 const PLATE_HEIGHTS: Record<number, number> = {
@@ -115,7 +115,7 @@ function BarbellVisual({ plates, barName }: { plates: number[]; barName: string 
                 y={centerY}
                 textAnchor="middle"
                 dominantBaseline="middle"
-                fill={plate === 5 ? '#1a202c' : '#fff'}
+                fill={plate === 5 ? '#1a202c' : 'var(--text)'}
                 fontSize={w > 10 ? 9 : 7}
                 fontWeight="bold"
                 transform={`rotate(-90, ${xOffset + w / 2}, ${centerY})`}
@@ -149,7 +149,7 @@ function BarbellVisual({ plates, barName }: { plates: number[]; barName: string 
                 y={centerY}
                 textAnchor="middle"
                 dominantBaseline="middle"
-                fill={plate === 5 ? '#1a202c' : '#fff'}
+                fill={plate === 5 ? '#1a202c' : 'var(--text)'}
                 fontSize={w > 10 ? 9 : 7}
                 fontWeight="bold"
                 transform={`rotate(-90, ${xOffset + w / 2}, ${centerY})`}
@@ -194,12 +194,12 @@ export function PlateCalculator() {
   return (
     <div
       style={{
-        background: '#1a1a2e',
+        background: 'var(--bg-card)',
         borderRadius: 16,
         padding: 24,
         maxWidth: 600,
         margin: '0 auto',
-        color: '#e2e8f0',
+        color: 'var(--text)',
         fontFamily: "'Segoe UI', sans-serif",
       }}
     >
@@ -228,8 +228,8 @@ export function PlateCalculator() {
               padding: '10px 8px',
               borderRadius: 10,
               border: barIndex === i ? '2px solid #ed8936' : '2px solid #2d3748',
-              background: barIndex === i ? 'rgba(237,137,54,0.15)' : '#16213e',
-              color: barIndex === i ? '#ed8936' : '#a0aec0',
+              background: barIndex === i ? 'rgba(237,137,54,0.15)' : 'var(--border)',
+              color: barIndex === i ? 'var(--accent)' : 'var(--text-secondary)',
               cursor: 'pointer',
               fontSize: 13,
               fontWeight: barIndex === i ? 700 : 400,
@@ -245,7 +245,7 @@ export function PlateCalculator() {
 
       {/* Weight input */}
       <div style={{ marginBottom: 16 }}>
-        <label style={{ fontSize: 13, color: '#a0aec0', marginBottom: 4, display: 'block' }}>
+        <label style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 4, display: 'block' }}>
           Poids cible (kg)
         </label>
         <input
@@ -260,8 +260,8 @@ export function PlateCalculator() {
             padding: '12px 16px',
             borderRadius: 10,
             border: '2px solid #2d3748',
-            background: '#16213e',
-            color: '#e2e8f0',
+            background: 'var(--border)',
+            color: 'var(--text)',
             fontSize: 18,
             fontWeight: 700,
             boxSizing: 'border-box',
@@ -280,8 +280,8 @@ export function PlateCalculator() {
               padding: '6px 12px',
               borderRadius: 8,
               border: 'none',
-              background: Number(targetWeight) === w ? '#ed8936' : '#2d3748',
-              color: Number(targetWeight) === w ? '#1a202c' : '#a0aec0',
+              background: Number(targetWeight) === w ? 'var(--accent)' : 'var(--border)',
+              color: Number(targetWeight) === w ? '#1a202c' : 'var(--text-secondary)',
               cursor: 'pointer',
               fontSize: 13,
               fontWeight: 600,
@@ -301,13 +301,13 @@ export function PlateCalculator() {
           {/* Plate breakdown */}
           <div
             style={{
-              background: '#16213e',
+              background: 'var(--border)',
               borderRadius: 12,
               padding: 16,
               marginTop: 16,
             }}
           >
-            <h3 style={{ margin: '0 0 12px', fontSize: 15, color: '#ed8936' }}>
+            <h3 style={{ margin: '0 0 12px', fontSize: 15, color: 'var(--accent)' }}>
               Disques par cote
             </h3>
             <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
@@ -344,15 +344,15 @@ export function PlateCalculator() {
                 gap: 8,
               }}
             >
-              <span style={{ fontSize: 13, color: '#a0aec0' }}>
-                Barre: <strong style={{ color: '#e2e8f0' }}>{bar.weight} kg</strong>
+              <span style={{ fontSize: 13, color: 'var(--text-secondary)' }}>
+                Barre: <strong style={{ color: 'var(--text)' }}>{bar.weight} kg</strong>
               </span>
-              <span style={{ fontSize: 13, color: '#a0aec0' }}>
-                Par cote: <strong style={{ color: '#e2e8f0' }}>{perSide} kg</strong>
+              <span style={{ fontSize: 13, color: 'var(--text-secondary)' }}>
+                Par cote: <strong style={{ color: 'var(--text)' }}>{perSide} kg</strong>
               </span>
-              <span style={{ fontSize: 13, color: '#a0aec0' }}>
+              <span style={{ fontSize: 13, color: 'var(--text-secondary)' }}>
                 Total:{' '}
-                <strong style={{ color: '#ed8936', fontSize: 16 }}>{achievable} kg</strong>
+                <strong style={{ color: 'var(--accent)', fontSize: 16 }}>{achievable} kg</strong>
               </span>
             </div>
 
@@ -380,7 +380,7 @@ export function PlateCalculator() {
           style={{
             textAlign: 'center',
             padding: 24,
-            color: '#a0aec0',
+            color: 'var(--text-secondary)',
             fontSize: 14,
           }}
         >

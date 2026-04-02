@@ -11,6 +11,7 @@ import ExerciseLibrary from '../workout/ExerciseLibrary'
 import { SectionTitle } from '../ui/Shared'
 import { ExerciseVideoLink } from '../tools/ExerciseVideos'
 import { ProgramBuilder } from '../tools/ProgramBuilder'
+import { WorkoutHistory } from '../stats/WorkoutHistory'
 import { ExerciseDetail } from '../tools/ExerciseDetail'
 
 function getLastSet(workouts: AppState['workouts'], exerciseId: string) {
@@ -55,6 +56,7 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
     const [detailExerciseId, setDetailExerciseId] = useState<string | null>(null)
     const [showLibrary, setShowLibrary] = useState(false)
     const [showTools, setShowTools] = useState(false)
+    const [showHistory, setShowHistory] = useState(false)
     const [expandedProgram, setExpandedProgram] = useState<string | null>(null)
 
     const selectedProgram = getProgramById(state.selectedProgramId)
@@ -193,6 +195,12 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
               <WorkoutTimer />
             </div>
           )}
+
+        {showHistory && (
+          <div style={{ marginBottom: 12 }}>
+            <WorkoutHistory workouts={state.workouts} />
+          </div>
+        )}
 
           {showLibrary && (
             <div style={{ marginBottom: 12 }}>

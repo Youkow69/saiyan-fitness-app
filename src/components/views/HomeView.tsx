@@ -18,6 +18,7 @@ import { DailyQuestsPanel } from '../gamification/QuestSection'
 import { RecoveryMap } from '../tools/RecoveryMap'
 import { ReadinessScore } from '../tools/ReadinessScore'
 import { WeeklyNutritionReport } from '../tools/WeeklyNutritionReport'
+import { DailySummaryWidget } from '../tools/DailySummaryWidget'
 
 interface HomeViewProps {
   onStartWorkout: () => void
@@ -228,7 +229,10 @@ export const HomeView: React.FC<HomeViewProps> = React.memo(
           </div>
         )}
 
-        {/* 3. CTA button */}
+              {/* Daily Summary Widget */}
+      <DailySummaryWidget />
+
+      {/* 3. CTA button */}
         <button
           className={`cta-button ${!hasWorkoutToday && !state.activeWorkout ? 'cta-button--pulse' : ''}`}
           onClick={onStartWorkout}

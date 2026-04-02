@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react'
 import type { AppState } from '../../types'
+import { MonthlyRecap } from '../stats/MonthlyRecap'
 import { useAppState } from '../../context/AppContext'
 import { exercises } from '../../data'
 import {
@@ -260,7 +261,9 @@ export const ScouterView: React.FC = React.memo(
 
         {/* Personal records table */}
         <PersonalRecords workouts={prWorkouts} exercises={prExercises} />
-      </div>
+      
+      <MonthlyRecap />
+    </div>
     )
   },
 )

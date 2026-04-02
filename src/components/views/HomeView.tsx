@@ -1,17 +1,18 @@
-import React, { useMemo, useCallback } from 'react'
+import React, { useMemo, useCallback, useState } from 'react'
 import { useAppState } from '../../context/AppContext'
 import {
   formatNumber,
   getCurrentTransformationFull,
   getDailyNutrition,
+  getDailyQuestStatus,
   getMesocycleStatus,
   getPowerLevel,
   getStreak,
 } from '../../lib'
 import { WeeklyReport } from '../stats/WeeklyReport'
+import { MonthlyRecap } from '../stats/MonthlyRecap'
 import { DailyQuote } from '../gamification/MotivationalQuotes'
 import { DailyQuestsPanel } from '../gamification/QuestSection'
-import { SectionTitle } from '../ui/Shared'
 import MacroBar from '../ui/MacroBar'
 import { RecoveryMap } from '../tools/RecoveryMap'
 import { ReadinessScore } from '../tools/ReadinessScore'
@@ -24,97 +25,158 @@ export const HomeView: React.FC<HomeViewProps> = React.memo(
   function HomeView({ onStartWorkout }) {
     const { state, dispatch } = useAppState()
     const targets = state.targets!
+    const [activePanel, setActivePanel] = useState<string | null>(null)
 
-    // Stable dependency arrays - only recalculate when the specific
-    // data slices change, not on every state reference change
     const nutrition = useMemo(
       () => getDailyNutrition(state.foodEntries),
-      [state.foodEntries]
+      [state.foodEntries],
     )
 
     const tf = useMemo(
       () => getCurrentTransformationFull(state),
-      [state.workouts, state.bodyweightEntries, state.targets, state.foodEntries]
+      [state.workouts, state.bodyweightEntries, state.targets, state.foodEntries],
     )
     const transformation = tf.current
 
     const mesocycle = useMemo(
       () => getMesocycleStatus(state),
-      [state.workouts, state.sessionFeedback]
+      [state.workouts, state.sessionFeedback],
     )
 
     const streak = useMemo(() => getStreak(state), [state.workouts])
 
     const powerLevel = useMemo(
       () => getPowerLevel(state),
-      [state.workouts, state.bodyweightEntries, state.targets, state.foodEntries]
+      [state.workouts, state.bodyweightEntries, state.targets, state.foodEntries],
     )
 
-    // Stable callbacks that only depend on dispatch (which is stable)
-    const handleUpdateQuest = useCallback(
+    const questsDone = useMemo(() => {
+      const statuses = getDailyQuestStatus(state)
+      return statuses.filter((q) => q.isComplete).length
+    }, [state.foodEntries, state.workouts, state.targets, state.completedDailyQuests, state.dailyQuestProgress])
+
+    const updateQuestProgress = useCallback(
       (questId: string, delta: number) => {
         dispatch({ type: 'UPDATE_QUEST_PROGRESS', payload: { questId, delta } })
       },
-      [dispatch]
+      [dispatch],
     )
 
-    const handleCompleteQuest = useCallback(
+    const completeQuest = useCallback(
       (questId: string) => {
         dispatch({ type: 'COMPLETE_QUEST', payload: questId })
       },
-      [dispatch]
+      [dispatch],
     )
+
+    const lastWorkout = state.workouts.length > 0 ? state.workouts[state.workouts.length - 1] : null
 
     return (
       <div className="page">
-        <DailyQuote />
+        {/* Floating pills */}
+        <div style={{
+          position: 'fixed', top: 54, right: 12, zIndex: 50,
+          display: 'flex', flexDirection: 'column', gap: 6,
+        }}>
+          {[
+            { id: 'quests', icon: '��', label: questsDone + '/8' },
+            { id: 'recovery', icon: '��', label: '' },
+            { id: 'stats', icon: '��', label: '' },
+          ].map((pill) => (
+            <button
+              key={pill.id}
+              onClick={() => setActivePanel(activePanel === pill.id ? null : pill.id)}
+              style={{
+                padding: '5px 10px', borderRadius: 16,
+                border: '1px solid var(--border)', background: 'var(--bg-card)',
+                color: activePanel === pill.id ? 'var(--accent)' : 'var(--text)',
+                fontSize: '0.72rem', fontWeight: 700, cursor: 'pointer',
+                boxShadow: 'var(--shadow-sm, 0 1px 3px rgba(0,0,0,0.2))',
+                display: 'flex', alignItems: 'center', gap: 4,
+              }}
+              type="button"
+            >
+              {pill.icon} {pill.label}
+            </button>
+          ))}
+        </div>
 
-        {/* Power Level hero card with aura */}
+        {/* Slide-in panel */}
+        {activePanel && (
+          <div style={{
+            position: 'fixed', top: 0, right: 0, bottom: 0, width: '85%', maxWidth: 400,
+            background: 'var(--bg)', zIndex: 100, overflowY: 'auto', padding: 16,
+            boxShadow: '-4px 0 20px rgba(0,0,0,0.3)', borderLeft: '1px solid var(--border)',
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+              <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 700, color: 'var(--text)' }}>
+                {activePanel === 'quests' ? 'Quêtes quotidiennes' : activePanel === 'recovery' ? 'Récupération' : 'Statistiques'}
+              </h3>
+              <button
+                onClick={() => setActivePanel(null)}
+                type="button"
+                style={{ background: 'none', border: 'none', color: 'var(--text)', fontSize: '1.3rem', cursor: 'pointer' }}
+              >
+                ✕
+              </button>
+            </div>
+            {activePanel === 'quests' && (
+              <DailyQuestsPanel state={state} onUpdateQuestProgress={updateQuestProgress} onCompleteQuest={completeQuest} />
+            )}
+            {activePanel === 'recovery' && (
+              <>
+                <ReadinessScore />
+                <div style={{ marginTop: 12 }}>
+                  <RecoveryMap />
+                </div>
+              </>
+            )}
+            {activePanel === 'stats' && (
+              <>
+                <WeeklyReport />
+                <div style={{ marginTop: 12 }}>
+                  <MonthlyRecap />
+                </div>
+              </>
+            )}
+          </div>
+        )}
+        {activePanel && (
+          <div
+            onClick={() => setActivePanel(null)}
+            style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.4)', zIndex: 99 }}
+          />
+        )}
+
+        {/* 1. Daily quote */}
+        <p style={{ margin: '0 0 8px', fontStyle: 'italic', fontSize: '0.75rem', color: 'var(--muted)', textAlign: 'center' }}>
+          <DailyQuote />
+        </p>
+
+        {/* 2. Power Level hero card */}
         <section
           className="power-card"
           style={{ '--aura': transformation.accent } as React.CSSProperties}
         >
           <div style={{ flex: 1 }}>
             <span className="eyebrow">Niveau de puissance</span>
-            <div
-              style={{
-                fontSize: 'clamp(2.8rem, 8vw, 4rem)',
-                fontFamily: 'Bebas Neue, sans-serif',
-                color: transformation.accent,
-                lineHeight: 1,
-              }}
-            >
+            <div style={{
+              fontSize: 'clamp(2.8rem, 8vw, 4rem)',
+              fontFamily: 'Bebas Neue, sans-serif',
+              color: transformation.accent,
+              lineHeight: 1,
+            }}>
               {formatNumber(powerLevel)}
             </div>
-            <p
-              style={{
-                margin: '6px 0 0',
-                color: 'var(--muted)',
-                fontSize: '0.85rem',
-              }}
-            >
+            <p style={{ margin: '6px 0 0', color: 'var(--muted)', fontSize: '0.85rem' }}>
               {transformation.name} — Continue ta progression
             </p>
-            <div
-              style={{ display: 'flex', gap: 8, marginTop: 10, flexWrap: 'wrap' }}
-            >
-              <span
-                className="hero-badge"
-                style={{
-                  borderColor: transformation.accent,
-                  color: transformation.accent,
-                }}
-              >
+            <div style={{ display: 'flex', gap: 8, marginTop: 10, flexWrap: 'wrap' }}>
+              <span className="hero-badge" style={{ borderColor: transformation.accent, color: transformation.accent }}>
                 {transformation.name}
               </span>
               {streak > 0 && (
-                <span
-                  className="hero-badge"
-                  style={{
-                    color: 'var(--accent-orange)',
-                    borderColor: 'var(--accent-orange)',
-                  }}
-                >
+                <span className="hero-badge" style={{ color: 'var(--accent-orange)', borderColor: 'var(--accent-orange)' }}>
                   {streak}j
                 </span>
               )}
@@ -124,9 +186,7 @@ export const HomeView: React.FC<HomeViewProps> = React.memo(
             <div
               className="aura-ring"
               style={{
-                position: 'absolute',
-                inset: -8,
-                borderRadius: '50%',
+                position: 'absolute', inset: -8, borderRadius: '50%',
                 background: `radial-gradient(circle, ${transformation.accent}33, transparent 70%)`,
                 animation: 'aura-pulse 2.5s ease-in-out infinite',
               }}
@@ -136,8 +196,7 @@ export const HomeView: React.FC<HomeViewProps> = React.memo(
               alt={transformation.name}
               className="transformation-image"
               style={{
-                width: 100,
-                height: 100,
+                width: 100, height: 100,
                 filter: `drop-shadow(0 0 20px ${transformation.accent}99)`,
                 position: 'relative',
               }}
@@ -145,130 +204,59 @@ export const HomeView: React.FC<HomeViewProps> = React.memo(
           </div>
         </section>
 
-        {/* CTA button */}
+        {/* 3. CTA button */}
         <button
           className="cta-button"
           onClick={onStartWorkout}
           type="button"
-          style={{
-            fontFamily: "'Manrope', sans-serif",
-            textTransform: 'none' as const,
-            fontWeight: 700,
-          }}
+          style={{ fontFamily: "'Manrope', sans-serif", textTransform: 'none' as const, fontWeight: 700 }}
         >
-          {state.activeWorkout
-            ? "Reprendre l'entra\u00EEnement"
-            : "Commencer l'entra\u00EEnement"}
+          {state.activeWorkout ? "Reprendre l'entraînement" : "Commencer l'entraînement"}
         </button>
 
-        {/* Daily quests */}
-        <DailyQuestsPanel
-          state={state}
-          onUpdateQuestProgress={handleUpdateQuest}
-          onCompleteQuest={handleCompleteQuest}
-        />
-
-        {/* Mesocycle compact card */}
-        <section
-          className="hevy-card"
-          style={{ borderColor: `${mesocycle.color}33` }}
-        >
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-            }}
-          >
-            <div>
-              <SectionTitle icon="" label="M\u00E9socycle" />
-              <p
-                style={{
-                  margin: '2px 0 0',
-                  fontWeight: 700,
-                  color: mesocycle.color,
-                  fontSize: '0.9rem',
-                }}
-              >
-                {mesocycle.label}
-              </p>
-              <p
-                style={{
-                  margin: '2px 0 0',
-                  fontSize: '0.75rem',
-                  color: 'var(--muted)',
-                }}
-              >
-                {mesocycle.detail}
-              </p>
+        {/* 4. Mesocycle compact line */}
+        <section className="hevy-card" style={{ padding: '8px 14px', borderColor: `${mesocycle.color}33` }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <span style={{ fontWeight: 700, fontSize: '0.82rem', color: mesocycle.color }}>
+                Mésocycle: {mesocycle.label}
+              </span>
+              <span style={{ fontSize: '0.72rem', color: 'var(--muted)' }}>{mesocycle.detail}</span>
             </div>
-            <div style={{ textAlign: 'right' }}>
-              <div
-                style={{
-                  fontSize: '2.2rem',
-                  fontFamily: 'Bebas Neue, sans-serif',
-                  color: 'var(--accent-gold)',
-                  lineHeight: 1,
-                }}
-              >
-                {streak}
-              </div>
-              <div
-                style={{
-                  fontSize: '0.62rem',
-                  color: 'var(--muted)',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.08em',
-                }}
-              >
-                jours
-              </div>
-            </div>
+            <span style={{
+              fontFamily: 'Bebas Neue, sans-serif', fontSize: '1.4rem',
+              color: 'var(--accent-gold)', lineHeight: 1,
+            }}>
+              {streak}j
+            </span>
           </div>
         </section>
 
-        {/* Readiness score */}
-        <ReadinessScore />
-
-        {/* Weekly report */}
-        <WeeklyReport />
-
-        {/* Recovery map */}
-        <RecoveryMap />
-
-        {/* Nutrition summary */}
-        <section className="hevy-card stack-md">
-          <SectionTitle icon="" label="Nutrition aujourd'hui" />
-          <MacroBar
-            label="Calories"
-            current={nutrition.calories}
-            target={targets.calories}
-            unit="kcal"
-            color="calories"
-          />
-          <MacroBar
-            label="Prot\u00E9ines"
-            current={nutrition.protein}
-            target={targets.protein}
-            unit="g"
-            color="protein"
-          />
-          <MacroBar
-            label="Glucides"
-            current={nutrition.carbs}
-            target={targets.carbs}
-            unit="g"
-            color="carbs"
-          />
-          <MacroBar
-            label="Lipides"
-            current={nutrition.fats}
-            target={targets.fats}
-            unit="g"
-            color="fat"
-          />
+        {/* 5. Compact nutrition summary — calories + protein only */}
+        <section className="hevy-card stack-md" style={{ padding: '8px 14px' }}>
+          <MacroBar label="Calories" current={nutrition.calories} target={targets.calories} unit="kcal" color="calories" />
+          <MacroBar label="Protéines" current={nutrition.protein} target={targets.protein} unit="g" color="protein" />
         </section>
+
+        {/* 6. Last workout card */}
+        {lastWorkout && (
+          <section className="hevy-card" style={{ padding: '10px 14px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div>
+                <div style={{ fontWeight: 700, fontSize: '0.82rem', color: 'var(--text)' }}>
+                  Dernier entraînement
+                </div>
+                <div style={{ fontSize: '0.72rem', color: 'var(--muted)', marginTop: 2 }}>
+                  {lastWorkout.date} — {lastWorkout.exercises.length} exercice{lastWorkout.exercises.length > 1 ? 's' : ''}
+                </div>
+              </div>
+              <span style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--accent-gold)' }}>
+                {lastWorkout.exercises.reduce((s, e) => s + e.sets.length, 0)} séries
+              </span>
+            </div>
+          </section>
+        )}
       </div>
     )
-  }
+  },
 )

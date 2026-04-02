@@ -8,6 +8,7 @@ import { useState, useCallback, useMemo, useRef, useEffect } from 'react'
 import { useAppState } from '../../context/AppContext'
 import { getExerciseById } from '../../lib'
 import type { SetType, SetLog } from '../../types'
+import { MiniPlateCalc } from '../tools/MiniPlateCalc'
 
 // ── CSS keyframes injected once ──────────────────────────────────────────────
 
@@ -247,6 +248,7 @@ export function InlineSetLogger({ exerciseId, target, onSetAdded }: Props) {
   const [showRir, setShowRir] = useState(false)
   const [removingId, setRemovingId] = useState<string | null>(null)
   const [showNotes, setShowNotes] = useState(false)
+  const [showPlates, setShowPlates] = useState(false)
   const newRowRef = useRef<HTMLDivElement>(null)
 
   // Inject CSS once

@@ -259,6 +259,18 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
           ➕ Créer ma routine
         </button>
 
+        <button onClick={() => setShowAiGenerator(true)} type="button" style={{
+          width: '100%', padding: '14px 16px', borderRadius: 12, border: 'none', marginBottom: 12,
+          background: 'linear-gradient(135deg, rgba(255,140,0,0.15), rgba(255,215,0,0.15))',
+          color: '#ffd700', fontWeight: 700, fontSize: '0.88rem',
+          cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+        }}>
+          {'✨'} Générer une séance IA (Whis)
+        </button>
+
+        {showAiGenerator && <SmartWorkoutGenerator onClose={() => setShowAiGenerator(false)} />}
+
+
         {creatingRoutine && (
           <section className="hevy-card stack-md" style={{ marginBottom: 12 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>

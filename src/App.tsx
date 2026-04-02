@@ -479,8 +479,8 @@ function AppInner({ user, pushToCloud, pullFromCloud, syncSteps, signOut }: AppI
           display: 'flex', justifyContent: 'space-between', alignItems: 'center',
           cursor: 'pointer', fontWeight: 700, fontSize: '0.85rem',
         }}>
-          <span>{'\uD83D\uDCAA'} S\u00E9ance en cours \u2014 {state.activeWorkout.sessionName || 'Entra\u00EEnement'}</span>
-          <span style={{ fontSize: '0.75rem' }}>Reprendre \u2192</span>
+          <span>💪 Séance en cours — {state.activeWorkout.sessionName || 'Entraînement'}</span>
+          <span style={{ fontSize: '0.75rem' }}>Reprendre →</span>
         </div>
       )}
 

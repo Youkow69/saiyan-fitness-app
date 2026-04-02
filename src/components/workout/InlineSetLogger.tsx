@@ -246,12 +246,14 @@ export function InlineSetLogger({ exerciseId, target, onSetAdded }: Props) {
   const { state, dispatch } = useAppState()
   const [showRir, setShowRir] = useState(false)
   const [removingId, setRemovingId] = useState<string | null>(null)
+  const [showNotes, setShowNotes] = useState(false)
   const newRowRef = useRef<HTMLDivElement>(null)
 
   // Inject CSS once
   useEffect(() => { injectStyles() }, [])
 
   const activeExercise = state.activeWorkout?.exercises.find(e => e.exerciseId === exerciseId)
+  const exerciseNotes = activeExercise?.notes || ''
   const sets: SetLog[] = activeExercise?.sets ?? []
 
   // Get previous workout's last set for this exercise
@@ -319,6 +321,18 @@ export function InlineSetLogger({ exerciseId, target, onSetAdded }: Props) {
         ...ex,
         sets: ex.sets.map(s => s.id === setId ? { ...s, [field]: value } : s),
       }
+    })
+    dispatch({
+      type: 'START_WORKOUT',
+      payload: { ...state.activeWorkout, exercises: updatedExercises },
+    })
+  }, [state.activeWorkout, exerciseId, dispatch])
+
+  const updateNotes = useCallback((notes: string) => {
+    if (!state.activeWorkout) return
+    const updatedExercises = state.activeWorkout.exercises.map(ex => {
+      if (ex.exerciseId !== exerciseId) return ex
+      return { ...ex, notes }
     })
     dispatch({
       type: 'START_WORKOUT',
@@ -625,6 +639,36 @@ export function InlineSetLogger({ exerciseId, target, onSetAdded }: Props) {
       >
         {showRir ? 'Masquer RIR \u25B2' : 'Afficher RIR \u25BC'}
       </button>
+
+      {/* Notes */}
+      <div style={{ display: 'flex', gap: 6, marginTop: 4 }}>
+        <button
+          type="button"
+          onClick={() => setShowNotes(!showNotes)}
+          style={{
+            flex: 1, padding: '4px', border: 'none', borderRadius: 6,
+            background: exerciseNotes ? 'rgba(255,140,0,0.1)' : 'transparent',
+            color: exerciseNotes ? 'var(--accent)' : 'var(--text-secondary, #888)',
+            fontSize: '0.7rem', cursor: 'pointer',
+          }}
+        >
+          {'📝'} {showNotes ? 'Masquer notes' : exerciseNotes ? 'Voir notes' : 'Ajouter une note'}
+        </button>
+      </div>
+      {showNotes && (
+        <textarea
+          value={exerciseNotes}
+          onChange={(e) => updateNotes(e.target.value)}
+          placeholder="Notes pour cet exercice..."
+          rows={2}
+          style={{
+            width: '100%', padding: '8px 10px', borderRadius: 8, marginTop: 6,
+            border: '1px solid var(--border, #333)', background: 'var(--bg, #111)',
+            color: 'var(--text, #fff)', fontSize: '0.78rem', resize: 'vertical',
+            fontFamily: 'inherit', boxSizing: 'border-box',
+          }}
+        />
+      )}
     </div>
   )
 }

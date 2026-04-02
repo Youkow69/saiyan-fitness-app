@@ -69,9 +69,9 @@ export const HomeView: React.FC<HomeViewProps> = React.memo(
           display: 'flex', flexDirection: 'column', gap: 6,
         }}>
           {[
-            { id: 'quests', icon: '��', label: questsDone + '/8' },
-            { id: 'recovery', icon: '��', label: '' },
-            { id: 'stats', icon: '��', label: '' },
+            { id: 'quests', icon: '🎯', label: questsDone + '/8' },
+            { id: 'recovery', icon: '💚', label: '' },
+            { id: 'stats', icon: '📊', label: '' },
           ].map((pill) => (
             <button
               key={pill.id}

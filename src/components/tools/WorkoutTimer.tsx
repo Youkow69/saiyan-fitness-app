@@ -185,7 +185,7 @@ export function WorkoutTimer() {
           phases.push({
             label: `Minute ${i + 1}/${emomMinutes}`,
             duration: 60,
-            color: '#ed8936',
+            color: 'var(--accent)',
             isWork: true,
           })
         }
@@ -303,7 +303,7 @@ export function WorkoutTimer() {
         : 0
 
   const ringColor =
-    mode === 'stopwatch' ? '#ed8936' : currentPhase ? currentPhase.color : '#ed8936'
+    mode === 'stopwatch' ? 'var(--accent)' : currentPhase ? currentPhase.color : 'var(--accent)'
 
   const isWorkPhase = currentPhase?.isWork ?? false
   const ringSize = 240
@@ -312,8 +312,8 @@ export function WorkoutTimer() {
     padding: '8px 14px',
     borderRadius: 10,
     border: active ? '2px solid #ed8936' : '2px solid transparent',
-    background: active ? 'rgba(237,137,54,0.15)' : '#16213e',
-    color: active ? '#ed8936' : '#a0aec0',
+    background: active ? 'rgba(237,137,54,0.15)' : 'var(--border)',
+    color: active ? 'var(--accent)' : 'var(--text-secondary)',
     cursor: 'pointer',
     fontSize: 12,
     fontWeight: active ? 700 : 400,
@@ -326,8 +326,8 @@ export function WorkoutTimer() {
     padding: '8px 10px',
     borderRadius: 8,
     border: '2px solid #2d3748',
-    background: '#16213e',
-    color: '#e2e8f0',
+    background: 'var(--border)',
+    color: 'var(--text)',
     fontSize: 14,
     fontWeight: 600,
     textAlign: 'center',
@@ -337,12 +337,12 @@ export function WorkoutTimer() {
   return (
     <div
       style={{
-        background: '#1a1a2e',
+        background: 'var(--bg-card)',
         borderRadius: 16,
         padding: 24,
         maxWidth: 500,
         margin: '0 auto',
-        color: '#e2e8f0',
+        color: 'var(--text)',
         fontFamily: "'Segoe UI', sans-serif",
       }}
     >
@@ -356,7 +356,7 @@ export function WorkoutTimer() {
           WebkitTextFillColor: 'transparent',
         }}
       >
-        Minuteur d&apos;Entrainement
+        Minuteur d'Entrainement
       </h2>
 
       {/* Mode selector */}
@@ -390,7 +390,7 @@ export function WorkoutTimer() {
       {/* Settings for specific modes */}
       {!running && elapsed === 0 && mode === 'countdown' && (
         <div style={{ display: 'flex', gap: 12, justifyContent: 'center', marginBottom: 20, alignItems: 'center' }}>
-          <label style={{ fontSize: 13, color: '#a0aec0' }}>Duree (sec):</label>
+          <label style={{ fontSize: 13, color: 'var(--text-secondary)' }}>Duree (sec):</label>
           <input
             type="number"
             min={5}
@@ -407,8 +407,8 @@ export function WorkoutTimer() {
                   padding: '4px 8px',
                   borderRadius: 6,
                   border: 'none',
-                  background: countdownSet === v ? '#ed8936' : '#2d3748',
-                  color: countdownSet === v ? '#1a202c' : '#a0aec0',
+                  background: countdownSet === v ? 'var(--accent)' : 'var(--border)',
+                  color: countdownSet === v ? '#1a202c' : 'var(--text-secondary)',
                   cursor: 'pointer',
                   fontSize: 11,
                   fontWeight: 600,
@@ -423,7 +423,7 @@ export function WorkoutTimer() {
 
       {!running && elapsed === 0 && mode === 'emom' && (
         <div style={{ display: 'flex', gap: 12, justifyContent: 'center', marginBottom: 20, alignItems: 'center' }}>
-          <label style={{ fontSize: 13, color: '#a0aec0' }}>Minutes:</label>
+          <label style={{ fontSize: 13, color: 'var(--text-secondary)' }}>Minutes:</label>
           <input
             type="number"
             min={1}
@@ -447,7 +447,7 @@ export function WorkoutTimer() {
           }}
         >
           <div style={{ textAlign: 'center' }}>
-            <label style={{ fontSize: 11, color: '#a0aec0', display: 'block', marginBottom: 4 }}>
+            <label style={{ fontSize: 11, color: 'var(--text-secondary)', display: 'block', marginBottom: 4 }}>
               Travail (s)
             </label>
             <input
@@ -459,7 +459,7 @@ export function WorkoutTimer() {
             />
           </div>
           <div style={{ textAlign: 'center' }}>
-            <label style={{ fontSize: 11, color: '#a0aec0', display: 'block', marginBottom: 4 }}>
+            <label style={{ fontSize: 11, color: 'var(--text-secondary)', display: 'block', marginBottom: 4 }}>
               Repos (s)
             </label>
             <input
@@ -471,7 +471,7 @@ export function WorkoutTimer() {
             />
           </div>
           <div style={{ textAlign: 'center' }}>
-            <label style={{ fontSize: 11, color: '#a0aec0', display: 'block', marginBottom: 4 }}>
+            <label style={{ fontSize: 11, color: 'var(--text-secondary)', display: 'block', marginBottom: 4 }}>
               Rounds
             </label>
             <input
@@ -520,12 +520,12 @@ export function WorkoutTimer() {
             {displayTime}
           </div>
           {currentPhase && mode !== 'stopwatch' && (
-            <div style={{ fontSize: 13, color: '#a0aec0', marginTop: 4 }}>
+            <div style={{ fontSize: 13, color: 'var(--text-secondary)', marginTop: 4 }}>
               {currentPhase.label}
             </div>
           )}
           {mode !== 'stopwatch' && totalDuration > 0 && (
-            <div style={{ fontSize: 11, color: '#718096', marginTop: 2 }}>
+            <div style={{ fontSize: 11, color: 'var(--text-secondary)', marginTop: 2 }}>
               Total: {formatTime(totalDuration)}
             </div>
           )}
@@ -543,7 +543,7 @@ export function WorkoutTimer() {
             background: running
               ? 'linear-gradient(135deg, #e53e3e, #c53030)'
               : 'linear-gradient(135deg, #38a169, #2f855a)',
-            color: '#fff',
+            color: 'var(--text)',
             fontSize: 16,
             fontWeight: 700,
             cursor: 'pointer',
@@ -561,7 +561,7 @@ export function WorkoutTimer() {
             borderRadius: 12,
             border: '2px solid #4a5568',
             background: 'transparent',
-            color: '#a0aec0',
+            color: 'var(--text-secondary)',
             fontSize: 16,
             fontWeight: 600,
             cursor: 'pointer',
@@ -581,7 +581,7 @@ export function WorkoutTimer() {
               height: 8,
               borderRadius: 4,
               overflow: 'hidden',
-              background: '#2d3748',
+              background: 'var(--border)',
             }}
           >
             {phases.map((phase, i) => (
@@ -607,7 +607,7 @@ export function WorkoutTimer() {
               justifyContent: 'space-between',
               marginTop: 6,
               fontSize: 11,
-              color: '#718096',
+              color: 'var(--text-secondary)',
             }}
           >
             <span>

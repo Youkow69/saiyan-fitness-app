@@ -9,6 +9,7 @@ import { useAppState } from '../../context/AppContext'
 import { getExerciseById } from '../../lib'
 import type { SetType, SetLog } from '../../types'
 import { MiniPlateCalc } from '../tools/MiniPlateCalc'
+import { ExerciseDemo } from '../tools/ExerciseDemo'
 
 // ── CSS keyframes injected once ──────────────────────────────────────────────
 
@@ -249,6 +250,7 @@ export function InlineSetLogger({ exerciseId, target, onSetAdded }: Props) {
   const [removingId, setRemovingId] = useState<string | null>(null)
   const [showNotes, setShowNotes] = useState(false)
   const [showPlates, setShowPlates] = useState(false)
+  const [showDemo, setShowDemo] = useState(false)
   const newRowRef = useRef<HTMLDivElement>(null)
 
   // Inject CSS once
@@ -669,9 +671,24 @@ export function InlineSetLogger({ exerciseId, target, onSetAdded }: Props) {
         >
           {'🏋️'} Plaques
         </button>
+        <button
+          type="button"
+          onClick={() => setShowDemo(!showDemo)}
+          style={{
+            flex: 1, padding: '4px', border: 'none', borderRadius: 6,
+            background: showDemo ? 'rgba(59,130,246,0.1)' : 'transparent',
+            color: showDemo ? '#3b82f6' : 'var(--text-secondary, #888)',
+            fontSize: '0.7rem', cursor: 'pointer',
+          }}
+        >
+          {'🎬'} Démo
+        </button>
       </div>
       {showPlates && (
         <MiniPlateCalc weight={parseFloat(draft.weight) || 0} />
+      )}
+      {showDemo && (
+        <ExerciseDemo exerciseId={exerciseId} />
       )}
       {showNotes && (
         <textarea

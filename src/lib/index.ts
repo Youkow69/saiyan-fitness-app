@@ -6,5 +6,3 @@ export * from './gamification'
 export * from './recommendations'
 export * from './utils'
 
-// Re-export PRChart pour acces facile
-export { PRChart } from '../components/stats/PRChart'

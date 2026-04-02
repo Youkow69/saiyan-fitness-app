@@ -3,6 +3,7 @@ import type {
   AppState,
   BodyweightEntry,
   CustomRoutine,
+  Food,
   FoodEntry,
   MeasurementEntry,
   OnboardingAnswers,
@@ -40,6 +41,8 @@ type Action =
   | { type: 'DELETE_CUSTOM_ROUTINE'; payload: string }
   | { type: 'UPDATE_PROFILE'; payload: Partial<UserProfile> }
   | { type: 'ABANDON_WORKOUT' }
+  | { type: 'ADD_CUSTOM_FOOD'; payload: Food }
+  | { type: 'DELETE_CUSTOM_FOOD'; payload: string }
   | { type: 'RESET_ACCOUNT' }
 
 // ── Default state ─────────────────────────────────────────────────────────────
@@ -64,6 +67,7 @@ const defaultState: AppState = {
   adaptiveTDEE: [],
   weeklyMuscleVolume: {},
   customRoutines: [],
+  customFoods: [],
 }
 
 // ── Reducer ───────────────────────────────────────────────────────────────────
@@ -154,6 +158,16 @@ function appReducer(state: AppState, action: Action): AppState {
                 (state.programCursor[workout.programId] ?? 0) + 1,
             },
       }
+    }
+
+    case 'ADD_CUSTOM_FOOD': {
+      const exists = (state.customFoods || []).some(f => f.id === action.payload.id)
+      if (exists) return state
+      return { ...state, customFoods: [...(state.customFoods || []), action.payload] }
+    }
+
+    case 'DELETE_CUSTOM_FOOD': {
+      return { ...state, customFoods: (state.customFoods || []).filter(f => f.id !== action.payload) }
     }
 
     case 'RESET_ACCOUNT': {

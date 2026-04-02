@@ -83,7 +83,7 @@ export const NutritionView: React.FC = React.memo(
       <div className="page">
         {/* Macro bars - always visible */}
         <section className="hevy-card stack-md" style={{ padding: '10px 14px' }}>
-          <SectionTitle icon="" label="Nutrition aujourd'hui" />
+          <SectionTitle icon="📊" label="Nutrition aujourd'hui" />
           <MacroBar label="Calories" current={totals.calories} target={targets.calories} unit="kcal" color="calories" />
           <MacroBar label="Protéines" current={totals.protein} target={targets.protein} unit="g" color="protein" />
           <MacroBar label="Glucides" current={totals.carbs} target={targets.carbs} unit="g" color="carbs" />
@@ -92,7 +92,7 @@ export const NutritionView: React.FC = React.memo(
 
         {/* Add food form - always visible */}
         <section className="hevy-card stack-md">
-          <SectionTitle icon="" label="Ajouter un aliment" />
+          <SectionTitle icon="➕" label="Ajouter un aliment" />
           <div className="field-grid compact-grid">
             <label>
               <span>Aliment</span>

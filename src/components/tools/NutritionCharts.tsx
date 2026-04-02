@@ -1,6 +1,5 @@
 import React, { useMemo, useState } from 'react'
 import type { FoodEntry } from '../../types'
-import { SectionTitle } from '../ui/Shared'
 
 interface Props {
   entries: FoodEntry[]

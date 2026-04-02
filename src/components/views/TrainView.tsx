@@ -50,6 +50,7 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
     const [routineExercises, setRoutineExercises] = useState<Array<{ exerciseId: string; sets: number; repMin: number; repMax: number; restSeconds: number }>>([])
     const [exerciseSearch, setExerciseSearch] = useState('')
     const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null)
+    const [editingRoutineId, setEditingRoutineId] = useState<string | null>(null)
     const [showBuilder, setShowBuilder] = useState(false)
     const [detailExerciseId, setDetailExerciseId] = useState<string | null>(null)
     const [showLibrary, setShowLibrary] = useState(false)
@@ -240,8 +241,8 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
         {creatingRoutine && (
           <section className="hevy-card stack-md" style={{ marginBottom: 12 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <SectionTitle icon="✏️" label="Nouvelle routine" />
-              <button className="ghost-btn" style={{ minHeight: 34, padding: '4px 12px' }} onClick={() => { setCreatingRoutine(false); setRoutineName(''); setRoutineExercises([]); setExerciseSearch('') }} type="button">✕</button>
+              <SectionTitle icon="✏️" label={editingRoutineId ? "Modifier la routine" : "Nouvelle routine"} />
+              <button className="ghost-btn" style={{ minHeight: 34, padding: '4px 12px' }} onClick={() => { setCreatingRoutine(false); setEditingRoutineId(null); setRoutineName(''); setRoutineExercises([]); setExerciseSearch('') }} type="button">✕</button>
             </div>
             <label><span>Nom de la routine</span><input value={routineName} onChange={(e) => setRoutineName(e.target.value)} placeholder="Ex: Full Body A" /></label>
             <div>
@@ -280,12 +281,15 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
             )}
             <button className="primary-btn" type="button" disabled={!routineName.trim() || routineExercises.length === 0}
               onClick={() => {
-                const routine: CustomRoutine = { id: makeId('cr'), name: routineName.trim(), exercises: routineExercises }
+                const routine: CustomRoutine = { id: editingRoutineId || makeId('cr'), name: routineName.trim(), exercises: routineExercises }
+                if (editingRoutineId) {
+                  dispatch({ type: 'DELETE_CUSTOM_ROUTINE', payload: editingRoutineId })
+                }
                 dispatch({ type: 'ADD_CUSTOM_ROUTINE', payload: routine })
                 showToast(`Routine "${routine.name}" creee`, 'success')
-                setCreatingRoutine(false); setRoutineName(''); setRoutineExercises([]); setExerciseSearch('')
+                setCreatingRoutine(false); setEditingRoutineId(null); setRoutineName(''); setRoutineExercises([]); setExerciseSearch('')
               }}>
-              Sauvegarder la routine
+              {editingRoutineId ? "Mettre à jour" : "Sauvegarder la routine"}
             </button>
           </section>
         )}
@@ -318,6 +322,15 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
                     padding: '6px 14px', borderRadius: 8, border: 'none',
                     background: 'var(--accent)', color: '#000', fontWeight: 700, fontSize: '0.78rem', cursor: 'pointer',
                   }}>Commencer</button>
+                  <button onClick={() => {
+                    setEditingRoutineId(routine.id)
+                    setRoutineName(routine.name)
+                    setRoutineExercises(routine.exercises.map(e => ({ ...e })))
+                    setCreatingRoutine(true)
+                  }} type="button" style={{
+                    padding: '6px 10px', borderRadius: 8, border: '1px solid var(--border)',
+                    background: 'transparent', color: 'var(--accent)', fontSize: '0.85rem', cursor: 'pointer',
+                  }}>✏️</button>
                   <button onClick={() => setConfirmDeleteId(routine.id)} type="button" style={{
                     padding: '6px 10px', borderRadius: 8, border: '1px solid var(--border)',
                     background: 'transparent', color: 'var(--text-secondary)', fontSize: '0.85rem', cursor: 'pointer',

@@ -532,6 +532,44 @@ export function InlineSetLogger({ exerciseId, target, onSetAdded }: Props) {
         </div>
       ))}
 
+      {/* ── Dernier entrainement ── */}
+      {previousSet && (
+        <div style={{
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          padding: '6px 8px', marginTop: 4, marginBottom: 2,
+          background: 'rgba(255,255,255,0.03)', borderRadius: 8,
+        }}>
+          <span style={{ fontSize: '0.72rem', color: 'var(--text-secondary, #999)' }}>
+            Dernier : {previousSet.weightKg}kg {String.fromCharCode(215)} {previousSet.reps} @ RIR {previousSet.rir}
+          </span>
+          <button
+            type="button"
+            onClick={() => setDraft(prev => ({
+              ...prev,
+              weight: String(previousSet.weightKg),
+              reps: String(previousSet.reps),
+              rir: String(previousSet.rir),
+            }))}
+            style={{
+              padding: '4px 10px', borderRadius: 6, border: '1px solid var(--border, #333)',
+              background: 'rgba(255,140,0,0.08)', color: 'var(--accent, #ff8c00)',
+              fontSize: '0.68rem', fontWeight: 600, cursor: 'pointer',
+            }}
+          >
+            Copier la derni\u00e8re s\u00e9rie
+          </button>
+        </div>
+      )}
+      {previousSet && previousSet.rir === 0 && (
+        <div style={{
+          padding: '4px 8px', marginBottom: 2, borderRadius: 6,
+          background: 'rgba(239,68,68,0.08)', fontSize: '0.7rem',
+          color: '#ef4444', fontWeight: 600,
+        }}>
+          \u26A0\uFE0F Tu \u00e9tais \u00e0 fond la derni\u00e8re fois
+        </div>
+      )}
+
       {/* ── Add new set row ────────────────────────────────────────────── */}
       <div
         ref={newRowRef}

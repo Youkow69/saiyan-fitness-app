@@ -53,7 +53,7 @@ export function WorkoutHistory({ workouts }: WorkoutHistoryProps) {
                 </div>
               </div>
               <span style={{ color: 'var(--muted)', fontSize: '0.75rem' }}>
-                {isExpanded ? ▲ : ▼}
+                {isExpanded ? '▲' : '▼'}
               </span>
             </button>
 
@@ -73,7 +73,7 @@ export function WorkoutHistory({ workouts }: WorkoutHistoryProps) {
                           }}>
                             <span style={{ color: 'var(--text-secondary)', minWidth: 30 }}>#{j + 1}</span>
                             <span>{set.weightKg} kg</span>
-                            <span>× {set.reps}</span>
+                            <span>x {set.reps}</span>
                             {set.rir !== undefined && <span style={{ color: 'var(--accent-orange)' }}>RIR {set.rir}</span>}
                           </div>
                         ))}

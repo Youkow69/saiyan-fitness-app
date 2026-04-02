@@ -1,7 +1,7 @@
 import { useState, useCallback, useRef } from 'react'
 import { todayIso, makeId } from '../../lib'
 
-interface ProgrèssPhoto {
+interface ProgressPhoto {
   id: string
   date: string
   dataUrl: string // compressed base64
@@ -74,7 +74,7 @@ export function ProgressPhotos() {
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
         <h3 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: '1.1rem', letterSpacing: '0.05em', textTransform: 'uppercase', color: 'var(--accent)' }}>
-          Photos de progrèssion
+          Photos de progression
         </h3>
         <div style={{ display: 'flex', gap: 6 }}>
           {photos.length >= 2 && (
@@ -125,7 +125,7 @@ export function ProgressPhotos() {
         </div>
       ) : photos.length === 0 ? (
         <div style={{ textAlign: 'center', padding: 24, color: 'var(--text-secondary)', fontSize: '0.85rem' }}>
-          Prends ta première photo pour suivre ta transformation !
+          Prends ta premiere photo pour suivre ta transformation !
         </div>
       ) : (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 6 }}>
@@ -148,7 +148,7 @@ export function ProgressPhotos() {
             marginTop: 12, padding: '8px 20px', borderRadius: 10, border: '1px solid #ef4444',
             background: 'rgba(239,68,68,0.15)', color: '#ef4444', fontWeight: 700, cursor: 'pointer',
           }}>
-            Supprimér
+            Supprimer
           </button>
         </div>
       )}

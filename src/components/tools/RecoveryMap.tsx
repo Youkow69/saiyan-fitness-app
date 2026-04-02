@@ -21,12 +21,6 @@ const MUSCLE_FR: Record<string, string> = {
   Core: 'Abdominaux',
 }
 
-const STATUS_COLORS: Record<RecoveryStatus, string> = {
-  rested: 'var(--recovery-rested, #22c55e)',
-  recovering: 'var(--recovery-recovering, #f59e0b)',
-  fatigued: 'var(--recovery-fatigued, #ef4444)',
-  unknown: 'var(--recovery-unknown, #888888)',
-}
 
 const STATUS_RAW_COLORS: Record<RecoveryStatus, string> = {
   rested: '#22c55e',

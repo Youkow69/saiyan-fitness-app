@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { useAppState } from '../../context/AppContext'
 import { getExerciseById } from '../../lib'
 
@@ -6,366 +6,185 @@ import { getExerciseById } from '../../lib'
 // Types
 // ---------------------------------------------------------------------------
 
-type RecoveryStatus = 'rested' | 'recovering' | 'fatigued'
+type RecoveryStatus = 'rested' | 'recovering' | 'fatigued' | 'unknown'
 
-type MuscleGroup =
-  | 'chest'
-  | 'shoulders'
-  | 'biceps'
-  | 'triceps'
-  | 'core'
-  | 'quads'
-  | 'hamstrings'
-  | 'glutes'
-  | 'calves'
-  | 'upper_back'
-  | 'lower_back'
-
-interface MuscleRecovery {
-  muscle: MuscleGroup
-  label: string
-  status: RecoveryStatus
-  hoursSince: number | null
+const MUSCLE_FR: Record<string, string> = {
+  Chest: 'Pectoraux',
+  Back: 'Dos',
+  Shoulders: '\u00c9paules',
+  Biceps: 'Biceps',
+  Triceps: 'Triceps',
+  Quads: 'Quadriceps',
+  Hamstrings: 'Ischio-jambiers',
+  Glutes: 'Fessiers',
+  Calves: 'Mollets',
+  Core: 'Abdominaux',
 }
 
-// ---------------------------------------------------------------------------
-// Constants
-// ---------------------------------------------------------------------------
+const STATUS_COLORS: Record<RecoveryStatus, string> = {
+  rested: 'var(--recovery-rested, #22c55e)',
+  recovering: 'var(--recovery-recovering, #f59e0b)',
+  fatigued: 'var(--recovery-fatigued, #ef4444)',
+  unknown: 'var(--recovery-unknown, #888888)',
+}
 
-const COLORS: Record<RecoveryStatus, string> = {
+const STATUS_RAW_COLORS: Record<RecoveryStatus, string> = {
   rested: '#22c55e',
   recovering: '#f59e0b',
   fatigued: '#ef4444',
+  unknown: '#888888',
 }
 
-const LABELS: Record<RecoveryStatus, string> = {
-  rested: 'Repose',
-  recovering: 'En recuperation',
-  fatigued: 'Fatigue',
+const STATUS_LABELS: Record<RecoveryStatus, string> = {
+  rested: 'Repos\u00e9 (48h+)',
+  recovering: 'En r\u00e9cup\u00e9ration (24-48h)',
+  fatigued: 'Fatigu\u00e9 (<24h)',
+  unknown: 'Jamais entra\u00een\u00e9',
 }
 
-const MUSCLE_LABELS: Record<MuscleGroup, string> = {
-  chest: 'Pectoraux',
-  shoulders: 'Epaules',
-  biceps: 'Biceps',
-  triceps: 'Triceps',
-  core: 'Abdos',
-  quads: 'Quadriceps',
-  hamstrings: 'Ischio-jambiers',
-  glutes: 'Fessiers',
-  calves: 'Mollets',
-  upper_back: 'Haut du dos',
-  lower_back: 'Bas du dos',
-}
+// ---------------------------------------------------------------------------
+// Muscle dot positions on Goku image (% from top-left)
+// ---------------------------------------------------------------------------
 
-const ALL_MUSCLES: MuscleGroup[] = [
-  'chest',
-  'shoulders',
-  'biceps',
-  'triceps',
-  'core',
-  'quads',
-  'hamstrings',
-  'glutes',
-  'calves',
-  'upper_back',
-  'lower_back',
+const MUSCLE_DOTS: { muscle: string; positions: { left: number; top: number }[] }[] = [
+  { muscle: 'Chest', positions: [{ left: 38, top: 32 }, { left: 55, top: 32 }] },
+  { muscle: 'Shoulders', positions: [{ left: 25, top: 27 }, { left: 68, top: 27 }] },
+  { muscle: 'Biceps', positions: [{ left: 20, top: 38 }, { left: 73, top: 38 }] },
+  { muscle: 'Triceps', positions: [{ left: 22, top: 42 }, { left: 71, top: 42 }] },
+  { muscle: 'Core', positions: [{ left: 47, top: 42 }] },
+  { muscle: 'Back', positions: [{ left: 47, top: 35 }] },
+  { muscle: 'Quads', positions: [{ left: 37, top: 62 }, { left: 56, top: 62 }] },
+  { muscle: 'Hamstrings', positions: [{ left: 38, top: 68 }, { left: 55, top: 68 }] },
+  { muscle: 'Glutes', positions: [{ left: 47, top: 55 }] },
+  { muscle: 'Calves', positions: [{ left: 37, top: 78 }, { left: 56, top: 78 }] },
 ]
 
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
 
-function getRecoveryStatus(hoursSinceLastTrained: number | null): RecoveryStatus {
-  if (hoursSinceLastTrained === null) return 'rested'
-  if (hoursSinceLastTrained >= 48) return 'rested'
-  if (hoursSinceLastTrained >= 24) return 'recovering'
+function getRecoveryStatus(hoursSince: number): RecoveryStatus {
+  if (hoursSince < 0) return 'unknown'
+  if (hoursSince >= 48) return 'rested'
+  if (hoursSince >= 24) return 'recovering'
   return 'fatigued'
 }
 
-function computeRecovery(
-  workouts: { date: string; exercises: { exerciseId: string }[] }[],
-): MuscleRecovery[] {
-  const now = Date.now()
-  const lastHit: Record<MuscleGroup, number | null> = {} as any
-  ALL_MUSCLES.forEach((m) => (lastHit[m] = null))
-
-  // Walk workouts newest-first to find the most recent hit per muscle
-  for (let i = workouts.length - 1; i >= 0; i--) {
-    const wDate = new Date(workouts[i].date).getTime()
-    for (const ex of workouts[i].exercises) {
-      const info = getExerciseById(ex.exerciseId)
-      if (!info?.primaryMuscles) continue
-      for (const muscle of info.primaryMuscles as unknown as MuscleGroup[]) {
-        if (ALL_MUSCLES.includes(muscle)) {
-          const existing = lastHit[muscle]
-          if (existing === null || wDate > existing) {
-            lastHit[muscle] = wDate
-          }
-        }
-      }
-    }
-  }
-
-  return ALL_MUSCLES.map((muscle) => {
-    const ts = lastHit[muscle]
-    const hoursSince = ts !== null ? (now - ts) / (1000 * 60 * 60) : null
-    return {
-      muscle,
-      label: MUSCLE_LABELS[muscle],
-      status: getRecoveryStatus(hoursSince),
-      hoursSince: hoursSince !== null ? Math.round(hoursSince) : null,
-    }
-  })
-}
-
 // ---------------------------------------------------------------------------
-// SVG body parts (front view)
+// Muscle Dot component
 // ---------------------------------------------------------------------------
 
-function FrontBody({ recoveryMap }: { recoveryMap: Map<MuscleGroup, MuscleRecovery> }) {
-  const c = (m: MuscleGroup) => COLORS[recoveryMap.get(m)?.status ?? 'rested']
-  const title = (m: MuscleGroup) => {
-    const r = recoveryMap.get(m)
-    if (!r) return ''
-    return `${r.label}: ${LABELS[r.status]}${r.hoursSince !== null ? ` (${r.hoursSince}h)` : ''}`
-  }
+function MuscleDot({
+  muscle,
+  pos,
+  idx,
+  recovery,
+  isHovered,
+  onToggle,
+}: {
+  muscle: string
+  pos: { left: number; top: number }
+  idx: number
+  recovery: { status: RecoveryStatus; hoursSince: number }
+  isHovered: boolean
+  onToggle: () => void
+}) {
+  const status = recovery?.status ?? 'unknown'
+  const color = STATUS_COLORS[status]
+  const rawColor = STATUS_RAW_COLORS[status]
+  const size = isHovered ? 22 : 16
+  const glowSize = isHovered ? 14 : 8
 
-  return (
-    <svg viewBox="0 0 200 400" width="180" height="360" aria-label="Vue de face">
-      {/* Head */}
-      <circle cx="100" cy="35" r="20" fill="none" stroke="var(--text-secondary)" strokeWidth="1.5" opacity="0.4" />
-
-      {/* Neck */}
-      <rect x="94" y="55" width="12" height="12" rx="3" fill="none" stroke="var(--text-secondary)" strokeWidth="1" opacity="0.3" />
-
-      {/* Shoulders */}
-      <circle cx="60" cy="82" r="14" fill={c('shoulders')} opacity="0.7" stroke={c('shoulders')} strokeWidth="1.5">
-        <title>{title('shoulders')}</title>
-      </circle>
-      <circle cx="140" cy="82" r="14" fill={c('shoulders')} opacity="0.7" stroke={c('shoulders')} strokeWidth="1.5">
-        <title>{title('shoulders')}</title>
-      </circle>
-
-      {/* Chest */}
-      <rect x="72" y="72" width="56" height="40" rx="8" fill={c('chest')} opacity="0.7" stroke={c('chest')} strokeWidth="1.5">
-        <title>{title('chest')}</title>
-      </rect>
-
-      {/* Biceps */}
-      <rect x="38" y="96" width="16" height="40" rx="6" fill={c('biceps')} opacity="0.7" stroke={c('biceps')} strokeWidth="1.5">
-        <title>{title('biceps')}</title>
-      </rect>
-      <rect x="146" y="96" width="16" height="40" rx="6" fill={c('biceps')} opacity="0.7" stroke={c('biceps')} strokeWidth="1.5">
-        <title>{title('biceps')}</title>
-      </rect>
-
-      {/* Forearms (decorative, no muscle tracking) */}
-      <rect x="38" y="140" width="14" height="36" rx="5" fill="none" stroke="var(--text-secondary)" strokeWidth="1" opacity="0.25" />
-      <rect x="148" y="140" width="14" height="36" rx="5" fill="none" stroke="var(--text-secondary)" strokeWidth="1" opacity="0.25" />
-
-      {/* Core */}
-      <rect x="78" y="116" width="44" height="50" rx="6" fill={c('core')} opacity="0.7" stroke={c('core')} strokeWidth="1.5">
-        <title>{title('core')}</title>
-      </rect>
-
-      {/* Quads */}
-      <rect x="72" y="175" width="24" height="60" rx="8" fill={c('quads')} opacity="0.7" stroke={c('quads')} strokeWidth="1.5">
-        <title>{title('quads')}</title>
-      </rect>
-      <rect x="104" y="175" width="24" height="60" rx="8" fill={c('quads')} opacity="0.7" stroke={c('quads')} strokeWidth="1.5">
-        <title>{title('quads')}</title>
-      </rect>
-
-      {/* Lower legs (decorative) */}
-      <rect x="74" y="242" width="20" height="55" rx="6" fill="none" stroke="var(--text-secondary)" strokeWidth="1" opacity="0.25" />
-      <rect x="106" y="242" width="20" height="55" rx="6" fill="none" stroke="var(--text-secondary)" strokeWidth="1" opacity="0.25" />
-
-      {/* Labels */}
-      <text x="100" y="96" textAnchor="middle" fontSize="8" fill="var(--text)" fontWeight="700" opacity="0.8">PECS</text>
-      <text x="100" y="144" textAnchor="middle" fontSize="7" fill="var(--text)" fontWeight="700" opacity="0.8">ABDOS</text>
-      <text x="84" y="210" textAnchor="middle" fontSize="7" fill="var(--text)" fontWeight="700" opacity="0.8">QUAD</text>
-      <text x="116" y="210" textAnchor="middle" fontSize="7" fill="var(--text)" fontWeight="700" opacity="0.8">QUAD</text>
-
-      {/* View label */}
-      <text x="100" y="320" textAnchor="middle" fontSize="10" fill="var(--text-secondary)" fontWeight="600">FACE</text>
-    </svg>
-  )
-}
-
-// ---------------------------------------------------------------------------
-// SVG body parts (back view)
-// ---------------------------------------------------------------------------
-
-function BackBody({ recoveryMap }: { recoveryMap: Map<MuscleGroup, MuscleRecovery> }) {
-  const c = (m: MuscleGroup) => COLORS[recoveryMap.get(m)?.status ?? 'rested']
-  const title = (m: MuscleGroup) => {
-    const r = recoveryMap.get(m)
-    if (!r) return ''
-    return `${r.label}: ${LABELS[r.status]}${r.hoursSince !== null ? ` (${r.hoursSince}h)` : ''}`
-  }
-
-  return (
-    <svg viewBox="0 0 200 400" width="180" height="360" aria-label="Vue de dos">
-      {/* Head */}
-      <circle cx="100" cy="35" r="20" fill="none" stroke="var(--text-secondary)" strokeWidth="1.5" opacity="0.4" />
-
-      {/* Neck */}
-      <rect x="94" y="55" width="12" height="12" rx="3" fill="none" stroke="var(--text-secondary)" strokeWidth="1" opacity="0.3" />
-
-      {/* Upper back */}
-      <rect x="68" y="70" width="64" height="36" rx="8" fill={c('upper_back')} opacity="0.7" stroke={c('upper_back')} strokeWidth="1.5">
-        <title>{title('upper_back')}</title>
-      </rect>
-
-      {/* Lower back */}
-      <rect x="76" y="112" width="48" height="34" rx="6" fill={c('lower_back')} opacity="0.7" stroke={c('lower_back')} strokeWidth="1.5">
-        <title>{title('lower_back')}</title>
-      </rect>
-
-      {/* Triceps */}
-      <rect x="40" y="80" width="16" height="40" rx="6" fill={c('triceps')} opacity="0.7" stroke={c('triceps')} strokeWidth="1.5">
-        <title>{title('triceps')}</title>
-      </rect>
-      <rect x="144" y="80" width="16" height="40" rx="6" fill={c('triceps')} opacity="0.7" stroke={c('triceps')} strokeWidth="1.5">
-        <title>{title('triceps')}</title>
-      </rect>
-
-      {/* Forearms (decorative) */}
-      <rect x="40" y="124" width="14" height="36" rx="5" fill="none" stroke="var(--text-secondary)" strokeWidth="1" opacity="0.25" />
-      <rect x="146" y="124" width="14" height="36" rx="5" fill="none" stroke="var(--text-secondary)" strokeWidth="1" opacity="0.25" />
-
-      {/* Glutes */}
-      <rect x="72" y="152" width="24" height="24" rx="8" fill={c('glutes')} opacity="0.7" stroke={c('glutes')} strokeWidth="1.5">
-        <title>{title('glutes')}</title>
-      </rect>
-      <rect x="104" y="152" width="24" height="24" rx="8" fill={c('glutes')} opacity="0.7" stroke={c('glutes')} strokeWidth="1.5">
-        <title>{title('glutes')}</title>
-      </rect>
-
-      {/* Hamstrings */}
-      <rect x="72" y="182" width="24" height="55" rx="8" fill={c('hamstrings')} opacity="0.7" stroke={c('hamstrings')} strokeWidth="1.5">
-        <title>{title('hamstrings')}</title>
-      </rect>
-      <rect x="104" y="182" width="24" height="55" rx="8" fill={c('hamstrings')} opacity="0.7" stroke={c('hamstrings')} strokeWidth="1.5">
-        <title>{title('hamstrings')}</title>
-      </rect>
-
-      {/* Calves */}
-      <rect x="74" y="244" width="20" height="50" rx="7" fill={c('calves')} opacity="0.7" stroke={c('calves')} strokeWidth="1.5">
-        <title>{title('calves')}</title>
-      </rect>
-      <rect x="106" y="244" width="20" height="50" rx="7" fill={c('calves')} opacity="0.7" stroke={c('calves')} strokeWidth="1.5">
-        <title>{title('calves')}</title>
-      </rect>
-
-      {/* Labels */}
-      <text x="100" y="92" textAnchor="middle" fontSize="7" fill="var(--text)" fontWeight="700" opacity="0.8">HAUT DOS</text>
-      <text x="100" y="133" textAnchor="middle" fontSize="7" fill="var(--text)" fontWeight="700" opacity="0.8">BAS DOS</text>
-      <text x="84" y="168" textAnchor="middle" fontSize="6" fill="var(--text)" fontWeight="700" opacity="0.8">GLUTE</text>
-      <text x="116" y="168" textAnchor="middle" fontSize="6" fill="var(--text)" fontWeight="700" opacity="0.8">GLUTE</text>
-      <text x="84" y="214" textAnchor="middle" fontSize="6" fill="var(--text)" fontWeight="700" opacity="0.8">ISCH</text>
-      <text x="116" y="214" textAnchor="middle" fontSize="6" fill="var(--text)" fontWeight="700" opacity="0.8">ISCH</text>
-      <text x="84" y="274" textAnchor="middle" fontSize="6" fill="var(--text)" fontWeight="700" opacity="0.8">MOLL</text>
-      <text x="116" y="274" textAnchor="middle" fontSize="6" fill="var(--text)" fontWeight="700" opacity="0.8">MOLL</text>
-
-      {/* View label */}
-      <text x="100" y="320" textAnchor="middle" fontSize="10" fill="var(--text-secondary)" fontWeight="600">DOS</text>
-    </svg>
-  )
-}
-
-// ---------------------------------------------------------------------------
-// Legend
-// ---------------------------------------------------------------------------
-
-function Legend() {
-  const statuses: RecoveryStatus[] = ['rested', 'recovering', 'fatigued']
   return (
     <div
-      style={{
-        display: 'flex',
-        justifyContent: 'center',
-        gap: 16,
-        marginTop: 8,
-        flexWrap: 'wrap',
+      key={`${muscle}-${idx}`}
+      role="button"
+      tabIndex={0}
+      aria-label={`${MUSCLE_FR[muscle]}: ${STATUS_LABELS[status]}`}
+      onClick={onToggle}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          onToggle()
+        }
       }}
+      style={{
+        position: 'absolute',
+        left: `${pos.left}%`,
+        top: `${pos.top}%`,
+        width: size,
+        height: size,
+        borderRadius: '50%',
+        background: `radial-gradient(circle, ${rawColor}ee 0%, ${rawColor}88 60%, ${rawColor}00 100%)`,
+        transform: 'translate(-50%, -50%)',
+        boxShadow: `0 0 ${glowSize}px ${rawColor}, 0 0 ${glowSize * 2}px ${rawColor}66`,
+        cursor: 'pointer',
+        transition: 'all 0.25s ease',
+        zIndex: isHovered ? 10 : 1,
+        border: `2px solid ${rawColor}`,
+        outline: 'none',
+      }}
+      title={`${MUSCLE_FR[muscle]}: ${STATUS_LABELS[status]}`}
     >
-      {statuses.map((s) => (
-        <div
-          key={s}
-          style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.7rem' }}
-        >
-          <div
-            style={{
-              width: 12,
-              height: 12,
-              borderRadius: '50%',
-              background: COLORS[s],
-              opacity: 0.8,
-            }}
-          />
-          <span style={{ color: 'var(--text-secondary)' }}>{LABELS[s]}</span>
-        </div>
-      ))}
+      {/* Inner bright core */}
+      <div
+        style={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          width: '40%',
+          height: '40%',
+          borderRadius: '50%',
+          background: `radial-gradient(circle, rgba(255,255,255,0.8) 0%, ${rawColor} 100%)`,
+          transform: 'translate(-50%, -50%)',
+          pointerEvents: 'none',
+        }}
+      />
     </div>
   )
 }
 
 // ---------------------------------------------------------------------------
-// Muscle list (detail view below the SVG)
+// Tooltip component
 // ---------------------------------------------------------------------------
 
-function MuscleList({ recoveries }: { recoveries: MuscleRecovery[] }) {
+function MuscleTooltip({
+  muscle,
+  recovery,
+}: {
+  muscle: string
+  recovery: { status: RecoveryStatus; hoursSince: number }
+}) {
+  const status = recovery?.status ?? 'unknown'
+  const rawColor = STATUS_RAW_COLORS[status]
+
   return (
     <div
       style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))',
-        gap: 6,
-        marginTop: 12,
+        position: 'absolute',
+        bottom: 4,
+        left: '50%',
+        transform: 'translateX(-50%)',
+        background: 'var(--bg-card, #1a1a2e)',
+        border: '1px solid var(--border, #333)',
+        borderRadius: 10,
+        padding: '8px 14px',
+        fontSize: '0.8rem',
+        textAlign: 'center',
+        whiteSpace: 'nowrap',
+        zIndex: 20,
+        boxShadow: `0 4px 16px rgba(0,0,0,0.4), 0 0 8px ${rawColor}33`,
+        pointerEvents: 'none',
       }}
     >
-      {recoveries.map((r) => (
-        <div
-          key={r.muscle}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 6,
-            padding: '4px 8px',
-            borderRadius: 8,
-            background: COLORS[r.status] + '11',
-            border: `1px solid ${COLORS[r.status]}33`,
-          }}
-        >
-          <div
-            style={{
-              width: 8,
-              height: 8,
-              borderRadius: '50%',
-              background: COLORS[r.status],
-              flexShrink: 0,
-            }}
-          />
-          <div style={{ minWidth: 0 }}>
-            <div
-              style={{
-                fontSize: '0.7rem',
-                fontWeight: 600,
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap',
-              }}
-            >
-              {r.label}
-            </div>
-            <div style={{ fontSize: '0.55rem', color: 'var(--text-secondary)' }}>
-              {r.hoursSince !== null ? `${r.hoursSince}h` : 'Jamais entraine'}
-            </div>
-          </div>
-        </div>
-      ))}
+      <strong style={{ color: rawColor }}>
+        {MUSCLE_FR[muscle]}
+      </strong>
+      <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary, #999)', marginTop: 2 }}>
+        {recovery?.hoursSince >= 0
+          ? `${Math.round(recovery.hoursSince)}h \u2014 ${STATUS_LABELS[status]}`
+          : STATUS_LABELS.unknown}
+      </div>
     </div>
   )
 }
@@ -376,21 +195,50 @@ function MuscleList({ recoveries }: { recoveries: MuscleRecovery[] }) {
 
 export function RecoveryMap() {
   const { state } = useAppState()
+  const [hoveredMuscle, setHoveredMuscle] = useState<string | null>(null)
 
-  const recoveries = useMemo(() => computeRecovery(state.workouts), [state.workouts])
+  const muscleRecovery = useMemo(() => {
+    const now = Date.now()
+    const recovery: Record<string, { status: RecoveryStatus; hoursSince: number }> = {}
 
-  const recoveryMap = useMemo(() => {
-    const m = new Map<MuscleGroup, MuscleRecovery>()
-    recoveries.forEach((r) => m.set(r.muscle, r))
-    return m
-  }, [recoveries])
+    // Initialize all muscles as unknown
+    Object.keys(MUSCLE_FR).forEach((m) => {
+      recovery[m] = { status: 'unknown', hoursSince: -1 }
+    })
+
+    // Find most recent workout for each muscle
+    for (let i = state.workouts.length - 1; i >= 0; i--) {
+      const w = state.workouts[i]
+      const workoutTime = new Date(w.date + 'T12:00:00').getTime()
+      const hoursSince = (now - workoutTime) / 3600000
+
+      for (const ex of w.exercises) {
+        const exercise = getExerciseById(ex.exerciseId)
+        if (!exercise) continue
+        for (const muscle of exercise.primaryMuscles) {
+          if (
+            !recovery[muscle] ||
+            recovery[muscle].hoursSince < 0 ||
+            hoursSince < recovery[muscle].hoursSince
+          ) {
+            recovery[muscle] = {
+              status: getRecoveryStatus(hoursSince),
+              hoursSince,
+            }
+          }
+        }
+      }
+    }
+
+    return recovery
+  }, [state.workouts])
 
   return (
     <div
       style={{
-        background: 'var(--bg-card)',
+        background: 'var(--bg-card, #1a1a2e)',
         borderRadius: 16,
-        border: '1px solid var(--border)',
+        border: '1px solid var(--border, #333)',
         padding: 16,
         marginBottom: 12,
       }}
@@ -402,7 +250,7 @@ export function RecoveryMap() {
           fontSize: '1.1rem',
           letterSpacing: '0.05em',
           textTransform: 'uppercase',
-          color: 'var(--accent)',
+          color: 'var(--accent, #ff8c00)',
           margin: '0 0 4px',
         }}
       >
@@ -410,32 +258,180 @@ export function RecoveryMap() {
       </h3>
       <p
         style={{
-          fontSize: '0.7rem',
-          color: 'var(--text-secondary)',
-          margin: '0 0 12px',
+          fontSize: '0.75rem',
+          color: 'var(--text-secondary, #999)',
+          margin: '0 0 16px',
         }}
       >
-        Etat de recuperation musculaire
+        {'\u00c9'}tat de r{'\u00e9'}cup{'\u00e9'}ration musculaire
       </p>
 
-      {/* Body maps side by side */}
+      {/* Goku body with muscle dots */}
+      <div
+        style={{
+          position: 'relative',
+          width: '100%',
+          maxWidth: 280,
+          margin: '0 auto 16px',
+          aspectRatio: '1 / 2',
+        }}
+      >
+        <img
+          src="images/goku.png"
+          alt="Goku - carte de r\u00e9cup\u00e9ration"
+          style={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'contain',
+            opacity: 0.85,
+            filter: 'drop-shadow(0 0 10px var(--accent-glow, rgba(255,140,0,0.25)))',
+            userSelect: 'none',
+            pointerEvents: 'none',
+          }}
+          loading="lazy"
+          draggable={false}
+        />
+
+        {/* Muscle indicator dots */}
+        {MUSCLE_DOTS.map(({ muscle, positions }) => {
+          const recovery = muscleRecovery[muscle]
+          const isHovered = hoveredMuscle === muscle
+
+          return positions.map((pos, idx) => (
+            <MuscleDot
+              key={`${muscle}-${idx}`}
+              muscle={muscle}
+              pos={pos}
+              idx={idx}
+              recovery={recovery}
+              isHovered={isHovered}
+              onToggle={() =>
+                setHoveredMuscle(hoveredMuscle === muscle ? null : muscle)
+              }
+            />
+          ))
+        })}
+
+        {/* Hovered muscle tooltip */}
+        {hoveredMuscle && muscleRecovery[hoveredMuscle] && (
+          <MuscleTooltip
+            muscle={hoveredMuscle}
+            recovery={muscleRecovery[hoveredMuscle]}
+          />
+        )}
+      </div>
+
+      {/* Legend */}
       <div
         style={{
           display: 'flex',
           justifyContent: 'center',
-          gap: 8,
+          gap: 16,
+          marginBottom: 12,
+          fontSize: '0.72rem',
           flexWrap: 'wrap',
         }}
       >
-        <FrontBody recoveryMap={recoveryMap} />
-        <BackBody recoveryMap={recoveryMap} />
+        {(['rested', 'recovering', 'fatigued'] as RecoveryStatus[]).map((s) => (
+          <div
+            key={s}
+            style={{ display: 'flex', alignItems: 'center', gap: 5 }}
+          >
+            <div
+              style={{
+                width: 9,
+                height: 9,
+                borderRadius: '50%',
+                background: STATUS_RAW_COLORS[s],
+                boxShadow: `0 0 4px ${STATUS_RAW_COLORS[s]}88`,
+                flexShrink: 0,
+              }}
+            />
+            <span style={{ color: 'var(--text-secondary, #999)' }}>
+              {STATUS_LABELS[s].split(' (')[0]}
+            </span>
+          </div>
+        ))}
       </div>
 
-      {/* Legend */}
-      <Legend />
+      {/* Muscle grid */}
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
+          gap: 6,
+        }}
+      >
+        {Object.entries(MUSCLE_FR).map(([eng, fr]) => {
+          const rec = muscleRecovery[eng]
+          const status = rec?.status ?? 'unknown'
+          const rawColor = STATUS_RAW_COLORS[status]
+          const isActive = hoveredMuscle === eng
 
-      {/* Detailed muscle list */}
-      <MuscleList recoveries={recoveries} />
+          return (
+            <div
+              key={eng}
+              role="button"
+              tabIndex={0}
+              onClick={() =>
+                setHoveredMuscle(hoveredMuscle === eng ? null : eng)
+              }
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault()
+                  setHoveredMuscle(hoveredMuscle === eng ? null : eng)
+                }
+              }}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 8,
+                padding: '8px 10px',
+                borderRadius: 8,
+                background: isActive
+                  ? `${rawColor}18`
+                  : 'var(--bg-card-inner, rgba(255,255,255,0.02))',
+                border: `1px solid ${isActive ? `${rawColor}55` : 'var(--border, #333)'}`,
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+                outline: 'none',
+              }}
+            >
+              <div
+                style={{
+                  width: 9,
+                  height: 9,
+                  borderRadius: '50%',
+                  background: rawColor,
+                  boxShadow: `0 0 4px ${rawColor}88`,
+                  flexShrink: 0,
+                }}
+              />
+              <div style={{ minWidth: 0 }}>
+                <div
+                  style={{
+                    fontSize: '0.78rem',
+                    fontWeight: 600,
+                    color: 'var(--text, #eee)',
+                  }}
+                >
+                  {fr}
+                </div>
+                <div
+                  style={{
+                    fontSize: '0.65rem',
+                    color: 'var(--text-secondary, #999)',
+                  }}
+                >
+                  {rec?.hoursSince >= 0
+                    ? `${Math.round(rec.hoursSince)}h`
+                    : 'Jamais entra\u00een\u00e9'}
+                </div>
+              </div>
+            </div>
+          )
+        })}
+      </div>
     </div>
   )
 }

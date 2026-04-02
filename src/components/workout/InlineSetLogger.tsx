@@ -297,13 +297,17 @@ export function InlineSetLogger({ exerciseId, target, onSetAdded }: Props) {
     const w = parseFloat(draft.weight) || 0
     const r = parseInt(draft.reps, 10) || 0
     if (r <= 0) return
+    // BUG-F1: Reject 0kg for non-warmup sets
+    if (w <= 0 && draft.setType !== 'warmup') return
+    // BUG-F5: Clamp RIR between 0 and 5
+    const rirVal = Math.max(0, Math.min(5, parseInt(draft.rir, 10) || target.targetRir))
     dispatch({
       type: 'ADD_SET',
       payload: {
         exerciseId,
         weightKg: w,
         reps: r,
-        rir: parseInt(draft.rir, 10) || target.targetRir,
+        rir: rirVal,
         setType: draft.setType,
       },
     })

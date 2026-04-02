@@ -17,10 +17,11 @@ const items: Array<{
   ariaLabel: string
 }> = [
   { id: 'home', icon: IconHome, label: 'Accueil', ariaLabel: 'Accueil' },
-  { id: 'train', icon: IconDumbbell, label: 'Training', ariaLabel: 'Entra\u00EEnement' },
+  { id: 'train', icon: IconDumbbell, label: 'Training', ariaLabel: 'Entraînement' },
   { id: 'nutrition', icon: IconBowl, label: 'Nutrition', ariaLabel: 'Nutrition' },
   { id: 'scouter', icon: IconChart, label: 'Stats', ariaLabel: 'Statistiques' },
-  { id: 'profile', icon: IconUser, label: 'Profil', ariaLabel: 'Profil' },
+  { id: 'coach', label: 'Coach', icon: '\uD83E\uDD4A' },
+    { id: 'profile', icon: IconUser, label: 'Profil', ariaLabel: 'Profil' },
 ]
 
 export const BottomNav: React.FC<BottomNavProps> = React.memo(

@@ -8,15 +8,15 @@ type Status = 'rested' | 'recovering' | 'fatigued' | 'unknown'
 const MUSCLES: MuscleGroup[] = ['Chest', 'Back', 'Shoulders', 'Biceps', 'Triceps', 'Quads', 'Hamstrings', 'Glutes', 'Calves', 'Core']
 
 const FR: Record<MuscleGroup, string> = {
-  Chest: 'Pectoraux', Back: 'Dos', Shoulders: '\u00C9paules', Biceps: 'Biceps', Triceps: 'Triceps',
+  Chest: 'Pectoraux', Back: 'Dos', Shoulders: 'Épaules', Biceps: 'Biceps', Triceps: 'Triceps',
   Quads: 'Quadriceps', Hamstrings: 'Ischio-jambiers', Glutes: 'Fessiers', Calves: 'Mollets', Core: 'Abdominaux',
 }
 
 const STATUS_META: Record<Status, { label: string; color: string; points: number; advice: string }> = {
-  rested:     { label: 'Repos\u00E9',        color: '#22c55e', points: 10, advice: 'Pr\u00EAt \u00E0 \u00EAtre retravail\u00E9.' },
-  recovering: { label: 'R\u00E9cup\u00E9ration', color: '#f59e0b', points: 5,  advice: 'Privil\u00E9gie un entra\u00EEnement l\u00E9ger.' },
-  fatigued:   { label: 'Fatigu\u00E9',       color: '#ef4444', points: 1,  advice: '\u00C9vite de retravailler ce muscle.' },
-  unknown:    { label: 'Inconnu',       color: '#6b7280', points: 0,  advice: 'Aucune donn\u00E9e. Entra\u00EEne-toi !' },
+  rested:     { label: 'Reposé',        color: '#22c55e', points: 10, advice: 'Prêt à être retravailé.' },
+  recovering: { label: 'Récupération', color: '#f59e0b', points: 5,  advice: 'Privilégie un entraînement léger.' },
+  fatigued:   { label: 'Fatigué',       color: '#ef4444', points: 1,  advice: 'Évite de retravailler ce muscle.' },
+  unknown:    { label: 'Inconnu',       color: '#6b7280', points: 0,  advice: 'Aucune donnée. Entraîne-toi !' },
 }
 
 function getStatus(hours: number | null): Status {
@@ -65,7 +65,7 @@ export function RecoveryMap() {
   const toggle = (m: MuscleGroup) => setExpanded((p) => (p === m ? null : m))
 
   return (
-    <div style={{ padding: 20, background: 'var(--bg, #0a0a0a)', color: 'var(--text, #f5f5f5)', borderRadius: 16, fontFamily: 'var(--font, system-ui, sans-serif)' }}>
+    <div style={{ padding: 20, background: 'var(--bg-card)', color: 'var(--text)', borderRadius: 16, fontFamily: ''Manrope', system-ui, sans-serif' }}>
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
         <span style={{ fontSize: 13, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', color: 'var(--text-muted, #a3a3a3)' }}>
@@ -88,7 +88,7 @@ export function RecoveryMap() {
       {/* Muscle rows */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
         {muscleData.map((m) => (
-          <div key={m.key} onClick={() => toggle(m.key)} style={{ cursor: 'pointer', padding: '12px 14px', borderRadius: 10, background: expanded === m.key ? 'var(--card-active, #1a1a1a)' : 'var(--card, #111)', transition: 'background .15s' }}>
+          <div key={m.key} onClick={() => toggle(m.key)} style={{ cursor: 'pointer', padding: '12px 14px', borderRadius: 10, background: expanded === m.key ? 'var(--bg-card)' : 'var(--bg)', transition: 'background .15s' }}>
             {/* Top line */}
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
               <span style={{ width: 8, height: 8, borderRadius: '50%', background: m.color, flexShrink: 0 }} />
@@ -99,7 +99,7 @@ export function RecoveryMap() {
               </span>
             </div>
             {/* Progress bar */}
-            <div style={{ marginTop: 8, height: 4, borderRadius: 2, background: 'var(--bar-bg, #222)' }}>
+            <div style={{ marginTop: 8, height: 4, borderRadius: 2, background: 'var(--border)' }}>
               <div style={{ height: '100%', width: `${m.pct}%`, borderRadius: 2, background: m.color, transition: 'width .3s' }} />
             </div>
             {/* Percent */}

@@ -102,6 +102,18 @@ export const ProfileView: React.FC<ProfileViewProps> = React.memo(
             <button className="quick-card" onClick={() => onNavigate('nutrition')} type="button"><span className="quick-card-icon">🍽️</span><span className="quick-card-label">Nutrition</span></button>
           </div>
         </section>
+        {/* Bodyweight chart */}
+        <section className="hevy-card stack-md">
+          <div style={{ fontWeight: 700, fontSize: '0.9rem', marginBottom: 8 }}>
+            {'⚖️'} Evolution du poids
+          </div>
+          <BodyweightChart
+            entries={state.bodyweightEntries}
+            targetWeight={state.profile?.goal === 'fat_loss' ? (state.profile?.weightKg || 80) - 5 : undefined}
+          />
+        </section>
+
+
 
         {/* Bodyweight */}
         <section className="hevy-card stack-md">
@@ -230,6 +242,7 @@ export const ProfileView: React.FC<ProfileViewProps> = React.memo(
       {/* Import/Export */}
       <section className="hevy-card stack-md">
         <ImportExport />
+import { BodyweightChart } from '../stats/BodyweightChart'
 
         {/* Reset Account */}
         <section className="hevy-card" style={{ padding: '14px', borderColor: 'rgba(239,68,68,0.2)' }}>

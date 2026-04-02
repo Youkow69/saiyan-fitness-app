@@ -37,10 +37,19 @@ export function Leaderboard() {
   const myStats = useMemo(() => {
     const pl = getPowerLevel(state)
     const totalVol = state.workouts.reduce((sum, w) => sum + getWorkoutVolume(w), 0)
+    // Count PRs: check max weight per exercise across all workouts
+    const maxWeights: Record<string, number> = {}
     let prCount = 0
     state.workouts.forEach(w => {
       w.exercises.forEach(ex => {
-        ex.sets.forEach(s => { if (s.isPR) prCount++ })
+        ex.sets.forEach(s => {
+          const key = ex.exerciseId
+          const prev = maxWeights[key] || 0
+          if (s.weightKg > prev) {
+            if (prev > 0) prCount++
+            maxWeights[key] = s.weightKg
+          }
+        })
       })
     })
     return {

@@ -107,12 +107,12 @@ function AppInner({ user, pushToCloud, pullFromCloud, syncSteps, signOut }: AppI
       try {
         setCloudStatus('syncing')
         const cloudState = await pullFromCloud()
-        if (cloudState) {
+        if (cloudState && (cloudState as any).profile) {
           const cloudWorkouts = (cloudState as any).workouts?.length ?? 0
           const localWorkouts = stateRef.current.workouts?.length ?? 0
           if (cloudWorkouts > localWorkouts) {
             dispatch({ type: 'SET_STATE', payload: cloudState })
-            showToast('Donn\u00E9es cloud r\u00E9cup\u00E9r\u00E9es', 'success')
+            showToast('Données cloud récupérées', 'success')
           } else {
             await pushToCloud(stateRef.current)
           }
@@ -372,7 +372,7 @@ function AppInner({ user, pushToCloud, pullFromCloud, syncSteps, signOut }: AppI
           'pr'
         )
       } else {
-        showToast(`S\u00E9rie ajout\u00E9e: ${weightKg}kg x ${reps}`, 'success')
+        showToast(`Série ajoutée: ${weightKg}kg x ${reps}`, 'success')
       }
     },
     [dispatch, user, pushToCloud]
@@ -385,7 +385,7 @@ function AppInner({ user, pushToCloud, pullFromCloud, syncSteps, signOut }: AppI
     // Empty workout check
     const validExercises = activeWorkout.exercises.filter((e) => e.sets.length > 0)
     if (validExercises.length === 0) {
-      showToast('Aucun exercice enregistr\u00E9', 'error')
+      showToast('Aucun exercice enregistré', 'error')
       return
     }
 
@@ -397,7 +397,7 @@ function AppInner({ user, pushToCloud, pullFromCloud, syncSteps, signOut }: AppI
       const cr = stateRef.current.customRoutines.find(
         (r) => r.id === activeWorkout.sessionId
       )
-      sessionName = cr?.name ?? activeWorkout.sessionName ?? 'S\u00E9ance libre'
+      sessionName = cr?.name ?? activeWorkout.sessionName ?? 'Séance libre'
       programId = 'custom'
     } else {
       if (!selectedProgram) return
@@ -441,7 +441,7 @@ function AppInner({ user, pushToCloud, pullFromCloud, syncSteps, signOut }: AppI
     })
     setRestTimer(0)
     showToast(
-      `S\u00E9ance termin\u00E9e ! ${workout.durationMinutes} min`,
+      `Séance terminée ! ${workout.durationMinutes} min`,
       'success'
     )
 
@@ -465,7 +465,7 @@ function AppInner({ user, pushToCloud, pullFromCloud, syncSteps, signOut }: AppI
       dispatch({ type: 'SAVE_FEEDBACK', payload: feedback })
       setPendingFeedback(null)
       setTab('home')
-      showToast('Feedback sauvegard\u00E9', 'success')
+      showToast('Feedback sauvegardé', 'success')
     },
     [dispatch]
   )
@@ -481,7 +481,7 @@ function AppInner({ user, pushToCloud, pullFromCloud, syncSteps, signOut }: AppI
     }
     await signOut()
     localStorage.removeItem('sf_local_mode')
-    showToast('D\u00E9connect\u00E9', 'success')
+    showToast('Déconnecté', 'success')
   }, [user, pushToCloud, signOut])
 
   // ── Render ─────────────────────────────────────────────────────────────────
@@ -516,10 +516,10 @@ function AppInner({ user, pushToCloud, pullFromCloud, syncSteps, signOut }: AppI
           }}
         >
           <span>
-            {'\uD83D\uDCAA'} S\u00E9ance en cours —{' '}
-            {state.activeWorkout.sessionName || 'Entra\u00EEnement'}
+            {'\uD83D\uDCAA'} Séance en cours —{' '}
+            {state.activeWorkout.sessionName || 'Entraînement'}
           </span>
-          <span style={{ fontSize: '0.75rem' }}>Reprendre {'\u2192'}</span>
+          <span style={{ fontSize: '0.75rem' }}>Reprendre {'→'}</span>
         </div>
       )}
 
@@ -567,7 +567,7 @@ function AppInner({ user, pushToCloud, pullFromCloud, syncSteps, signOut }: AppI
               await pushToCloud(stateRef.current)
               setCloudStatus('synced')
               setLastSyncedAt(new Date().toISOString())
-              showToast('Synchronis\u00E9', 'success')
+              showToast('Synchronisé', 'success')
             } catch {
               setCloudStatus('error')
             }

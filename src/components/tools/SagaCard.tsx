@@ -119,10 +119,10 @@ export function SagaCardGenerator() {
     ctx.fillText(tf.current.name, 540, 260)
 
     // ── Next transformation hint ──
-    if (tf.next) {
+    if (tf.nextTransformation) {
       ctx.fillStyle = '#777'
       ctx.font = '18px system-ui, sans-serif'
-      ctx.fillText(`Prochaine forme : ${tf.next.name}`, 540, 300)
+      ctx.fillText(`Prochaine forme : ${tf.nextTransformation.name}`, 540, 300)
     }
 
     // ── Power level (large) ──
@@ -142,7 +142,15 @@ export function SagaCardGenerator() {
     const stats = [
       { label: 'Seances', value: String(state.workouts.length) },
       { label: 'Volume total', value: volume.toLocaleString('fr-FR') + ' kg' },
-      { label: 'Records', value: String(state.personalRecords?.length ?? 0) },
+      { label: 'Records', value: String(
+        new Set(
+          state.workouts.flatMap(w =>
+            w.exercises.flatMap(ex =>
+              ex.sets.map(s => `${ex.exerciseId}_${s.weightKg}_${s.reps}`)
+            )
+          )
+        ).size
+      ) },
       { label: 'Streak', value: streak + ' jours' },
     ]
 

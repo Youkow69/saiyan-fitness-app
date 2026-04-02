@@ -39,6 +39,7 @@ export const NutritionView: React.FC = React.memo(
     const [category, setCategory] = useState<FoodEntry['category']>('lunch')
     const [barcodeInput, setBarcodeInput] = useState('')
     const [lookingUp, setLookingUp] = useState(false)
+    const [selectedDate, setSelectedDate] = useState(todayIso())
     const [showScanner, setShowScanner] = useState(false)
     const [showCustomForm, setShowCustomForm] = useState(false)
     const [customName, setCustomName] = useState('')
@@ -46,7 +47,10 @@ export const NutritionView: React.FC = React.memo(
     const [customProt, setCustomProt] = useState('')
     const [customCarbs, setCustomCarbs] = useState('')
     const [customFats, setCustomFats] = useState('')
-    const totals = useMemo(() => getDailyNutrition(state.foodEntries), [state.foodEntries])
+    const totals = useMemo(() => {
+      const filtered = state.foodEntries.filter(e => e.date === selectedDate)
+      return getDailyNutrition(filtered)
+    }, [state.foodEntries, selectedDate])
     const suggestions = useMemo(
       () => getRecommendedRecipes(state),
       [state.foodEntries, state.targets, state.profile],
@@ -92,6 +96,73 @@ export const NutritionView: React.FC = React.memo(
 
     return (
       <div className="page">
+        {/* Date picker */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+          <button
+            type="button"
+            onClick={() => {
+              const d = new Date(selectedDate)
+              d.setDate(d.getDate() - 1)
+              setSelectedDate(d.toISOString().slice(0, 10))
+            }}
+            style={{ background: 'var(--bg-card)', border: '1px solid var(--stroke)', borderRadius: 8, padding: '6px 10px', color: 'var(--text)', cursor: 'pointer', fontSize: '0.9rem' }}
+          >
+            {'\u25c0'}
+          </button>
+          <input
+            type="date"
+            value={selectedDate}
+            onChange={(e) => setSelectedDate(e.target.value)}
+            style={{
+              flex: 1, padding: '6px 10px', borderRadius: 8,
+              border: '1px solid var(--stroke)', background: 'var(--bg-card)',
+              color: 'var(--text)', fontSize: '0.82rem', textAlign: 'center',
+            }}
+          />
+          <button
+            type="button"
+            onClick={() => {
+              const d = new Date(selectedDate)
+              d.setDate(d.getDate() + 1)
+              setSelectedDate(d.toISOString().slice(0, 10))
+            }}
+            style={{ background: 'var(--bg-card)', border: '1px solid var(--stroke)', borderRadius: 8, padding: '6px 10px', color: 'var(--text)', cursor: 'pointer', fontSize: '0.9rem' }}
+          >
+            {'\u25b6'}
+          </button>
+          {selectedDate !== todayIso() && (
+            <button
+              type="button"
+              onClick={() => setSelectedDate(todayIso())}
+              style={{ background: 'var(--accent)', border: 'none', borderRadius: 8, padding: '6px 10px', color: '#000', cursor: 'pointer', fontSize: '0.72rem', fontWeight: 700 }}
+            >
+              Auj.
+            </button>
+          )}
+        </div>
+
+        {/* Copy day button */}
+        {selectedDate !== todayIso() && state.foodEntries.filter(e => e.date === selectedDate).length > 0 && (
+          <button
+            type="button"
+            className="secondary-btn"
+            style={{ width: '100%', marginBottom: 8, fontSize: '0.78rem' }}
+            onClick={() => {
+              const dayEntries = state.foodEntries.filter(e => e.date === selectedDate)
+              dayEntries.forEach(entry => {
+                dispatch({
+                  type: 'ADD_FOOD',
+                  payload: { ...entry, id: makeId('copy'), date: todayIso() },
+                })
+              })
+              showToast(dayEntries.length + ' aliment(s) copies vers aujourd\'hui', 'success')
+              setSelectedDate(todayIso())
+            }}
+          >
+            {'\U0001f4cb'} Copier cette journee vers aujourd'hui
+          </button>
+        )}
+
         {/* Macro bars - always visible */}
         <section className="hevy-card stack-md" style={{ padding: '10px 14px' }}>
           <SectionTitle icon="📊" label="Nutrition aujourd'hui" />

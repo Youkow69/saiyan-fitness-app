@@ -272,25 +272,6 @@ export function evaluateFatigueStatus(state: { workouts: any[]; feedbacks?: any[
 
 // ── FEAT-F6: Periodisation mesocycle ────────────────────────────────────────
 
-/** Retourne la semaine actuelle du mesocycle (1-4). Cycle de 4 semaines. */
-
-/** Multiplicateur de volume selon la semaine du mesocycle.
- *  Semaines 1-3 : montee progressive (1.0 -> 1.15 -> 1.3)
- *  Semaine 4 : deload (0.6)
- */
-
-interface SessionFeedbackInput {
-  pump: number    // 1-5
-  soreness: number // 1-5
-}
-
-/** Ajuste le nombre de series selon le feedback de la seance.
- *  - pump >= 4 et soreness <= 2 : +1 serie (bonne recuperation, bon stimulus)
- *  - soreness >= 4 : -1 serie (trop de fatigue)
- *  - sinon : pas de changement
- */
-
-
 // ── FEAT-F6: Periodisation mesocycle ────────────────────────────────────────
 
 /** Retourne la semaine actuelle du mesocycle (1-4). Cycle de 4 semaines. */

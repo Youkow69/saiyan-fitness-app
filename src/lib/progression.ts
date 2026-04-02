@@ -27,7 +27,7 @@ export function countPRs(state: AppState): number {
       ex.sets.forEach(set => {
         const e1rm = estimate1Rm(set.weightKg, set.reps)
         const prev = bestByExercise.get(ex.exerciseId) ?? 0
-        if (e1rm > prev && prev > 0) prCount++
+        if (prev === 0 || e1rm > prev) prCount++
         if (e1rm > prev) bestByExercise.set(ex.exerciseId, e1rm)
       })
     })
@@ -177,4 +177,94 @@ export function getMesocycleStatus(state: AppState): { label: string; detail: st
   }
 
   return { label: 'Semaine productive', detail: `Semaine ${weekNumber} — continue sur cette lancée`, color: '#4fffb0', weekNumber }
+}
+
+
+// BUG-F6: Unified fatigue evaluation (replaces inconsistent shouldDeload/getDeloadAdvice)
+export function evaluateFatigueStatus(state: { workouts: any[]; feedbacks?: any[] }): {
+  shouldDeload: boolean
+  reason: string
+  severity: 'low' | 'medium' | 'high'
+} {
+  const feedbacks = (state as any).feedbacks || []
+  const recentFb = feedbacks.slice(-5)
+  const recentWorkouts = state.workouts.slice(-5)
+
+  if (recentFb.length < 3 && recentWorkouts.length < 3) {
+    return { shouldDeload: false, reason: '', severity: 'low' }
+  }
+
+  const reasons: string[] = []
+  let severityScore = 0
+
+  if (recentFb.length >= 3) {
+    const avgSoreness = recentFb.reduce((s: number, f: any) => s + (f.soreness || 0), 0) / recentFb.length
+    const avgPerf = recentFb.reduce((s: number, f: any) => s + (f.performance || 3), 0) / recentFb.length
+    const avgPump = recentFb.reduce((s: number, f: any) => s + (f.pump || 3), 0) / recentFb.length
+
+    if (avgSoreness >= 3.5) {
+      reasons.push('Courbatures persistantes (moyenne ' + avgSoreness.toFixed(1) + '/5)')
+      severityScore += 2
+    }
+    if (avgPerf <= 2) {
+      reasons.push('Performance en baisse')
+      severityScore += 2
+    }
+    if (avgPump < 2 && avgSoreness > 3) {
+      reasons.push('Mauvais pump + forte fatigue')
+      severityScore += 1
+    }
+  }
+
+  if (recentWorkouts.length >= 3) {
+    let totalRir = 0
+    let rirCount = 0
+    recentWorkouts.forEach((w: any) => {
+      w.exercises.forEach((ex: any) => {
+        ex.sets.forEach((s: any) => {
+          if (s.setType !== 'warmup' && typeof s.rir === 'number') {
+            totalRir += s.rir
+            rirCount++
+          }
+        })
+      })
+    })
+    if (rirCount > 0) {
+      const avgRir = totalRir / rirCount
+      if (avgRir <= 0.5) {
+        reasons.push('RIR moyen trop bas (' + avgRir.toFixed(1) + ') - tu forces trop')
+        severityScore += 2
+      }
+    }
+
+    const exerciseMaxes: Record<string, number[]> = {}
+    recentWorkouts.forEach((w: any) => {
+      w.exercises.forEach((ex: any) => {
+        if (!exerciseMaxes[ex.exerciseId]) exerciseMaxes[ex.exerciseId] = []
+        let maxE1rm = 0
+        ex.sets.forEach((s: any) => {
+          if (s.setType !== 'warmup') {
+            const e1rm = s.weightKg * (1 + s.reps / 30)
+            if (e1rm > maxE1rm) maxE1rm = e1rm
+          }
+        })
+        if (maxE1rm > 0) exerciseMaxes[ex.exerciseId].push(maxE1rm)
+      })
+    })
+    let anyImproved = false
+    for (const vals of Object.values(exerciseMaxes)) {
+      if (vals.length >= 3 && vals[vals.length - 1] > vals[0]) anyImproved = true
+    }
+    if (!anyImproved && Object.keys(exerciseMaxes).length > 0) {
+      reasons.push('Aucune progression depuis 5 sessions')
+      severityScore += 1
+    }
+  }
+
+  const severity: 'low' | 'medium' | 'high' = severityScore >= 4 ? 'high' : severityScore >= 2 ? 'medium' : 'low'
+  return {
+    shouldDeload: severityScore >= 2,
+    reason: reasons.length > 0 ? reasons.join('. ') + '.' : '',
+    severity,
+  }
 }

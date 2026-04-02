@@ -624,4 +624,400 @@ export const specializedPrograms: ProgramTemplate[] = [
       },
     ],
   },
+,
+  // ──────────────────────────────────────────
+  // Starting Strength 3J - Saga Saiyan : Les debuts de Goku
+  // ──────────────────────────────────────────
+  {
+    id: 'starting_strength_goku',
+    name: 'Starting Strength - Les debuts de Goku',
+    saga: 'Saiyan',
+    split: 'Full Body A/B alterne',
+    goalTags: ['strength'],
+    levelTags: ['beginner'],
+    equipmentTags: ['full_gym'],
+    daysPerWeek: 3,
+    description: 'Le programme de Mark Rippetoe pour les debutants. 3 seances/semaine, progression lineaire sur les mouvements de base. Comme Goku qui apprend les fondamentaux du combat.',
+    sessions: [
+      {
+        id: 'ss_workout_a',
+        name: 'Workout A - Kamehameha basique',
+        focus: 'Squat, Bench, Deadlift',
+        exercises: [
+          { exerciseId: 'back_squat', sets: 3, repMin: 5, repMax: 5, targetRir: 1, restSeconds: 180 },
+          { exerciseId: 'barbell_bench_press', sets: 3, repMin: 5, repMax: 5, targetRir: 1, restSeconds: 180 },
+          { exerciseId: 'deadlift', sets: 1, repMin: 5, repMax: 5, targetRir: 1, restSeconds: 240 },
+        ],
+      },
+      {
+        id: 'ss_workout_b',
+        name: 'Workout B - Kaio-Ken debutant',
+        focus: 'Squat, OHP, Power Clean',
+        exercises: [
+          { exerciseId: 'back_squat', sets: 3, repMin: 5, repMax: 5, targetRir: 1, restSeconds: 180 },
+          { exerciseId: 'overhead_press', sets: 3, repMin: 5, repMax: 5, targetRir: 1, restSeconds: 180 },
+          { exerciseId: 'power_clean', sets: 5, repMin: 3, repMax: 3, targetRir: 2, restSeconds: 150 },
+        ],
+      },
+    ],
+  },
+  // ──────────────────────────────────────────
+  // PPL Reddit 6J - Saga Cell : Preparation au tournoi
+  // ──────────────────────────────────────────
+  {
+    id: 'ppl_reddit_cell',
+    name: 'PPL Reddit - Saga Cell',
+    saga: 'Cell',
+    split: 'Push/Pull/Legs x2',
+    goalTags: ['muscle_gain'],
+    levelTags: ['intermediate'],
+    equipmentTags: ['full_gym'],
+    daysPerWeek: 6,
+    description: 'Le celebre programme PPL de Reddit r/Fitness. 6 jours, volume eleve, ideal pour la prise de masse. Comme la preparation intense avant le Cell Games.',
+    sessions: [
+      {
+        id: 'ppl_push_a',
+        name: 'Push A - Kamehameha',
+        focus: 'Pecs, epaules, triceps (force)',
+        exercises: [
+          { exerciseId: 'barbell_bench_press', sets: 5, repMin: 5, repMax: 5, targetRir: 1, restSeconds: 180 },
+          { exerciseId: 'overhead_press', sets: 3, repMin: 8, repMax: 12, targetRir: 2, restSeconds: 90 },
+          { exerciseId: 'db_incliné_press', sets: 3, repMin: 8, repMax: 12, targetRir: 2, restSeconds: 90 },
+          { exerciseId: 'lateral_raise_db', sets: 4, repMin: 15, repMax: 20, targetRir: 1, restSeconds: 60 },
+          { exerciseId: 'rope_pushdown', sets: 3, repMin: 8, repMax: 12, targetRir: 2, restSeconds: 60 },
+          { exerciseId: 'overhead_tricep_extension', sets: 3, repMin: 8, repMax: 12, targetRir: 2, restSeconds: 60 },
+        ],
+      },
+      {
+        id: 'ppl_pull_a',
+        name: 'Pull A - Gravite x10',
+        focus: 'Dos, biceps (force)',
+        exercises: [
+          { exerciseId: 'barbell_row', sets: 5, repMin: 5, repMax: 5, targetRir: 1, restSeconds: 180 },
+          { exerciseId: 'pull_ups', sets: 3, repMin: 8, repMax: 12, targetRir: 2, restSeconds: 90 },
+          { exerciseId: 'cable_row_seated', sets: 3, repMin: 8, repMax: 12, targetRir: 2, restSeconds: 90 },
+          { exerciseId: 'face_pull', sets: 5, repMin: 15, repMax: 20, targetRir: 1, restSeconds: 60 },
+          { exerciseId: 'barbell_curl', sets: 3, repMin: 8, repMax: 12, targetRir: 2, restSeconds: 60 },
+          { exerciseId: 'hammer_curl', sets: 3, repMin: 8, repMax: 12, targetRir: 2, restSeconds: 60 },
+        ],
+      },
+      {
+        id: 'ppl_legs_a',
+        name: 'Legs A - Power Oozaru',
+        focus: 'Quadriceps, ischio, mollets',
+        exercises: [
+          { exerciseId: 'back_squat', sets: 3, repMin: 5, repMax: 5, targetRir: 1, restSeconds: 180 },
+          { exerciseId: 'romanian_deadlift', sets: 3, repMin: 8, repMax: 12, targetRir: 2, restSeconds: 120 },
+          { exerciseId: 'leg_press', sets: 3, repMin: 8, repMax: 12, targetRir: 2, restSeconds: 120 },
+          { exerciseId: 'leg_extension', sets: 3, repMin: 8, repMax: 12, targetRir: 2, restSeconds: 60 },
+          { exerciseId: 'lying_leg_curl', sets: 3, repMin: 8, repMax: 12, targetRir: 2, restSeconds: 60 },
+          { exerciseId: 'standing_calf_raise', sets: 5, repMin: 8, repMax: 12, targetRir: 1, restSeconds: 60 },
+        ],
+      },
+      {
+        id: 'ppl_push_b',
+        name: 'Push B - Final Flash',
+        focus: 'Pecs, epaules, triceps (volume)',
+        exercises: [
+          { exerciseId: 'overhead_press', sets: 5, repMin: 5, repMax: 5, targetRir: 1, restSeconds: 180 },
+          { exerciseId: 'db_bench_press', sets: 3, repMin: 8, repMax: 12, targetRir: 2, restSeconds: 90 },
+          { exerciseId: 'cable_fly', sets: 3, repMin: 10, repMax: 15, targetRir: 2, restSeconds: 60 },
+          { exerciseId: 'lateral_raise_db', sets: 4, repMin: 15, repMax: 20, targetRir: 1, restSeconds: 60 },
+          { exerciseId: 'skullcrusher', sets: 3, repMin: 8, repMax: 12, targetRir: 2, restSeconds: 60 },
+          { exerciseId: 'single_arm_pushdown', sets: 3, repMin: 8, repMax: 12, targetRir: 2, restSeconds: 60 },
+        ],
+      },
+      {
+        id: 'ppl_pull_b',
+        name: 'Pull B - Spirit Bomb',
+        focus: 'Dos, biceps (volume)',
+        exercises: [
+          { exerciseId: 'deadlift', sets: 3, repMin: 5, repMax: 5, targetRir: 1, restSeconds: 240 },
+          { exerciseId: 'lat_pulldown_wide', sets: 3, repMin: 8, repMax: 12, targetRir: 2, restSeconds: 90 },
+          { exerciseId: 'chest_supported_row', sets: 3, repMin: 8, repMax: 12, targetRir: 2, restSeconds: 90 },
+          { exerciseId: 'face_pull', sets: 5, repMin: 15, repMax: 20, targetRir: 1, restSeconds: 60 },
+          { exerciseId: 'ez_curl', sets: 3, repMin: 8, repMax: 12, targetRir: 2, restSeconds: 60 },
+          { exerciseId: 'concentration_curl', sets: 3, repMin: 8, repMax: 12, targetRir: 2, restSeconds: 60 },
+        ],
+      },
+      {
+        id: 'ppl_legs_b',
+        name: 'Legs B - Great Ape Fury',
+        focus: 'Quadriceps, ischio, fessiers',
+        exercises: [
+          { exerciseId: 'front_squat', sets: 3, repMin: 8, repMax: 12, targetRir: 2, restSeconds: 150 },
+          { exerciseId: 'barbell_hip_thrust', sets: 3, repMin: 8, repMax: 12, targetRir: 2, restSeconds: 120 },
+          { exerciseId: 'bulgarian_split_squat', sets: 3, repMin: 8, repMax: 12, targetRir: 2, restSeconds: 90 },
+          { exerciseId: 'leg_extension', sets: 3, repMin: 10, repMax: 15, targetRir: 2, restSeconds: 60 },
+          { exerciseId: 'seated_leg_curl', sets: 3, repMin: 10, repMax: 15, targetRir: 2, restSeconds: 60 },
+          { exerciseId: 'seated_calf_raise', sets: 5, repMin: 10, repMax: 15, targetRir: 1, restSeconds: 60 },
+        ],
+      },
+    ],
+  },
+  // ──────────────────────────────────────────
+  // GZCLP 3-4J - Saga Ginyu : Maitrise du Ki
+  // ──────────────────────────────────────────
+  {
+    id: 'gzclp_ginyu',
+    name: 'GZCLP - Saga Ginyu',
+    saga: 'Ginyu',
+    split: 'Upper/Lower alterne',
+    goalTags: ['strength', 'muscle_gain'],
+    levelTags: ['beginner', 'intermediate'],
+    equipmentTags: ['full_gym'],
+    daysPerWeek: 4,
+    description: 'Le programme GZCLP de Cody Lefever. Structure T1/T2/T3 avec progression lineaire. Comme les forces Ginyu : technique, puissance et strategie.',
+    sessions: [
+      {
+        id: 'gzclp_a1',
+        name: 'A1 - Ginyu Force Pose',
+        focus: 'T1 Squat, T2 Bench, T3 Accessoires',
+        exercises: [
+          { exerciseId: 'back_squat', sets: 5, repMin: 3, repMax: 3, targetRir: 1, restSeconds: 210 },
+          { exerciseId: 'barbell_bench_press', sets: 3, repMin: 10, repMax: 10, targetRir: 2, restSeconds: 120 },
+          { exerciseId: 'lat_pulldown_wide', sets: 3, repMin: 15, repMax: 15, targetRir: 2, restSeconds: 60 },
+          { exerciseId: 'face_pull', sets: 3, repMin: 15, repMax: 20, targetRir: 1, restSeconds: 60 },
+        ],
+      },
+      {
+        id: 'gzclp_b1',
+        name: 'B1 - Recoome Boom',
+        focus: 'T1 OHP, T2 Deadlift, T3 Accessoires',
+        exercises: [
+          { exerciseId: 'overhead_press', sets: 5, repMin: 3, repMax: 3, targetRir: 1, restSeconds: 210 },
+          { exerciseId: 'deadlift', sets: 3, repMin: 10, repMax: 10, targetRir: 2, restSeconds: 150 },
+          { exerciseId: 'db_row', sets: 3, repMin: 15, repMax: 15, targetRir: 2, restSeconds: 60 },
+          { exerciseId: 'lateral_raise_db', sets: 3, repMin: 15, repMax: 20, targetRir: 1, restSeconds: 60 },
+        ],
+      },
+      {
+        id: 'gzclp_a2',
+        name: 'A2 - Jeice Red Magma',
+        focus: 'T1 Bench, T2 Squat, T3 Accessoires',
+        exercises: [
+          { exerciseId: 'barbell_bench_press', sets: 5, repMin: 3, repMax: 3, targetRir: 1, restSeconds: 210 },
+          { exerciseId: 'back_squat', sets: 3, repMin: 10, repMax: 10, targetRir: 2, restSeconds: 120 },
+          { exerciseId: 'chin_ups', sets: 3, repMin: 15, repMax: 15, targetRir: 2, restSeconds: 60 },
+          { exerciseId: 'cable_fly', sets: 3, repMin: 12, repMax: 15, targetRir: 1, restSeconds: 60 },
+        ],
+      },
+      {
+        id: 'gzclp_b2',
+        name: 'B2 - Burter Blue Hurricane',
+        focus: 'T1 Deadlift, T2 OHP, T3 Accessoires',
+        exercises: [
+          { exerciseId: 'deadlift', sets: 5, repMin: 3, repMax: 3, targetRir: 1, restSeconds: 240 },
+          { exerciseId: 'overhead_press', sets: 3, repMin: 10, repMax: 10, targetRir: 2, restSeconds: 120 },
+          { exerciseId: 'cable_row_seated', sets: 3, repMin: 15, repMax: 15, targetRir: 2, restSeconds: 60 },
+          { exerciseId: 'barbell_curl', sets: 3, repMin: 12, repMax: 15, targetRir: 1, restSeconds: 60 },
+        ],
+      },
+    ],
+  },
+  // ──────────────────────────────────────────
+  // PHUL 4J - Saga Buu : Power + Hypertrophie
+  // ──────────────────────────────────────────
+  {
+    id: 'phul_buu',
+    name: 'PHUL - Saga Buu',
+    saga: 'Buu',
+    split: 'Upper Power/Lower Power/Upper Hyper/Lower Hyper',
+    goalTags: ['muscle_gain', 'strength'],
+    levelTags: ['intermediate'],
+    equipmentTags: ['full_gym'],
+    daysPerWeek: 4,
+    description: 'Power Hypertrophy Upper Lower. 2 jours force + 2 jours volume. Comme Buu qui combine puissance brute et regeneration massive.',
+    sessions: [
+      {
+        id: 'phul_upper_power',
+        name: 'Upper Power - Super Buu',
+        focus: 'Haut du corps force',
+        exercises: [
+          { exerciseId: 'barbell_bench_press', sets: 4, repMin: 3, repMax: 5, targetRir: 1, restSeconds: 180 },
+          { exerciseId: 'barbell_row', sets: 4, repMin: 3, repMax: 5, targetRir: 1, restSeconds: 180 },
+          { exerciseId: 'overhead_press', sets: 3, repMin: 5, repMax: 8, targetRir: 2, restSeconds: 150 },
+          { exerciseId: 'pull_ups', sets: 3, repMin: 5, repMax: 8, targetRir: 2, restSeconds: 120 },
+          { exerciseId: 'barbell_curl', sets: 2, repMin: 6, repMax: 10, targetRir: 2, restSeconds: 60 },
+          { exerciseId: 'skullcrusher', sets: 2, repMin: 6, repMax: 10, targetRir: 2, restSeconds: 60 },
+        ],
+      },
+      {
+        id: 'phul_lower_power',
+        name: 'Lower Power - Kid Buu',
+        focus: 'Bas du corps force',
+        exercises: [
+          { exerciseId: 'back_squat', sets: 4, repMin: 3, repMax: 5, targetRir: 1, restSeconds: 210 },
+          { exerciseId: 'deadlift', sets: 3, repMin: 3, repMax: 5, targetRir: 1, restSeconds: 240 },
+          { exerciseId: 'leg_press', sets: 4, repMin: 8, repMax: 12, targetRir: 2, restSeconds: 120 },
+          { exerciseId: 'lying_leg_curl', sets: 3, repMin: 6, repMax: 10, targetRir: 2, restSeconds: 90 },
+          { exerciseId: 'standing_calf_raise', sets: 4, repMin: 6, repMax: 10, targetRir: 2, restSeconds: 60 },
+        ],
+      },
+      {
+        id: 'phul_upper_hyper',
+        name: 'Upper Hypertrophie - Buu Gohan Absorbe',
+        focus: 'Haut du corps volume',
+        exercises: [
+          { exerciseId: 'db_incliné_press', sets: 4, repMin: 8, repMax: 12, targetRir: 2, restSeconds: 90 },
+          { exerciseId: 'cable_row_seated', sets: 4, repMin: 8, repMax: 12, targetRir: 2, restSeconds: 90 },
+          { exerciseId: 'db_shoulder_press', sets: 3, repMin: 10, repMax: 15, targetRir: 2, restSeconds: 60 },
+          { exerciseId: 'lat_pulldown_wide', sets: 3, repMin: 10, repMax: 15, targetRir: 2, restSeconds: 60 },
+          { exerciseId: 'cable_fly', sets: 3, repMin: 12, repMax: 15, targetRir: 1, restSeconds: 60 },
+          { exerciseId: 'lateral_raise_db', sets: 4, repMin: 15, repMax: 20, targetRir: 1, restSeconds: 45 },
+          { exerciseId: 'ez_curl', sets: 3, repMin: 10, repMax: 15, targetRir: 2, restSeconds: 60 },
+          { exerciseId: 'rope_pushdown', sets: 3, repMin: 10, repMax: 15, targetRir: 2, restSeconds: 60 },
+        ],
+      },
+      {
+        id: 'phul_lower_hyper',
+        name: 'Lower Hypertrophie - Majin Vegeta Rage',
+        focus: 'Bas du corps volume',
+        exercises: [
+          { exerciseId: 'front_squat', sets: 4, repMin: 8, repMax: 12, targetRir: 2, restSeconds: 120 },
+          { exerciseId: 'romanian_deadlift', sets: 4, repMin: 8, repMax: 12, targetRir: 2, restSeconds: 120 },
+          { exerciseId: 'bulgarian_split_squat', sets: 3, repMin: 10, repMax: 15, targetRir: 2, restSeconds: 90 },
+          { exerciseId: 'leg_extension', sets: 3, repMin: 12, repMax: 15, targetRir: 1, restSeconds: 60 },
+          { exerciseId: 'seated_leg_curl', sets: 3, repMin: 12, repMax: 15, targetRir: 1, restSeconds: 60 },
+          { exerciseId: 'seated_calf_raise', sets: 4, repMin: 10, repMax: 15, targetRir: 1, restSeconds: 45 },
+        ],
+      },
+    ],
+  },
+  // ──────────────────────────────────────────
+  // 5/3/1 BBB 4J - Saga DBS : Entrainement de Whis
+  // ──────────────────────────────────────────
+  {
+    id: '531_bbb_whis',
+    name: '5/3/1 BBB - Saga DBS',
+    saga: 'DBS',
+    split: '4 jours (Squat/Bench/Dead/OHP)',
+    goalTags: ['strength', 'muscle_gain'],
+    levelTags: ['intermediate', 'advanced'],
+    equipmentTags: ['full_gym'],
+    daysPerWeek: 4,
+    description: 'Le classique 5/3/1 de Jim Wendler avec Boring But Big. Progression lente mais sure. La patience de Whis appliquee a la musculation.',
+    sessions: [
+      {
+        id: '531_squat',
+        name: 'Squat Day - Ultra Instinct Sign',
+        focus: 'T1 Squat + BBB Squat + Accessoires',
+        exercises: [
+          { exerciseId: 'back_squat', sets: 3, repMin: 3, repMax: 5, targetRir: 0, restSeconds: 210 },
+          { exerciseId: 'back_squat', sets: 5, repMin: 10, repMax: 10, targetRir: 3, restSeconds: 120 },
+          { exerciseId: 'leg_press', sets: 3, repMin: 10, repMax: 15, targetRir: 2, restSeconds: 90 },
+          { exerciseId: 'lying_leg_curl', sets: 3, repMin: 10, repMax: 15, targetRir: 2, restSeconds: 60 },
+          { exerciseId: 'hanging_leg_raise', sets: 3, repMin: 10, repMax: 15, targetRir: 2, restSeconds: 60 },
+        ],
+      },
+      {
+        id: '531_bench',
+        name: 'Bench Day - Hakai',
+        focus: 'T1 Bench + BBB Bench + Accessoires',
+        exercises: [
+          { exerciseId: 'barbell_bench_press', sets: 3, repMin: 3, repMax: 5, targetRir: 0, restSeconds: 180 },
+          { exerciseId: 'barbell_bench_press', sets: 5, repMin: 10, repMax: 10, targetRir: 3, restSeconds: 90 },
+          { exerciseId: 'db_row', sets: 5, repMin: 10, repMax: 15, targetRir: 2, restSeconds: 60 },
+          { exerciseId: 'face_pull', sets: 3, repMin: 15, repMax: 20, targetRir: 1, restSeconds: 60 },
+          { exerciseId: 'rope_pushdown', sets: 3, repMin: 10, repMax: 15, targetRir: 2, restSeconds: 60 },
+        ],
+      },
+      {
+        id: '531_deadlift',
+        name: 'Deadlift Day - Vegeta Royal Blue',
+        focus: 'T1 Deadlift + BBB Deadlift + Accessoires',
+        exercises: [
+          { exerciseId: 'deadlift', sets: 3, repMin: 3, repMax: 5, targetRir: 0, restSeconds: 240 },
+          { exerciseId: 'deadlift', sets: 5, repMin: 10, repMax: 10, targetRir: 3, restSeconds: 150 },
+          { exerciseId: 'barbell_hip_thrust', sets: 3, repMin: 10, repMax: 15, targetRir: 2, restSeconds: 90 },
+          { exerciseId: 'hyperextension', sets: 3, repMin: 12, repMax: 15, targetRir: 2, restSeconds: 60 },
+          { exerciseId: 'plank', sets: 3, repMin: 30, repMax: 60, targetRir: 1, restSeconds: 60 },
+        ],
+      },
+      {
+        id: '531_ohp',
+        name: 'OHP Day - Beerus Destruction',
+        focus: 'T1 OHP + BBB OHP + Accessoires',
+        exercises: [
+          { exerciseId: 'overhead_press', sets: 3, repMin: 3, repMax: 5, targetRir: 0, restSeconds: 180 },
+          { exerciseId: 'overhead_press', sets: 5, repMin: 10, repMax: 10, targetRir: 3, restSeconds: 90 },
+          { exerciseId: 'chin_ups', sets: 5, repMin: 8, repMax: 12, targetRir: 2, restSeconds: 60 },
+          { exerciseId: 'lateral_raise_db', sets: 4, repMin: 15, repMax: 20, targetRir: 1, restSeconds: 45 },
+          { exerciseId: 'barbell_curl', sets: 3, repMin: 10, repMax: 15, targetRir: 2, restSeconds: 60 },
+        ],
+      },
+    ],
+  },
+  // ──────────────────────────────────────────
+  // nSuns 5/3/1 LP 5J - Saga Namek : Gravite x100
+  // ──────────────────────────────────────────
+  {
+    id: 'nsuns_namek',
+    name: 'nSuns 5/3/1 LP - Saga Namek',
+    saga: 'Namek',
+    split: '5 jours haute intensite',
+    goalTags: ['strength'],
+    levelTags: ['intermediate'],
+    equipmentTags: ['full_gym'],
+    daysPerWeek: 5,
+    description: 'nSuns 531 LP : volume intense et progression rapide. 9 sets par exercice principal. La gravite x100 de la salle de Goku sur Namek.',
+    sessions: [
+      {
+        id: 'nsuns_bench_ohp',
+        name: 'Jour 1 - Bench/OHP',
+        focus: 'T1 Bench Press + T2 OHP',
+        exercises: [
+          { exerciseId: 'barbell_bench_press', sets: 9, repMin: 1, repMax: 8, targetRir: 0, restSeconds: 150 },
+          { exerciseId: 'overhead_press', sets: 8, repMin: 3, repMax: 8, targetRir: 1, restSeconds: 120 },
+          { exerciseId: 'db_row', sets: 4, repMin: 8, repMax: 12, targetRir: 2, restSeconds: 60 },
+          { exerciseId: 'lateral_raise_db', sets: 4, repMin: 12, repMax: 15, targetRir: 1, restSeconds: 45 },
+        ],
+      },
+      {
+        id: 'nsuns_squat_sumo',
+        name: 'Jour 2 - Squat/Sumo',
+        focus: 'T1 Squat + T2 Sumo Deadlift',
+        exercises: [
+          { exerciseId: 'back_squat', sets: 9, repMin: 1, repMax: 8, targetRir: 0, restSeconds: 180 },
+          { exerciseId: 'sumo_deadlift', sets: 8, repMin: 3, repMax: 8, targetRir: 1, restSeconds: 150 },
+          { exerciseId: 'leg_extension', sets: 3, repMin: 10, repMax: 15, targetRir: 2, restSeconds: 60 },
+          { exerciseId: 'lying_leg_curl', sets: 3, repMin: 10, repMax: 15, targetRir: 2, restSeconds: 60 },
+        ],
+      },
+      {
+        id: 'nsuns_ohp_incline',
+        name: 'Jour 3 - OHP/Incline',
+        focus: 'T1 OHP + T2 Incline Bench',
+        exercises: [
+          { exerciseId: 'overhead_press', sets: 9, repMin: 1, repMax: 8, targetRir: 0, restSeconds: 150 },
+          { exerciseId: 'incliné_barbell_bench', sets: 8, repMin: 3, repMax: 8, targetRir: 1, restSeconds: 120 },
+          { exerciseId: 'pull_ups', sets: 4, repMin: 6, repMax: 12, targetRir: 2, restSeconds: 90 },
+          { exerciseId: 'face_pull', sets: 4, repMin: 15, repMax: 20, targetRir: 1, restSeconds: 45 },
+        ],
+      },
+      {
+        id: 'nsuns_dead_front',
+        name: 'Jour 4 - Deadlift/Front Squat',
+        focus: 'T1 Deadlift + T2 Front Squat',
+        exercises: [
+          { exerciseId: 'deadlift', sets: 9, repMin: 1, repMax: 8, targetRir: 0, restSeconds: 210 },
+          { exerciseId: 'front_squat', sets: 8, repMin: 3, repMax: 8, targetRir: 1, restSeconds: 150 },
+          { exerciseId: 'barbell_row', sets: 4, repMin: 8, repMax: 12, targetRir: 2, restSeconds: 90 },
+          { exerciseId: 'hanging_leg_raise', sets: 3, repMin: 10, repMax: 15, targetRir: 2, restSeconds: 60 },
+        ],
+      },
+      {
+        id: 'nsuns_bench_cg',
+        name: 'Jour 5 - Bench/Close Grip',
+        focus: 'T1 Bench Press + T2 Close Grip Bench',
+        exercises: [
+          { exerciseId: 'barbell_bench_press', sets: 9, repMin: 1, repMax: 8, targetRir: 0, restSeconds: 150 },
+          { exerciseId: 'close_grip_bench', sets: 8, repMin: 3, repMax: 8, targetRir: 1, restSeconds: 120 },
+          { exerciseId: 'cable_fly', sets: 3, repMin: 10, repMax: 15, targetRir: 2, restSeconds: 60 },
+          { exerciseId: 'barbell_curl', sets: 3, repMin: 10, repMax: 15, targetRir: 2, restSeconds: 60 },
+          { exerciseId: 'rope_pushdown', sets: 3, repMin: 10, repMax: 15, targetRir: 2, restSeconds: 60 },
+        ],
+      },
+    ],
+  },
 ]

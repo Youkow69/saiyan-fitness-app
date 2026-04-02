@@ -2,380 +2,390 @@ import { useMemo, useState } from 'react'
 import { useAppState } from '../../context/AppContext'
 import { getExerciseById } from '../../lib'
 
-// ---------------------------------------------------------------------------
-// Constants & Types
-// ---------------------------------------------------------------------------
-
-type RecoveryStatus = 'rested' | 'recovering' | 'fatigued' | 'unknown'
-
 const MUSCLE_FR: Record<string, string> = {
-  Chest: 'Pectoraux',
-  Back: 'Dos',
-  Shoulders: '\u00c9paules',
-  Biceps: 'Biceps',
-  Triceps: 'Triceps',
-  Quads: 'Quadriceps',
-  Hamstrings: 'Ischio-jambiers',
-  Glutes: 'Fessiers',
-  Calves: 'Mollets',
-  Core: 'Abdominaux',
+  Chest: 'Pectoraux', Back: 'Dos', Shoulders: 'Épaules', Biceps: 'Biceps',
+  Triceps: 'Triceps', Quads: 'Quadriceps', Hamstrings: 'Ischio-jambiers',
+  Glutes: 'Fessiers', Calves: 'Mollets', Core: 'Abdominaux',
 }
 
-const RAW_COLORS: Record<RecoveryStatus, string> = {
-  rested: '#22c55e',
-  recovering: '#f59e0b',
-  fatigued: '#ef4444',
-  unknown: '#6b7280',
-}
+type Status = 'rested' | 'recovering' | 'fatigued' | 'unknown'
+const COLORS: Record<Status, string> = { rested: '#22c55e', recovering: '#f59e0b', fatigued: '#ef4444', unknown: '#6b7280' }
+const LABELS: Record<Status, string> = { rested: 'Reposé (48h+)', recovering: 'Récupération (24-48h)', fatigued: 'Fatigué (<24h)', unknown: 'Jamais entraîné' }
 
-const STATUS_LABELS_FR: Record<RecoveryStatus, string> = {
-  rested: 'Repos\u00e9',
-  recovering: 'R\u00e9cup\u00e9ration',
-  fatigued: 'Fatigu\u00e9',
-  unknown: 'Jamais entra\u00een\u00e9',
-}
-
-// ---------------------------------------------------------------------------
-// Dot positions (% of image container)
-// ---------------------------------------------------------------------------
-
-const FRONT_DOTS: { muscle: string; label: string; left: number; top: number }[] = [
-  { muscle: 'Shoulders', label: '\u00c9PAULES', left: 28, top: 26 },
-  { muscle: 'Shoulders', label: '\u00c9PAULES', left: 67, top: 26 },
-  { muscle: 'Chest', label: 'PECS', left: 38, top: 31 },
-  { muscle: 'Chest', label: 'PECS', left: 57, top: 31 },
-  { muscle: 'Biceps', label: 'BICEPS', left: 22, top: 37 },
-  { muscle: 'Biceps', label: 'BICEPS', left: 73, top: 37 },
-  { muscle: 'Core', label: 'ABDOS', left: 47, top: 40 },
-  { muscle: 'Quads', label: 'QUADS', left: 38, top: 58 },
-  { muscle: 'Quads', label: 'QUADS', left: 57, top: 58 },
-]
-
-const BACK_DOTS: { muscle: string; label: string; left: number; top: number }[] = [
-  { muscle: 'Back', label: 'HAUT DOS', left: 47, top: 28 },
-  { muscle: 'Back', label: 'BAS DOS', left: 47, top: 38 },
-  { muscle: 'Triceps', label: 'TRICEPS', left: 24, top: 37 },
-  { muscle: 'Triceps', label: 'TRICEPS', left: 71, top: 37 },
-  { muscle: 'Glutes', label: 'FESSIERS', left: 40, top: 50 },
-  { muscle: 'Glutes', label: 'FESSIERS', left: 55, top: 50 },
-  { muscle: 'Hamstrings', label: 'ISCH.', left: 39, top: 62 },
-  { muscle: 'Hamstrings', label: 'ISCH.', left: 56, top: 62 },
-  { muscle: 'Calves', label: 'MOLLETS', left: 38, top: 78 },
-  { muscle: 'Calves', label: 'MOLLETS', left: 57, top: 78 },
-]
-
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-
-function getRecoveryStatus(hoursSince: number): RecoveryStatus {
-  if (hoursSince < 0) return 'unknown'
-  if (hoursSince >= 48) return 'rested'
-  if (hoursSince >= 24) return 'recovering'
+function getStatus(h: number): Status {
+  if (h < 0) return 'unknown'
+  if (h >= 48) return 'rested'
+  if (h >= 24) return 'recovering'
   return 'fatigued'
 }
 
+const FRONT = [
+  { muscle: 'Chest', label: 'PECS', left: 38, top: 29 },
+  { muscle: 'Chest', label: 'PECS', left: 60, top: 29 },
+  { muscle: 'Shoulders', label: 'ÉP.', left: 24, top: 23 },
+  { muscle: 'Shoulders', label: 'ÉP.', left: 74, top: 23 },
+  { muscle: 'Biceps', label: 'BIC.', left: 18, top: 35 },
+  { muscle: 'Biceps', label: 'BIC.', left: 80, top: 35 },
+  { muscle: 'Core', label: 'ABDOS', left: 49, top: 40 },
+  { muscle: 'Quads', label: 'QUADS', left: 38, top: 60 },
+  { muscle: 'Quads', label: 'QUADS', left: 60, top: 60 },
+  { muscle: 'Calves', label: 'MOLL.', left: 38, top: 80 },
+  { muscle: 'Calves', label: 'MOLL.', left: 60, top: 80 },
+]
+
+const BACK_DOTS = [
+  { muscle: 'Back', label: 'DOS', left: 49, top: 25 },
+  { muscle: 'Back', label: 'DOS', left: 49, top: 35 },
+  { muscle: 'Shoulders', label: 'ÉP.', left: 24, top: 20 },
+  { muscle: 'Shoulders', label: 'ÉP.', left: 74, top: 20 },
+  { muscle: 'Triceps', label: 'TRI.', left: 18, top: 37 },
+  { muscle: 'Triceps', label: 'TRI.', left: 80, top: 37 },
+  { muscle: 'Glutes', label: 'FESS.', left: 40, top: 50 },
+  { muscle: 'Glutes', label: 'FESS.', left: 58, top: 50 },
+  { muscle: 'Hamstrings', label: 'ISCH.', left: 38, top: 62 },
+  { muscle: 'Hamstrings', label: 'ISCH.', left: 60, top: 62 },
+  { muscle: 'Calves', label: 'MOLL.', left: 38, top: 80 },
+  { muscle: 'Calves', label: 'MOLL.', left: 60, top: 80 },
+]
 
 // ---------------------------------------------------------------------------
-// Sub-components
+// Dot sub-component
 // ---------------------------------------------------------------------------
 
-function MuscleDot({
-  dot,
-  status,
-  isActive,
-  onTap,
+function Dot({
+  left,
+  top,
+  color,
+  label,
+  onClick,
 }: {
-  dot: { muscle: string; label: string; left: number; top: number }
-  status: RecoveryStatus
-  isActive: boolean
-  onTap: () => void
+  left: number
+  top: number
+  color: string
+  label: string
+  onClick: () => void
 }) {
-  const color = RAW_COLORS[status]
-  const size = isActive ? 22 : 18
-
   return (
-    <div
-      role="button"
-      tabIndex={0}
-      aria-label={`${dot.label}: ${STATUS_LABELS_FR[status]}`}
-      onClick={onTap}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault()
-          onTap()
-        }
-      }}
+    <button
+      onClick={onClick}
       style={{
         position: 'absolute',
-        left: `${dot.left}%`,
-        top: `${dot.top}%`,
+        left: `${left}%`,
+        top: `${top}%`,
         transform: 'translate(-50%, -50%)',
-        width: size,
-        height: size,
-        borderRadius: 6,
-        background: `${color}cc`,
-        border: `2px solid ${color}`,
-        boxShadow: `0 0 ${isActive ? 14 : 8}px ${color}, 0 0 ${isActive ? 24 : 12}px ${color}55`,
+        width: 'var(--dot-size, 22px)',
+        height: 'var(--dot-size, 22px)',
+        borderRadius: '50%',
+        backgroundColor: color,
+        border: '2px solid var(--dot-border, rgba(255,255,255,0.9))',
+        boxShadow: `0 0 8px 2px ${color}80, 0 0 16px 4px ${color}40`,
         cursor: 'pointer',
-        transition: 'all 0.2s ease',
-        zIndex: isActive ? 20 : 2,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        outline: 'none',
+        padding: 0,
+        zIndex: 2,
+        transition: 'transform 0.15s ease, box-shadow 0.15s ease',
       }}
+      onMouseEnter={(e) => {
+        ;(e.currentTarget as HTMLElement).style.transform = 'translate(-50%, -50%) scale(1.3)'
+        ;(e.currentTarget as HTMLElement).style.boxShadow = `0 0 12px 4px ${color}90, 0 0 24px 8px ${color}50`
+      }}
+      onMouseLeave={(e) => {
+        ;(e.currentTarget as HTMLElement).style.transform = 'translate(-50%, -50%) scale(1)'
+        ;(e.currentTarget as HTMLElement).style.boxShadow = `0 0 8px 2px ${color}80, 0 0 16px 4px ${color}40`
+      }}
+      title={label}
+      aria-label={label}
     >
-      {/* Label above the dot */}
       <span
         style={{
-          position: 'absolute',
-          bottom: '110%',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          fontSize: 8,
+          fontSize: 'var(--dot-font-size, 6px)',
           fontWeight: 700,
-          color: 'var(--rm-text, #fff)',
-          whiteSpace: 'nowrap',
-          textShadow: '0 1px 4px rgba(0,0,0,0.8)',
-          letterSpacing: 0.5,
+          color: 'var(--dot-text-color, #fff)',
+          textShadow: '0 1px 2px rgba(0,0,0,0.6)',
+          lineHeight: 1,
           pointerEvents: 'none',
-          opacity: isActive ? 1 : 0.85,
+          userSelect: 'none',
         }}
       >
-        {dot.label}
+        {label}
       </span>
-
-      {/* Tooltip on active */}
-      {isActive && (
-        <div
-          style={{
-            position: 'absolute',
-            top: '120%',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            background: 'var(--rm-tooltip-bg, rgba(0,0,0,0.85))',
-            color: 'var(--rm-tooltip-text, #fff)',
-            padding: '4px 8px',
-            borderRadius: 6,
-            fontSize: 10,
-            fontWeight: 600,
-            whiteSpace: 'nowrap',
-            zIndex: 30,
-            border: `1px solid ${color}`,
-            boxShadow: `0 2px 8px rgba(0,0,0,0.4)`,
-          }}
-        >
-          {MUSCLE_FR[dot.muscle] ?? dot.muscle} — {STATUS_LABELS_FR[status]}
-        </div>
-      )}
-
-      {/* Bright inner core */}
-      <div
-        style={{
-          width: 6,
-          height: 6,
-          borderRadius: '50%',
-          background: '#fff',
-          opacity: 0.7,
-        }}
-      />
-    </div>
-  )
-}
-
-function BodyPanel({
-  title,
-  dots,
-  flipped,
-  recoveryMap,
-  activeDot,
-  onDotTap,
-}: {
-  title: string
-  dots: typeof FRONT_DOTS
-  flipped: boolean
-  recoveryMap: Record<string, { status: RecoveryStatus; hoursSince: number }>
-  activeDot: string | null
-  onDotTap: (key: string) => void
-}) {
-  return (
-    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
-      <div
-        style={{
-          position: 'relative',
-          width: '100%',
-          maxWidth: 220,
-          aspectRatio: '3 / 5',
-          borderRadius: 12,
-          overflow: 'hidden',
-          background: 'var(--rm-panel-bg, rgba(255,255,255,0.04))',
-          border: '1px solid var(--rm-border, rgba(255,255,255,0.08))',
-        }}
-      >
-        <img
-          src="images/goku.png"
-          alt={`Goku ${title}`}
-          style={{
-            width: '100%',
-            height: '100%',
-            objectFit: 'contain',
-            ...(flipped ? { transform: 'scaleX(-1)' } : {}),
-            filter: 'brightness(0.85) contrast(1.05)',
-            pointerEvents: 'none',
-            userSelect: 'none',
-          }}
-          draggable={false}
-        />
-        {dots.map((dot, i) => {
-          const key = `${title}-${dot.muscle}-${i}`
-          const rec = recoveryMap[dot.muscle] ?? { status: 'unknown' as RecoveryStatus, hoursSince: -1 }
-          return (
-            <MuscleDot
-              key={key}
-              dot={dot}
-              status={rec.status}
-              isActive={activeDot === key}
-              onTap={() => onDotTap(activeDot === key ? '' : key)}
-            />
-          )
-        })}
-      </div>
-      <span
-        style={{
-          fontSize: 12,
-          fontWeight: 700,
-          letterSpacing: 1.5,
-          color: 'var(--rm-label, rgba(255,255,255,0.5))',
-          textTransform: 'uppercase',
-        }}
-      >
-        {title}
-      </span>
-    </div>
+    </button>
   )
 }
 
 // ---------------------------------------------------------------------------
-// Main Component
+// Main component
 // ---------------------------------------------------------------------------
 
 export function RecoveryMap() {
   const { state } = useAppState()
-  const [activeDot, setActiveDot] = useState<string | null>(null)
+  const [selectedMuscle, setSelectedMuscle] = useState<string | null>(null)
 
-  // Compute hours since last training per muscle
-  const recoveryMap = useMemo(() => {
+  // Compute hours since last training for each muscle
+  const muscleHours = useMemo(() => {
     const now = Date.now()
-    const muscleLastTrained: Record<string, number> = {}
+    const lastTrained: Record<string, number> = {}
 
-    state.workouts.forEach((session: any) => {
-      const sessionTime = new Date(session.date).getTime()
-      ;(session.exercises ?? []).forEach((ex: any) => {
-        const def = getExerciseById(ex.exerciseId)
-        if (!def) return
-        const muscles = [...(def.primaryMuscles ?? []), ...(def.secondaryMuscles ?? [])]
-        muscles.forEach((m: string) => {
-          if (!muscleLastTrained[m] || sessionTime > muscleLastTrained[m]) {
-            muscleLastTrained[m] = sessionTime
+    for (const workout of state.workouts) {
+      const ts = new Date(workout.date).getTime()
+      for (const entry of workout.exercises) {
+        const exercise = getExerciseById(entry.exerciseId)
+        if (!exercise) continue
+        for (const muscle of exercise.primaryMuscles) {
+          const prev = lastTrained[muscle]
+          if (prev === undefined || ts > prev) {
+            lastTrained[muscle] = ts
           }
-        })
-      })
-    })
-
-    const result: Record<string, { status: RecoveryStatus; hoursSince: number }> = {}
-    Object.keys(MUSCLE_FR).forEach((muscle) => {
-      const last = muscleLastTrained[muscle]
-      if (!last) {
-        result[muscle] = { status: 'unknown', hoursSince: -1 }
-      } else {
-        const hours = (now - last) / 3_600_000
-        result[muscle] = { status: getRecoveryStatus(hours), hoursSince: hours }
+        }
       }
-    })
+    }
+
+    const result: Record<string, number> = {}
+    const allMuscles = Object.keys(MUSCLE_FR)
+    for (const m of allMuscles) {
+      if (lastTrained[m] !== undefined) {
+        result[m] = (now - lastTrained[m]) / (1000 * 60 * 60)
+      } else {
+        result[m] = -1 // never trained
+      }
+    }
     return result
   }, [state.workouts])
+
+  const muscleStatus = useMemo(() => {
+    const result: Record<string, Status> = {}
+    for (const [muscle, hours] of Object.entries(muscleHours)) {
+      result[muscle] = getStatus(hours)
+    }
+    return result
+  }, [muscleHours])
+
+  const selectedStatus = selectedMuscle ? muscleStatus[selectedMuscle] : null
+  const selectedHours = selectedMuscle ? muscleHours[selectedMuscle] : null
 
   return (
     <div
       style={{
-        background: 'var(--rm-bg, #0f0f14)',
-        borderRadius: 16,
-        padding: 20,
-        color: 'var(--rm-text, #e5e5e5)',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 'var(--rm-gap, 16px)',
+        padding: 'var(--rm-padding, 16px)',
         fontFamily: 'var(--rm-font, system-ui, -apple-system, sans-serif)',
-        maxWidth: 520,
+        color: 'var(--rm-text-color, #e2e8f0)',
+        background: 'var(--rm-bg, linear-gradient(135deg, #0f172a 0%, #1e293b 100%))',
+        borderRadius: 'var(--rm-radius, 16px)',
+        maxWidth: 'var(--rm-max-width, 600px)',
         margin: '0 auto',
       }}
     >
-      {/* Header */}
-      <div style={{ marginBottom: 16 }}>
-        <h2
+      {/* Title */}
+      <h2
+        style={{
+          margin: 0,
+          fontSize: 'var(--rm-title-size, 20px)',
+          fontWeight: 700,
+          textAlign: 'center',
+          color: 'var(--rm-title-color, #f8fafc)',
+          letterSpacing: '0.5px',
+        }}
+      >
+        Carte de Récupération Musculaire
+      </h2>
+
+      {/* Anatomy images side by side */}
+      <div
+        style={{
+          display: 'flex',
+          gap: 'var(--rm-images-gap, 8px)',
+          justifyContent: 'center',
+          alignItems: 'flex-start',
+        }}
+      >
+        {/* Front view */}
+        <div
           style={{
-            margin: 0,
-            fontSize: 18,
-            fontWeight: 800,
-            letterSpacing: 1,
-            color: 'var(--rm-heading, #fff)',
+            position: 'relative',
+            flex: '1 1 0',
+            maxWidth: 'var(--rm-img-max-width, 260px)',
           }}
         >
-          SENZU BEAN RECOVERY
-        </h2>
-        <p
+          <img
+            src="images/goku_muscles_front.png"
+            alt="Vue de face - muscles"
+            style={{
+              width: '100%',
+              height: 'auto',
+              display: 'block',
+              borderRadius: 'var(--rm-img-radius, 12px)',
+              opacity: 'var(--rm-img-opacity, 0.85)',
+            }}
+          />
+          {FRONT.map((dot, i) => (
+            <Dot
+              key={`front-${i}`}
+              left={dot.left}
+              top={dot.top}
+              color={COLORS[muscleStatus[dot.muscle] ?? 'unknown']}
+              label={dot.label}
+              onClick={() => setSelectedMuscle(dot.muscle)}
+            />
+          ))}
+          <div
+            style={{
+              textAlign: 'center',
+              marginTop: 'var(--rm-label-mt, 6px)',
+              fontSize: 'var(--rm-label-size, 12px)',
+              fontWeight: 600,
+              color: 'var(--rm-label-color, #94a3b8)',
+              textTransform: 'uppercase',
+              letterSpacing: '1px',
+            }}
+          >
+            Face
+          </div>
+        </div>
+
+        {/* Back view */}
+        <div
           style={{
-            margin: '4px 0 0',
-            fontSize: 12,
-            color: 'var(--rm-subtext, rgba(255,255,255,0.45))',
+            position: 'relative',
+            flex: '1 1 0',
+            maxWidth: 'var(--rm-img-max-width, 260px)',
           }}
         >
-          {'\u00c9'}tat de r{'\u00e9'}cup{'\u00e9'}ration musculaire
-        </p>
+          <img
+            src="images/goku_muscles_back.png"
+            alt="Vue de dos - muscles"
+            style={{
+              width: '100%',
+              height: 'auto',
+              display: 'block',
+              borderRadius: 'var(--rm-img-radius, 12px)',
+              opacity: 'var(--rm-img-opacity, 0.85)',
+            }}
+          />
+          {BACK_DOTS.map((dot, i) => (
+            <Dot
+              key={`back-${i}`}
+              left={dot.left}
+              top={dot.top}
+              color={COLORS[muscleStatus[dot.muscle] ?? 'unknown']}
+              label={dot.label}
+              onClick={() => setSelectedMuscle(dot.muscle)}
+            />
+          ))}
+          <div
+            style={{
+              textAlign: 'center',
+              marginTop: 'var(--rm-label-mt, 6px)',
+              fontSize: 'var(--rm-label-size, 12px)',
+              fontWeight: 600,
+              color: 'var(--rm-label-color, #94a3b8)',
+              textTransform: 'uppercase',
+              letterSpacing: '1px',
+            }}
+          >
+            Dos
+          </div>
+        </div>
       </div>
 
-      {/* Two body panels side by side */}
-      <div style={{ display: 'flex', gap: 12, marginBottom: 16 }}>
-        <BodyPanel
-          title="FACE"
-          dots={FRONT_DOTS}
-          flipped={false}
-          recoveryMap={recoveryMap}
-          activeDot={activeDot}
-          onDotTap={setActiveDot}
-        />
-        <BodyPanel
-          title="DOS"
-          dots={BACK_DOTS}
-          flipped={true}
-          recoveryMap={recoveryMap}
-          activeDot={activeDot}
-          onDotTap={setActiveDot}
-        />
-      </div>
+      {/* Selected muscle detail */}
+      {selectedMuscle && selectedStatus && (
+        <div
+          style={{
+            background: 'var(--rm-detail-bg, rgba(30, 41, 59, 0.8))',
+            border: `2px solid ${COLORS[selectedStatus]}`,
+            borderRadius: 'var(--rm-detail-radius, 12px)',
+            padding: 'var(--rm-detail-padding, 12px 16px)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 'var(--rm-detail-gap, 12px)',
+          }}
+        >
+          <div
+            style={{
+              width: 'var(--rm-detail-dot-size, 16px)',
+              height: 'var(--rm-detail-dot-size, 16px)',
+              borderRadius: '50%',
+              backgroundColor: COLORS[selectedStatus],
+              boxShadow: `0 0 8px ${COLORS[selectedStatus]}80`,
+              flexShrink: 0,
+            }}
+          />
+          <div style={{ flex: 1 }}>
+            <div
+              style={{
+                fontWeight: 700,
+                fontSize: 'var(--rm-detail-title-size, 15px)',
+                color: 'var(--rm-detail-title-color, #f1f5f9)',
+              }}
+            >
+              {MUSCLE_FR[selectedMuscle] ?? selectedMuscle}
+            </div>
+            <div
+              style={{
+                fontSize: 'var(--rm-detail-sub-size, 12px)',
+                color: 'var(--rm-detail-sub-color, #94a3b8)',
+                marginTop: 2,
+              }}
+            >
+              {LABELS[selectedStatus]}
+              {selectedHours !== null && selectedHours >= 0
+                ? ` — ${Math.round(selectedHours)}h depuis le dernier entraînement`
+                : ''}
+            </div>
+          </div>
+          <button
+            onClick={() => setSelectedMuscle(null)}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: 'var(--rm-detail-close-color, #64748b)',
+              cursor: 'pointer',
+              fontSize: 'var(--rm-detail-close-size, 18px)',
+              padding: '4px',
+              lineHeight: 1,
+            }}
+            aria-label="Fermer"
+          >
+            ✕
+          </button>
+        </div>
+      )}
 
       {/* Legend */}
       <div
         style={{
           display: 'flex',
           justifyContent: 'center',
-          gap: 16,
-          marginBottom: 16,
+          gap: 'var(--rm-legend-gap, 16px)',
           flexWrap: 'wrap',
         }}
       >
-        {(['rested', 'recovering', 'fatigued'] as RecoveryStatus[]).map((s) => (
-          <div key={s} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+        {(['rested', 'recovering', 'fatigued', 'unknown'] as Status[]).map((s) => (
+          <div
+            key={s}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 'var(--rm-legend-item-gap, 6px)',
+              fontSize: 'var(--rm-legend-font-size, 11px)',
+              color: 'var(--rm-legend-color, #94a3b8)',
+            }}
+          >
             <div
               style={{
-                width: 10,
-                height: 10,
+                width: 'var(--rm-legend-dot-size, 10px)',
+                height: 'var(--rm-legend-dot-size, 10px)',
                 borderRadius: '50%',
-                background: RAW_COLORS[s],
-                boxShadow: `0 0 6px ${RAW_COLORS[s]}`,
+                backgroundColor: COLORS[s],
+                boxShadow: `0 0 4px ${COLORS[s]}60`,
               }}
             />
-            <span style={{ fontSize: 11, color: 'var(--rm-legend, rgba(255,255,255,0.6))' }}>
-              {STATUS_LABELS_FR[s]}
-            </span>
+            {LABELS[s]}
           </div>
         ))}
       </div>
@@ -384,60 +394,69 @@ export function RecoveryMap() {
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: 8,
+          gridTemplateColumns: 'repeat(auto-fill, minmax(var(--rm-grid-min, 130px), 1fr))',
+          gap: 'var(--rm-grid-gap, 8px)',
         }}
       >
         {Object.keys(MUSCLE_FR).map((muscle) => {
-          const rec = recoveryMap[muscle]
-          const color = RAW_COLORS[rec.status]
+          const status = muscleStatus[muscle] ?? 'unknown'
+          const hours = muscleHours[muscle] ?? -1
+          const isSelected = selectedMuscle === muscle
           return (
-            <div
+            <button
               key={muscle}
+              onClick={() => setSelectedMuscle(isSelected ? null : muscle)}
               style={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: 10,
-                padding: '8px 12px',
-                borderRadius: 10,
-                background: 'var(--rm-card-bg, rgba(255,255,255,0.04))',
-                border: '1px solid var(--rm-card-border, rgba(255,255,255,0.06))',
+                gap: 'var(--rm-cell-gap, 8px)',
+                padding: 'var(--rm-cell-padding, 10px 12px)',
+                background: isSelected
+                  ? 'var(--rm-cell-bg-active, rgba(51, 65, 85, 0.9))'
+                  : 'var(--rm-cell-bg, rgba(30, 41, 59, 0.6))',
+                border: isSelected
+                  ? `2px solid ${COLORS[status]}`
+                  : '2px solid var(--rm-cell-border, rgba(51, 65, 85, 0.5))',
+                borderRadius: 'var(--rm-cell-radius, 10px)',
+                cursor: 'pointer',
+                transition: 'all 0.15s ease',
+                textAlign: 'left',
               }}
             >
               <div
                 style={{
-                  width: 10,
-                  height: 10,
+                  width: 'var(--rm-cell-dot, 12px)',
+                  height: 'var(--rm-cell-dot, 12px)',
                   borderRadius: '50%',
-                  background: color,
-                  boxShadow: `0 0 6px ${color}`,
+                  backgroundColor: COLORS[status],
+                  boxShadow: `0 0 6px ${COLORS[status]}60`,
                   flexShrink: 0,
                 }}
               />
-              <div style={{ minWidth: 0 }}>
+              <div style={{ flex: 1, minWidth: 0 }}>
                 <div
                   style={{
-                    fontSize: 12,
-                    fontWeight: 700,
-                    color: 'var(--rm-card-title, #fff)',
+                    fontWeight: 600,
+                    fontSize: 'var(--rm-cell-title-size, 13px)',
+                    color: 'var(--rm-cell-title-color, #e2e8f0)',
+                    whiteSpace: 'nowrap',
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap',
                   }}
                 >
                   {MUSCLE_FR[muscle]}
                 </div>
                 <div
                   style={{
-                    fontSize: 10,
-                    color: 'var(--rm-card-sub, rgba(255,255,255,0.4))',
+                    fontSize: 'var(--rm-cell-sub-size, 10px)',
+                    color: 'var(--rm-cell-sub-color, #64748b)',
                     marginTop: 1,
                   }}
                 >
-                  {rec.hoursSince < 0 ? 'Jamais entra\u00een\u00e9' : `${Math.round(rec.hoursSince)}h`}
+                  {hours >= 0 ? `${Math.round(hours)}h` : '—'}
                 </div>
               </div>
-            </div>
+            </button>
           )
         })}
       </div>

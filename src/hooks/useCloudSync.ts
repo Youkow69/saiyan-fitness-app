@@ -56,7 +56,8 @@ export function useCloudSync(user: any) {
 
   // Timestamp-based pull + merge to prevent data loss
   const pullAndMerge = useCallback(async (localState: AppState): Promise<AppState | null> => {
-    if (!user) return null
+    if (!user || syncingRef.current) return null
+    syncingRef.current = true
     try {
       const { data, error } = await supabase
         .from('app_state')
@@ -84,6 +85,8 @@ export function useCloudSync(user: any) {
       return merged
     } catch {
       return null // Network error - stay with local
+    } finally {
+      syncingRef.current = false
     }
   }, [user])
 

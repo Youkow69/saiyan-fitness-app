@@ -65,12 +65,15 @@ function injectStyles() {
       inset: 0;
       z-index: 9999;
       background: rgba(0,0,0,0.92);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       padding: 24px;
       overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
     }
     .ws-gold-flash {
       position: fixed;
@@ -130,7 +133,7 @@ function injectStyles() {
     .ws-stat-value {
       font-size: 1.4rem;
       font-weight: 900;
-      color: #ffd700;
+      color: var(--accent);
       font-variant-numeric: tabular-nums;
     }
     .ws-stat-label {
@@ -200,7 +203,7 @@ function injectStyles() {
       gap: 8px;
       font-size: 0.82rem;
       font-weight: 700;
-      color: #ffd700;
+      color: var(--accent);
       margin-bottom: 10px;
     }
     .ws-pr-item {
@@ -259,6 +262,18 @@ function injectStyles() {
     }
     .ws-close-btn:active {
       transform: scale(0.97);
+    }
+    .ws-close-btn:focus-visible {
+      outline: 2px solid #fff;
+      outline-offset: 3px;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .ws-title, .ws-content, .ws-stats-grid, .ws-power-section,
+      .ws-prs-section, .ws-exercises-summary, .ws-close-btn,
+      .ws-subtitle, .ws-pr-item, .ws-aura-ring, .ws-gold-flash {
+        animation: none !important;
+      }
+      .ws-power-gain { animation: none !important; }
     }
     .ws-aura-ring {
       position: absolute;
@@ -509,7 +524,7 @@ export function WorkoutSummary({ workout, previousPowerLevel, onClose }: Props) 
                   <div className="ws-pr-exercise">{pr.exercise}</div>
                   <div className="ws-pr-detail">
                     {pr.weight} kg × {pr.reps} reps — e1RM: {pr.e1rm} kg
-                    <span style={{ color: '#22c55e', marginLeft: 6 }}>
+                    <span style={{ color: 'var(--success)', marginLeft: 6 }}>
                       (+{pr.e1rm - pr.prevBest} kg)
                     </span>
                   </div>
@@ -553,8 +568,8 @@ export function WorkoutSummary({ workout, previousPowerLevel, onClose }: Props) 
           animation: 'ws-fadeInUp 0.5s ease-out 2s both',
         }}>
           {stats.prs.length > 0
-            ? 'Tu as d\u00e9pass\u00e9 tes limites. Le pouvoir du Super Saiyan coule en toi.'
-            : 'Chaque s\u00e9ance te rapproche de ta transformation ultime.'
+            ? 'Tu as dépassé tes limites. Le pouvoir du Super Saiyan coule en toi.'
+            : 'Chaque séance te rapproche de ta transformation ultime.'
           }
         </div>
 

@@ -86,6 +86,15 @@ function AppInner({ user, pushToCloud, pullFromCloud, syncSteps, signOut }: AppI
   const stateRef = useRef(state)
   stateRef.current = state
 
+  // ── Tab change handler (workout-aware) ──────────────────────────────────────
+  const handleTabChange = useCallback((newTab: TabId) => {
+    if (state.activeWorkout && tab === 'train' && newTab !== 'train') {
+      // Don't prevent navigation - the workout persists in state
+      // The floating resume bar will show on other tabs
+    }
+    setTab(newTab)
+  }, [state.activeWorkout, tab])
+
   // ── Cloud sync: pull on first login ────────────────────────────────────────
   useEffect(() => {
     if (!user || hasPulledRef.current) return
@@ -316,6 +325,12 @@ function AppInner({ user, pushToCloud, pullFromCloud, syncSteps, signOut }: AppI
         (e) => e.exerciseId === exerciseId
       )?.target
       setRestTimer(exerciseTarget?.restSeconds ?? DEFAULT_REST_SECONDS)
+
+      // Immediate cloud push after adding a set
+      if (user) {
+        setTimeout(() => pushToCloud(stateRef.current), 300)
+      }
+
       if (isPR) {
         const exName = getExerciseById(exerciseId)?.name ?? exerciseId.replace(/_/g, ' ')
         showToast(
@@ -326,7 +341,7 @@ function AppInner({ user, pushToCloud, pullFromCloud, syncSteps, signOut }: AppI
         showToast(`S\u00E9rie ajout\u00E9e: ${weightKg}kg x ${reps}`, 'success')
       }
     },
-    [dispatch, state.activeWorkout, state.workouts]
+    [dispatch, state.activeWorkout, state.workouts, user, pushToCloud]
   )
 
   const finishWorkout = useCallback(() => {
@@ -455,6 +470,20 @@ function AppInner({ user, pushToCloud, pullFromCloud, syncSteps, signOut }: AppI
     <div className="app-shell">
       <ToastContainer />
 
+      {/* Floating resume bar when active workout and not on train tab */}
+      {state.activeWorkout && tab !== 'train' && (
+        <div onClick={() => setTab('train')} style={{
+          position: 'fixed', top: 0, left: 0, right: 0, zIndex: 90,
+          background: 'linear-gradient(135deg, #FF8C00, #FF6B00)',
+          color: '#000', padding: '10px 16px',
+          display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+          cursor: 'pointer', fontWeight: 700, fontSize: '0.85rem',
+        }}>
+          <span>{'\uD83D\uDCAA'} S\u00E9ance en cours \u2014 {state.activeWorkout.sessionName || 'Entra\u00EEnement'}</span>
+          <span style={{ fontSize: '0.75rem' }}>Reprendre \u2192</span>
+        </div>
+      )}
+
       {pendingFeedback && (
         <FeedbackModal
           muscles={pendingFeedback.muscles}
@@ -489,7 +518,7 @@ function AppInner({ user, pushToCloud, pullFromCloud, syncSteps, signOut }: AppI
             setTheme((t) => (t === 'dark' ? 'light' : 'dark'))
           }
           theme={theme}
-          onNavigate={setTab}
+          onNavigate={handleTabChange}
           cloudUser={user}
           cloudStatus={cloudStatus}
           lastSyncedAt={lastSyncedAt}
@@ -509,7 +538,7 @@ function AppInner({ user, pushToCloud, pullFromCloud, syncSteps, signOut }: AppI
         />
       )}
 
-      <BottomNav tab={tab} onChange={setTab} restTimer={restTimer} />
+      <BottomNav tab={tab} onChange={handleTabChange} restTimer={restTimer} />
     </div>
   )
 }
@@ -548,7 +577,7 @@ function App() {
         background: 'var(--bg, #0c0c14)', color: 'var(--text, #f0f0f5)',
       }}>
         <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: '2rem', marginBottom: 8 }}>⚡</div>
+          <div style={{ fontSize: '2rem', marginBottom: 8 }}>{'\u26A1'}</div>
           <p style={{ color: 'var(--text-secondary, #a0a8c0)', fontSize: '0.9rem' }}>Chargement...</p>
         </div>
       </div>

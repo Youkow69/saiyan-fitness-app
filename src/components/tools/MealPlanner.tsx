@@ -25,7 +25,7 @@ interface MealSuggestion {
   totalProtein: number
   totalCarbs: number
   totalFat: number
-  category: 'rapide' | 'equilibre' | 'copieux'
+  category: 'rapide' | 'équilibré' | 'copieux'
 }
 
 interface RemainingMacros {
@@ -123,9 +123,9 @@ function generateSuggestions(remaining: RemainingMacros): MealSuggestion[] {
     ]
     const totals = sumItems(items)
     suggestions.push({
-      name: 'Repas equilibre',
+      name: 'Repas équilibré',
       description: 'Poulet et riz : la base de la nutrition sportive.',
-      category: 'equilibre',
+      category: 'équilibré',
       items,
       totalCalories: totals.calories,
       totalProtein: totals.protein,
@@ -205,7 +205,7 @@ function generateSuggestions(remaining: RemainingMacros): MealSuggestion[] {
       suggestions.push({
         name: 'Repas lipides sains',
         description: 'Oeufs et avocat pour combler le deficit en graisses.',
-        category: 'equilibre',
+        category: 'équilibré',
         items,
         totalCalories: totals.calories,
         totalProtein: totals.protein,

@@ -31,6 +31,7 @@ import { HomeView } from './components/views/HomeView'
 import { TrainView } from './components/views/TrainView'
 import { OnboardingView } from './components/views/OnboardingView'
 import { NutritionView } from './components/views/NutritionView'
+import { CoachView } from './components/views/CoachView'
 import { ScouterView } from './components/views/ScouterView'
 import { ProfileView } from './components/views/ProfileView'
 
@@ -559,6 +560,7 @@ function AppInner({ user, pushToCloud, pullFromCloud, syncSteps, signOut }: AppI
       )}
       {tab === 'nutrition' && <NutritionView />}
       {tab === 'scouter' && <ScouterView />}
+        {tab === 'coach' && <CoachView />}
       {tab === 'profile' && (
         <ProfileView
           onToggleTheme={() =>

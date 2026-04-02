@@ -222,7 +222,7 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
           <span>Créer ma routine</span>
         </button>
 
-        <ExerciseLibrary exercises={exercises.map(e => ({ id: e.id, name: e.name, muscleGroups: e.primaryMuscles as string[], equipment: [e.equipment] })) as Exercise[]} />
+        <ExerciseLibrary />
 
         {creatingRoutine && (
           <section className="hevy-card stack-md">

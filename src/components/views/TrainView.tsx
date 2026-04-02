@@ -63,12 +63,47 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
     if (!selectedProgram) {
       return (
         <div className="page">
-          <section className="hevy-card">
-            <div className="empty-state">
-              <div className="empty-icon">🏋️</div>
-              <p>Choisis un programme depuis le profil pour commencer ta Saga.</p>
-            </div>
+          {/* Outils */}
+          {!activeWorkout && (
+            <details style={{ marginBottom: 12 }}>
+              <summary style={{ cursor: 'pointer', fontWeight: 700, fontSize: '0.85rem', color: 'var(--accent)', padding: '10px 0' }}>⚙️ Outils</summary>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10, padding: '10px 0' }}>
+                <PlateCalculator />
+                <WorkoutTimer />
+              </div>
+            </details>
+          )}
+
+          <section style={{ background: 'var(--bg-card)', borderRadius: 16, border: '1px solid var(--border)', padding: 16, marginBottom: 12, textAlign: 'center' }}>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', margin: '0 0 12px' }}>Aucun programme sélectionné. Tu peux choisir un programme depuis le Profil, ou commencer une séance libre.</p>
+            <button className="primary-btn" onClick={onStartWorkout} type="button" style={{ width: '100%', marginBottom: 8 }}>Commencer une séance libre</button>
           </section>
+
+          <button onClick={() => setShowBuilder(true)} type="button" style={{ width: '100%', padding: 14, borderRadius: 12, border: '1px dashed var(--accent)', background: 'rgba(255,140,0,0.06)', color: 'var(--accent)', fontSize: '0.9rem', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, marginBottom: 12 }}>
+            + Créer un programme personnalisé
+          </button>
+
+          {customRoutines.length > 0 && (
+            <>
+              <SectionTitle icon="⭐" label="Mes routines perso" />
+              {customRoutines.map((routine) => (
+                <section key={routine.id} className="routine-card" style={{ marginBottom: 8 }}>
+                  <div style={{ marginBottom: 12 }}>
+                    <h3 style={{ margin: 0 }}>{routine.name}</h3>
+                  </div>
+                  <div style={{ display: 'flex', gap: 10 }}>
+                    <button className="primary-btn" style={{ flex: 1 }} onClick={() => onStartCustomRoutine(routine)} type="button">Commencer</button>
+                    <button className="ghost-btn" style={{ padding: '8px 14px' }} onClick={() => onDeleteCustomRoutine(routine.id)} type="button">🗑️</button>
+                  </div>
+                </section>
+              ))}
+            </>
+          )}
+
+          <ExerciseLibrary />
+
+          {showBuilder && <ProgramBuilder onClose={() => setShowBuilder(false)} />}
+          {detailExerciseId && <ExerciseDetail exerciseId={detailExerciseId} onClose={() => setDetailExerciseId(null)} />}
         </div>
       )
     }

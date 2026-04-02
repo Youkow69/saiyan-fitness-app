@@ -123,7 +123,7 @@ export const CoachView: React.FC = React.memo(function CoachView() {
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           fontSize: '1.2rem',
         }}>
-          {'\uD83E\uDD4A'}
+          {'🥊'}
         </div>
         <div>
           <div style={{ fontWeight: 700, fontSize: '0.9rem', color: 'var(--text)' }}>Coach Saiyan</div>
@@ -144,7 +144,7 @@ export const CoachView: React.FC = React.memo(function CoachView() {
 
         {!loadingHistory && messages.length === 0 && (
           <div style={{ textAlign: 'center', padding: '30px 10px' }}>
-            <div style={{ fontSize: '2.5rem', marginBottom: 12 }}>{'\uD83E\uDD4A'}</div>
+            <div style={{ fontSize: '2.5rem', marginBottom: 12 }}>{'🥊'}</div>
             <h3 style={{ margin: '0 0 6px', color: 'var(--text)', fontSize: '1rem' }}>Coach Saiyan</h3>
             <p style={{ color: 'var(--muted)', fontSize: '0.82rem', margin: '0 0 16px' }}>
               Pose-moi tes questions sur la musculation, la nutrition ou la r\u00e9cup\u00e9ration.

@@ -82,18 +82,21 @@ function AppInner({ user, pushToCloud, pullFromCloud, syncSteps, signOut }: AppI
   const [lastSyncedAt, setLastSyncedAt] = useState<string | null>(null)
   const hasPulledRef = useRef(false)
 
-  // Ref to avoid stale closure in sync effect
+  // Ref to avoid stale closure in sync effects - prevents re-render loops
   const stateRef = useRef(state)
   stateRef.current = state
 
+  // Track last synced values to prevent redundant dispatches
+  const lastSyncedValues = useRef<{ steps: number; water: number; sleep: number }>({
+    steps: 0,
+    water: 0,
+    sleep: 0,
+  })
+
   // ── Tab change handler (workout-aware) ──────────────────────────────────────
   const handleTabChange = useCallback((newTab: TabId) => {
-    if (state.activeWorkout && tab === 'train' && newTab !== 'train') {
-      // Don't prevent navigation - the workout persists in state
-      // The floating resume bar will show on other tabs
-    }
     setTab(newTab)
-  }, [state.activeWorkout, tab])
+  }, [])
 
   // ── Cloud sync: pull on first login ────────────────────────────────────────
   useEffect(() => {
@@ -105,21 +108,17 @@ function AppInner({ user, pushToCloud, pullFromCloud, syncSteps, signOut }: AppI
         setCloudStatus('syncing')
         const cloudState = await pullFromCloud()
         if (cloudState) {
-          // Merge strategy: if cloud has more workouts, use cloud state
-          // Otherwise keep local state and push it up
           const cloudWorkouts = (cloudState as any).workouts?.length ?? 0
           const localWorkouts = stateRef.current.workouts?.length ?? 0
           if (cloudWorkouts > localWorkouts) {
             dispatch({ type: 'SET_STATE', payload: cloudState })
             showToast('Donn\u00E9es cloud r\u00E9cup\u00E9r\u00E9es', 'success')
           } else {
-            // Push local state to cloud
             await pushToCloud(stateRef.current)
           }
           setCloudStatus('synced')
           setLastSyncedAt(new Date().toISOString())
         } else {
-          // No cloud data yet, push current local state
           await pushToCloud(stateRef.current)
           setCloudStatus('synced')
           setLastSyncedAt(new Date().toISOString())
@@ -180,50 +179,85 @@ function AppInner({ user, pushToCloud, pullFromCloud, syncSteps, signOut }: AppI
 
   // Persist state on page unload
   useEffect(() => {
-    const handleUnload = () => saveState(state)
+    const handleUnload = () => saveState(stateRef.current)
     window.addEventListener('beforeunload', handleUnload)
     return () => window.removeEventListener('beforeunload', handleUnload)
-  }, [state])
+  }, [])
 
   // Saiyan-steps sync: read tracker data from localStorage
+  // FIX: Use stateRef to read current quest progress instead of state directly.
+  // This prevents the effect from depending on `state`, which would cause
+  // dispatch -> state change -> effect re-run -> dispatch loop.
   useEffect(() => {
     const checkSync = () => {
       try {
-        const current = stateRef.current
         const raw = localStorage.getItem('saiyan_tracker_sync')
         if (!raw) return
         const sync = JSON.parse(raw)
-        if (sync.date !== todayIso()) return
         const today = todayIso()
-        const existing = (current.dailyQuestProgress ?? []).find((d: { date: string }) => d.date === today)
-        if (sync.steps > 0) {
-          const currentSteps = existing?.quests['steps'] ?? 0
-          if (sync.steps > currentSteps) {
-            dispatch({ type: 'UPDATE_QUEST_PROGRESS', payload: { questId: 'steps', delta: sync.steps - currentSteps } })
-          }
+        if (sync.date !== today) return
+
+        // Read current values from ref (not from state dependency)
+        const current = stateRef.current
+        const existing = (current.dailyQuestProgress ?? []).find(
+          (d: { date: string }) => d.date === today
+        )
+        const currentSteps = existing?.quests['steps'] ?? 0
+        const currentWater = existing?.quests['water'] ?? 0
+        const currentSleep = existing?.quests['sleep'] ?? 0
+
+        // Only dispatch if the incoming value actually exceeds the current value
+        // AND differs from the last value we synced (prevents duplicate dispatches)
+        if (
+          sync.steps > 0 &&
+          sync.steps > currentSteps &&
+          sync.steps !== lastSyncedValues.current.steps
+        ) {
+          lastSyncedValues.current.steps = sync.steps
+          dispatch({
+            type: 'UPDATE_QUEST_PROGRESS',
+            payload: { questId: 'steps', delta: sync.steps - currentSteps },
+          })
         }
-        if (sync.waterGlasses > 0) {
-          const currentWater = existing?.quests['water'] ?? 0
-          if (sync.waterGlasses > currentWater) {
-            dispatch({ type: 'UPDATE_QUEST_PROGRESS', payload: { questId: 'water', delta: sync.waterGlasses - currentWater } })
-          }
+
+        if (
+          sync.waterGlasses > 0 &&
+          sync.waterGlasses > currentWater &&
+          sync.waterGlasses !== lastSyncedValues.current.water
+        ) {
+          lastSyncedValues.current.water = sync.waterGlasses
+          dispatch({
+            type: 'UPDATE_QUEST_PROGRESS',
+            payload: { questId: 'water', delta: sync.waterGlasses - currentWater },
+          })
         }
-        if (sync.sleepHours > 0) {
-          const currentSleep = existing?.quests['sleep'] ?? 0
-          if (sync.sleepHours > currentSleep) {
-            dispatch({ type: 'UPDATE_QUEST_PROGRESS', payload: { questId: 'sleep', delta: sync.sleepHours - currentSleep } })
-          }
+
+        if (
+          sync.sleepHours > 0 &&
+          sync.sleepHours > currentSleep &&
+          sync.sleepHours !== lastSyncedValues.current.sleep
+        ) {
+          lastSyncedValues.current.sleep = sync.sleepHours
+          dispatch({
+            type: 'UPDATE_QUEST_PROGRESS',
+            payload: { questId: 'sleep', delta: sync.sleepHours - currentSleep },
+          })
         }
 
         // Also sync steps to cloud if user is logged in
         if (user && (sync.steps > 0 || sync.sleepHours > 0 || sync.waterGlasses > 0)) {
           syncSteps(today, sync.steps ?? 0, sync.sleepHours ?? 0, sync.waterGlasses ?? 0)
         }
-      } catch { /* ignore parse errors */ }
+      } catch {
+        /* ignore parse errors */
+      }
     }
     checkSync()
     const interval = setInterval(checkSync, SYNC_INTERVAL_MS)
     return () => clearInterval(interval)
+    // NOTE: dispatch and syncSteps are stable refs from context/hook,
+    // user is needed to gate cloud sync. We intentionally do NOT include
+    // state here - we read it via stateRef to avoid re-render loops.
   }, [dispatch, user, syncSteps])
 
   const selectedProgram = getProgramById(state.selectedProgramId)
@@ -315,13 +349,13 @@ function AppInner({ user, pushToCloud, pullFromCloud, syncSteps, signOut }: AppI
       rir: number,
       setType: SetType
     ) => {
-      if (!state.activeWorkout || reps <= 0 || weightKg < 0) return
-      const isPR = checkForPR(state.workouts, exerciseId, weightKg, reps)
+      if (!stateRef.current.activeWorkout || reps <= 0 || weightKg < 0) return
+      const isPR = checkForPR(stateRef.current.workouts, exerciseId, weightKg, reps)
       dispatch({
         type: 'ADD_SET',
         payload: { exerciseId, weightKg, reps, rir, setType },
       })
-      const exerciseTarget = state.activeWorkout.exercises.find(
+      const exerciseTarget = stateRef.current.activeWorkout.exercises.find(
         (e) => e.exerciseId === exerciseId
       )?.target
       setRestTimer(exerciseTarget?.restSeconds ?? DEFAULT_REST_SECONDS)
@@ -341,35 +375,35 @@ function AppInner({ user, pushToCloud, pullFromCloud, syncSteps, signOut }: AppI
         showToast(`S\u00E9rie ajout\u00E9e: ${weightKg}kg x ${reps}`, 'success')
       }
     },
-    [dispatch, state.activeWorkout, state.workouts, user, pushToCloud]
+    [dispatch, user, pushToCloud]
   )
 
   const finishWorkout = useCallback(() => {
-    if (!state.activeWorkout) return
+    const activeWorkout = stateRef.current.activeWorkout
+    if (!activeWorkout) return
 
     // Empty workout check
-    const validExercises = state.activeWorkout.exercises.filter(e => e.sets.length > 0)
+    const validExercises = activeWorkout.exercises.filter((e) => e.sets.length > 0)
     if (validExercises.length === 0) {
       showToast('Aucun exercice enregistr\u00E9', 'error')
       return
     }
 
-    const isCustom = state.activeWorkout.programId === 'custom'
+    const isCustom = activeWorkout.programId === 'custom'
     let sessionName: string
     let programId: string
 
     if (isCustom) {
-      const cr = state.customRoutines.find(
-        (r) => r.id === state.activeWorkout!.sessionId
+      const cr = stateRef.current.customRoutines.find(
+        (r) => r.id === activeWorkout.sessionId
       )
-      sessionName =
-        cr?.name ?? state.activeWorkout.sessionName ?? 'S\u00E9ance libre'
+      sessionName = cr?.name ?? activeWorkout.sessionName ?? 'S\u00E9ance libre'
       programId = 'custom'
     } else {
       if (!selectedProgram) return
       const activeSession =
         selectedProgram.sessions.find(
-          (s) => s.id === state.activeWorkout!.sessionId
+          (s) => s.id === activeWorkout.sessionId
         ) ?? nextSession
       if (!activeSession) return
       sessionName = activeSession.name
@@ -377,7 +411,7 @@ function AppInner({ user, pushToCloud, pullFromCloud, syncSteps, signOut }: AppI
     }
 
     const musclesWorked = new Set<MuscleGroup>()
-    state.activeWorkout.exercises.forEach((ex) => {
+    activeWorkout.exercises.forEach((ex) => {
       if (ex.sets.filter((s) => s.setType !== 'warmup').length > 0) {
         const exData = getExerciseById(ex.exerciseId)
         if (exData) {
@@ -390,17 +424,13 @@ function AppInner({ user, pushToCloud, pullFromCloud, syncSteps, signOut }: AppI
       id: makeId('workout'),
       date: todayIso(),
       programId,
-      sessionId: state.activeWorkout.sessionId,
+      sessionId: activeWorkout.sessionId,
       sessionName,
-      exercises: state.activeWorkout.exercises.filter(
-        (e) => e.sets.length > 0
-      ),
+      exercises: activeWorkout.exercises.filter((e) => e.sets.length > 0),
       durationMinutes: Math.max(
         1,
         Math.round(
-          (Date.now() -
-            new Date(state.activeWorkout.startedAt).getTime()) /
-            60000
+          (Date.now() - new Date(activeWorkout.startedAt).getTime()) / 60000
         )
       ),
     }
@@ -428,15 +458,7 @@ function AppInner({ user, pushToCloud, pullFromCloud, syncSteps, signOut }: AppI
     } else {
       setTab('home')
     }
-  }, [
-    state.activeWorkout,
-    state.customRoutines,
-    selectedProgram,
-    nextSession,
-    dispatch,
-    user,
-    pushToCloud,
-  ])
+  }, [selectedProgram, nextSession, dispatch, user, pushToCloud])
 
   const saveFeedback = useCallback(
     (feedback: SessionFeedback) => {
@@ -453,7 +475,9 @@ function AppInner({ user, pushToCloud, pullFromCloud, syncSteps, signOut }: AppI
     if (user) {
       try {
         await pushToCloud(stateRef.current)
-      } catch { /* ignore */ }
+      } catch {
+        /* ignore */
+      }
     }
     await signOut()
     localStorage.removeItem('sf_local_mode')
@@ -472,15 +496,30 @@ function AppInner({ user, pushToCloud, pullFromCloud, syncSteps, signOut }: AppI
 
       {/* Floating resume bar when active workout and not on train tab */}
       {state.activeWorkout && tab !== 'train' && (
-        <div onClick={() => setTab('train')} style={{
-          position: 'fixed', top: 0, left: 0, right: 0, zIndex: 90,
-          background: 'linear-gradient(135deg, #FF8C00, #FF6B00)',
-          color: '#000', padding: '10px 16px',
-          display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-          cursor: 'pointer', fontWeight: 700, fontSize: '0.85rem',
-        }}>
-          <span>💪 Séance en cours — {state.activeWorkout.sessionName || 'Entraînement'}</span>
-          <span style={{ fontSize: '0.75rem' }}>Reprendre →</span>
+        <div
+          onClick={() => setTab('train')}
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            zIndex: 90,
+            background: 'linear-gradient(135deg, #FF8C00, #FF6B00)',
+            color: '#000',
+            padding: '10px 16px',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            cursor: 'pointer',
+            fontWeight: 700,
+            fontSize: '0.85rem',
+          }}
+        >
+          <span>
+            {'\uD83D\uDCAA'} S\u00E9ance en cours —{' '}
+            {state.activeWorkout.sessionName || 'Entra\u00EEnement'}
+          </span>
+          <span style={{ fontSize: '0.75rem' }}>Reprendre {'\u2192'}</span>
         </div>
       )}
 
@@ -496,9 +535,7 @@ function AppInner({ user, pushToCloud, pullFromCloud, syncSteps, signOut }: AppI
         />
       )}
 
-      {tab === 'home' && (
-        <HomeView onStartWorkout={startWorkout} />
-      )}
+      {tab === 'home' && <HomeView onStartWorkout={startWorkout} />}
       {tab === 'train' && (
         <TrainView
           onStartWorkout={startWorkout}
@@ -547,7 +584,9 @@ function AppInner({ user, pushToCloud, pullFromCloud, syncSteps, signOut }: AppI
 
 function App() {
   const { user, loading, signIn, signUp, signOut } = useAuth()
-  const [localMode, setLocalMode] = useState(() => localStorage.getItem('sf_local_mode') === '1')
+  const [localMode, setLocalMode] = useState(() =>
+    localStorage.getItem('sf_local_mode') === '1'
+  )
   const { pushToCloud, pullFromCloud, syncSteps } = useCloudSync(user)
 
   // Show auth screen if not logged in and not in local mode
@@ -572,13 +611,26 @@ function App() {
   // Show loading spinner while checking auth
   if (loading) {
     return (
-      <div style={{
-        minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center',
-        background: 'var(--bg, #0c0c14)', color: 'var(--text, #f0f0f5)',
-      }}>
+      <div
+        style={{
+          minHeight: '100vh',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          background: 'var(--bg, #0c0c14)',
+          color: 'var(--text, #f0f0f5)',
+        }}
+      >
         <div style={{ textAlign: 'center' }}>
           <div style={{ fontSize: '2rem', marginBottom: 8 }}>{'\u26A1'}</div>
-          <p style={{ color: 'var(--text-secondary, #a0a8c0)', fontSize: '0.9rem' }}>Chargement...</p>
+          <p
+            style={{
+              color: 'var(--text-secondary, #a0a8c0)',
+              fontSize: '0.9rem',
+            }}
+          >
+            Chargement...
+          </p>
         </div>
       </div>
     )

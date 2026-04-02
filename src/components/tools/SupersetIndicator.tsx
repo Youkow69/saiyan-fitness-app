@@ -165,28 +165,71 @@ export function SupersetManager({ exercises, onGroupExercises }: Props) {
 }
 
 // Wrapper to visually indicate superset membership on each exercise card
-export function SupersetBar({ exerciseId, groups }: { exerciseId: string; groups: string[][] }) {
+// Enhanced: gold->orange gradient, SUPERSET/GIANT SET label, move up/down
+export function SupersetBar({ exerciseId, groups, onMoveExercise }: {
+  exerciseId: string
+  groups: string[][]
+  onMoveExercise?: (groupIdx: number, fromIdx: number, direction: 'up' | 'down') => void
+}) {
   for (let i = 0; i < groups.length; i++) {
     const g = groups[i]
     const idx = g.indexOf(exerciseId)
     if (idx >= 0) {
-      const color = SUPERSET_COLORS[i % SUPERSET_COLORS.length]
       const isFirst = idx === 0
       const isLast = idx === g.length - 1
+      const label = g.length >= 3 ? 'GIANT SET' : 'SUPERSET'
       return (
         <div style={{
           position: 'absolute', left: -2, top: isFirst ? 20 : 0,
           bottom: isLast ? 20 : 0, width: 4,
-          background: color, borderRadius: isFirst ? '4px 4px 0 0' : isLast ? '0 0 4px 4px' : 0,
+          background: 'linear-gradient(180deg, #ffd700, #ff8c00)',
+          borderRadius: isFirst ? '4px 4px 0 0' : isLast ? '0 0 4px 4px' : 0,
         }}>
           {isFirst && (
             <span style={{
               position: 'absolute', top: -14, left: 8,
-              fontSize: '0.55rem', fontWeight: 700, color,
+              fontSize: '0.55rem', fontWeight: 700,
+              background: 'linear-gradient(90deg, #ffd700, #ff8c00)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
               whiteSpace: 'nowrap',
             }}>
-              SUPERSET
+              {label}
             </span>
+          )}
+          {/* Move up/down buttons */}
+          {onMoveExercise && (
+            <div style={{
+              position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)',
+              display: 'flex', flexDirection: 'column', gap: 2,
+            }}>
+              {!isFirst && (
+                <button
+                  type="button"
+                  onClick={(e) => { e.stopPropagation(); onMoveExercise(i, idx, 'up') }}
+                  style={{
+                    width: 20, height: 20, borderRadius: 4, border: 'none',
+                    background: 'rgba(255,215,0,0.15)', color: '#ffd700',
+                    fontSize: '0.65rem', cursor: 'pointer', display: 'flex',
+                    alignItems: 'center', justifyContent: 'center', padding: 0,
+                  }}
+                  aria-label="Monter"
+                >{'\u2191'}</button>
+              )}
+              {!isLast && (
+                <button
+                  type="button"
+                  onClick={(e) => { e.stopPropagation(); onMoveExercise(i, idx, 'down') }}
+                  style={{
+                    width: 20, height: 20, borderRadius: 4, border: 'none',
+                    background: 'rgba(255,140,0,0.15)', color: '#ff8c00',
+                    fontSize: '0.65rem', cursor: 'pointer', display: 'flex',
+                    alignItems: 'center', justifyContent: 'center', padding: 0,
+                  }}
+                  aria-label="Descendre"
+                >{'\u2193'}</button>
+              )}
+            </div>
           )}
         </div>
       )

@@ -36,7 +36,7 @@ function countPRsFromWorkouts(workouts: AppState['workouts']): number {
 }
 
 interface ProfileViewProps {
-  onToggleTheme: () => void
+  onToggleThème: () => void
   theme: 'dark' | 'light'
   onNavigate: (tab: TabId) => void
   cloudUser?: any
@@ -56,7 +56,7 @@ const GOAL_FR: Record<string, string> = {
 }
 
 export const ProfileView: React.FC<ProfileViewProps> = React.memo(
-  function ProfileView({ onToggleTheme, theme, onNavigate, cloudUser, cloudStatus, lastSyncedAt, onSignOut, onSyncNow }) {
+  function ProfileView({ onToggleThème, theme, onNavigate, cloudUser, cloudStatus, lastSyncedAt, onSignOut, onSyncNow }) {
     const { state, dispatch } = useAppState()
     const [bodyweight, setBodyweight] = useState(String(state.profile?.weightKg ?? 0))
     const [measurements, setMeasurements] = useState({ waist: '', chest: '', arm: '', thigh: '' })
@@ -214,7 +214,7 @@ export const ProfileView: React.FC<ProfileViewProps> = React.memo(
           <SectionTitle icon="⚙️" label="Paramètres" />
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 0' }}>
             <span style={{ fontSize: '0.9rem' }}>{theme === 'dark' ? '🌙 Mode sombre' : '☀️ Mode clair'}</span>
-            <button type="button" onClick={onToggleTheme} className="theme-toggle" aria-label="Changer le thème">
+            <button type="button" onClick={onToggleThème} className="theme-toggle" aria-label="Changer le thème">
               <span className="theme-toggle-knob" style={{ transform: theme === 'light' ? 'translateX(24px)' : 'translateX(0)' }}>
                 {theme === 'dark' ? '🌙' : '☀️'}
               </span>
@@ -271,7 +271,7 @@ export const ProfileView: React.FC<ProfileViewProps> = React.memo(
               {cloudStatus === 'synced' ? 'Synchronise' : cloudStatus === 'syncing' ? 'Sync...' : cloudStatus === 'error' ? 'Erreur' : 'En attente'}
             </span>
           </div>
-          {lastSyncedAt && <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', marginBottom: 8 }}>Derniere sync : {new Date(lastSyncedAt).toLocaleString('fr-FR')}</div>}
+          {lastSyncedAt && <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', marginBottom: 8 }}>Dernière sync : {new Date(lastSyncedAt).toLocaleString('fr-FR')}</div>}
           <div style={{ display: 'flex', gap: 8 }}>
             {onSyncNow && <button type="button" onClick={onSyncNow} style={{ flex: 1, padding: '10px', borderRadius: 10, border: '1px solid var(--accent)', background: 'rgba(255,140,0,0.08)', color: 'var(--accent)', fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer' }}>Synchroniser</button>}
             {onSignOut && <button type="button" onClick={onSignOut} style={{ padding: '10px 16px', borderRadius: 10, border: '1px solid var(--border)', background: 'transparent', color: 'var(--text-secondary)', fontWeight: 600, fontSize: '0.85rem', cursor: 'pointer' }}>Deconnexion</button>}

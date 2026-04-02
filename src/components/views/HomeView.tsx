@@ -3,7 +3,6 @@ import { useAppState } from '../../context/AppContext'
 import {
   formatNumber,
   getCurrentTransformationFull,
-  getDailyNutrition,
   getDailyQuestStatus,
   getMesocycleStatus,
   getPowerLevel,
@@ -13,7 +12,6 @@ import { WeeklyReport } from '../stats/WeeklyReport'
 import { MonthlyRecap } from '../stats/MonthlyRecap'
 import { DailyQuote } from '../gamification/MotivationalQuotes'
 import { DailyQuestsPanel } from '../gamification/QuestSection'
-import MacroBar from '../ui/MacroBar'
 import { RecoveryMap } from '../tools/RecoveryMap'
 import { ReadinessScore } from '../tools/ReadinessScore'
 
@@ -24,13 +22,7 @@ interface HomeViewProps {
 export const HomeView: React.FC<HomeViewProps> = React.memo(
   function HomeView({ onStartWorkout }) {
     const { state, dispatch } = useAppState()
-    const targets = state.targets!
     const [activePanel, setActivePanel] = useState<string | null>(null)
-
-    const nutrition = useMemo(
-      () => getDailyNutrition(state.foodEntries),
-      [state.foodEntries],
-    )
 
     const tf = useMemo(
       () => getCurrentTransformationFull(state),
@@ -68,8 +60,6 @@ export const HomeView: React.FC<HomeViewProps> = React.memo(
       },
       [dispatch],
     )
-
-    const lastWorkout = state.workouts.length > 0 ? state.workouts[state.workouts.length - 1] : null
 
     return (
       <div className="page">
@@ -232,30 +222,27 @@ export const HomeView: React.FC<HomeViewProps> = React.memo(
           </div>
         </section>
 
-        {/* 5. Compact nutrition summary — calories + protein only */}
-        <section className="hevy-card stack-md" style={{ padding: '8px 14px' }}>
-          <MacroBar label="Calories" current={nutrition.calories} target={targets.calories} unit="kcal" color="calories" />
-          <MacroBar label="Protéines" current={nutrition.protein} target={targets.protein} unit="g" color="protein" />
-        </section>
-
-        {/* 6. Last workout card */}
-        {lastWorkout && (
-          <section className="hevy-card" style={{ padding: '10px 14px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div>
-                <div style={{ fontWeight: 700, fontSize: '0.82rem', color: 'var(--text)' }}>
-                  Dernier entraînement
-                </div>
-                <div style={{ fontSize: '0.72rem', color: 'var(--muted)', marginTop: 2 }}>
-                  {lastWorkout.date} — {lastWorkout.exercises.length} exercice{lastWorkout.exercises.length > 1 ? 's' : ''}
-                </div>
-              </div>
-              <span style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--accent-gold)' }}>
-                {lastWorkout.exercises.reduce((s, e) => s + e.sets.length, 0)} séries
-              </span>
+        {/* 5. Saiyan Steps promo */}
+        <a
+          href="https://youkow69.github.io/saiyan-steps/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="hevy-card"
+          style={{
+            display: 'flex', alignItems: 'center', gap: 10,
+            padding: '10px 14px', textDecoration: 'none', color: 'var(--text)',
+            cursor: 'pointer',
+          }}
+        >
+          <span style={{ fontSize: '1.4rem' }}>{'📱'}</span>
+          <div>
+            <div style={{ fontWeight: 700, fontSize: '0.82rem' }}>Saiyan Steps</div>
+            <div style={{ fontSize: '0.72rem', color: 'var(--muted)' }}>
+              Suis tes pas, ton sommeil et ton hydratation
             </div>
-          </section>
-        )}
+          </div>
+          <span style={{ marginLeft: 'auto', fontSize: '0.85rem', color: 'var(--accent)' }}>{'→'}</span>
+        </a>
       </div>
     )
   },

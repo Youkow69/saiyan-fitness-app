@@ -12,6 +12,7 @@ export const allFoods: Food[] = [
     protein: 31,
     carbs: 0,
     fats: 3.6,
+    servings: [{ name: '1 filet', grams: 150 }, { name: '1/2 filet', grams: 75 }],
     tags: ['protein', 'viande', 'volaille']
   },
   {
@@ -22,6 +23,7 @@ export const allFoods: Food[] = [
     protein: 30,
     carbs: 0,
     fats: 1,
+    servings: [{ name: '1 filet', grams: 120 }, { name: '2 tranches', grams: 60 }],
     tags: ['protein', 'viande', 'volaille']
   },
   {
@@ -32,6 +34,7 @@ export const allFoods: Food[] = [
     protein: 26,
     carbs: 0,
     fats: 18,
+    servings: [{ name: '1 steak', grams: 150 }, { name: '1 pavé', grams: 200 }],
     tags: ['protein', 'viande', 'boeuf']
   },
   {
@@ -400,6 +403,7 @@ export const allFoods: Food[] = [
     protein: 1.1,
     carbs: 23,
     fats: 0.3,
+    servings: [{ name: '1 banane', grams: 120 }],
     tags: ['fruit', 'carb']
   },
   {
@@ -410,6 +414,7 @@ export const allFoods: Food[] = [
     protein: 0.3,
     carbs: 14,
     fats: 0.2,
+    servings: [{ name: '1 pomme', grams: 180 }],
     tags: ['fruit']
   },
   {
@@ -510,6 +515,7 @@ export const allFoods: Food[] = [
     protein: 2,
     carbs: 8.5,
     fats: 15,
+    servings: [{ name: '1 avocat', grams: 200 }, { name: '1/2 avocat', grams: 100 }],
     tags: ['fruit', 'lipide', 'bon_gras']
   },
   {
@@ -534,6 +540,7 @@ export const allFoods: Food[] = [
     protein: 2.8,
     carbs: 7,
     fats: 0.4,
+    servings: [{ name: '1 portion', grams: 150 }],
     tags: ['legume']
   },
   {
@@ -866,6 +873,7 @@ export const allFoods: Food[] = [
     protein: 21,
     carbs: 22,
     fats: 50,
+    servings: [{ name: '1 poignée', grams: 30 }],
     tags: ['noix', 'lipide', 'snack']
   },
   {
@@ -876,6 +884,7 @@ export const allFoods: Food[] = [
     protein: 15,
     carbs: 14,
     fats: 65,
+    servings: [{ name: '1 poignée', grams: 30 }],
     tags: ['noix', 'lipide', 'omega3']
   },
   {

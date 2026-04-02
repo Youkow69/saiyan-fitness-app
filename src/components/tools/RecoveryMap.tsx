@@ -90,7 +90,6 @@ function MuscleDot({
   onToggle: () => void
 }) {
   const status = recovery?.status ?? 'unknown'
-  const color = STATUS_COLORS[status]
   const rawColor = STATUS_RAW_COLORS[status]
   const size = isHovered ? 22 : 16
   const glowSize = isHovered ? 14 : 8

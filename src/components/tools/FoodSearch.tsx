@@ -67,6 +67,10 @@ function injectStyles() {
       border-color: var(--accent, #ff8c00);
       box-shadow: 0 0 0 2px rgba(255,140,0,0.15);
     }
+    .fs-input::placeholder {
+      color: var(--text-secondary, #888);
+      opacity: 0.6;
+    }
     .fs-result-item {
       display: flex;
       align-items: center;
@@ -80,6 +84,11 @@ function injectStyles() {
     }
     .fs-result-item:hover, .fs-result-item:active {
       background: rgba(255,140,0,0.06);
+    }
+    .fs-result-item:focus-visible {
+      outline: 2px solid var(--accent, #ff8c00);
+      outline-offset: -2px;
+      border-radius: 8px;
     }
     .fs-result-item:last-child { border-bottom: none; }
     .fs-thumb {
@@ -152,6 +161,10 @@ function injectStyles() {
       cursor: not-allowed;
       transform: none;
     }
+    .fs-add-btn:focus-visible {
+      outline: 2px solid #fff;
+      outline-offset: 2px;
+    }
     .fs-spinner {
       display: inline-block;
       width: 16px;
@@ -201,9 +214,9 @@ function injectStyles() {
 function macroPills(cal: number, p: number, c: number, f: number) {
   return (
     <div className="fs-macro-pills">
-      <span className="fs-pill" style={{ background: 'rgba(255,140,0,0.12)', color: '#ff8c00' }}>{cal} kcal</span>
+      <span className="fs-pill" style={{ background: 'rgba(255,140,0,0.12)', color: 'var(--accent)' }}>{cal} kcal</span>
       <span className="fs-pill" style={{ background: 'rgba(59,130,246,0.12)', color: '#60a5fa' }}>{p}P</span>
-      <span className="fs-pill" style={{ background: 'rgba(34,197,94,0.12)', color: '#22c55e' }}>{c}G</span>
+      <span className="fs-pill" style={{ background: 'rgba(34,197,94,0.12)', color: 'var(--success)' }}>{c}G</span>
       <span className="fs-pill" style={{ background: 'rgba(236,72,153,0.12)', color: '#ec4899' }}>{f}L</span>
     </div>
   )
@@ -293,7 +306,7 @@ export function FoodSearch({ category, onAdd }: Props) {
 
     setSelected(null)
     setQuery('')
-    showToast(`${entry.name} ajout\u00e9 !`, 'success')
+    showToast(`${entry.name} ajouté !`, 'success')
   }, [selected, grams, category, onAdd])
 
   // ── Add a local food ───────────────────────────────────────────────────────
@@ -316,7 +329,7 @@ export function FoodSearch({ category, onAdd }: Props) {
 
     onAdd(entry)
     setQuery('')
-    showToast(`${entry.name} ajout\u00e9 !`, 'success')
+    showToast(`${entry.name} ajouté !`, 'success')
   }, [grams, category, onAdd])
 
   // ── Computed macros for selected product at given grams ─────────────────
@@ -442,7 +455,7 @@ export function FoodSearch({ category, onAdd }: Props) {
 
       {/* OpenFoodFacts results */}
       {mode === 'search' && results.length > 0 && !selected && (
-        <div style={{ marginTop: 8, maxHeight: 320, overflowY: 'auto' }}>
+        <div style={{ marginTop: 8, maxHeight: 320, overflowY: 'auto', WebkitOverflowScrolling: 'touch', scrollBehavior: 'smooth' }}>
           {results.map((prod, i) => {
             const n = prod.nutriments
             return (
@@ -487,7 +500,7 @@ export function FoodSearch({ category, onAdd }: Props) {
 
       {/* Local food results */}
       {mode === 'local' && !selected && (
-        <div style={{ marginTop: 8, maxHeight: 320, overflowY: 'auto' }}>
+        <div style={{ marginTop: 8, maxHeight: 320, overflowY: 'auto', WebkitOverflowScrolling: 'touch', scrollBehavior: 'smooth' }}>
           {localResults.map(food => (
             <div
               key={food.id}
@@ -573,7 +586,7 @@ export function FoodSearch({ category, onAdd }: Props) {
               inputMode="decimal"
               placeholder="Grammes"
               style={{ textAlign: 'center', fontSize: '1rem', fontWeight: 700 }}
-              aria-label="Quantit\u00e9 en grammes"
+              aria-label="Quantité en grammes"
             />
           </div>
 
@@ -586,7 +599,7 @@ export function FoodSearch({ category, onAdd }: Props) {
             textAlign: 'center',
           }}>
             <div>
-              <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#ff8c00' }}>{selectedMacros.cal}</div>
+              <div style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--accent)' }}>{selectedMacros.cal}</div>
               <div style={{ fontSize: '0.6rem', color: 'var(--text-secondary, #888)', textTransform: 'uppercase' }}>kcal</div>
             </div>
             <div>
@@ -594,7 +607,7 @@ export function FoodSearch({ category, onAdd }: Props) {
               <div style={{ fontSize: '0.6rem', color: 'var(--text-secondary, #888)', textTransform: 'uppercase' }}>prot</div>
             </div>
             <div>
-              <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#22c55e' }}>{selectedMacros.c}</div>
+              <div style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--success)' }}>{selectedMacros.c}</div>
               <div style={{ fontSize: '0.6rem', color: 'var(--text-secondary, #888)', textTransform: 'uppercase' }}>gluc</div>
             </div>
             <div>

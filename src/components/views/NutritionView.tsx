@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react'
-import type { FoodEntry } from '../../types'
+import type { Food, FoodEntry } from '../../types'
 import { useAppState } from '../../context/AppContext'
 import { foods } from '../../data'
 import { getDailyNutrition, getRecommendedRecipes, makeId, todayIso } from '../../lib'
@@ -39,11 +39,21 @@ export const NutritionView: React.FC = React.memo(
     const [barcodeInput, setBarcodeInput] = useState('')
     const [lookingUp, setLookingUp] = useState(false)
     const [showScanner, setShowScanner] = useState(false)
+    const [showCustomForm, setShowCustomForm] = useState(false)
+    const [customName, setCustomName] = useState('')
+    const [customCal, setCustomCal] = useState('')
+    const [customProt, setCustomProt] = useState('')
+    const [customCarbs, setCustomCarbs] = useState('')
+    const [customFats, setCustomFats] = useState('')
     const totals = useMemo(() => getDailyNutrition(state.foodEntries), [state.foodEntries])
     const suggestions = useMemo(
       () => getRecommendedRecipes(state),
       [state.foodEntries, state.targets, state.profile],
     )
+    const allFoodsList = useMemo(() => {
+      const custom: Food[] = (state.customFoods || []).map(f => ({ ...f, isCustom: true as const }))
+      return [...custom, ...foods]
+    }, [state.customFoods])
     const targets = state.targets ?? { calories: 2500, protein: 150, carbs: 300, fats: 70 }
 
     const addFood = (entry: FoodEntry) => {
@@ -97,9 +107,9 @@ export const NutritionView: React.FC = React.memo(
             <label>
               <span>Aliment</span>
               <SearchSelect
-                options={foods.map((f) => ({ value: f.id, label: f.name }))}
+                options={allFoodsList.map((f) => ({ value: f.id, label: f.name + (f.isCustom ? ' (perso)' : '') }))}
                 value={selectedFood.id}
-                onChange={(val: string) => setSelectedFood(foods.find((f) => f.id === val) ?? foods[0])}
+                onChange={(val: string) => setSelectedFood(allFoodsList.find((f) => f.id === val) ?? allFoodsList[0])}
                 placeholder="Rechercher un aliment......"
               />
             </label>
@@ -120,6 +130,22 @@ export const NutritionView: React.FC = React.memo(
               </button>
             ))}
           </div>
+          {/* Portion presets */}
+          {selectedFood.servings && selectedFood.servings.length > 0 && (
+            <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 6 }}>
+              {selectedFood.servings.map((s: { name: string; grams: number }, idx: number) => (
+                <button
+                  key={idx}
+                  type="button"
+                  className="chip"
+                  onClick={() => setGrams(String(s.grams))}
+                  style={{ fontSize: '0.72rem' }}
+                >
+                  {s.name} ({s.grams}g)
+                </button>
+              ))}
+            </div>
+          )}
           <button
             className="secondary-btn"
             type="button"
@@ -140,6 +166,64 @@ export const NutritionView: React.FC = React.memo(
             Ajouter
           </button>
         </section>
+
+        {/* Custom food creation */}
+        <details style={{ marginBottom: 8 }} open={showCustomForm}>
+          <summary style={accordionStyle} onClick={(e) => { e.preventDefault(); setShowCustomForm(!showCustomForm) }}>
+            {'➕'} Créer un aliment perso
+          </summary>
+          {showCustomForm && (
+            <section className="hevy-card stack-md" style={{ marginTop: 0, borderTopLeftRadius: 0, borderTopRightRadius: 0 }}>
+              <div className="field-grid compact-grid">
+                <label>
+                  <span>Nom</span>
+                  <input value={customName} onChange={(e) => setCustomName(e.target.value)} placeholder="Ex: Mon granola maison" />
+                </label>
+                <label>
+                  <span>Calories /100g</span>
+                  <input type="number" value={customCal} onChange={(e) => setCustomCal(e.target.value)} placeholder="0" />
+                </label>
+                <label>
+                  <span>Protéines /100g</span>
+                  <input type="number" value={customProt} onChange={(e) => setCustomProt(e.target.value)} placeholder="0" />
+                </label>
+                <label>
+                  <span>Glucides /100g</span>
+                  <input type="number" value={customCarbs} onChange={(e) => setCustomCarbs(e.target.value)} placeholder="0" />
+                </label>
+                <label>
+                  <span>Lipides /100g</span>
+                  <input type="number" value={customFats} onChange={(e) => setCustomFats(e.target.value)} placeholder="0" />
+                </label>
+              </div>
+              <button
+                className="cta-button"
+                type="button"
+                style={{ marginTop: 10, width: '100%' }}
+                onClick={() => {
+                  if (!customName.trim()) { showToast('Donne un nom \u00e0 ton aliment', 'error'); return }
+                  const newFood: Food = {
+                    id: makeId('custom'),
+                    name: customName.trim(),
+                    servingGrams: 100,
+                    calories: Number(customCal) || 0,
+                    protein: Number(customProt) || 0,
+                    carbs: Number(customCarbs) || 0,
+                    fats: Number(customFats) || 0,
+                    tags: ['custom'],
+                    isCustom: true,
+                  }
+                  dispatch({ type: 'ADD_CUSTOM_FOOD', payload: newFood })
+                  showToast(customName.trim() + ' créé !', 'success')
+                  setCustomName(''); setCustomCal(''); setCustomProt(''); setCustomCarbs(''); setCustomFats('')
+                  setShowCustomForm(false)
+                }}
+              >
+                Sauvegarder l'aliment
+              </button>
+            </section>
+          )}
+        </details>
 
         {/* Accordion: Scanner */}
         <details style={{ marginBottom: 8 }}>

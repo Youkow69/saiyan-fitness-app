@@ -624,7 +624,6 @@ export const specializedPrograms: ProgramTemplate[] = [
       },
     ],
   },
-,
   // ──────────────────────────────────────────
   // Starting Strength 3J - Saga Saiyan : Les debuts de Goku
   // ──────────────────────────────────────────

@@ -10,8 +10,8 @@ interface TimerPhase {
 }
 
 const MODES: { id: TimerMode; label: string; icon: string }[] = [
-  { id: 'stopwatch', label: 'Chronometre', icon: '⏱️' },
-  { id: 'countdown', label: 'Decompte', icon: '⏳' },
+  { id: 'stopwatch', label: 'Chronomètre', icon: '⏱️' },
+  { id: 'countdown', label: 'Décompte', icon: '⏳' },
   { id: 'emom', label: 'EMOM', icon: '🔁' },
   { id: 'tabata', label: 'Tabata', icon: '🔥' },
   { id: 'custom', label: 'Intervalles', icon: '⚡' },
@@ -214,7 +214,7 @@ export function WorkoutTimer() {
       case 'countdown':
         return [
           {
-            label: 'Decompte',
+            label: 'Décompte',
             duration: countdownSet,
             color: 'var(--accent-blue)',
             isWork: true,
@@ -356,7 +356,7 @@ export function WorkoutTimer() {
           WebkitTextFillColor: 'transparent',
         }}
       >
-        Minuteur d'Entrainement
+        Minuteur d'Entraînement
       </h2>
 
       {/* Mode selector */}
@@ -390,7 +390,7 @@ export function WorkoutTimer() {
       {/* Settings for specific modes */}
       {!running && elapsed === 0 && mode === 'countdown' && (
         <div style={{ display: 'flex', gap: 12, justifyContent: 'center', marginBottom: 20, alignItems: 'center' }}>
-          <label style={{ fontSize: 13, color: 'var(--text-secondary)' }}>Duree (sec):</label>
+          <label style={{ fontSize: 13, color: 'var(--text-secondary)' }}>Durée (sec):</label>
           <input
             type="number"
             min={5}
@@ -552,7 +552,7 @@ export function WorkoutTimer() {
             boxShadow: running ? '0 0 20px rgba(229,62,62,0.3)' : '0 0 20px rgba(56,161,105,0.3)',
           }}
         >
-          {running ? 'Pause' : elapsed > 0 ? 'Reprendre' : 'Demarrer'}
+          {running ? 'Pause' : elapsed > 0 ? 'Reprendre' : 'Démarrer'}
         </button>
         <button
           onClick={handleReset}
@@ -568,7 +568,7 @@ export function WorkoutTimer() {
             transition: 'all 0.2s',
           }}
         >
-          Reinitialiser
+          Réinitialiser
         </button>
       </div>
 
@@ -614,7 +614,7 @@ export function WorkoutTimer() {
               Phase {currentPhaseIdx + 1}/{phases.length}
             </span>
             <span>
-              Ecou: {formatTime(elapsed)} / {formatTime(totalDuration)}
+              Écoulé : {formatTime(elapsed)} / {formatTime(totalDuration)}
             </span>
           </div>
         </div>

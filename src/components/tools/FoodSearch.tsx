@@ -4,6 +4,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { useState, useCallback, useRef, useEffect, useMemo } from 'react'
+import { useAppState } from '../../context/AppContext'
 import { makeId, todayIso } from '../../lib'
 import { foods as localFoods } from '../../data'
 import { showToast } from '../ui/Toast'
@@ -214,6 +215,7 @@ const GRAM_PRESETS = [50, 100, 150, 200, 250]
 // ── Component ────────────────────────────────────────────────────────────────
 
 export function FoodSearch({ category, onAdd }: Props) {
+  const { state } = useAppState()
   const [query, setQuery] = useState('')
   const [results, setResults] = useState<OFFProduct[]>([])
   const [loading, setLoading] = useState(false)
@@ -221,7 +223,7 @@ export function FoodSearch({ category, onAdd }: Props) {
   const [grams, setGrams] = useState('100')
   const [mode, setMode] = useState<'search' | 'local'>('search')
   const [recentSearches, setRecentSearches] = useState<OFFProduct[]>([])
-  const debounceRef = useRef<ReturnType<typeof setTimeout>>()
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
   const inputRef = useRef<HTMLInputElement>(null)
 
   // Inject styles once

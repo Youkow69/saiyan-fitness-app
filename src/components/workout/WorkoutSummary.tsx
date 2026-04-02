@@ -449,6 +449,7 @@ export function WorkoutSummary({ workout, previousPowerLevel, onClose }: Props) 
 
   return (
     <div className="ws-overlay">
+      <Confetti />
       {/* Gold flash overlay */}
       {showFlash && <div className="ws-gold-flash" />}
 

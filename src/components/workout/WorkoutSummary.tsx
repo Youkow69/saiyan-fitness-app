@@ -3,7 +3,7 @@
 // Shows duration, volume, sets, power level gain, and personal records.
 // ─────────────────────────────────────────────────────────────────────────────
 
-import { useMemo, useState, useEffect, useCallback } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 import { useAppState } from '../../context/AppContext'
 import { getWorkoutVolume, estimate1Rm, getExerciseById, getPowerLevel } from '../../lib'
 import type { WorkoutLog } from '../../types'

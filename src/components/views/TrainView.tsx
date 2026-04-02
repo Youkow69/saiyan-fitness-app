@@ -12,6 +12,8 @@ import { SectionTitle } from '../ui/Shared'
 import { ExerciseVideoLink } from '../tools/ExerciseVideos'
 import { ProgramBuilder } from '../tools/ProgramBuilder'
 import { WorkoutHistory } from '../stats/WorkoutHistory'
+import { SmartWorkoutGenerator } from '../tools/SmartWorkoutGenerator'
+import { MesocycleProgress } from '../tools/MesocycleProgress'
 import { ExerciseDetail } from '../tools/ExerciseDetail'
 
 function getLastSet(workouts: AppState['workouts'], exerciseId: string) {
@@ -58,6 +60,7 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
     const [showTools, setShowTools] = useState(false)
     const [showHistory, setShowHistory] = useState(false)
     const [expandedProgram, setExpandedProgram] = useState<string | null>(null)
+    const [showAiGenerator, setShowAiGenerator] = useState(false)
 
     const selectedProgram = getProgramById(state.selectedProgramId)
     const nextIndex = state.programCursor[selectedProgram?.id ?? ''] ?? 0
@@ -94,6 +97,8 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
               </div>
             </div>
           </section>
+
+          <MesocycleProgress />
 
           {activeWorkout.exercises.map((exerciseLog) => {
             const exercise = getExerciseById(exerciseLog.exerciseId)

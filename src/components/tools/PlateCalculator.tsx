@@ -356,6 +356,24 @@ export function PlateCalculator() {
               </span>
             </div>
 
+            {/* Breakdown text */}
+            {plates.length > 0 && (
+              <div
+                style={{
+                  marginTop: 12,
+                  padding: '10px 14px',
+                  background: 'rgba(49,130,206,0.08)',
+                  borderRadius: 10,
+                  fontSize: 13,
+                  color: 'var(--text)',
+                  fontWeight: 600,
+                  textAlign: 'center',
+                }}
+              >
+                Chaque c\u00f4t\u00e9 : {plates.join(' + ')} kg
+              </div>
+            )}
+
             {hasRemainder && (
               <div
                 style={{

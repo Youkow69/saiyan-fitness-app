@@ -344,13 +344,13 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
         <ConfirmDialog
           isOpen={confirmDeleteId !== null}
           title="Supprimer la routine"
-          message="Es-tu sur de vouloir supprimer cette routine ? Cette action est irreversible."
+          message="Es-tu sûr de vouloir supprimer cette routine ? Cette action est irréversible."
           confirmLabel="Supprimer"
           confirmColor="var(--accent-red)"
           onConfirm={() => {
             if (confirmDeleteId) {
               dispatch({ type: 'DELETE_CUSTOM_ROUTINE', payload: confirmDeleteId })
-              showToast('Routine supprimee', 'info')
+              showToast('Routine supprimée', 'info')
             }
             setConfirmDeleteId(null)
           }}

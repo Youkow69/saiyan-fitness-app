@@ -19,7 +19,7 @@ export const QuestSection: React.FC<QuestSectionProps> = React.memo(
       <section className="hevy-card stack-md">
         <div className="section-head">
           <div>
-            <SectionTitle icon="⚔️" label={`Quetes vers ${next.name}`} />
+            <SectionTitle icon="⚔️" label={`Quêtes vers ${next.name}`} />
           </div>
           <img
             src={next.image}
@@ -148,7 +148,7 @@ export const DailyQuestsPanel: React.FC<DailyQuestsPanelProps> = React.memo(
     return (
       <section className="hevy-card stack-md">
         <div className="section-head">
-          <SectionTitle icon="🗓️" label="Quetes quotidiennes" />
+          <SectionTitle icon="🗓️" label="Quêtes quotidiennes" />
           <span
             style={{
               fontSize: '0.85rem',

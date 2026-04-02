@@ -140,7 +140,7 @@ export function SagaCardGenerator() {
 
     // ── Stats grid (2x2) ──
     const stats = [
-      { label: 'Seances', value: String(state.workouts.length) },
+      { label: 'Séances', value: String(state.workouts.length) },
       { label: 'Volume total', value: volume.toLocaleString('fr-FR') + ' kg' },
       { label: 'Records', value: String(
         new Set(
@@ -239,7 +239,7 @@ export function SagaCardGenerator() {
       ctx.fillStyle = '#777'
       ctx.font = '20px system-ui, sans-serif'
       ctx.textAlign = 'center'
-      ctx.fillText('Ajoute des seances pour voir tes perfs ici', 540, perfY + 60)
+      ctx.fillText('Ajoute des séances pour voir tes perfs ici', 540, perfY + 60)
     }
 
     // ── Bottom accent line ──

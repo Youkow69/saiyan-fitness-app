@@ -39,6 +39,7 @@ type Action =
   | { type: 'SAVE_FEEDBACK'; payload: SessionFeedback }
   | { type: 'ADD_CUSTOM_ROUTINE'; payload: CustomRoutine }
   | { type: 'DELETE_CUSTOM_ROUTINE'; payload: string }
+  | { type: 'UPDATE_CUSTOM_ROUTINE'; payload: { id: string; routine: any } }
   | { type: 'UPDATE_PROFILE'; payload: Partial<UserProfile> }
   | { type: 'ABANDON_WORKOUT' }
   | { type: 'ADD_CUSTOM_FOOD'; payload: Food }
@@ -272,6 +273,15 @@ function appReducer(state: AppState, action: Action): AppState {
         customRoutines: [...state.customRoutines, action.payload],
       }
 
+    case 'UPDATE_CUSTOM_ROUTINE': {
+      const { id: routineId, routine: routineData } = action.payload
+      return {
+        ...state,
+        customRoutines: state.customRoutines.map(cr =>
+          cr.id === routineId ? { ...cr, ...routineData, id: routineId } : cr
+        ),
+      }
+    }
     case 'DELETE_CUSTOM_ROUTINE':
       return {
         ...state,

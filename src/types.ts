@@ -33,6 +33,7 @@ export type SetType =
   | 'backoff'
   | 'drop'
   | 'amrap'
+  | 'superset'
 
 export type MuscleGroup =
   | 'Chest'

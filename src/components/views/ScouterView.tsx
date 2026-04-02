@@ -105,7 +105,7 @@ export const ScouterView: React.FC = React.memo(
       <div className="page">
         {/* Basic stats - always visible */}
         <section className="hevy-card stack-md">
-          <SectionTitle icon="" label="Vue d'ensemble" />
+          <SectionTitle icon="📊" label="Vue d'ensemble" />
           <div className="metrics-grid">
             <MetricCard label="Séances total" value={String(state.workouts.length)} accent="var(--accent-gold)" />
             <MetricCard label="Volume total" value={`${formatNumber(totalVolume)} kg`} accent="var(--accent-blue)" />
@@ -128,7 +128,7 @@ export const ScouterView: React.FC = React.memo(
 
         {/* 1RM board - always visible */}
         <section className="hevy-card stack-md">
-          <SectionTitle icon="" label="1RM estimés" />
+          <SectionTitle icon="🏋" label="1RM estimés" />
           {['bench_press', 'back_squat', 'romanian_deadlift', 'pull_up'].map((exerciseId) => {
             let best = 0
             state.workouts.forEach((w) =>

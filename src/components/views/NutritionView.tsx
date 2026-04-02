@@ -31,6 +31,138 @@ const accordionStyle: React.CSSProperties = {
   border: '1px solid var(--border)', marginBottom: 6,
 }
 
+
+// ── Macro Journal Chart (FEAT-F11) ──────────────────────────────────────────
+function MacroJournalChart({ entries, targets }: { entries: FoodEntry[]; targets: { calories: number; protein: number; carbs: number; fats: number } }) {
+  const [period, setPeriod] = React.useState<7 | 30>(7)
+
+  const days = React.useMemo(() => {
+    const result: Array<{ date: string; calories: number; protein: number }> = []
+    const today = new Date()
+    for (let i = period - 1; i >= 0; i--) {
+      const d = new Date(today)
+      d.setDate(d.getDate() - i)
+      const iso = d.toISOString().slice(0, 10)
+      const dayEntries = entries.filter(e => e.date === iso)
+      const calories = dayEntries.reduce((s, e) => s + e.calories, 0)
+      const protein = dayEntries.reduce((s, e) => s + e.protein, 0)
+      result.push({ date: iso, calories, protein })
+    }
+    return result
+  }, [entries, period])
+
+  const maxCal = Math.max(targets.calories * 1.2, ...days.map(d => d.calories))
+  const maxProt = Math.max(targets.protein * 1.2, ...days.map(d => d.protein))
+  const barW = Math.max(6, Math.floor(280 / period) - 2)
+  const chartH = 100
+
+  return (
+    <section className="hevy-card stack-md" style={{ marginTop: 0 }}>
+      <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
+        {([7, 30] as const).map(p => (
+          <button
+            key={p}
+            type="button"
+            className={`chip ${period === p ? 'chip--active' : ''}`}
+            onClick={() => setPeriod(p)}
+            style={{ fontSize: '0.72rem' }}
+          >
+            {p}j
+          </button>
+        ))}
+      </div>
+
+      {/* Calories bars */}
+      <div style={{ marginBottom: 12 }}>
+        <div style={{ fontSize: '0.72rem', color: 'var(--muted)', marginBottom: 4 }}>
+          Calories (objectif: {targets.calories} kcal)
+        </div>
+        <svg width="100%" height={chartH} viewBox={`0 0 ${(barW + 2) * period} ${chartH}`} style={{ display: 'block' }}>
+          {/* Target line */}
+          <line
+            x1={0} x2={(barW + 2) * period}
+            y1={chartH - (targets.calories / maxCal) * chartH}
+            y2={chartH - (targets.calories / maxCal) * chartH}
+            stroke="var(--accent)" strokeWidth={1} strokeDasharray="4,3" opacity={0.5}
+          />
+          {days.map((d, i) => {
+            const h = (d.calories / maxCal) * chartH
+            const over = d.calories > targets.calories
+            return (
+              <rect
+                key={d.date}
+                x={i * (barW + 2)} y={chartH - h}
+                width={barW} height={Math.max(1, h)}
+                rx={2}
+                fill={over ? 'var(--accent-red, #e53e3e)' : 'var(--accent-orange, #ed8936)'}
+                opacity={d.calories === 0 ? 0.15 : 0.85}
+              >
+                <title>{d.date}: {d.calories} kcal</title>
+              </rect>
+            )
+          })}
+        </svg>
+      </div>
+
+      {/* Protein bars */}
+      <div>
+        <div style={{ fontSize: '0.72rem', color: 'var(--muted)', marginBottom: 4 }}>
+          Prot\u00e9ines (objectif: {targets.protein}g)
+        </div>
+        <svg width="100%" height={chartH} viewBox={`0 0 ${(barW + 2) * period} ${chartH}`} style={{ display: 'block' }}>
+          <line
+            x1={0} x2={(barW + 2) * period}
+            y1={chartH - (targets.protein / maxProt) * chartH}
+            y2={chartH - (targets.protein / maxProt) * chartH}
+            stroke="#3182ce" strokeWidth={1} strokeDasharray="4,3" opacity={0.5}
+          />
+          {days.map((d, i) => {
+            const h = (d.protein / maxProt) * chartH
+            const ok = d.protein >= targets.protein
+            return (
+              <rect
+                key={d.date}
+                x={i * (barW + 2)} y={chartH - h}
+                width={barW} height={Math.max(1, h)}
+                rx={2}
+                fill={ok ? '#38a169' : '#3182ce'}
+                opacity={d.protein === 0 ? 0.15 : 0.85}
+              >
+                <title>{d.date}: {d.protein}g prot</title>
+              </rect>
+            )
+          })}
+        </svg>
+      </div>
+
+      {/* Summary stats */}
+      <div style={{
+        display: 'flex', justifyContent: 'space-around', marginTop: 8,
+        padding: '8px', background: 'rgba(255,255,255,0.03)', borderRadius: 8,
+      }}>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--accent-orange)' }}>
+            {Math.round(days.reduce((s, d) => s + d.calories, 0) / days.filter(d => d.calories > 0).length || 0)}
+          </div>
+          <div style={{ fontSize: '0.65rem', color: 'var(--muted)' }}>kcal/jour moy.</div>
+        </div>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ fontSize: '0.95rem', fontWeight: 700, color: '#3182ce' }}>
+            {Math.round(days.reduce((s, d) => s + d.protein, 0) / days.filter(d => d.protein > 0).length || 0)}g
+          </div>
+          <div style={{ fontSize: '0.65rem', color: 'var(--muted)' }}>prot/jour moy.</div>
+        </div>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ fontSize: '0.95rem', fontWeight: 700, color: '#38a169' }}>
+            {days.filter(d => d.calories > 0).length}/{period}
+          </div>
+          <div style={{ fontSize: '0.65rem', color: 'var(--muted)' }}>jours track\u00e9s</div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
 export const NutritionView: React.FC = React.memo(
   function NutritionView() {
     const { state, dispatch } = useAppState()
@@ -47,6 +179,8 @@ export const NutritionView: React.FC = React.memo(
     const [customProt, setCustomProt] = useState('')
     const [customCarbs, setCustomCarbs] = useState('')
     const [customFats, setCustomFats] = useState('')
+    const [customFiber, setCustomFiber] = useState('')
+    const [customPortions, setCustomPortions] = useState<Array<{ name: string; grams: number }>>([])
     const totals = useMemo(() => {
       const filtered = state.foodEntries.filter(e => e.date === selectedDate)
       return getDailyNutrition(filtered)

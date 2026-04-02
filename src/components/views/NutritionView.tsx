@@ -369,6 +369,34 @@ export const NutritionView: React.FC = React.memo(
           </div>
         </details>
 
+        {/* Accordion: Nutrition charts + export */}
+        <details style={{ marginBottom: 8 }}>
+          <summary style={accordionStyle}>{'📊'} Historique & export</summary>
+          <div style={{ padding: '12px 0' }}>
+            <section className="hevy-card stack-md" style={{ marginTop: 0 }}>
+              <NutritionCharts entries={state.foodEntries} />
+              <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
+                <button
+                  className="secondary-btn"
+                  type="button"
+                  style={{ flex: 1, fontSize: '0.8rem' }}
+                  onClick={() => exportNutritionData(state.foodEntries, 'csv')}
+                >
+                  Export CSV
+                </button>
+                <button
+                  className="secondary-btn"
+                  type="button"
+                  style={{ flex: 1, fontSize: '0.8rem' }}
+                  onClick={() => exportNutritionData(state.foodEntries, 'json')}
+                >
+                  Export JSON
+                </button>
+              </div>
+            </section>
+          </div>
+        </details>
+
         {/* Accordion: TDEE */}
         <details style={{ marginBottom: 8 }}>
           <summary style={accordionStyle}>{'🔥'} TDEE adaptatif</summary>

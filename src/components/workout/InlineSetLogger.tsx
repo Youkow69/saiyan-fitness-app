@@ -50,6 +50,10 @@ function injectStyles() {
       border-color: var(--accent, #ff8c00);
       box-shadow: 0 0 0 2px rgba(255,140,0,0.15);
     }
+    .isl-input::placeholder {
+      color: var(--text-secondary, #888);
+      opacity: 0.6;
+    }
     .isl-delete-btn {
       width: 32px;
       height: 32px;
@@ -67,6 +71,11 @@ function injectStyles() {
     }
     .isl-delete-btn:active {
       background: rgba(239,68,68,0.25);
+      transform: scale(0.9);
+    }
+    .isl-delete-btn:focus-visible {
+      outline: 2px solid var(--danger, #ef4444);
+      outline-offset: 1px;
     }
     .isl-add-btn {
       width: 36px;
@@ -87,6 +96,10 @@ function injectStyles() {
     .isl-add-btn:active {
       transform: scale(0.92);
     }
+    .isl-add-btn:focus-visible {
+      outline: 2px solid #fff;
+      outline-offset: 2px;
+    }
     .isl-toggle-btn {
       width: 100%;
       padding: 6px;
@@ -100,6 +113,11 @@ function injectStyles() {
     }
     .isl-toggle-btn:hover {
       color: var(--text, #fff);
+    }
+    .isl-toggle-btn:focus-visible {
+      outline: 2px solid var(--accent, #ff8c00);
+      outline-offset: 1px;
+      border-radius: 6px;
     }
     .isl-check {
       color: var(--accent, #ff8c00);
@@ -208,10 +226,10 @@ function setTypeBadge(t: SetType) {
   const colors: Record<SetType, { bg: string; fg: string }> = {
     warmup:  { bg: 'rgba(59,130,246,0.15)', fg: '#60a5fa' },
     normal:  { bg: 'rgba(255,255,255,0.06)', fg: 'var(--text-secondary, #888)' },
-    top:     { bg: 'rgba(255,140,0,0.15)', fg: '#ff8c00' },
+    top:     { bg: 'rgba(255,140,0,0.15)', fg: 'var(--accent)' },
     backoff: { bg: 'rgba(168,85,247,0.15)', fg: '#a855f7' },
     drop:    { bg: 'rgba(236,72,153,0.15)', fg: '#ec4899' },
-    amrap:   { bg: 'rgba(34,197,94,0.15)', fg: '#22c55e' },
+    amrap:   { bg: 'rgba(34,197,94,0.15)', fg: 'var(--success)' },
   }
   const c = colors[t] ?? colors.normal
   return (
@@ -484,7 +502,7 @@ export function InlineSetLogger({ exerciseId, target, onSetAdded }: Props) {
             className="isl-delete-btn"
             onClick={() => deleteSet(set.id)}
             type="button"
-            aria-label={`Supprimer la s\u00e9rie ${idx + 1}`}
+            aria-label={`Supprimer la série ${idx + 1}`}
           >
             ×
           </button>
@@ -531,7 +549,7 @@ export function InlineSetLogger({ exerciseId, target, onSetAdded }: Props) {
           onChange={e => setDraft(prev => ({ ...prev, reps: e.target.value }))}
           inputMode="numeric"
           placeholder="reps"
-          aria-label="Nombre de r\u00e9p\u00e9titions"
+          aria-label="Nombre de répétitions"
         />
 
         {/* RIR input (collapsible) */}
@@ -565,7 +583,7 @@ export function InlineSetLogger({ exerciseId, target, onSetAdded }: Props) {
             appearance: 'none',
             WebkitAppearance: 'none',
           }}
-          aria-label="Type de s\u00e9rie"
+          aria-label="Type de série"
         >
           <option value="normal">N</option>
           <option value="warmup">W</option>
@@ -580,7 +598,7 @@ export function InlineSetLogger({ exerciseId, target, onSetAdded }: Props) {
           className="isl-add-btn"
           onClick={addSet}
           type="button"
-          aria-label="Ajouter la s\u00e9rie"
+          aria-label="Ajouter la série"
         >
           +
         </button>

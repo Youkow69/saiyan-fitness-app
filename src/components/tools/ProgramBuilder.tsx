@@ -456,7 +456,7 @@ export function ProgramBuilder({ onClose, editRoutineIds }: Props) {
               <button
                 type="button"
                 onClick={() => deleteSession(activeSessionIdx)}
-                style={{ ...smallBtnStyle, color: '#ff6b6b' }}
+                style={{ ...smallBtnStyle, color: 'var(--danger)' }}
                 disabled={sessions.length <= 1}
                 title="Supprimer cette seance"
                 aria-label="Supprimer cette seance"
@@ -510,7 +510,7 @@ export function ProgramBuilder({ onClose, editRoutineIds }: Props) {
                       <button
                         type="button"
                         onClick={() => deleteExercise(ex.uid)}
-                        style={{ ...arrowBtnStyle, color: '#ff6b6b' }}
+                        style={{ ...arrowBtnStyle, color: 'var(--danger)' }}
                         aria-label={`Supprimer ${exName}`}
                         title="Supprimer"
                       >
@@ -728,7 +728,7 @@ function ExercisePickerModal({
                   <div style={{ color: 'var(--text)', fontSize: 14, fontWeight: 500 }}>
                     {ex.name}
                   </div>
-                  <div style={{ color: '#aaa', fontSize: 12, marginTop: 2 }}>
+                  <div style={{ color: 'var(--text-secondary)', fontSize: 12, marginTop: 2 }}>
                     {ex.primaryMuscles.join(', ')} | {ex.equipment}
                     {ex.difficulty && ` | ${'*'.repeat(ex.difficulty)}`}
                   </div>
@@ -752,7 +752,7 @@ function ExercisePickerModal({
 const overlayStyle: CSSProperties = {
   position: 'fixed',
   inset: 0,
-  background: 'rgba(0,0,0,0.85)',
+  background: 'var(--panel-2)',
   zIndex: 1000,
   display: 'flex',
   alignItems: 'center',
@@ -794,7 +794,7 @@ const fieldRowStyle: CSSProperties = {
 }
 
 const labelStyle: CSSProperties = {
-  color: '#aaa',
+  color: 'var(--text-secondary)',
   fontSize: 12,
   fontWeight: 600,
   textTransform: 'uppercase',
@@ -823,7 +823,7 @@ const chipStyle: CSSProperties = {
   background: 'var(--bg-card)',
   border: '1px solid #333',
   borderRadius: 20,
-  color: '#aaa',
+  color: 'var(--text-secondary)',
   padding: '5px 14px',
   fontSize: 12,
   cursor: 'pointer',
@@ -832,7 +832,7 @@ const chipStyle: CSSProperties = {
 
 const chipActiveStyle: CSSProperties = {
   background: 'var(--info)',
-  color: '#000',
+  color: 'var(--bg)',
   borderColor: 'var(--info)',
   fontWeight: 600,
 }
@@ -901,7 +901,7 @@ const smallBtnStyle: CSSProperties = {
   background: 'var(--bg-card)',
   border: '1px solid #333',
   borderRadius: 6,
-  color: '#aaa',
+  color: 'var(--text-secondary)',
   padding: '5px 10px',
   fontSize: 11,
   cursor: 'pointer',
@@ -954,7 +954,7 @@ const arrowBtnStyle: CSSProperties = {
   background: 'var(--bg-card)',
   border: '1px solid #333',
   borderRadius: 4,
-  color: '#aaa',
+  color: 'var(--text-secondary)',
   width: 28,
   height: 28,
   fontSize: 12,
@@ -1011,10 +1011,10 @@ const addExerciseBtnStyle: CSSProperties = {
 }
 
 const errorBoxStyle: CSSProperties = {
-  background: '#2a1a1a',
+  background: 'var(--bg-card)',
   border: '1px solid #ff6b6b',
   borderRadius: 8,
-  color: '#ff6b6b',
+  color: 'var(--danger)',
   padding: '8px 16px',
   margin: '0 16px',
   fontSize: 13,
@@ -1032,7 +1032,7 @@ const cancelBtnStyle: CSSProperties = {
   background: 'var(--bg-card)',
   border: '1px solid #333',
   borderRadius: 10,
-  color: '#aaa',
+  color: 'var(--text-secondary)',
   padding: '10px 24px',
   fontSize: 14,
   cursor: 'pointer',
@@ -1042,7 +1042,7 @@ const saveBtnStyle: CSSProperties = {
   background: 'var(--info)',
   border: 'none',
   borderRadius: 10,
-  color: '#000',
+  color: 'var(--bg)',
   padding: '10px 32px',
   fontSize: 14,
   fontWeight: 700,
@@ -1054,7 +1054,7 @@ const saveBtnStyle: CSSProperties = {
 const pickerOverlayStyle: CSSProperties = {
   position: 'fixed',
   inset: 0,
-  background: 'rgba(0,0,0,0.7)',
+  background: 'var(--panel-2)',
   zIndex: 1100,
   display: 'flex',
   alignItems: 'center',

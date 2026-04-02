@@ -8,15 +8,15 @@ type Status = 'rested' | 'recovering' | 'fatigued' | 'unknown'
 const MUSCLES: MuscleGroup[] = ['Chest', 'Back', 'Shoulders', 'Biceps', 'Triceps', 'Quads', 'Hamstrings', 'Glutes', 'Calves', 'Core']
 
 const FR: Record<MuscleGroup, string> = {
-  Chest: 'Pectoraux', Back: 'Dos', Shoulders: 'Épaules', Biceps: 'Biceps', Triceps: 'Triceps',
+  Chest: 'Pectoraux', Back: 'Dos', Shoulders: '\u00C9paules', Biceps: 'Biceps', Triceps: 'Triceps',
   Quads: 'Quadriceps', Hamstrings: 'Ischio-jambiers', Glutes: 'Fessiers', Calves: 'Mollets', Core: 'Abdominaux',
 }
 
 const STATUS_META: Record<Status, { label: string; color: string; points: number; advice: string }> = {
-  rested:     { label: 'Reposé',        color: '#22c55e', points: 10, advice: 'Prêt à être retravailé.' },
-  recovering: { label: 'Récupération', color: '#f59e0b', points: 5,  advice: 'Privilégie un entraînement léger.' },
-  fatigued:   { label: 'Fatigué',       color: '#ef4444', points: 1,  advice: 'Évite de retravailler ce muscle.' },
-  unknown:    { label: 'Inconnu',       color: '#6b7280', points: 0,  advice: 'Aucune donnée. Entraîne-toi !' },
+  rested:     { label: 'Repos\u00E9',        color: '#22c55e', points: 10, advice: 'Pr\u00EAt \u00E0 \u00EAtre retravail\u00E9.' },
+  recovering: { label: 'R\u00E9cup\u00E9ration', color: '#f59e0b', points: 5,  advice: 'Privil\u00E9gie un entra\u00EEnement l\u00E9ger.' },
+  fatigued:   { label: 'Fatigu\u00E9',       color: '#ef4444', points: 1,  advice: '\u00C9vite de retravailler ce muscle.' },
+  unknown:    { label: 'Inconnu',       color: '#6b7280', points: 0,  advice: 'Aucune donn\u00E9e. Entra\u00EEne-toi !' },
 }
 
 function getStatus(hours: number | null): Status {
@@ -65,7 +65,7 @@ export function RecoveryMap() {
   const toggle = (m: MuscleGroup) => setExpanded((p) => (p === m ? null : m))
 
   return (
-    <div style={{ padding: 20, background: 'var(--bg-card)', color: 'var(--text)', borderRadius: 16, fontFamily: ''Manrope', system-ui, sans-serif' }}>
+    <div style={{ padding: 20, background: 'var(--bg-card)', color: 'var(--text)', borderRadius: 16, fontFamily: 'Manrope, system-ui, sans-serif' }}>
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
         <span style={{ fontSize: 13, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', color: 'var(--text-muted, #a3a3a3)' }}>

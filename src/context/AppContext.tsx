@@ -39,6 +39,7 @@ type Action =
   | { type: 'ADD_CUSTOM_ROUTINE'; payload: CustomRoutine }
   | { type: 'DELETE_CUSTOM_ROUTINE'; payload: string }
   | { type: 'UPDATE_PROFILE'; payload: Partial<UserProfile> }
+  | { type: 'ABANDON_WORKOUT' }
 
 // ── Default state ─────────────────────────────────────────────────────────────
 
@@ -68,8 +69,15 @@ const defaultState: AppState = {
 
 function appReducer(state: AppState, action: Action): AppState {
   switch (action.type) {
-    case 'SET_STATE':
-      return action.payload
+    case 'SET_STATE': {
+      const incoming = action.payload
+      // Preserve activeWorkout from local state if it exists and incoming doesn't have one
+      // This ensures workout persistence survives cloud pulls
+      return {
+        ...incoming,
+        activeWorkout: incoming.activeWorkout ?? state.activeWorkout ?? null,
+      }
+    }
 
     case 'COMPLETE_ONBOARDING': {
       const { profile, answers } = action.payload
@@ -145,6 +153,11 @@ function appReducer(state: AppState, action: Action): AppState {
                 (state.programCursor[workout.programId] ?? 0) + 1,
             },
       }
+    }
+
+    case 'ABANDON_WORKOUT': {
+      if (!state.activeWorkout) return state
+      return { ...state, activeWorkout: null }
     }
 
     case 'ADD_FOOD':
@@ -284,6 +297,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
     return {
       ...defaultState,
       ...loaded,
+      // Preserve activeWorkout from localStorage (workout persistence across reloads)
+      activeWorkout: loaded.activeWorkout ?? null,
       dailyQuestProgress: loaded.dailyQuestProgress ?? [],
       onboardingAnswers: loaded.onboardingAnswers ?? null,
       completedDailyQuests: loaded.completedDailyQuests ?? {},

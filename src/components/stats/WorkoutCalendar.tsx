@@ -38,7 +38,7 @@ const INTENSITY_COLORS: Record<number, string> = {
   2: 'rgba(237,137,54,0.4)',
   3: 'rgba(237,137,54,0.6)',
   4: 'rgba(237,137,54,0.8)',
-  5: '#ed8936',
+  5: 'var(--accent-orange)',
 }
 
 const DAY_LABELS = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim']
@@ -120,7 +120,7 @@ export function WorkoutCalendar({ workouts }: { workouts: CalendarWorkoutLog[] }
           textAlign: 'center',
           margin: '0 0 16px',
           fontSize: 22,
-          background: 'linear-gradient(135deg, #f6ad55, #ed8936)',
+          background: 'linear-gradient(135deg, var(--accent-orange), var(--accent))',
           WebkitBackgroundClip: 'text',
           WebkitTextFillColor: 'transparent',
         }}
@@ -146,7 +146,7 @@ export function WorkoutCalendar({ workouts }: { workouts: CalendarWorkoutLog[] }
             textAlign: 'center',
           }}
         >
-          <div style={{ fontSize: 24, fontWeight: 800, color: '#ed8936' }}>{streak}</div>
+          <div style={{ fontSize: 24, fontWeight: 800, color: 'var(--accent-orange)' }}>{streak}</div>
           <div style={{ fontSize: 11, color: 'var(--text-secondary)' }}>Jours de suite</div>
         </div>
         <div
@@ -157,7 +157,7 @@ export function WorkoutCalendar({ workouts }: { workouts: CalendarWorkoutLog[] }
             textAlign: 'center',
           }}
         >
-          <div style={{ fontSize: 24, fontWeight: 800, color: '#3182ce' }}>{totalWorkouts}</div>
+          <div style={{ fontSize: 24, fontWeight: 800, color: 'var(--accent-blue)' }}>{totalWorkouts}</div>
           <div style={{ fontSize: 11, color: 'var(--text-secondary)' }}>Séances (3 mois)</div>
         </div>
         <div
@@ -168,7 +168,7 @@ export function WorkoutCalendar({ workouts }: { workouts: CalendarWorkoutLog[] }
             textAlign: 'center',
           }}
         >
-          <div style={{ fontSize: 24, fontWeight: 800, color: '#38a169' }}>
+          <div style={{ fontSize: 24, fontWeight: 800, color: 'var(--success)' }}>
             {workoutDates.size}
           </div>
           <div style={{ fontSize: 11, color: 'var(--text-secondary)' }}>Jours actifs</div>
@@ -302,7 +302,7 @@ export function WorkoutCalendar({ workouts }: { workouts: CalendarWorkoutLog[] }
             border: '1px solid var(--stroke)',
           }}
         >
-          <h4 style={{ margin: '0 0 8px', fontSize: 14, color: '#ed8936' }}>
+          <h4 style={{ margin: '0 0 8px', fontSize: 14, color: 'var(--accent-orange)' }}>
             {new Date(selectedDay).toLocaleDateString('fr-FR', {
               weekday: 'long',
               day: 'numeric',

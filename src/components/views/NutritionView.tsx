@@ -100,7 +100,7 @@ export const NutritionView: React.FC = React.memo(
                 options={foods.map((f) => ({ value: f.id, label: f.name }))}
                 value={selectedFood.id}
                 onChange={(val: string) => setSelectedFood(foods.find((f) => f.id === val) ?? foods[0])}
-                placeholder="Rechercher un aliment..."
+                placeholder="Rechercher un aliment......"
               />
             </label>
             <label>

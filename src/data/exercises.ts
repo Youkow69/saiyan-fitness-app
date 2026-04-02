@@ -13,35 +13,35 @@ export const allExercises: Exercise[] = [
     secondaryMuscles: ['Triceps', 'Shoulders'],
     difficulty: 2,
     stimulusFatigue: 8,
-    setupCues: ['Allongez-vous sur le banc, pieds au sol', 'Prise legerement plus large que les epaules', 'Serrez les omoplates ensemble'],
+    setupCues: ['Allongez-vous sur le banc, pieds au sol', 'Prise legerement plus large que les épaules', 'Serrez les omoplates ensemble'],
     executionCues: ['Descendez la barre vers le bas des pectoraux', 'Poussez en arc vers le haut', 'Gardez les coudes a 45 degres'],
     alternatives: ['db_bench_press', 'machine_chest_press']
   },
   {
-    id: 'incline_barbell_bench',
-    name: 'Développé incline barre',
+    id: 'incliné_barbell_bench',
+    name: 'Développé incliné barre',
     equipment: 'Barbell',
-    pattern: 'incline_push',
+    pattern: 'incliné_push',
     primaryMuscles: ['Chest'],
     secondaryMuscles: ['Shoulders', 'Triceps'],
     difficulty: 2,
     stimulusFatigue: 7,
-    setupCues: ['Reglez le banc a 30-45 degres', 'Prise legerement plus large que les epaules', 'Serrez les omoplates'],
+    setupCues: ['Reglez le banc a 30-45 degres', 'Prise legerement plus large que les épaules', 'Serrez les omoplates'],
     executionCues: ['Descendez la barre vers le haut de la poitrine', 'Poussez vers le haut en controlant', 'Gardez le dos colle au banc'],
-    alternatives: ['db_incline_press', 'smith_incline_press']
+    alternatives: ['db_incliné_press', 'smith_incliné_press']
   },
   {
-    id: 'decline_barbell_bench',
-    name: 'Développé decline barre',
+    id: 'décliné_barbell_bench',
+    name: 'Développé décliné barre',
     equipment: 'Barbell',
-    pattern: 'decline_push',
+    pattern: 'décliné_push',
     primaryMuscles: ['Chest'],
     secondaryMuscles: ['Triceps', 'Shoulders'],
     difficulty: 2,
     stimulusFatigue: 7,
-    setupCues: ['Reglez le banc en position declinee', 'Calez vos pieds sous les supports', 'Prise moyenne sur la barre'],
+    setupCues: ['Reglez le banc en position déclinée', 'Calez vos pieds sous les supports', 'Prise moyenne sur la barre'],
     executionCues: ['Descendez la barre vers le bas des pectoraux', 'Poussez en contractant les pectoraux', 'Controlez la descente'],
-    alternatives: ['dips_chest', 'decline_db_press']
+    alternatives: ['dips_chest', 'décliné_db_press']
   },
   {
     id: 'db_bench_press',
@@ -57,17 +57,17 @@ export const allExercises: Exercise[] = [
     alternatives: ['barbell_bench_press', 'machine_chest_press']
   },
   {
-    id: 'db_incline_press',
-    name: 'Développé incline halteres',
+    id: 'db_incliné_press',
+    name: 'Développé incliné halteres',
     equipment: 'Dumbbells',
-    pattern: 'incline_push',
+    pattern: 'incliné_push',
     primaryMuscles: ['Chest'],
     secondaryMuscles: ['Shoulders', 'Triceps'],
     difficulty: 2,
     stimulusFatigue: 7,
     setupCues: ['Banc a 30-45 degres', 'Halteres sur les cuisses avant de vous allonger', 'Omoplates serrees'],
     executionCues: ['Descendez les halteres de chaque cote du haut de la poitrine', 'Poussez vers le haut', 'Contractez en haut du mouvement'],
-    alternatives: ['incline_barbell_bench', 'smith_incline_press']
+    alternatives: ['incliné_barbell_bench', 'smith_incliné_press']
   },
   {
     id: 'db_fly',
@@ -91,7 +91,7 @@ export const allExercises: Exercise[] = [
     secondaryMuscles: ['Shoulders'],
     difficulty: 1,
     stimulusFatigue: 5,
-    setupCues: ['Placez les poulies a hauteur des epaules', 'Un pied en avant pour la stabilite', 'Saisissez les poignees'],
+    setupCues: ['Placez les poulies a hauteur des épaules', 'Un pied en avant pour la stabilite', 'Saisissez les poignees'],
     executionCues: ['Amenez les mains devant vous en arc', 'Serrez les pectoraux en fin de mouvement', 'Controlez le retour'],
     alternatives: ['db_fly', 'pec_deck']
   },
@@ -117,7 +117,7 @@ export const allExercises: Exercise[] = [
     secondaryMuscles: ['Triceps', 'Shoulders', 'Core'],
     difficulty: 1,
     stimulusFatigue: 4,
-    setupCues: ['Mains legerement plus larges que les epaules', 'Corps droit de la tete aux pieds', 'Gainage abdominal engage'],
+    setupCues: ['Mains legerement plus larges que les épaules', 'Corps droit de la tete aux pieds', 'Gainage abdominal engage'],
     executionCues: ['Descendez jusqu a ce que la poitrine frole le sol', 'Poussez en contractant les pectoraux', 'Gardez le corps aligne'],
     alternatives: ['barbell_bench_press', 'db_bench_press']
   },
@@ -125,14 +125,14 @@ export const allExercises: Exercise[] = [
     id: 'dips_chest',
     name: 'Dips pectoraux',
     equipment: 'Bodyweight',
-    pattern: 'decline_push',
+    pattern: 'décliné_push',
     primaryMuscles: ['Chest'],
     secondaryMuscles: ['Triceps', 'Shoulders'],
     difficulty: 2,
     stimulusFatigue: 7,
     setupCues: ['Saisissez les barres paralleles', 'Penchez le buste en avant a 30 degres', 'Croisez les pieds derriere vous'],
     executionCues: ['Descendez jusqu a un angle de 90 degres aux coudes', 'Poussez en contractant les pectoraux', 'Gardez l inclinaison avant'],
-    alternatives: ['decline_barbell_bench', 'db_bench_press']
+    alternatives: ['décliné_barbell_bench', 'db_bench_press']
   },
   {
     id: 'cable_crossover',
@@ -151,14 +151,14 @@ export const allExercises: Exercise[] = [
     id: 'landmine_press_chest',
     name: 'Landmine press',
     equipment: 'Barbell',
-    pattern: 'incline_push',
+    pattern: 'incliné_push',
     primaryMuscles: ['Chest'],
     secondaryMuscles: ['Shoulders', 'Triceps'],
     difficulty: 2,
     stimulusFatigue: 5,
-    setupCues: ['Placez une extremite de la barre dans un coin ou landmine', 'Tenez l autre extremite a deux mains devant la poitrine', 'Position debout, pieds largeur des epaules'],
+    setupCues: ['Placez une extremite de la barre dans un coin ou landmine', 'Tenez l autre extremite a deux mains devant la poitrine', 'Position debout, pieds largeur des épaules'],
     executionCues: ['Poussez la barre vers le haut et l avant', 'Contractez les pectoraux en haut', 'Redescendez lentement'],
-    alternatives: ['incline_barbell_bench', 'db_incline_press']
+    alternatives: ['incliné_barbell_bench', 'db_incliné_press']
   },
   {
     id: 'floor_press',
@@ -195,7 +195,7 @@ export const allExercises: Exercise[] = [
     secondaryMuscles: ['Back'],
     difficulty: 2,
     stimulusFatigue: 5,
-    setupCues: ['Allongez-vous en travers du banc, epaules sur le banc', 'Hanches basses, pieds au sol', 'Tenez l haltere a deux mains au-dessus de la poitrine'],
+    setupCues: ['Allongez-vous en travers du banc, épaules sur le banc', 'Hanches basses, pieds au sol', 'Tenez l haltere a deux mains au-dessus de la poitrine'],
     executionCues: ['Descendez l haltere derriere la tete en arc', 'Etirez les pectoraux et le dos', 'Remontez en contractant la poitrine'],
     alternatives: ['cable_fly', 'straight_arm_pulldown']
   },
@@ -213,17 +213,17 @@ export const allExercises: Exercise[] = [
     alternatives: ['barbell_bench_press', 'db_bench_press']
   },
   {
-    id: 'smith_incline_press',
-    name: 'Développé incline Smith machine',
+    id: 'smith_incliné_press',
+    name: 'Développé incliné Smith machine',
     equipment: 'Smith',
-    pattern: 'incline_push',
+    pattern: 'incliné_push',
     primaryMuscles: ['Chest'],
     secondaryMuscles: ['Shoulders', 'Triceps'],
     difficulty: 1,
     stimulusFatigue: 6,
-    setupCues: ['Banc incline a 30-45 degres sous la Smith machine', 'Alignez la barre avec le haut de la poitrine', 'Omoplates serrees'],
+    setupCues: ['Banc incliné a 30-45 degres sous la Smith machine', 'Alignez la barre avec le haut de la poitrine', 'Omoplates serrees'],
     executionCues: ['Deverrouillez et descendez la barre vers le haut des pectoraux', 'Poussez en contractant', 'Verrouillez en haut'],
-    alternatives: ['incline_barbell_bench', 'db_incline_press']
+    alternatives: ['incliné_barbell_bench', 'db_incliné_press']
   },
 
   // ========================
@@ -238,7 +238,7 @@ export const allExercises: Exercise[] = [
     secondaryMuscles: ['Biceps'],
     difficulty: 1,
     stimulusFatigue: 6,
-    setupCues: ['Prise pronation plus large que les epaules', 'Cuisses calees sous les coussins', 'Poitrine sortie'],
+    setupCues: ['Prise pronation plus large que les épaules', 'Cuisses calees sous les coussins', 'Poitrine sortie'],
     executionCues: ['Tirez la barre vers le haut de la poitrine', 'Serrez les omoplates en bas', 'Remontez lentement en controlant'],
     alternatives: ['pull_ups', 'lat_pulldown_close']
   },
@@ -277,7 +277,7 @@ export const allExercises: Exercise[] = [
     secondaryMuscles: ['Biceps', 'Core'],
     difficulty: 3,
     stimulusFatigue: 8,
-    setupCues: ['Prise pronation largeur des epaules ou plus', 'Bras tendus en position de depart', 'Engagez les epaules'],
+    setupCues: ['Prise pronation largeur des épaules ou plus', 'Bras tendus en position de depart', 'Engagez les épaules'],
     executionCues: ['Tirez-vous vers le haut jusqu au menton au-dessus de la barre', 'Serrez les dorsaux en haut', 'Descendez lentement'],
     alternatives: ['lat_pulldown_wide', 'chin_ups']
   },
@@ -290,7 +290,7 @@ export const allExercises: Exercise[] = [
     secondaryMuscles: ['Biceps'],
     difficulty: 2,
     stimulusFatigue: 7,
-    setupCues: ['Prise supination largeur des epaules', 'Bras tendus en bas', 'Omoplates basses'],
+    setupCues: ['Prise supination largeur des épaules', 'Bras tendus en bas', 'Omoplates basses'],
     executionCues: ['Tirez en amenant le menton au-dessus de la barre', 'Contractez les biceps et dorsaux', 'Descendez en controlant'],
     alternatives: ['pull_ups', 'lat_pulldown_close']
   },
@@ -303,7 +303,7 @@ export const allExercises: Exercise[] = [
     secondaryMuscles: ['Biceps', 'Core'],
     difficulty: 2,
     stimulusFatigue: 8,
-    setupCues: ['Pieds largeur des epaules', 'Penchez le buste a 45 degres', 'Prise pronation largeur des epaules'],
+    setupCues: ['Pieds largeur des épaules', 'Penchez le buste a 45 degres', 'Prise pronation largeur des épaules'],
     executionCues: ['Tirez la barre vers le nombril', 'Serrez les omoplates en haut', 'Descendez en controlant'],
     alternatives: ['db_row', 'cable_row_seated']
   },
@@ -355,7 +355,7 @@ export const allExercises: Exercise[] = [
     secondaryMuscles: ['Biceps'],
     difficulty: 1,
     stimulusFatigue: 5,
-    setupCues: ['Allongez-vous face contre le banc incline', 'Un haltere dans chaque main', 'Bras pendants vers le sol'],
+    setupCues: ['Allongez-vous face contre le banc incliné', 'Un haltere dans chaque main', 'Bras pendants vers le sol'],
     executionCues: ['Tirez les halteres vers les hanches', 'Serrez les omoplates ensemble', 'Descendez lentement'],
     alternatives: ['barbell_row', 'cable_row_seated']
   },
@@ -463,13 +463,13 @@ export const allExercises: Exercise[] = [
     secondaryMuscles: ['Triceps', 'Core'],
     difficulty: 2,
     stimulusFatigue: 7,
-    setupCues: ['Barre au niveau des clavicules', 'Pieds largeur des epaules', 'Gainage abdominal serre'],
+    setupCues: ['Barre au niveau des clavicules', 'Pieds largeur des épaules', 'Gainage abdominal serre'],
     executionCues: ['Poussez la barre au-dessus de la tete', 'Passez la tete sous la barre en haut', 'Redescendez lentement aux clavicules'],
     alternatives: ['db_shoulder_press', 'arnold_press']
   },
   {
     id: 'db_shoulder_press',
-    name: 'Développé epaules halteres',
+    name: 'Développé épaules halteres',
     equipment: 'Dumbbells',
     pattern: 'vertical_push',
     primaryMuscles: ['Shoulders'],
@@ -489,7 +489,7 @@ export const allExercises: Exercise[] = [
     secondaryMuscles: ['Triceps'],
     difficulty: 2,
     stimulusFatigue: 6,
-    setupCues: ['Assis, halteres devant les epaules paumes vers vous', 'Dos cale', 'Pieds a plat'],
+    setupCues: ['Assis, halteres devant les épaules paumes vers vous', 'Dos cale', 'Pieds a plat'],
     executionCues: ['Tournez les paumes vers l exterieur en poussant vers le haut', 'Montez completement bras tendus', 'Inversez le mouvement en redescendant'],
     alternatives: ['db_shoulder_press', 'overhead_press']
   },
@@ -541,7 +541,7 @@ export const allExercises: Exercise[] = [
     secondaryMuscles: ['Back'],
     difficulty: 1,
     stimulusFatigue: 4,
-    setupCues: ['Penche en avant a 45 degres ou allonge sur banc incline', 'Halteres pendants devant vous', 'Legere flexion des coudes'],
+    setupCues: ['Penche en avant a 45 degres ou allonge sur banc incliné', 'Halteres pendants devant vous', 'Legere flexion des coudes'],
     executionCues: ['Ecartez les bras sur les cotes', 'Serrez les omoplates en haut', 'Redescendez lentement'],
     alternatives: ['face_pull', 'reverse_fly_cable']
   },
@@ -554,7 +554,7 @@ export const allExercises: Exercise[] = [
     secondaryMuscles: ['Back'],
     difficulty: 1,
     stimulusFatigue: 4,
-    setupCues: ['Poulies a hauteur des epaules', 'Croisez les cables', 'Un pas en arriere'],
+    setupCues: ['Poulies a hauteur des épaules', 'Croisez les cables', 'Un pas en arriere'],
     executionCues: ['Ecartez les bras en arriere', 'Contractez les deltoïdes posterieurs', 'Revenez lentement'],
     alternatives: ['reverse_fly_db', 'face_pull']
   },
@@ -586,15 +586,15 @@ export const allExercises: Exercise[] = [
   },
   {
     id: 'landmine_press_shoulder',
-    name: 'Landmine press epaules',
+    name: 'Landmine press épaules',
     equipment: 'Barbell',
     pattern: 'vertical_push',
     primaryMuscles: ['Shoulders'],
     secondaryMuscles: ['Triceps', 'Core'],
     difficulty: 2,
     stimulusFatigue: 5,
-    setupCues: ['Barre dans la landmine', 'Tenez l extremite a une main au niveau de l epaule', 'Position semi-agenouillee ou debout'],
-    executionCues: ['Poussez la barre vers le haut et l avant', 'Contractez l epaule en haut', 'Ramenez avec controle'],
+    setupCues: ['Barre dans la landmine', 'Tenez l extremite a une main au niveau de l épaule', 'Position semi-agenouillee ou debout'],
+    executionCues: ['Poussez la barre vers le haut et l avant', 'Contractez l épaule en haut', 'Ramenez avec controle'],
     alternatives: ['db_shoulder_press', 'overhead_press']
   },
   {
@@ -606,7 +606,7 @@ export const allExercises: Exercise[] = [
     secondaryMuscles: ['Triceps'],
     difficulty: 2,
     stimulusFatigue: 5,
-    setupCues: ['Position de pompe avec les hanches hautes en V inverse', 'Mains largeur des epaules', 'Tete entre les bras'],
+    setupCues: ['Position de pompe avec les hanches hautes en V inverse', 'Mains largeur des épaules', 'Tete entre les bras'],
     executionCues: ['Flechissez les coudes pour descendre la tete vers le sol', 'Poussez pour revenir en position haute', 'Gardez les hanches hautes'],
     alternatives: ['overhead_press', 'db_shoulder_press']
   },
@@ -632,8 +632,8 @@ export const allExercises: Exercise[] = [
     secondaryMuscles: ['Back'],
     difficulty: 1,
     stimulusFatigue: 4,
-    setupCues: ['Debout, halteres le long du corps', 'Bras tendus', 'Epaules basses au depart'],
-    executionCues: ['Montez les epaules vers les oreilles', 'Tenez la contraction 1-2 secondes', 'Redescendez lentement'],
+    setupCues: ['Debout, halteres le long du corps', 'Bras tendus', 'Épaules basses au depart'],
+    executionCues: ['Montez les épaules vers les oreilles', 'Tenez la contraction 1-2 secondes', 'Redescendez lentement'],
     alternatives: ['barbell_shrug', 'cable_lateral_raise']
   },
 
@@ -649,7 +649,7 @@ export const allExercises: Exercise[] = [
     secondaryMuscles: [],
     difficulty: 1,
     stimulusFatigue: 5,
-    setupCues: ['Debout, prise supination largeur des epaules', 'Coudes le long du corps', 'Buste droit'],
+    setupCues: ['Debout, prise supination largeur des épaules', 'Coudes le long du corps', 'Buste droit'],
     executionCues: ['Flechissez les coudes pour monter la barre', 'Contractez les biceps en haut', 'Redescendez lentement sans balancer'],
     alternatives: ['ez_curl', 'db_curl']
   },
@@ -693,16 +693,16 @@ export const allExercises: Exercise[] = [
     alternatives: ['db_curl', 'cable_curl']
   },
   {
-    id: 'incline_db_curl',
-    name: 'Curl incline halteres',
+    id: 'incliné_db_curl',
+    name: 'Curl incliné halteres',
     equipment: 'Dumbbells',
     pattern: 'curl',
     primaryMuscles: ['Biceps'],
     secondaryMuscles: [],
     difficulty: 2,
     stimulusFatigue: 5,
-    setupCues: ['Banc incline a 45 degres', 'Bras pendants derriere le torse', 'Paumes vers l avant'],
-    executionCues: ['Montez les halteres en flechissant les coudes', 'Ne bougez pas les epaules', 'Redescendez completement'],
+    setupCues: ['Banc incliné a 45 degres', 'Bras pendants derriere le torse', 'Paumes vers l avant'],
+    executionCues: ['Montez les halteres en flechissant les coudes', 'Ne bougez pas les épaules', 'Redescendez completement'],
     alternatives: ['db_curl', 'preacher_curl']
   },
   {
@@ -753,9 +753,9 @@ export const allExercises: Exercise[] = [
     secondaryMuscles: [],
     difficulty: 2,
     stimulusFatigue: 5,
-    setupCues: ['Allonge face contre un banc incline', 'Bras pendants devant', 'Halteres en prise supination'],
+    setupCues: ['Allonge face contre un banc incliné', 'Bras pendants devant', 'Halteres en prise supination'],
     executionCues: ['Montez les halteres en flechissant les coudes', 'Contractez en haut', 'Redescendez lentement'],
-    alternatives: ['preacher_curl', 'incline_db_curl']
+    alternatives: ['preacher_curl', 'incliné_db_curl']
   },
   {
     id: 'bayesian_curl',
@@ -767,8 +767,8 @@ export const allExercises: Exercise[] = [
     difficulty: 2,
     stimulusFatigue: 5,
     setupCues: ['Poulie basse, dos a la machine', 'Un pas en avant pour creer de la tension', 'Bras en arriere du corps'],
-    executionCues: ['Flechissez le coude pour amener la main vers l epaule', 'Gardez le coude en arriere', 'Redescendez en controlant'],
-    alternatives: ['incline_db_curl', 'cable_curl']
+    executionCues: ['Flechissez le coude pour amener la main vers l épaule', 'Gardez le coude en arriere', 'Redescendez en controlant'],
+    alternatives: ['incliné_db_curl', 'cable_curl']
   },
 
   // ========================
@@ -835,7 +835,7 @@ export const allExercises: Exercise[] = [
     secondaryMuscles: ['Chest', 'Shoulders'],
     difficulty: 2,
     stimulusFatigue: 7,
-    setupCues: ['Allonge sur banc plat', 'Prise etroite (largeur des epaules ou moins)', 'Omoplates serrees'],
+    setupCues: ['Allonge sur banc plat', 'Prise etroite (largeur des épaules ou moins)', 'Omoplates serrees'],
     executionCues: ['Descendez la barre vers le bas de la poitrine', 'Gardez les coudes pres du corps', 'Poussez en contractant les triceps'],
     alternatives: ['dips_triceps', 'skullcrusher']
   },
@@ -904,7 +904,7 @@ export const allExercises: Exercise[] = [
     secondaryMuscles: ['Glutes', 'Hamstrings', 'Core'],
     difficulty: 3,
     stimulusFatigue: 10,
-    setupCues: ['Barre sur les trapezes', 'Pieds largeur des epaules, pointes legerement vers l exterieur', 'Poitrine haute, regard droit'],
+    setupCues: ['Barre sur les trapezes', 'Pieds largeur des épaules, pointes legerement vers l exterieur', 'Poitrine haute, regard droit'],
     executionCues: ['Descendez en poussant les genoux vers l exterieur', 'Cuisses paralleles au sol minimum', 'Poussez a travers les talons pour remonter'],
     alternatives: ['front_squat', 'leg_press']
   },
@@ -917,7 +917,7 @@ export const allExercises: Exercise[] = [
     secondaryMuscles: ['Glutes', 'Core'],
     difficulty: 3,
     stimulusFatigue: 8,
-    setupCues: ['Barre sur les deltoïdes anterieurs', 'Coudes hauts, bras paralleles au sol', 'Pieds largeur des epaules'],
+    setupCues: ['Barre sur les deltoïdes anterieurs', 'Coudes hauts, bras paralleles au sol', 'Pieds largeur des épaules'],
     executionCues: ['Descendez bien droit, genoux vers l avant', 'Gardez les coudes hauts', 'Remontez en poussant les genoux dehors'],
     alternatives: ['back_squat', 'goblet_squat']
   },
@@ -930,7 +930,7 @@ export const allExercises: Exercise[] = [
     secondaryMuscles: ['Glutes', 'Hamstrings'],
     difficulty: 1,
     stimulusFatigue: 7,
-    setupCues: ['Dos bien cale contre le dossier', 'Pieds largeur des epaules sur la plateforme', 'Genoux alignes avec les pieds'],
+    setupCues: ['Dos bien cale contre le dossier', 'Pieds largeur des épaules sur la plateforme', 'Genoux alignes avec les pieds'],
     executionCues: ['Descendez la plateforme en flechissant les genoux', 'Ne decollez pas les fesses du siege', 'Poussez pour remonter sans verrouiller completement'],
     alternatives: ['back_squat', 'hack_squat']
   },
@@ -956,7 +956,7 @@ export const allExercises: Exercise[] = [
     secondaryMuscles: ['Glutes'],
     difficulty: 2,
     stimulusFatigue: 7,
-    setupCues: ['Epaules sous les coussins', 'Dos cale contre la plateforme', 'Pieds bas et etroits pour cibler les quads'],
+    setupCues: ['Épaules sous les coussins', 'Dos cale contre la plateforme', 'Pieds bas et etroits pour cibler les quads'],
     executionCues: ['Descendez en flechissant les genoux', 'Cuisses paralleles au sol', 'Poussez pour remonter'],
     alternatives: ['leg_press', 'back_squat']
   },
@@ -969,7 +969,7 @@ export const allExercises: Exercise[] = [
     secondaryMuscles: ['Glutes', 'Core'],
     difficulty: 1,
     stimulusFatigue: 5,
-    setupCues: ['Tenez un haltere ou kettlebell devant la poitrine', 'Pieds largeur des epaules', 'Coudes entre les genoux en bas'],
+    setupCues: ['Tenez un haltere ou kettlebell devant la poitrine', 'Pieds largeur des épaules', 'Coudes entre les genoux en bas'],
     executionCues: ['Descendez en squat profond', 'Gardez le buste droit', 'Poussez pour remonter'],
     alternatives: ['front_squat', 'back_squat']
   },
@@ -1047,7 +1047,7 @@ export const allExercises: Exercise[] = [
     secondaryMuscles: ['Glutes'],
     difficulty: 1,
     stimulusFatigue: 6,
-    setupCues: ['Epaules sous les coussins', 'Pieds bas sur la plateforme', 'Dos cale'],
+    setupCues: ['Épaules sous les coussins', 'Pieds bas sur la plateforme', 'Dos cale'],
     executionCues: ['Descendez profondement', 'Gardez la tension sur les quads', 'Remontez sans verrouiller'],
     alternatives: ['hack_squat', 'leg_press']
   },
@@ -1211,7 +1211,7 @@ export const allExercises: Exercise[] = [
     secondaryMuscles: ['Hamstrings'],
     difficulty: 1,
     stimulusFatigue: 4,
-    setupCues: ['Poulie basse, dos a la machine', 'Corde entre les jambes', 'Pieds plus larges que les epaules'],
+    setupCues: ['Poulie basse, dos a la machine', 'Corde entre les jambes', 'Pieds plus larges que les épaules'],
     executionCues: ['Penchez le buste en poussant les hanches en arriere', 'Remontez en contractant les fessiers', 'Verrouillez les hanches en haut'],
     alternatives: ['barbell_hip_thrust', 'romanian_deadlift']
   },
@@ -1237,7 +1237,7 @@ export const allExercises: Exercise[] = [
     secondaryMuscles: [],
     difficulty: 1,
     stimulusFatigue: 2,
-    setupCues: ['A quatre pattes, mains sous les epaules', 'Genoux sous les hanches', 'Dos plat'],
+    setupCues: ['A quatre pattes, mains sous les épaules', 'Genoux sous les hanches', 'Dos plat'],
     executionCues: ['Poussez un pied vers le plafond genou a 90 degres', 'Contractez le fessier en haut', 'Redescendez sans toucher le sol'],
     alternatives: ['cable_kickback_glute', 'glute_bridge']
   },
@@ -1306,7 +1306,7 @@ export const allExercises: Exercise[] = [
     secondaryMuscles: [],
     difficulty: 1,
     stimulusFatigue: 4,
-    setupCues: ['Epaules sous les coussins', 'Pointe des pieds sur la plateforme', 'Talons dans le vide'],
+    setupCues: ['Épaules sous les coussins', 'Pointe des pieds sur la plateforme', 'Talons dans le vide'],
     executionCues: ['Montez sur la pointe des pieds', 'Contractez les mollets en haut', 'Descendez lentement pour etirer'],
     alternatives: ['seated_calf_raise', 'leg_press_calf_raise']
   },
@@ -1376,8 +1376,8 @@ export const allExercises: Exercise[] = [
     difficulty: 1,
     stimulusFatigue: 3,
     setupCues: ['Allonge sur le dos, genoux flechis', 'Mains derriere la tete ou sur la poitrine', 'Pieds a plat au sol'],
-    executionCues: ['Soulevéz les epaules du sol en contractant les abdominaux', 'Ne tirez pas sur la nuque', 'Redescendez lentement'],
-    alternatives: ['cable_crunch', 'decline_crunch']
+    executionCues: ['Soulevéz les épaules du sol en contractant les abdominaux', 'Ne tirez pas sur la nuque', 'Redescendez lentement'],
+    alternatives: ['cable_crunch', 'décliné_crunch']
   },
   {
     id: 'cable_crunch',
@@ -1390,11 +1390,11 @@ export const allExercises: Exercise[] = [
     stimulusFatigue: 5,
     setupCues: ['A genoux face a la poulie haute', 'Corde derriere la tete', 'Hanches fixes'],
     executionCues: ['Enroulez le buste vers le bas', 'Contractez les abdominaux', 'Remontez lentement'],
-    alternatives: ['crunch', 'decline_crunch']
+    alternatives: ['crunch', 'décliné_crunch']
   },
   {
     id: 'hanging_leg_raise',
-    name: 'Releve de jambes suspendu',
+    name: 'Rélevé de jambes suspendu',
     equipment: 'Bodyweight',
     pattern: 'flexion',
     primaryMuscles: ['Core'],
@@ -1427,7 +1427,7 @@ export const allExercises: Exercise[] = [
     secondaryMuscles: ['Shoulders'],
     difficulty: 1,
     stimulusFatigue: 3,
-    setupCues: ['Avant-bras au sol, coudes sous les epaules', 'Corps droit de la tete aux pieds', 'Gainage abdominal serre'],
+    setupCues: ['Avant-bras au sol, coudes sous les épaules', 'Corps droit de la tete aux pieds', 'Gainage abdominal serre'],
     executionCues: ['Maintenez la position sans lever les hanches', 'Respirez calmement', 'Gardez le dos plat'],
     alternatives: ['dead_bug', 'ab_wheel']
   },
@@ -1466,7 +1466,7 @@ export const allExercises: Exercise[] = [
     secondaryMuscles: [],
     difficulty: 1,
     stimulusFatigue: 3,
-    setupCues: ['Poulie a hauteur de poitrine, de cote', 'Tenez la poignee a deux mains devant la poitrine', 'Pieds largeur des epaules'],
+    setupCues: ['Poulie a hauteur de poitrine, de cote', 'Tenez la poignee a deux mains devant la poitrine', 'Pieds largeur des épaules'],
     executionCues: ['Poussez les mains devant vous bras tendus', 'Resistez a la rotation', 'Ramenez vers la poitrine'],
     alternatives: ['side_plank', 'woodchop']
   },
@@ -1492,7 +1492,7 @@ export const allExercises: Exercise[] = [
     secondaryMuscles: ['Shoulders'],
     difficulty: 1,
     stimulusFatigue: 4,
-    setupCues: ['Poulie en position haute ou basse', 'Debout de cote', 'Pieds largeur des epaules'],
+    setupCues: ['Poulie en position haute ou basse', 'Debout de cote', 'Pieds largeur des épaules'],
     executionCues: ['Tirez la poignee en diagonale en tournant le buste', 'Pivotez sur les pieds', 'Controlez le retour'],
     alternatives: ['russian_twist', 'pallof_press']
   },
@@ -1511,7 +1511,7 @@ export const allExercises: Exercise[] = [
   },
   {
     id: 'leg_raise',
-    name: 'Releve de jambes allonge',
+    name: 'Rélevé de jambes allonge',
     equipment: 'Bodyweight',
     pattern: 'flexion',
     primaryMuscles: ['Core'],
@@ -1536,15 +1536,15 @@ export const allExercises: Exercise[] = [
     alternatives: ['crunch', 'cable_crunch']
   },
   {
-    id: 'decline_crunch',
-    name: 'Crunch sur banc decline',
+    id: 'décliné_crunch',
+    name: 'Crunch sur banc décliné',
     equipment: 'Bodyweight',
     pattern: 'flexion',
     primaryMuscles: ['Core'],
     secondaryMuscles: [],
     difficulty: 2,
     stimulusFatigue: 5,
-    setupCues: ['Allonge sur le banc decline', 'Pieds cales sous les coussins', 'Mains sur la poitrine ou derriere la tete'],
+    setupCues: ['Allonge sur le banc décliné', 'Pieds cales sous les coussins', 'Mains sur la poitrine ou derriere la tete'],
     executionCues: ['Enroulez le buste vers le haut', 'Contractez les abdominaux', 'Redescendez lentement'],
     alternatives: ['crunch', 'cable_crunch']
   },
@@ -1567,15 +1567,15 @@ export const allExercises: Exercise[] = [
   },
   {
     id: 'clean_and_press',
-    name: 'Epaulee-jete (clean & press)',
+    name: 'Épaulee-jete (clean & press)',
     equipment: 'Barbell',
     pattern: 'full_body',
     primaryMuscles: ['Shoulders', 'Quads'],
     secondaryMuscles: ['Back', 'Glutes', 'Core', 'Triceps'],
     difficulty: 3,
     stimulusFatigue: 9,
-    setupCues: ['Position de souleve de terre', 'Prise pronation largeur des epaules', 'Dos plat, hanches basses'],
-    executionCues: ['Tirez la barre explosivement jusqu aux epaules', 'Recevez en position de front squat', 'Poussez la barre au-dessus de la tete'],
+    setupCues: ['Position de souleve de terre', 'Prise pronation largeur des épaules', 'Dos plat, hanches basses'],
+    executionCues: ['Tirez la barre explosivement jusqu aux épaules', 'Recevez en position de front squat', 'Poussez la barre au-dessus de la tete'],
     alternatives: ['overhead_press', 'deadlift']
   },
   {
@@ -1587,13 +1587,13 @@ export const allExercises: Exercise[] = [
     secondaryMuscles: ['Shoulders', 'Back', 'Quads'],
     difficulty: 1,
     stimulusFatigue: 6,
-    setupCues: ['Halteres lourds dans chaque main', 'Bras le long du corps', 'Epaules en arriere, poitrine haute'],
-    executionCues: ['Marchez a pas courts et rapides', 'Gardez le gainage abdominal', 'Epaules stables, pas de balancement'],
+    setupCues: ['Halteres lourds dans chaque main', 'Bras le long du corps', 'Épaules en arriere, poitrine haute'],
+    executionCues: ['Marchez a pas courts et rapides', 'Gardez le gainage abdominal', 'Épaules stables, pas de balancement'],
     alternatives: ['deadlift', 'trap_bar_deadlift']
   },
   {
     id: 'turkish_get_up',
-    name: 'Releve turc (Turkish get-up)',
+    name: 'Rélevé turc (Turkish get-up)',
     equipment: 'Kettlebell',
     pattern: 'full_body',
     primaryMuscles: ['Core', 'Shoulders'],
@@ -1626,8 +1626,8 @@ export const allExercises: Exercise[] = [
     secondaryMuscles: ['Core', 'Shoulders'],
     difficulty: 2,
     stimulusFatigue: 6,
-    setupCues: ['Pieds plus larges que les epaules', 'Kettlebell au sol devant vous', 'Dos plat, hanches en arriere'],
-    executionCues: ['Balancez le kettlebell entre les jambes', 'Poussez les hanches vers l avant explosivement', 'Laissez le kettlebell monter a hauteur des epaules'],
+    setupCues: ['Pieds plus larges que les épaules', 'Kettlebell au sol devant vous', 'Dos plat, hanches en arriere'],
+    executionCues: ['Balancez le kettlebell entre les jambes', 'Poussez les hanches vers l avant explosivement', 'Laissez le kettlebell monter a hauteur des épaules'],
     alternatives: ['cable_pull_through', 'romanian_deadlift']
   },
   {
@@ -1639,8 +1639,8 @@ export const allExercises: Exercise[] = [
     secondaryMuscles: ['Back'],
     difficulty: 1,
     stimulusFatigue: 4,
-    setupCues: ['Debout, barre devant les cuisses', 'Prise pronation largeur des epaules', 'Bras tendus'],
-    executionCues: ['Montez les epaules vers les oreilles', 'Contractez 1-2 secondes en haut', 'Redescendez lentement'],
+    setupCues: ['Debout, barre devant les cuisses', 'Prise pronation largeur des épaules', 'Bras tendus'],
+    executionCues: ['Montez les épaules vers les oreilles', 'Contractez 1-2 secondes en haut', 'Redescendez lentement'],
     alternatives: ['db_shrug', 'rack_pull']
   },
   {
@@ -1652,7 +1652,7 @@ export const allExercises: Exercise[] = [
     secondaryMuscles: ['Back'],
     difficulty: 1,
     stimulusFatigue: 2,
-    setupCues: ['Elastique tenu devant vous a deux mains', 'Bras tendus a hauteur des epaules', 'Pieds largeur des epaules'],
+    setupCues: ['Elastique tenu devant vous a deux mains', 'Bras tendus a hauteur des épaules', 'Pieds largeur des épaules'],
     executionCues: ['Ecartez les mains en tirant l elastique vers la poitrine', 'Serrez les omoplates', 'Revenez lentement'],
     alternatives: ['face_pull', 'reverse_fly_db']
   },
@@ -1691,7 +1691,7 @@ export const allExercises: Exercise[] = [
     secondaryMuscles: ['Glutes'],
     difficulty: 1,
     stimulusFatigue: 2,
-    setupCues: ['A quatre pattes', 'Mains sous les epaules, genoux sous les hanches', 'Dos plat et neutre'],
+    setupCues: ['A quatre pattes', 'Mains sous les épaules, genoux sous les hanches', 'Dos plat et neutre'],
     executionCues: ['Tendez le bras droit et la jambe gauche simultanement', 'Gardez le dos plat sans rotation', 'Alternez les cotes'],
     alternatives: ['dead_bug', 'plank']
   },
@@ -1709,32 +1709,32 @@ export const allExercises: Exercise[] = [
     alternatives: ['hyperextension', 'barbell_hip_thrust']
   },
   {
-    id: 'decline_db_press',
-    name: 'Développé decline halteres',
+    id: 'décliné_db_press',
+    name: 'Développé décliné halteres',
     equipment: 'Dumbbells',
-    pattern: 'decline_push',
+    pattern: 'décliné_push',
     primaryMuscles: ['Chest'],
     secondaryMuscles: ['Triceps', 'Shoulders'],
     difficulty: 2,
     stimulusFatigue: 6,
-    setupCues: ['Banc decline, pieds cales', 'Un haltere dans chaque main au-dessus de la poitrine', 'Omoplates serrees'],
+    setupCues: ['Banc décliné, pieds cales', 'Un haltere dans chaque main au-dessus de la poitrine', 'Omoplates serrees'],
     executionCues: ['Descendez les halteres de chaque cote', 'Poussez vers le haut en contractant', 'Controlez la descente'],
-    alternatives: ['decline_barbell_bench', 'dips_chest']
+    alternatives: ['décliné_barbell_bench', 'dips_chest']
   },
 
   // ========================
   // ADDITIONAL EXERCISES (to reach 150+)
   // ========================
   {
-    id: 'incline_cable_fly',
-    name: 'Ecarte incline a la poulie',
+    id: 'incliné_cable_fly',
+    name: 'Ecarte incliné a la poulie',
     equipment: 'Cable',
     pattern: 'fly',
     primaryMuscles: ['Chest'],
     secondaryMuscles: ['Shoulders'],
     difficulty: 1,
     stimulusFatigue: 5,
-    setupCues: ['Banc incline entre deux poulies basses', 'Saisissez les poignees', 'Legere flexion des coudes'],
+    setupCues: ['Banc incliné entre deux poulies basses', 'Saisissez les poignees', 'Legere flexion des coudes'],
     executionCues: ['Amenez les mains au-dessus de la poitrine en arc', 'Serrez les pectoraux en haut', 'Redescendez lentement'],
     alternatives: ['db_fly', 'cable_fly']
   },
@@ -1786,7 +1786,7 @@ export const allExercises: Exercise[] = [
     secondaryMuscles: ['Biceps'],
     difficulty: 1,
     stimulusFatigue: 6,
-    setupCues: ['Prise supination sur la barre', 'Largeur des epaules', 'Cuisses calees'],
+    setupCues: ['Prise supination sur la barre', 'Largeur des épaules', 'Cuisses calees'],
     executionCues: ['Tirez vers le bas de la poitrine', 'Contractez les dorsaux', 'Remontez avec controle'],
     alternatives: ['chin_ups', 'lat_pulldown_close']
   },
@@ -1805,14 +1805,14 @@ export const allExercises: Exercise[] = [
   },
   {
     id: 'machine_shoulder_press',
-    name: 'Développé epaules machine',
+    name: 'Développé épaules machine',
     equipment: 'Machine',
     pattern: 'vertical_push',
     primaryMuscles: ['Shoulders'],
     secondaryMuscles: ['Triceps'],
     difficulty: 1,
     stimulusFatigue: 5,
-    setupCues: ['Reglez le siege pour que les poignees soient a hauteur des epaules', 'Dos cale', 'Pieds a plat'],
+    setupCues: ['Reglez le siege pour que les poignees soient a hauteur des épaules', 'Dos cale', 'Pieds a plat'],
     executionCues: ['Poussez les poignees vers le haut', 'Contractez en haut', 'Redescendez lentement'],
     alternatives: ['db_shoulder_press', 'overhead_press']
   },
@@ -1826,7 +1826,7 @@ export const allExercises: Exercise[] = [
     difficulty: 1,
     stimulusFatigue: 4,
     setupCues: ['Debout, halteres le long du corps', 'Prise neutre', 'Buste droit'],
-    executionCues: ['Montez l haltere en diagonale vers l epaule opposee', 'Contractez en haut', 'Alternez les bras'],
+    executionCues: ['Montez l haltere en diagonale vers l épaule opposee', 'Contractez en haut', 'Alternez les bras'],
     alternatives: ['hammer_curl', 'db_curl']
   },
   {
@@ -1916,7 +1916,7 @@ export const allExercises: Exercise[] = [
     secondaryMuscles: ['Shoulders'],
     difficulty: 1,
     stimulusFatigue: 4,
-    setupCues: ['Poulie en position basse', 'Debout de cote', 'Pieds largeur des epaules'],
+    setupCues: ['Poulie en position basse', 'Debout de cote', 'Pieds largeur des épaules'],
     executionCues: ['Tirez la poignee en diagonale de bas en haut', 'Pivotez les hanches', 'Controlez le retour'],
     alternatives: ['woodchop', 'russian_twist']
   },
@@ -1948,14 +1948,14 @@ export const allExercises: Exercise[] = [
   },
   {
     id: 'power_clean',
-    name: 'Epaulee de puissance (power clean)',
+    name: 'Épaulee de puissance (power clean)',
     equipment: 'Barbell',
     pattern: 'full_body',
     primaryMuscles: ['Back', 'Shoulders'],
     secondaryMuscles: ['Quads', 'Glutes', 'Core'],
     difficulty: 3,
     stimulusFatigue: 8,
-    setupCues: ['Position de souleve de terre', 'Prise pronation largeur des epaules', 'Hanches basses'],
+    setupCues: ['Position de souleve de terre', 'Prise pronation largeur des épaules', 'Hanches basses'],
     executionCues: ['Tirez la barre explosivement', 'Recevez en position front rack', 'Stabilisez'],
     alternatives: ['clean_and_press', 'deadlift']
   },
@@ -1969,7 +1969,7 @@ export const allExercises: Exercise[] = [
     difficulty: 3,
     stimulusFatigue: 9,
     setupCues: ['Prise tres large sur la barre', 'Hanches plus basses qu un deadlift classique', 'Dos plat'],
-    executionCues: ['Poussez le sol avec les pieds', 'Gardez les epaules au-dessus de la barre', 'Verrouillez en haut'],
+    executionCues: ['Poussez le sol avec les pieds', 'Gardez les épaules au-dessus de la barre', 'Verrouillez en haut'],
     alternatives: ['deadlift', 'rack_pull']
   },
   {
@@ -1986,15 +1986,15 @@ export const allExercises: Exercise[] = [
     alternatives: ['cable_lateral_raise', 'lateral_raise_db']
   },
   {
-    id: 'prone_incline_curl',
-    name: 'Curl allonge sur banc incline (prone)',
+    id: 'prone_incliné_curl',
+    name: 'Curl allonge sur banc incliné (prone)',
     equipment: 'Dumbbells',
     pattern: 'curl',
     primaryMuscles: ['Biceps'],
     secondaryMuscles: [],
     difficulty: 2,
     stimulusFatigue: 5,
-    setupCues: ['Allonge face contre un banc incline a 45 degres', 'Bras pendants devant', 'Halteres en supination'],
+    setupCues: ['Allonge face contre un banc incliné a 45 degres', 'Bras pendants devant', 'Halteres en supination'],
     executionCues: ['Montez les halteres en flechissant', 'Contractez les biceps', 'Redescendez completement'],
     alternatives: ['spider_curl', 'preacher_curl']
   },
@@ -2033,7 +2033,7 @@ export const allExercises: Exercise[] = [
     secondaryMuscles: ['Core', 'Glutes', 'Biceps'],
     difficulty: 3,
     stimulusFatigue: 8,
-    setupCues: ['Barre dans le creux des coudes', 'Pieds largeur des epaules', 'Buste droit'],
+    setupCues: ['Barre dans le creux des coudes', 'Pieds largeur des épaules', 'Buste droit'],
     executionCues: ['Descendez en squat', 'Gardez les coudes hauts', 'Poussez pour remonter'],
     alternatives: ['front_squat', 'goblet_squat']
   }

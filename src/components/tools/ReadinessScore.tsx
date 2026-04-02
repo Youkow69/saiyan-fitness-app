@@ -205,12 +205,12 @@ export function ReadinessScore() {
 
   const scoreColor =
     readiness.score >= 80
-      ? '#22c55e'
+      ? 'var(--success)'
       : readiness.score >= 60
-        ? '#f59e0b'
+        ? 'var(--warning)'
         : readiness.score >= 40
-          ? '#FF8C00'
-          : '#ef4444'
+          ? 'var(--accent)'
+          : 'var(--danger)'
 
   const recommendationLabel: Record<ReadinessResult['recommendation'], string> = {
     push: 'Pousse fort',
@@ -229,7 +229,7 @@ export function ReadinessScore() {
         padding: 16,
       }}
       role="region"
-      aria-label="Score de disponibilite"
+      aria-label="Score de disponibilité"
     >
       {/* Title */}
       <h3
@@ -242,7 +242,7 @@ export function ReadinessScore() {
           margin: '0 0 12px',
         }}
       >
-        Readiness -- Senzu Check
+        Readiness — Senzu Check
       </h3>
 
       {/* Big score circle + label */}
@@ -277,6 +277,7 @@ export function ReadinessScore() {
               strokeWidth="3"
               strokeDasharray={`${readiness.score} ${100 - readiness.score}`}
               strokeLinecap="round"
+              style={{ transition: 'stroke-dasharray 0.8s ease, stroke 0.3s ease' }}
             />
           </svg>
           <div
@@ -323,7 +324,7 @@ export function ReadinessScore() {
         {readiness.components.map((c) => {
           const ratio = c.maxScore > 0 ? c.score / c.maxScore : 0
           const barColor =
-            ratio >= 0.7 ? '#22c55e' : ratio >= 0.4 ? '#f59e0b' : '#ef4444'
+            ratio >= 0.7 ? 'var(--success)' : ratio >= 0.4 ? 'var(--warning)' : 'var(--danger)'
 
           return (
             <div key={c.name} role="listitem">
@@ -387,6 +388,7 @@ export function ReadinessScore() {
           background: 'rgba(255,255,255,0.02)',
           borderRadius: 10,
           border: '1px solid var(--border, #2a2a40)',
+          borderLeft: `3px solid ${scoreColor}`,
         }}
       >
         <p

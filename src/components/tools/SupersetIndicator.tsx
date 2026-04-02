@@ -4,7 +4,6 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { useState } from 'react'
-import { useAppState } from '../../context/AppContext'
 import type { LoggedExercise } from '../../types'
 import { getExerciseById } from '../../lib'
 
@@ -15,12 +14,6 @@ const SUPERSET_COLORS = [
   '#2ecc71', // Green
   '#f39c12', // Orange
 ]
-
-interface SupersetGroup {
-  color: string
-  exerciseIds: string[]
-  label: string
-}
 
 interface Props {
   exercises: LoggedExercise[]

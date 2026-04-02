@@ -20,11 +20,11 @@ import { WorkoutCalendar } from '../stats/WorkoutCalendar'
 import type { CalendarWorkoutLog } from '../stats/WorkoutCalendar'
 import { PersonalRecords } from '../stats/PersonalRecords'
 import type { PRWorkoutLog, PRExercise } from '../stats/PersonalRecords'
-import { MetricCard, ProgressBar, SectionTitle } from '../ui/Shared'
+import { MetricCard, SectionTitle } from '../ui/Shared'
 import { StrengthStandards } from '../tools/StrengthStandards'
 
 const MUSCLE_FR: Record<string, string> = {
-  Chest: 'Pectoraux', Back: 'Dos', Shoulders: '\u00C9paules',
+  Chest: 'Pectoraux', Back: 'Dos', Shoulders: 'Épaules',
   Quads: 'Quadriceps', Hamstrings: 'Ischio-jambiers', Glutes: 'Fessiers',
   Calves: 'Mollets', Core: 'Abdominaux', Biceps: 'Biceps', Triceps: 'Triceps',
 }
@@ -50,33 +50,12 @@ function countPRsFromWorkouts(workouts: AppState['workouts']): number {
   return prCount
 }
 
-const accordionStyle: React.CSSProperties = {
-  padding: '10px 14px', cursor: 'pointer', fontWeight: 600,
-  fontSize: '0.85rem', color: 'var(--text)', display: 'flex',
-  alignItems: 'center', gap: 8, listStyle: 'none',
-  background: 'var(--bg-card)', borderRadius: 12,
-  border: '1px solid var(--border)', marginBottom: 6,
-}
-
-const fullscreenOverlay: React.CSSProperties = {
-  position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.8)',
-  zIndex: 1000, overflowY: 'auto', padding: 16,
-}
-
-const closeBtnStyle: React.CSSProperties = {
-  background: 'none', border: 'none', color: 'var(--text)',
-  fontSize: '1.5rem', cursor: 'pointer',
-}
-
 export const ScouterView: React.FC = React.memo(
   function ScouterView() {
     const { state } = useAppState()
-    const [showCalendar, setShowCalendar] = useState(false)
-    const [showPRs, setShowPRs] = useState(false)
-    const [showRecap, setShowRecap] = useState(false)
+    const [modal, setModal] = useState<string | null>(null)
 
     const weeklyWorkouts = useMemo(() => getWeeklyWorkouts(state.workouts), [state.workouts])
-    const volumeByMuscle = useMemo(() => getVolumeByMuscle(weeklyWorkouts), [weeklyWorkouts])
     const totalVolume = useMemo(
       () => state.workouts.reduce((s, w) => s + getWorkoutVolume(w), 0),
       [state.workouts],
@@ -123,29 +102,42 @@ export const ScouterView: React.FC = React.memo(
       [],
     )
 
+    const modalTitle: Record<string, string> = {
+      calendar: "Calendrier d'activité",
+      records: 'Records personnels',
+      recap: 'Récap mensuel',
+      volume: 'Volume par muscle',
+      charts: 'Graphiques',
+    }
+
     return (
       <div className="page">
-        {/* Charts — always visible */}
-        <WeightChart entries={chartBWEntries} />
-        <VolumeChart workouts={chartWorkouts} />
-
-        {/* Calendar — button opens fullscreen overlay */}
-        <button onClick={() => setShowCalendar(true)} style={accordionStyle} type="button">
-          {'\uD83D\uDCC5'} Calendrier d'activité
-        </button>
-        {showCalendar && (
-          <div style={fullscreenOverlay}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 12 }}>
-              <h3 style={{ color: 'var(--text)', margin: 0 }}>Calendrier</h3>
-              <button onClick={() => setShowCalendar(false)} style={closeBtnStyle} type="button">{'\u2715'}</button>
-            </div>
-            <WorkoutCalendar workouts={calendarWorkouts} />
-          </div>
-        )}
-
-        {/* 1RM board */}
+        {/* Basic stats - always visible */}
         <section className="hevy-card stack-md">
-          <SectionTitle icon="" label="1RM estim\u00E9s" />
+          <SectionTitle icon="" label="Vue d'ensemble" />
+          <div className="metrics-grid">
+            <MetricCard label="Séances total" value={String(state.workouts.length)} accent="var(--accent-gold)" />
+            <MetricCard label="Volume total" value={`${formatNumber(totalVolume)} kg`} accent="var(--accent-blue)" />
+            <MetricCard label="Records" value={String(prCount)} accent="var(--accent-orange)" />
+          </div>
+          <div className="metrics-grid">
+            <MetricCard label="Cette semaine" value={String(weeklyWorkouts.length)} accent="var(--accent-gold)" />
+            <MetricCard
+              label="Vol. semaine"
+              value={`${formatNumber(weeklyWorkouts.reduce((s, w) => s + getWorkoutVolume(w), 0))} kg`}
+              accent="var(--accent-blue)"
+            />
+            <MetricCard
+              label="Poids actuel"
+              value={`${state.bodyweightEntries.at(-1)?.weightKg ?? state.profile?.weightKg ?? 0} kg`}
+              accent="var(--accent-green, #4fffb0)"
+            />
+          </div>
+        </section>
+
+        {/* 1RM board - always visible */}
+        <section className="hevy-card stack-md">
+          <SectionTitle icon="" label="1RM estimés" />
           {['bench_press', 'back_squat', 'romanian_deadlift', 'pull_up'].map((exerciseId) => {
             let best = 0
             state.workouts.forEach((w) =>
@@ -169,88 +161,64 @@ export const ScouterView: React.FC = React.memo(
                   color: best > 0 ? 'var(--accent-gold)' : 'var(--muted)',
                   fontSize: '0.9rem',
                 }}>
-                  {best > 0 ? `~${Math.round(best)} kg` : '\u2014'}
+                  {best > 0 ? `~${Math.round(best)} kg` : '—'}
                 </strong>
               </div>
             )
           })}
         </section>
 
-        {/* Strength standards */}
+        {/* Strength standards - always visible */}
         <StrengthStandards />
 
-        {/* Muscle volume — accordion */}
-        <details>
-          <summary style={accordionStyle}>{'\uD83D\uDCAA'} Tonnage par muscle</summary>
-          <section className="hevy-card stack-md" style={{ marginTop: 0 }}>
-            {volumeByMuscle.length === 0 ? (
-              <div className="empty-state">
-                <p>Complète ta première semaine pour voir la map musculaire.</p>
+        {/* Button row for modals */}
+        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 12 }}>
+          {['calendar', 'records', 'recap', 'volume', 'charts'].map((id) => (
+            <button
+              key={id}
+              onClick={() => setModal(id)}
+              type="button"
+              style={{
+                padding: '8px 14px', borderRadius: 10, border: '1px solid var(--border)',
+                background: 'var(--bg-card)', color: 'var(--text)', fontSize: '0.78rem',
+                fontWeight: 600, cursor: 'pointer',
+              }}
+            >
+              {id === 'calendar' ? '�� Calendrier' : id === 'records' ? '�� Records' : id === 'recap' ? '�� Récap' : id === 'volume' ? '�� Volume' : '�� Charts'}
+            </button>
+          ))}
+        </div>
+
+        {/* Modal overlay */}
+        {modal && (
+          <div style={{
+            position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.8)',
+            zIndex: 1000, overflowY: 'auto', padding: 16,
+          }}>
+            <div style={{ maxWidth: 500, margin: '0 auto' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+                <h3 style={{ margin: 0, color: 'var(--text)' }}>
+                  {modalTitle[modal] ?? modal}
+                </h3>
+                <button
+                  onClick={() => setModal(null)}
+                  type="button"
+                  style={{ background: 'none', border: 'none', color: 'var(--text)', fontSize: '1.5rem', cursor: 'pointer' }}
+                >
+                  ✕
+                </button>
               </div>
-            ) : (
-              volumeByMuscle.map(([muscle, volume]) => (
-                <ProgressBar
-                  key={muscle}
-                  label={translateMuscle(muscle)}
-                  value={volume}
-                  target={Math.max(volumeByMuscle[0][1], 1)}
-                  accent="linear-gradient(90deg,#4fffb0,#00d4ff)"
-                />
-              ))
-            )}
-          </section>
-        </details>
-
-        <VolumeDashboard state={state} />
-
-        {/* Overview metrics */}
-        <section className="hevy-card stack-md">
-          <SectionTitle icon="" label="Vue d'ensemble" />
-          <div className="metrics-grid">
-            <MetricCard label="S\u00E9ances total" value={String(state.workouts.length)} accent="var(--accent-gold)" />
-            <MetricCard label="Volume total" value={`${formatNumber(totalVolume)} kg`} accent="var(--accent-blue)" />
-            <MetricCard label="Records" value={String(prCount)} accent="var(--accent-orange)" />
-          </div>
-          <div className="metrics-grid">
-            <MetricCard label="Cette semaine" value={String(weeklyWorkouts.length)} accent="var(--accent-gold)" />
-            <MetricCard
-              label="Vol. semaine"
-              value={`${formatNumber(weeklyWorkouts.reduce((s, w) => s + getWorkoutVolume(w), 0))} kg`}
-              accent="var(--accent-blue)"
-            />
-            <MetricCard
-              label="Poids actuel"
-              value={`${state.bodyweightEntries.at(-1)?.weightKg ?? state.profile?.weightKg ?? 0} kg`}
-              accent="#4fffb0"
-            />
-          </div>
-        </section>
-
-        {/* Personal Records — behind button */}
-        <button onClick={() => setShowPRs(true)} style={accordionStyle} type="button">
-          {'\uD83C\uDFC6'} Records personnels
-        </button>
-        {showPRs && (
-          <div style={fullscreenOverlay}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 12 }}>
-              <h3 style={{ color: 'var(--text)', margin: 0 }}>Records personnels</h3>
-              <button onClick={() => setShowPRs(false)} style={closeBtnStyle} type="button">{'\u2715'}</button>
+              {modal === 'calendar' && <WorkoutCalendar workouts={calendarWorkouts} />}
+              {modal === 'records' && <PersonalRecords workouts={prWorkouts} exercises={prExercises} />}
+              {modal === 'recap' && <MonthlyRecap />}
+              {modal === 'volume' && <VolumeDashboard state={state} />}
+              {modal === 'charts' && (
+                <>
+                  <WeightChart entries={chartBWEntries} />
+                  <VolumeChart workouts={chartWorkouts} />
+                </>
+              )}
             </div>
-            <PersonalRecords workouts={prWorkouts} exercises={prExercises} />
-          </div>
-        )}
-
-        {/* Monthly Recap — behind button */}
-        <button onClick={() => setShowRecap(true)} style={accordionStyle} type="button">
-          {'\uD83D\uDCCA'} Récap mensuel
-        </button>
-        {showRecap && (
-          <div style={fullscreenOverlay}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 12 }}>
-              <h3 style={{ color: 'var(--text)', margin: 0 }}>Récap mensuel</h3>
-              <button onClick={() => setShowRecap(false)} style={closeBtnStyle} type="button">{'\u2715'}</button>
-            </div>
-            <MonthlyRecap />
           </div>
         )}
       </div>

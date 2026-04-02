@@ -42,7 +42,7 @@ export function BodyweightTrendChart({ height = 200, showTarget = true }: Props)
   const yScale = (w: number) => PAD.top + plotH - ((w - minW) / range) * plotH
 
   // Points
-  const points = entries.map((e, i) => `${xScale(i)},${yScale(e.weightKg)}`)
+  const pointsStr = entries.map((e, i) => `${xScale(i)},${yScale(e.weightKg)}`).join(' ')
   const avgLine = movingAvg.map((w, i) => `${xScale(i)},${yScale(w)}`).join(' ')
 
   // Target weight
@@ -77,6 +77,7 @@ export function BodyweightTrendChart({ height = 200, showTarget = true }: Props)
       )}
 
       {/* Moving average line (gold) */}
+      <polyline points={pointsStr} fill="none" stroke="var(--accent)" strokeWidth={1} opacity={0.4} />
       <polyline points={avgLine} fill="none" stroke="#FFD700" strokeWidth={2} opacity={0.8} />
 
       {/* Individual points */}

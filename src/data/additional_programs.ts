@@ -14,7 +14,7 @@ export const specializedPrograms: ProgramTemplate[] = [
     equipmentTags: ['full_gym'],
     daysPerWeek: 4,
     description:
-      'Programme de specialisation dos avec 2 seances dos par semaine. Volume eleve sur les tirages verticaux et horizontaux pour un dos massif digne du pere de Goku.',
+      'Programme de specialisation dos avec 2 séances dos par semaine. Volume eleve sur les tirages verticaux et horizontaux pour un dos massif digne du pere de Goku.',
     sessions: [
       {
         id: 'bardock_back_heavy',
@@ -32,10 +32,10 @@ export const specializedPrograms: ProgramTemplate[] = [
       {
         id: 'bardock_push',
         name: 'Push - Assaut Saiyan',
-        focus: 'Pectoraux, epaules, triceps',
+        focus: 'Pectoraux, épaules, triceps',
         exercises: [
           { exerciseId: 'barbell_bench_press', sets: 4, repMin: 6, repMax: 8, targetRir: 2, restSeconds: 150 },
-          { exerciseId: 'db_incline_press', sets: 3, repMin: 8, repMax: 12, targetRir: 2, restSeconds: 90 },
+          { exerciseId: 'db_incliné_press', sets: 3, repMin: 8, repMax: 12, targetRir: 2, restSeconds: 90 },
           { exerciseId: 'overhead_press', sets: 3, repMin: 8, repMax: 10, targetRir: 2, restSeconds: 120 },
           { exerciseId: 'lateral_raise_db', sets: 4, repMin: 12, repMax: 15, targetRir: 1, restSeconds: 60 },
           { exerciseId: 'cable_fly', sets: 3, repMin: 12, repMax: 15, targetRir: 1, restSeconds: 60 },
@@ -73,24 +73,24 @@ export const specializedPrograms: ProgramTemplate[] = [
   },
 
   // ──────────────────────────────────────────
-  // 2. Specialisation Epaules — Saga Broly
+  // 2. Specialisation Épaules — Saga Broly
   // ──────────────────────────────────────────
   {
     id: 'spec_shoulders_broly',
-    name: 'Specialisation Epaules - Saga Broly',
+    name: 'Specialisation Épaules - Saga Broly',
     saga: 'Broly',
-    split: 'Epaules x2 / Upper / Lower',
+    split: 'Épaules x2 / Upper / Lower',
     goalTags: ['muscle_gain'],
     levelTags: ['intermediate', 'advanced'],
     equipmentTags: ['full_gym'],
     daysPerWeek: 4,
     description:
-      'Epaules massives comme Broly le Legendaire. 2 seances epaules par semaine avec emphase sur les 3 faisceaux pour un look de guerrier Saiyan.',
+      'Épaules massives comme Broly le Legendaire. 2 séances épaules par semaine avec emphase sur les 3 faisceaux pour un look de guerrier Saiyan.',
     sessions: [
       {
         id: 'broly_shoulders_heavy',
-        name: 'Epaules Force - Rage de Broly',
-        focus: 'Epaules force & masse',
+        name: 'Épaules Force - Rage de Broly',
+        focus: 'Épaules force & masse',
         exercises: [
           { exerciseId: 'overhead_press', sets: 4, repMin: 5, repMax: 8, targetRir: 2, restSeconds: 150 },
           { exerciseId: 'db_shoulder_press', sets: 3, repMin: 8, repMax: 10, targetRir: 2, restSeconds: 120 },
@@ -107,7 +107,7 @@ export const specializedPrograms: ProgramTemplate[] = [
         exercises: [
           { exerciseId: 'barbell_bench_press', sets: 3, repMin: 8, repMax: 10, targetRir: 2, restSeconds: 120 },
           { exerciseId: 'barbell_row', sets: 3, repMin: 8, repMax: 10, targetRir: 2, restSeconds: 120 },
-          { exerciseId: 'db_incline_press', sets: 3, repMin: 10, repMax: 12, targetRir: 2, restSeconds: 90 },
+          { exerciseId: 'db_incliné_press', sets: 3, repMin: 10, repMax: 12, targetRir: 2, restSeconds: 90 },
           { exerciseId: 'lat_pulldown_wide', sets: 3, repMin: 10, repMax: 12, targetRir: 2, restSeconds: 90 },
           { exerciseId: 'ez_curl', sets: 3, repMin: 10, repMax: 12, targetRir: 2, restSeconds: 60 },
           { exerciseId: 'skullcrusher', sets: 3, repMin: 10, repMax: 12, targetRir: 2, restSeconds: 60 },
@@ -128,8 +128,8 @@ export const specializedPrograms: ProgramTemplate[] = [
       },
       {
         id: 'broly_shoulders_volume',
-        name: 'Epaules Volume - Forme Legendaire',
-        focus: 'Epaules volume & details',
+        name: 'Épaules Volume - Forme Legendaire',
+        focus: 'Épaules volume & details',
         exercises: [
           { exerciseId: 'arnold_press', sets: 3, repMin: 10, repMax: 12, targetRir: 2, restSeconds: 90 },
           { exerciseId: 'cable_lateral_raise', sets: 4, repMin: 15, repMax: 20, targetRir: 1, restSeconds: 45 },
@@ -156,7 +156,7 @@ export const specializedPrograms: ProgramTemplate[] = [
     equipmentTags: ['full_gym'],
     daysPerWeek: 4,
     description:
-      'Programme specialise jambes avec 2 seances dediees. Vitesse et puissance comme l\'assassin Hit. Quadriceps, ischios et fessiers au maximum.',
+      'Programme specialise jambes avec 2 séances dediees. Vitesse et puissance comme l\'assassin Hit. Quadriceps, ischios et fessiers au maximum.',
     sessions: [
       {
         id: 'hit_legs_quad',
@@ -227,7 +227,7 @@ export const specializedPrograms: ProgramTemplate[] = [
     equipmentTags: ['home_gym'],
     daysPerWeek: 3,
     description:
-      'Programme 100% halteres pour s\'entrainer a domicile. 3 seances full body differentes, inspirees de la determination sombre de Goku Black. Aucune machine necessaire.',
+      'Programme 100% halteres pour s\'entrainer a domicile. 3 séances full body differentes, inspirees de la determination sombre de Goku Black. Aucune machine necessaire.',
     sessions: [
       {
         id: 'gblack_full_a',
@@ -236,7 +236,7 @@ export const specializedPrograms: ProgramTemplate[] = [
         exercises: [
           { exerciseId: 'db_bench_press', sets: 4, repMin: 8, repMax: 12, targetRir: 2, restSeconds: 90 },
           { exerciseId: 'db_row', sets: 4, repMin: 8, repMax: 12, targetRir: 2, restSeconds: 90 },
-          { exerciseId: 'db_incline_press', sets: 3, repMin: 10, repMax: 12, targetRir: 2, restSeconds: 90 },
+          { exerciseId: 'db_incliné_press', sets: 3, repMin: 10, repMax: 12, targetRir: 2, restSeconds: 90 },
           { exerciseId: 'db_fly', sets: 3, repMin: 12, repMax: 15, targetRir: 1, restSeconds: 60 },
           { exerciseId: 'db_curl', sets: 3, repMin: 10, repMax: 12, targetRir: 2, restSeconds: 60 },
           { exerciseId: 'db_overhead_extension', sets: 3, repMin: 10, repMax: 12, targetRir: 2, restSeconds: 60 },
@@ -244,8 +244,8 @@ export const specializedPrograms: ProgramTemplate[] = [
       },
       {
         id: 'gblack_full_b',
-        name: 'Full B - Rose (Jambes/Epaules)',
-        focus: 'Jambes, epaules',
+        name: 'Full B - Rose (Jambes/Épaules)',
+        focus: 'Jambes, épaules',
         exercises: [
           { exerciseId: 'goblet_squat', sets: 4, repMin: 10, repMax: 15, targetRir: 2, restSeconds: 90 },
           { exerciseId: 'db_shoulder_press', sets: 4, repMin: 8, repMax: 12, targetRir: 2, restSeconds: 90 },
@@ -285,15 +285,15 @@ export const specializedPrograms: ProgramTemplate[] = [
     equipmentTags: ['full_gym'],
     daysPerWeek: 3,
     description:
-      'Programme 100% machines, parfait pour les debutants ou ceux qui preferent la securite guidee. Precision mecanique comme les Androides du Dr Gero.',
+      'Programme 100% machines, parfait pour les débutants ou ceux qui preferent la securite guidee. Precision mecanique comme les Androides du Dr Gero.',
     sessions: [
       {
         id: 'android_push',
         name: 'Push - Systeme 18',
-        focus: 'Pectoraux, epaules, triceps',
+        focus: 'Pectoraux, épaules, triceps',
         exercises: [
           { exerciseId: 'machine_chest_press', sets: 4, repMin: 8, repMax: 12, targetRir: 2, restSeconds: 90 },
-          { exerciseId: 'smith_incline_press', sets: 3, repMin: 10, repMax: 12, targetRir: 2, restSeconds: 90 },
+          { exerciseId: 'smith_incliné_press', sets: 3, repMin: 10, repMax: 12, targetRir: 2, restSeconds: 90 },
           { exerciseId: 'pec_deck', sets: 3, repMin: 12, repMax: 15, targetRir: 1, restSeconds: 60 },
           { exerciseId: 'machine_shoulder_press', sets: 3, repMin: 10, repMax: 12, targetRir: 2, restSeconds: 90 },
           { exerciseId: 'machine_lateral_raise', sets: 3, repMin: 12, repMax: 15, targetRir: 1, restSeconds: 60 },
@@ -404,7 +404,7 @@ export const specializedPrograms: ProgramTemplate[] = [
     equipmentTags: ['full_gym', 'basic_gym'],
     daysPerWeek: 3,
     description:
-      'Programme de reprise apres une pause prolongee. Volume et intensite progressifs sur 3 semaines. Comme Freezer qui revient plus fort, reprends l\'entrainement en douceur.',
+      'Programme de reprise apres une pause prolongee. Volume et intensite progressifs sur 3 semaines. Comme Freezer qui revient plus fort, reprends l\'entraînement en douceur.',
     sessions: [
       {
         id: 'resf_week1',
@@ -453,11 +453,11 @@ export const specializedPrograms: ProgramTemplate[] = [
   },
 
   // ──────────────────────────────────────────
-  // 8. Debutant total (2J tres simple) — Saga Saiyan
+  // 8. Débutant total (2J tres simple) — Saga Saiyan
   // ──────────────────────────────────────────
   {
     id: 'beginner_saiyan_saga',
-    name: 'Debutant Total - Saga Saiyan',
+    name: 'Débutant Total - Saga Saiyan',
     saga: 'Saiyan',
     split: 'Full Body A/B',
     goalTags: ['muscle_gain', 'recomp'],
@@ -482,7 +482,7 @@ export const specializedPrograms: ProgramTemplate[] = [
       },
       {
         id: 'saiyan_full_b',
-        name: 'Full Body B - Kamehameha Debutant',
+        name: 'Full Body B - Kamehameha Débutant',
         focus: 'Mouvements de base bis',
         exercises: [
           { exerciseId: 'goblet_squat', sets: 3, repMin: 10, repMax: 12, targetRir: 3, restSeconds: 90 },
@@ -567,7 +567,7 @@ export const specializedPrograms: ProgramTemplate[] = [
     equipmentTags: ['full_gym'],
     daysPerWeek: 4,
     description:
-      'Programme de powerlifting axe sur les 3 mouvements de competition : squat, developpe couche, souleve de terre. Recherche de la perfection comme Cell dans sa forme parfaite.',
+      'Programme de powerlifting axe sur les 3 mouvements de competition : squat, développé couche, souleve de terre. Recherche de la perfection comme Cell dans sa forme parfaite.',
     sessions: [
       {
         id: 'cell_squat',
@@ -585,11 +585,11 @@ export const specializedPrograms: ProgramTemplate[] = [
       {
         id: 'cell_bench',
         name: 'Bench Day - Deuxieme Forme',
-        focus: 'Developpe couche & accessoires poussee',
+        focus: 'Développé couche & accessoires poussee',
         exercises: [
           { exerciseId: 'barbell_bench_press', sets: 5, repMin: 3, repMax: 5, targetRir: 2, restSeconds: 240 },
           { exerciseId: 'close_grip_bench', sets: 3, repMin: 6, repMax: 8, targetRir: 2, restSeconds: 150 },
-          { exerciseId: 'db_incline_press', sets: 3, repMin: 8, repMax: 10, targetRir: 2, restSeconds: 90 },
+          { exerciseId: 'db_incliné_press', sets: 3, repMin: 8, repMax: 10, targetRir: 2, restSeconds: 90 },
           { exerciseId: 'overhead_press', sets: 3, repMin: 6, repMax: 8, targetRir: 2, restSeconds: 120 },
           { exerciseId: 'dips_triceps', sets: 3, repMin: 8, repMax: 12, targetRir: 2, restSeconds: 90 },
           { exerciseId: 'skullcrusher', sets: 3, repMin: 10, repMax: 12, targetRir: 2, restSeconds: 60 },

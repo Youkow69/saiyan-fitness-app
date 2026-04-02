@@ -92,7 +92,12 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
                 <SectionTitle icon="🏋️" label="Séance en cours" />
                 <h3 style={{ margin: '4px 0 0' }}>{nextSession.name}</h3>
               </div>
-              <button className="primary-btn" onClick={onFinishWorkout} type="button">Terminer</button>
+              <div style={{ display: 'flex', gap: 8 }}>
+              <button onClick={() => { if (window.confirm('Annuler la séance ? Tes séries non terminées seront perdues.')) { dispatch({ type: 'ABANDON_WORKOUT' }) } }} type="button" style={{ padding: '8px 16px', borderRadius: 10, border: '1px solid var(--border)', background: 'transparent', color: 'var(--text-secondary)', fontWeight: 600, fontSize: '0.85rem', cursor: 'pointer' }}>
+                ← Annuler
+              </button>
+              <button className="primary-btn" onClick={onFinishWorkout} type="button" style={{ flex: 1 }}>Terminer la séance</button>
+            </div>
             </div>
           </section>
           {activeWorkout.exercises.map((exerciseLog) => {

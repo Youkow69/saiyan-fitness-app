@@ -273,28 +273,11 @@ export function evaluateFatigueStatus(state: { workouts: any[]; feedbacks?: any[
 // ── FEAT-F6: Periodisation mesocycle ────────────────────────────────────────
 
 /** Retourne la semaine actuelle du mesocycle (1-4). Cycle de 4 semaines. */
-export function getMesocycleWeek(state: AppState): number {
-  if (state.workouts.length === 0) return 1
-  const firstDate = new Date(state.workouts[0].date)
-  const now = new Date()
-  const daysSince = Math.floor((now.getTime() - firstDate.getTime()) / 86400000)
-  const weekNumber = (Math.floor(daysSince / 7) % 4) + 1
-  return weekNumber
-}
 
 /** Multiplicateur de volume selon la semaine du mesocycle.
  *  Semaines 1-3 : montee progressive (1.0 -> 1.15 -> 1.3)
  *  Semaine 4 : deload (0.6)
  */
-export function getVolumeMultiplier(week: number): number {
-  switch (week) {
-    case 1: return 1.0
-    case 2: return 1.15
-    case 3: return 1.3
-    case 4: return 0.6
-    default: return 1.0
-  }
-}
 
 interface SessionFeedbackInput {
   pump: number    // 1-5
@@ -306,23 +289,6 @@ interface SessionFeedbackInput {
  *  - soreness >= 4 : -1 serie (trop de fatigue)
  *  - sinon : pas de changement
  */
-export function adjustVolumeFromFeedback(feedback: SessionFeedbackInput, currentSets: number): number {
-  const minSets = 2
-  const maxSets = 8
-
-  if (feedback.pump >= 4 && feedback.soreness <= 2) {
-    // Bon pump, peu de courbatures -> on peut augmenter
-    return Math.min(maxSets, currentSets + 1)
-  }
-
-  if (feedback.soreness >= 4) {
-    // Trop de courbatures -> reduire
-    return Math.max(minSets, currentSets - 1)
-  }
-
-  // Neutre
-  return currentSets
-}
 
 
 // ── FEAT-F6: Periodisation mesocycle ────────────────────────────────────────

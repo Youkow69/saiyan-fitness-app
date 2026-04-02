@@ -264,7 +264,7 @@ function BodyPanel({
 // Main Component
 // ---------------------------------------------------------------------------
 
-export default function RecoveryMap() {
+export function RecoveryMap() {
   const { workoutHistory } = useAppState()
   const [activeDot, setActiveDot] = useState<string | null>(null)
 
@@ -278,7 +278,7 @@ export default function RecoveryMap() {
       ;(session.exercises ?? []).forEach((ex: any) => {
         const def = getExerciseById(ex.exerciseId)
         if (!def) return
-        const muscles = [def.muscleGroup, ...(def.secondaryMuscles ?? [])]
+        const muscles = [def.primaryMuscles, ...(def.secondaryMuscles ?? [])]
         muscles.forEach((m: string) => {
           if (!muscleLastTrained[m] || sessionTime > muscleLastTrained[m]) {
             muscleLastTrained[m] = sessionTime

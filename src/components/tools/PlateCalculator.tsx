@@ -115,7 +115,7 @@ function BarbellVisual({ plates, barName }: { plates: number[]; barName: string 
                 y={centerY}
                 textAnchor="middle"
                 dominantBaseline="middle"
-                fill={plate === 5 ? '#1a202c' : 'var(--text)'}
+                fill={plate === 5 ? 'var(--text)' : 'var(--text)'}
                 fontSize={w > 10 ? 9 : 7}
                 fontWeight="bold"
                 transform={`rotate(-90, ${xOffset + w / 2}, ${centerY})`}
@@ -149,7 +149,7 @@ function BarbellVisual({ plates, barName }: { plates: number[]; barName: string 
                 y={centerY}
                 textAnchor="middle"
                 dominantBaseline="middle"
-                fill={plate === 5 ? '#1a202c' : 'var(--text)'}
+                fill={plate === 5 ? 'var(--text)' : 'var(--text)'}
                 fontSize={w > 10 ? 9 : 7}
                 fontWeight="bold"
                 transform={`rotate(-90, ${xOffset + w / 2}, ${centerY})`}
@@ -208,7 +208,7 @@ export function PlateCalculator() {
           textAlign: 'center',
           margin: '0 0 20px',
           fontSize: 22,
-          background: 'linear-gradient(135deg, #f6ad55, #ed8936)',
+          background: 'linear-gradient(135deg, var(--accent-orange), var(--accent))',
           WebkitBackgroundClip: 'text',
           WebkitTextFillColor: 'transparent',
         }}
@@ -281,7 +281,7 @@ export function PlateCalculator() {
               borderRadius: 8,
               border: 'none',
               background: Number(targetWeight) === w ? 'var(--accent)' : 'var(--border)',
-              color: Number(targetWeight) === w ? '#1a202c' : 'var(--text-secondary)',
+              color: Number(targetWeight) === w ? 'var(--text)' : 'var(--text-secondary)',
               cursor: 'pointer',
               fontSize: 13,
               fontWeight: 600,
@@ -363,7 +363,7 @@ export function PlateCalculator() {
                   padding: '8px 12px',
                   background: 'rgba(229,62,62,0.15)',
                   borderRadius: 8,
-                  color: '#fc8181',
+                  color: 'var(--danger)',
                   fontSize: 12,
                 }}
               >
@@ -393,7 +393,7 @@ export function PlateCalculator() {
           style={{
             textAlign: 'center',
             padding: 24,
-            color: '#fc8181',
+            color: 'var(--danger)',
             fontSize: 14,
           }}
         >

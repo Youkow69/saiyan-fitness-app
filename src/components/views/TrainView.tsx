@@ -146,7 +146,7 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
                   <div style={{ gridColumn: 'span 2' }}>
                     <span style={{ fontSize: '0.75rem', color: 'var(--muted)', marginBottom: 4, display: 'block' }}>Type</span>
                     <div className="chip-row">
-                      {([['warmup', 'Échauffement'], ['normal', 'Normal'], ['top', 'Top set'], ['backoff', 'Back-off'], ['drop', 'Drop set'], ['amrap', 'superset', 'AMRAP']] as [SetType, string][]).map(([val, label]) => (
+                      {([['warmup', 'Échauffement'], ['normal', 'Normal'], ['top', 'Top set'], ['backoff', 'Back-off'], ['drop', 'Drop set'], ['amrap', 'AMRAP']] as [SetType, string][]).map(([val, label]) => (
                         <button key={val} type="button"
                           className={`chip chip--sm ${currentInput.setType === val ? 'chip--active' : ''}`}
                           onClick={() => setDraftInputs({ ...draftInputs, [exercise.id]: { ...currentInput, setType: val } })}

@@ -24,37 +24,45 @@ export const HomeView: React.FC<HomeViewProps> = React.memo(
   function HomeView({ onStartWorkout }) {
     const { state, dispatch } = useAppState()
     const targets = state.targets!
+
+    // Stable dependency arrays - only recalculate when the specific
+    // data slices change, not on every state reference change
     const nutrition = useMemo(
       () => getDailyNutrition(state.foodEntries),
-      [state.foodEntries],
-    )
-    const tf = useMemo(
-      () => getCurrentTransformationFull(state),
-      [state.workouts, state.bodyweightEntries, state.targets, state.foodEntries],
-    )
-    const transformation = tf.current
-    const mesocycle = useMemo(
-      () => getMesocycleStatus(state),
-      [state.workouts, state.sessionFeedback],
-    )
-    const streak = useMemo(() => getStreak(state), [state.workouts])
-    const powerLevel = useMemo(
-      () => getPowerLevel(state),
-      [state.workouts, state.bodyweightEntries, state.targets, state.foodEntries],
+      [state.foodEntries]
     )
 
+    const tf = useMemo(
+      () => getCurrentTransformationFull(state),
+      [state.workouts, state.bodyweightEntries, state.targets, state.foodEntries]
+    )
+    const transformation = tf.current
+
+    const mesocycle = useMemo(
+      () => getMesocycleStatus(state),
+      [state.workouts, state.sessionFeedback]
+    )
+
+    const streak = useMemo(() => getStreak(state), [state.workouts])
+
+    const powerLevel = useMemo(
+      () => getPowerLevel(state),
+      [state.workouts, state.bodyweightEntries, state.targets, state.foodEntries]
+    )
+
+    // Stable callbacks that only depend on dispatch (which is stable)
     const handleUpdateQuest = useCallback(
       (questId: string, delta: number) => {
         dispatch({ type: 'UPDATE_QUEST_PROGRESS', payload: { questId, delta } })
       },
-      [dispatch],
+      [dispatch]
     )
 
     const handleCompleteQuest = useCallback(
       (questId: string) => {
         dispatch({ type: 'COMPLETE_QUEST', payload: questId })
       },
-      [dispatch],
+      [dispatch]
     )
 
     return (
@@ -78,20 +86,34 @@ export const HomeView: React.FC<HomeViewProps> = React.memo(
             >
               {formatNumber(powerLevel)}
             </div>
-            <p style={{ margin: '6px 0 0', color: 'var(--muted)', fontSize: '0.85rem' }}>
+            <p
+              style={{
+                margin: '6px 0 0',
+                color: 'var(--muted)',
+                fontSize: '0.85rem',
+              }}
+            >
               {transformation.name} — Continue ta progression
             </p>
-            <div style={{ display: 'flex', gap: 8, marginTop: 10, flexWrap: 'wrap' }}>
+            <div
+              style={{ display: 'flex', gap: 8, marginTop: 10, flexWrap: 'wrap' }}
+            >
               <span
                 className="hero-badge"
-                style={{ borderColor: transformation.accent, color: transformation.accent }}
+                style={{
+                  borderColor: transformation.accent,
+                  color: transformation.accent,
+                }}
               >
                 {transformation.name}
               </span>
               {streak > 0 && (
                 <span
                   className="hero-badge"
-                  style={{ color: 'var(--accent-orange)', borderColor: 'var(--accent-orange)' }}
+                  style={{
+                    color: 'var(--accent-orange)',
+                    borderColor: 'var(--accent-orange)',
+                  }}
                 >
                   {streak}j
                 </span>
@@ -99,11 +121,16 @@ export const HomeView: React.FC<HomeViewProps> = React.memo(
             </div>
           </div>
           <div style={{ position: 'relative' }}>
-            <div className="aura-ring" style={{
-              position: 'absolute', inset: -8, borderRadius: '50%',
-              background: `radial-gradient(circle, ${transformation.accent}33, transparent 70%)`,
-              animation: 'aura-pulse 2.5s ease-in-out infinite',
-            }} />
+            <div
+              className="aura-ring"
+              style={{
+                position: 'absolute',
+                inset: -8,
+                borderRadius: '50%',
+                background: `radial-gradient(circle, ${transformation.accent}33, transparent 70%)`,
+                animation: 'aura-pulse 2.5s ease-in-out infinite',
+              }}
+            />
             <img
               src={transformation.image}
               alt={transformation.name}
@@ -118,9 +145,20 @@ export const HomeView: React.FC<HomeViewProps> = React.memo(
           </div>
         </section>
 
-        {/* CTA button in sentence case */}
-        <button className="cta-button" onClick={onStartWorkout} type="button" style={{ fontFamily: "'Manrope', sans-serif", textTransform: 'none' as const, fontWeight: 700 }}>
-          {state.activeWorkout ? "Reprendre l'entraînement" : "Commencer l'entraînement"}
+        {/* CTA button */}
+        <button
+          className="cta-button"
+          onClick={onStartWorkout}
+          type="button"
+          style={{
+            fontFamily: "'Manrope', sans-serif",
+            textTransform: 'none' as const,
+            fontWeight: 700,
+          }}
+        >
+          {state.activeWorkout
+            ? "Reprendre l'entra\u00EEnement"
+            : "Commencer l'entra\u00EEnement"}
         </button>
 
         {/* Daily quests */}
@@ -131,14 +169,36 @@ export const HomeView: React.FC<HomeViewProps> = React.memo(
         />
 
         {/* Mesocycle compact card */}
-        <section className="hevy-card" style={{ borderColor: `${mesocycle.color}33` }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <section
+          className="hevy-card"
+          style={{ borderColor: `${mesocycle.color}33` }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}
+          >
             <div>
-              <SectionTitle icon="" label="Mésocycle" />
-              <p style={{ margin: '2px 0 0', fontWeight: 700, color: mesocycle.color, fontSize: '0.9rem' }}>
+              <SectionTitle icon="" label="M\u00E9socycle" />
+              <p
+                style={{
+                  margin: '2px 0 0',
+                  fontWeight: 700,
+                  color: mesocycle.color,
+                  fontSize: '0.9rem',
+                }}
+              >
                 {mesocycle.label}
               </p>
-              <p style={{ margin: '2px 0 0', fontSize: '0.75rem', color: 'var(--muted)' }}>
+              <p
+                style={{
+                  margin: '2px 0 0',
+                  fontSize: '0.75rem',
+                  color: 'var(--muted)',
+                }}
+              >
                 {mesocycle.detail}
               </p>
             </div>
@@ -179,12 +239,36 @@ export const HomeView: React.FC<HomeViewProps> = React.memo(
         {/* Nutrition summary */}
         <section className="hevy-card stack-md">
           <SectionTitle icon="" label="Nutrition aujourd'hui" />
-          <MacroBar label="Calories" current={nutrition.calories} target={targets.calories} unit="kcal" color="calories" />
-          <MacroBar label="Protéines" current={nutrition.protein} target={targets.protein} unit="g" color="protein" />
-          <MacroBar label="Glucides" current={nutrition.carbs} target={targets.carbs} unit="g" color="carbs" />
-          <MacroBar label="Lipides" current={nutrition.fats} target={targets.fats} unit="g" color="fat" />
+          <MacroBar
+            label="Calories"
+            current={nutrition.calories}
+            target={targets.calories}
+            unit="kcal"
+            color="calories"
+          />
+          <MacroBar
+            label="Prot\u00E9ines"
+            current={nutrition.protein}
+            target={targets.protein}
+            unit="g"
+            color="protein"
+          />
+          <MacroBar
+            label="Glucides"
+            current={nutrition.carbs}
+            target={targets.carbs}
+            unit="g"
+            color="carbs"
+          />
+          <MacroBar
+            label="Lipides"
+            current={nutrition.fats}
+            target={targets.fats}
+            unit="g"
+            color="fat"
+          />
         </section>
       </div>
     )
-  },
+  }
 )

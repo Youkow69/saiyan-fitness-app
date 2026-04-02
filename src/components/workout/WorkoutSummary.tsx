@@ -64,7 +64,7 @@ function injectStyles() {
       position: fixed;
       inset: 0;
       z-index: 9999;
-      background: rgba(0,0,0,0.92);
+      background: var(--panel-2);
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
       display: flex;

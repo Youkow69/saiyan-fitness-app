@@ -94,4 +94,5 @@ export const programs: ProgramTemplate[] = [
     ],
   },
   ...additionalPrograms,
+  ...specializedPrograms,
 ]

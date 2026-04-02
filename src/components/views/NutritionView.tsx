@@ -33,7 +33,7 @@ const accordionStyle: React.CSSProperties = {
 
 
 // ── Macro Journal Chart (FEAT-F11) ──────────────────────────────────────────
-function MacroJournalChart({ entries, targets }: { entries: FoodEntry[]; targets: { calories: number; protein: number; carbs: number; fats: number } }) {
+function _MacroJournalChart({ entries, targets }: { entries: FoodEntry[]; targets: { calories: number; protein: number; carbs: number; fats: number } }) {
   const [period, setPeriod] = React.useState<7 | 30>(7)
 
   const days = React.useMemo(() => {
@@ -179,8 +179,8 @@ export const NutritionView: React.FC = React.memo(
     const [customProt, setCustomProt] = useState('')
     const [customCarbs, setCustomCarbs] = useState('')
     const [customFats, setCustomFats] = useState('')
-    const [customFiber, setCustomFiber] = useState('')
-    const [customPortions, setCustomPortions] = useState<Array<{ name: string; grams: number }>>([])
+    const [_customFiber, _setCustomFiber] = useState('')
+    const [_customPortions, _setCustomPortions] = useState<Array<{ name: string; grams: number }>>([])
     const totals = useMemo(() => {
       const filtered = state.foodEntries.filter(e => e.date === selectedDate)
       return getDailyNutrition(filtered)

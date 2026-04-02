@@ -32,8 +32,7 @@ const accordionStyle: React.CSSProperties = {
 }
 
 
-// ── Macro Journal Chart (FEAT-F11) ──────────────────────────────────────────
-function _MacroJournalChart({ entries, targets }: { entries: FoodEntry[]; targets: { calories: number; protein: number; carbs: number; fats: number } }) {
+// ── Macro Journal Chart (FEAT-F11) ──────────────────────────────────────────: { entries: FoodEntry[]; targets: { calories: number; protein: number; carbs: number; fats: number } }) {
   const [period, setPeriod] = React.useState<7 | 30>(7)
 
   const days = React.useMemo(() => {

@@ -5,7 +5,7 @@
 
 import { useState } from 'react'
 import { useAppState } from '../../context/AppContext'
-import { getExerciseById, makeId } from '../../lib'
+import { getExerciseById } from '../../lib'
 import { showToast } from '../ui/Toast'
 import { supabase, SUPABASE_URL, SUPABASE_ANON_KEY } from '../../supabase'
 
@@ -144,8 +144,8 @@ Limite-toi \u00e0 5-8 exercices.`
     dispatch({
       type: 'START_WORKOUT',
       payload: {
-        id: makeId('wk'),
         programId: 'ai_generated',
+        sessionId: 'ai_' + Date.now(),
         sessionName: result.name,
         exercises,
         startedAt: new Date().toISOString(),

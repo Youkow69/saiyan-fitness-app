@@ -237,3 +237,23 @@ function getDemoLeaderboard(): LeaderboardEntry[] {
     { id: 'd7', username: 'Yamcha', avatar_level: 2, power_level: 1500, total_volume: 34000, streak: 5, pr_count: 8 },
   ]
 }
+
+
+// Push current stats to leaderboard table
+export async function syncToLeaderboard(userId: string, data: {
+  displayName: string; powerLevel: number; totalVolume: number;
+  streak: number; prCount: number; transformation: string;
+}) {
+  try {
+    await supabase.from('leaderboard').upsert({
+      user_id: userId,
+      display_name: data.displayName,
+      power_level: data.powerLevel,
+      total_volume: data.totalVolume,
+      streak: data.streak,
+      pr_count: data.prCount,
+      transformation: data.transformation,
+      updated_at: new Date().toISOString(),
+    }, { onConflict: 'user_id' })
+  } catch (e) { console.warn('Leaderboard sync failed:', e) }
+}

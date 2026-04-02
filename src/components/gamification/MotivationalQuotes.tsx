@@ -75,12 +75,12 @@ export function DailyQuote() {
   return (
     <div
       style={{
-        background: `linear-gradient(135deg, #1a1a2e, ${accentColor}15)`,
+        background: `linear-gradient(135deg, var(--bg-card), ${accentColor}15)`,
         borderRadius: 16,
         padding: 24,
         maxWidth: 500,
         margin: '0 auto',
-        color: '#e2e8f0',
+        color: 'var(--text)',
         fontFamily: "'Segoe UI', sans-serif",
         position: 'relative',
         overflow: 'hidden',
@@ -112,7 +112,7 @@ export function DailyQuote() {
           marginBottom: -10,
         }}
       >
-        &ldquo;
+        “
       </div>
 
       {/* Quote text */}
@@ -159,7 +159,7 @@ export function DailyQuote() {
           borderTop: '1px solid rgba(255,255,255,0.06)',
           textAlign: 'center',
           fontSize: 11,
-          color: '#718096',
+          color: 'var(--text-secondary)',
         }}
       >
         Citation du jour -- Puissance Saiyan

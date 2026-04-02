@@ -22,11 +22,6 @@ import type { PRWorkoutLog, PRExercise } from '../stats/PersonalRecords'
 import { MetricCard, SectionTitle } from '../ui/Shared'
 import { StrengthStandards } from '../tools/StrengthStandards'
 
-const MUSCLE_FR: Record<string, string> = {
-  Chest: 'Pectoraux', Back: 'Dos', Shoulders: 'Épaules',
-  Quads: 'Quadriceps', Hamstrings: 'Ischio-jambiers', Glutes: 'Fessiers',
-  Calves: 'Mollets', Core: 'Abdominaux', Biceps: 'Biceps', Triceps: 'Triceps',
-}
 
 
 function countPRsFromWorkouts(workouts: AppState['workouts']): number {

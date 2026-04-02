@@ -469,7 +469,7 @@ export function ImportExport() {
     borderRadius: 10,
     border: '1px solid rgba(255,255,255,0.1)',
     background: 'rgba(255,255,255,0.04)',
-    color: '#e5e7eb',
+    color: 'var(--text)',
     fontSize: 13,
     fontWeight: 500,
     cursor: 'pointer',
@@ -479,7 +479,7 @@ export function ImportExport() {
 
   return (
     <div style={{ padding: 16, borderRadius: 14, background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
-      <div style={{ fontSize: 15, fontWeight: 600, color: '#e5e7eb', marginBottom: 16 }}>
+      <div style={{ fontSize: 15, fontWeight: 600, color: 'var(--text)', marginBottom: 16 }}>
         Import / Export
       </div>
 
@@ -494,7 +494,7 @@ export function ImportExport() {
 
       {/* Export */}
       <div style={{ marginBottom: 16 }}>
-        <div style={{ fontSize: 12, fontWeight: 600, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>
+        <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>
           Exporter
         </div>
         <button
@@ -509,7 +509,7 @@ export function ImportExport() {
 
       {/* Import mode toggle */}
       <div style={{ marginBottom: 12 }}>
-        <div style={{ fontSize: 12, fontWeight: 600, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>
+        <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>
           Mode d'import JSON
         </div>
         <div style={{ display: 'flex', gap: 6 }}>
@@ -519,7 +519,7 @@ export function ImportExport() {
               ...btnStyle,
               background: mode === 'merge' ? 'rgba(99,102,241,0.15)' : 'transparent',
               borderColor: mode === 'merge' ? 'rgba(99,102,241,0.4)' : 'rgba(255,255,255,0.1)',
-              color: mode === 'merge' ? '#818cf8' : '#9ca3af',
+              color: mode === 'merge' ? 'var(--info)' : 'var(--text-secondary)',
               fontSize: 12,
             }}
           >
@@ -531,7 +531,7 @@ export function ImportExport() {
               ...btnStyle,
               background: mode === 'replace' ? 'rgba(239,68,68,0.12)' : 'transparent',
               borderColor: mode === 'replace' ? 'rgba(239,68,68,0.3)' : 'rgba(255,255,255,0.1)',
-              color: mode === 'replace' ? 'var(--danger)' : '#9ca3af',
+              color: mode === 'replace' ? 'var(--danger)' : 'var(--text-secondary)',
               fontSize: 12,
             }}
           >
@@ -542,7 +542,7 @@ export function ImportExport() {
 
       {/* Import buttons */}
       <div style={{ marginBottom: 12 }}>
-        <div style={{ fontSize: 12, fontWeight: 600, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>
+        <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>
           Importer
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
@@ -602,7 +602,7 @@ export function ImportExport() {
 
       {/* Warning for replace mode */}
       {mode === 'replace' && (
-        <div style={{ marginTop: 10, padding: '8px 12px', borderRadius: 8, background: 'rgba(239,68,68,0.08)', fontSize: 11, color: '#f87171' }}>
+        <div style={{ marginTop: 10, padding: '8px 12px', borderRadius: 8, background: 'rgba(239,68,68,0.08)', fontSize: 11, color: 'var(--danger)' }}>
           Attention : le mode "Remplacer tout" ecrasera toutes vos donnees actuelles.
         </div>
       )}

@@ -75,10 +75,6 @@ function getRecoveryStatus(hoursSince: number): RecoveryStatus {
   return 'fatigued'
 }
 
-function formatHours(h: number): string {
-  if (h < 0) return 'Jamais entra\u00een\u00e9'
-  return `${Math.round(h)}h`
-}
 
 // ---------------------------------------------------------------------------
 // Sub-components
@@ -265,7 +261,7 @@ function BodyPanel({
 // ---------------------------------------------------------------------------
 
 export function RecoveryMap() {
-  const { workoutHistory } = useAppState()
+  const { state } = useAppState()
   const [activeDot, setActiveDot] = useState<string | null>(null)
 
   // Compute hours since last training per muscle
@@ -273,12 +269,12 @@ export function RecoveryMap() {
     const now = Date.now()
     const muscleLastTrained: Record<string, number> = {}
 
-    workoutHistory.forEach((session: any) => {
+    state.workouts.forEach((session: any) => {
       const sessionTime = new Date(session.date).getTime()
       ;(session.exercises ?? []).forEach((ex: any) => {
         const def = getExerciseById(ex.exerciseId)
         if (!def) return
-        const muscles = [def.primaryMuscles, ...(def.secondaryMuscles ?? [])]
+        const muscles = [...(def.primaryMuscles ?? []), ...(def.secondaryMuscles ?? [])]
         muscles.forEach((m: string) => {
           if (!muscleLastTrained[m] || sessionTime > muscleLastTrained[m]) {
             muscleLastTrained[m] = sessionTime
@@ -298,7 +294,7 @@ export function RecoveryMap() {
       }
     })
     return result
-  }, [workoutHistory])
+  }, [state.workouts])
 
   return (
     <div

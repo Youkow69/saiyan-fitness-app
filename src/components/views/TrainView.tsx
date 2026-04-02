@@ -14,6 +14,7 @@ import { ProgramBuilder } from '../tools/ProgramBuilder'
 import { WorkoutHistory } from '../stats/WorkoutHistory'
 import { SmartWorkoutGenerator } from '../tools/SmartWorkoutGenerator'
 import { MesocycleProgress } from '../tools/MesocycleProgress'
+import { SupersetManager, SupersetBar } from '../tools/SupersetIndicator'
 import { ExerciseDetail } from '../tools/ExerciseDetail'
 
 function getLastSet(workouts: AppState['workouts'], exerciseId: string) {
@@ -61,6 +62,7 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
     const [showHistory, setShowHistory] = useState(false)
     const [expandedProgram, setExpandedProgram] = useState<string | null>(null)
     const [showAiGenerator, setShowAiGenerator] = useState(false)
+    const [supersetGroups, setSupersetGroups] = useState<string[][]>([])
 
     const selectedProgram = getProgramById(state.selectedProgramId)
     const nextIndex = state.programCursor[selectedProgram?.id ?? ''] ?? 0
@@ -100,6 +102,11 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
 
           <MesocycleProgress />
 
+          <SupersetManager
+            exercises={activeWorkout.exercises}
+            onGroupExercises={setSupersetGroups}
+          />
+
           {activeWorkout.exercises.map((exerciseLog) => {
             const exercise = getExerciseById(exerciseLog.exerciseId)
             if (!exercise) return null
@@ -112,7 +119,8 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
               setType: 'normal' as SetType,
             }
             return (
-              <section className="hevy-card stack-md" key={exercise.id}>
+              <section className="hevy-card stack-md" key={exercise.id} style={{ position: 'relative' }}>
+                <SupersetBar exerciseId={exercise.id} groups={supersetGroups} />
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                   <div>
                     <h3 style={{ margin: 0 }}>

@@ -53,6 +53,8 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
     const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null)
     const [showBuilder, setShowBuilder] = useState(false)
     const [detailExerciseId, setDetailExerciseId] = useState<string | null>(null)
+    const [showLibrary, setShowLibrary] = useState(false)
+    const [showTools, setShowTools] = useState(false)
 
     const selectedProgram = getProgramById(state.selectedProgramId)
     const nextIndex = state.programCursor[selectedProgram?.id ?? ''] ?? 0
@@ -60,28 +62,27 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
     const activeWorkout = state.activeWorkout
     const customRoutines = state.customRoutines
 
+    /* ─────────────────────────────────────────────
+       NO PROGRAM SELECTED
+       ───────────────────────────────────────────── */
     if (!selectedProgram) {
       return (
         <div className="page">
-          {/* Outils */}
-          {!activeWorkout && (
-            <button onClick={() => setShowTools(!showTools)} type="button" style={{ width: '100%', padding: '10px 16px', borderRadius: 12, border: '1px solid var(--border)', background: 'var(--bg-card)', color: 'var(--text-secondary)', fontSize: '0.82rem', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8 }}>
-                {showTools ? '▲' : '▼'} Outils (chrono, plaques)
-              </button>
-              {showTools && (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 8 }}>
-                  <PlateCalculator />
-                  <WorkoutTimer />
-                </div>
-              )}
-          )}
-
           <section style={{ background: 'var(--bg-card)', borderRadius: 16, border: '1px solid var(--border)', padding: 16, marginBottom: 12, textAlign: 'center' }}>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', margin: '0 0 12px' }}>Aucun programme sélectionné. Tu peux choisir un programme depuis le Profil, ou commencer une séance libre.</p>
-            <button className="primary-btn" onClick={onStartWorkout} type="button" style={{ width: '100%', marginBottom: 8 }}>Commencer une séance libre</button>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', margin: '0 0 12px' }}>
+              Aucun programme sélectionné. Tu peux choisir un programme depuis le Profil, ou commencer une séance libre.
+            </p>
+            <button className="primary-btn" onClick={onStartWorkout} type="button" style={{ width: '100%', marginBottom: 8 }}>
+              Commencer une séance libre
+            </button>
           </section>
 
-          <button onClick={() => setShowBuilder(true)} type="button" style={{ width: '100%', padding: 14, borderRadius: 12, border: '1px dashed var(--accent)', background: 'rgba(255,140,0,0.06)', color: 'var(--accent)', fontSize: '0.9rem', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, marginBottom: 12 }}>
+          <button onClick={() => setShowBuilder(true)} type="button" style={{
+            width: '100%', padding: 14, borderRadius: 12, border: '1px dashed var(--accent)',
+            background: 'rgba(255,140,0,0.06)', color: 'var(--accent)',
+            fontSize: '0.9rem', fontWeight: 700, cursor: 'pointer',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, marginBottom: 12,
+          }}>
             + Créer un programme personnalisé
           </button>
 
@@ -102,6 +103,38 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
             </>
           )}
 
+          {/* Toggle buttons for tools & library */}
+          <div style={{ display: 'flex', gap: 8, marginTop: 8, marginBottom: 8 }}>
+            <button onClick={() => setShowTools(!showTools)} type="button" style={{
+              flex: 1, padding: '10px 16px', borderRadius: 12, border: '1px solid var(--border)',
+              background: showTools ? 'rgba(255,140,0,0.10)' : 'var(--bg-card)',
+              color: 'var(--text-secondary)', fontSize: '0.82rem', fontWeight: 600, cursor: 'pointer',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+            }}>
+              ⚙️ Outils
+            </button>
+            <button onClick={() => setShowLibrary(!showLibrary)} type="button" style={{
+              flex: 1, padding: '10px 16px', borderRadius: 12, border: '1px solid var(--border)',
+              background: showLibrary ? 'rgba(255,140,0,0.10)' : 'var(--bg-card)',
+              color: 'var(--text-secondary)', fontSize: '0.82rem', fontWeight: 600, cursor: 'pointer',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+            }}>
+              📖 Exercices
+            </button>
+          </div>
+
+          {showTools && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 12 }}>
+              <PlateCalculator />
+              <WorkoutTimer />
+            </div>
+          )}
+
+          {showLibrary && (
+            <div style={{ marginBottom: 12 }}>
+              <ExerciseLibrary />
+            </div>
+          )}
 
           {showBuilder && <ProgramBuilder onClose={() => setShowBuilder(false)} />}
           {detailExerciseId && <ExerciseDetail exerciseId={detailExerciseId} onClose={() => setDetailExerciseId(null)} />}
@@ -109,6 +142,9 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
       )
     }
 
+    /* ─────────────────────────────────────────────
+       ACTIVE WORKOUT (with program)
+       ───────────────────────────────────────────── */
     if (activeWorkout && nextSession) {
       return (
         <div className="page">
@@ -128,13 +164,14 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
                 <h3 style={{ margin: '4px 0 0' }}>{nextSession.name}</h3>
               </div>
               <div style={{ display: 'flex', gap: 8 }}>
-              <button onClick={() => { if (window.confirm('Annuler la séance ? Tes séries non terminées seront perdues.')) { dispatch({ type: 'ABANDON_WORKOUT' }) } }} type="button" style={{ padding: '8px 16px', borderRadius: 10, border: '1px solid var(--border)', background: 'transparent', color: 'var(--text-secondary)', fontWeight: 600, fontSize: '0.85rem', cursor: 'pointer' }}>
-                ← Annuler
-              </button>
-              <button className="primary-btn" onClick={onFinishWorkout} type="button" style={{ flex: 1 }}>Terminer la séance</button>
-            </div>
+                <button onClick={() => { if (window.confirm('Annuler la séance ? Tes séries non terminées seront perdues.')) { dispatch({ type: 'ABANDON_WORKOUT' }) } }} type="button" style={{ padding: '8px 16px', borderRadius: 10, border: '1px solid var(--border)', background: 'transparent', color: 'var(--text-secondary)', fontWeight: 600, fontSize: '0.85rem', cursor: 'pointer' }}>
+                  ← Annuler
+                </button>
+                <button className="primary-btn" onClick={onFinishWorkout} type="button" style={{ flex: 1 }}>Terminer la séance</button>
+              </div>
             </div>
           </section>
+
           {activeWorkout.exercises.map((exerciseLog) => {
             const exercise = getExerciseById(exerciseLog.exerciseId)
             if (!exercise) return null
@@ -209,12 +246,48 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
             )
           })}
 
+          {/* Small toggle buttons at the bottom of active workout */}
+          <div style={{ display: 'flex', gap: 8, marginTop: 8, marginBottom: 8 }}>
+            <button onClick={() => setShowTools(!showTools)} type="button" style={{
+              flex: 1, padding: '10px 14px', borderRadius: 12, border: '1px solid var(--border)',
+              background: showTools ? 'rgba(255,140,0,0.10)' : 'var(--bg-card)',
+              color: 'var(--text-secondary)', fontSize: '0.82rem', fontWeight: 600, cursor: 'pointer',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+            }}>
+              ⚙️ Outils
+            </button>
+            <button onClick={() => setShowLibrary(!showLibrary)} type="button" style={{
+              flex: 1, padding: '10px 14px', borderRadius: 12, border: '1px solid var(--border)',
+              background: showLibrary ? 'rgba(255,140,0,0.10)' : 'var(--bg-card)',
+              color: 'var(--text-secondary)', fontSize: '0.82rem', fontWeight: 600, cursor: 'pointer',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+            }}>
+              📖 Exercices
+            </button>
+          </div>
+
+          {showTools && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 12 }}>
+              <PlateCalculator />
+              <WorkoutTimer />
+            </div>
+          )}
+
+          {showLibrary && (
+            <div style={{ marginBottom: 12 }}>
+              <ExerciseLibrary />
+            </div>
+          )}
+
           {showBuilder && <ProgramBuilder onClose={() => setShowBuilder(false)} />}
           {detailExerciseId && <ExerciseDetail exerciseId={detailExerciseId} onClose={() => setDetailExerciseId(null)} />}
         </div>
       )
     }
 
+    /* ─────────────────────────────────────────────
+       WITH PROGRAM, NO ACTIVE WORKOUT
+       ───────────────────────────────────────────── */
     return (
       <div className="page">
         <section className="hevy-hero">
@@ -225,17 +298,6 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
           </div>
           <div className="hero-badge" style={{ alignSelf: 'flex-start' }}>{selectedProgram.daysPerWeek} j/sem</div>
         </section>
-
-        {!activeWorkout && (
-          <section className="hevy-card stack-md">
-            <SectionTitle icon="🛠️" label="Outils" />
-            <details>
-              <summary style={{ cursor: 'pointer', fontSize: '0.85rem', color: 'var(--muted)', padding: '4px 0' }}>Chronomètre & Calculateur de plaques</summary>
-              <div className="stack-md" style={{ marginTop: 12 }}>
-              </div>
-            </details>
-          </section>
-        )}
 
         <button className="secondary-btn" onClick={onStartWorkout} type="button" style={{ display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'center', width: '100%', padding: '12px 16px' }}>
           <span style={{ fontSize: '1.2rem' }}>⚡</span>
@@ -255,7 +317,6 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
           <span style={{ fontSize: '1.2rem' }}>➕</span>
           <span>Créer ma routine</span>
         </button>
-
 
         {creatingRoutine && (
           <section className="hevy-card stack-md">
@@ -380,6 +441,39 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
           }}
           onCancel={() => setConfirmDeleteId(null)}
         />
+
+        {/* Toggle buttons for tools & library -- with-program, no active workout */}
+        <div style={{ display: 'flex', gap: 8, marginTop: 8, marginBottom: 8 }}>
+          <button onClick={() => setShowTools(!showTools)} type="button" style={{
+            flex: 1, padding: '10px 14px', borderRadius: 12, border: '1px solid var(--border)',
+            background: showTools ? 'rgba(255,140,0,0.10)' : 'var(--bg-card)',
+            color: 'var(--text-secondary)', fontSize: '0.82rem', fontWeight: 600, cursor: 'pointer',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+          }}>
+            ⚙️ Outils
+          </button>
+          <button onClick={() => setShowLibrary(!showLibrary)} type="button" style={{
+            flex: 1, padding: '10px 14px', borderRadius: 12, border: '1px solid var(--border)',
+            background: showLibrary ? 'rgba(255,140,0,0.10)' : 'var(--bg-card)',
+            color: 'var(--text-secondary)', fontSize: '0.82rem', fontWeight: 600, cursor: 'pointer',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+          }}>
+            📖 Exercices
+          </button>
+        </div>
+
+        {showTools && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 12 }}>
+            <PlateCalculator />
+            <WorkoutTimer />
+          </div>
+        )}
+
+        {showLibrary && (
+          <div style={{ marginBottom: 12 }}>
+            <ExerciseLibrary />
+          </div>
+        )}
 
         {showBuilder && <ProgramBuilder onClose={() => setShowBuilder(false)} />}
         {detailExerciseId && <ExerciseDetail exerciseId={detailExerciseId} onClose={() => setDetailExerciseId(null)} />}

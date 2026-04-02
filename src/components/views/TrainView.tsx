@@ -179,6 +179,14 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
             }}>
               ⚙️ Outils
             </button>
+          <button onClick={() => setShowHistory(!showHistory)} type="button" style={{
+            flex: 1, padding: '10px 14px', borderRadius: 12, border: '1px solid var(--border)',
+            background: showHistory ? 'rgba(255,140,0,0.10)' : 'var(--bg-card)',
+            color: 'var(--text-secondary)', fontSize: '0.82rem', fontWeight: 600, cursor: 'pointer',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+          }}>
+            Historique
+          </button>
             <button onClick={() => setShowLibrary(!showLibrary)} type="button" style={{
               flex: 1, padding: '10px 14px', borderRadius: 12, border: '1px solid var(--border)',
               background: showLibrary ? 'rgba(255,140,0,0.10)' : 'var(--bg-card)',

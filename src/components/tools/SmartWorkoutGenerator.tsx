@@ -55,7 +55,7 @@ export function SmartWorkoutGenerator({ onClose }: { onClose: () => void }) {
       })),
     }))
 
-    const profile = state.profile
+    const profile = state.profile || { goal: 'muscle_gain', experienceLevel: 'intermediate' }
     const prompt = `Tu es Whis, le coach d'entra\u00eenement de l'univers Dragon Ball.
 Analyse l'historique d'entra\u00eenement et g\u00e9n\u00e8re une s\u00e9ance optimale.
 
@@ -131,6 +131,7 @@ Limite-toi \u00e0 5-8 exercices.`
     const exercises = result.exercises.map(ex => ({
       exerciseId: ex.exerciseId,
       target: {
+        exerciseId: ex.exerciseId,
         sets: ex.sets,
         repMin: ex.repMin,
         repMax: ex.repMax,

@@ -499,7 +499,7 @@ export function ImportExport() {
         </div>
         <button
           onClick={exportJSON}
-          style={{ ...btnStyle, width: '100%', background: 'rgba(34,197,94,0.1)', borderColor: 'rgba(34,197,94,0.3)', color: '#22c55e' }}
+          style={{ ...btnStyle, width: '100%', background: 'rgba(34,197,94,0.1)', borderColor: 'rgba(34,197,94,0.3)', color: 'var(--success)' }}
           onMouseEnter={e => (e.currentTarget.style.background = 'rgba(34,197,94,0.2)')}
           onMouseLeave={e => (e.currentTarget.style.background = 'rgba(34,197,94,0.1)')}
         >
@@ -531,7 +531,7 @@ export function ImportExport() {
               ...btnStyle,
               background: mode === 'replace' ? 'rgba(239,68,68,0.12)' : 'transparent',
               borderColor: mode === 'replace' ? 'rgba(239,68,68,0.3)' : 'rgba(255,255,255,0.1)',
-              color: mode === 'replace' ? '#ef4444' : '#9ca3af',
+              color: mode === 'replace' ? 'var(--danger)' : '#9ca3af',
               fontSize: 12,
             }}
           >
@@ -578,7 +578,7 @@ export function ImportExport() {
 
       {/* Loading state */}
       {importing && (
-        <div style={{ padding: 12, textAlign: 'center', color: '#f59e0b', fontSize: 13 }}>
+        <div style={{ padding: 12, textAlign: 'center', color: 'var(--warning)', fontSize: 13 }}>
           Import en cours...
         </div>
       )}
@@ -591,7 +591,7 @@ export function ImportExport() {
             borderRadius: 8,
             background: importResult.type === 'success' ? 'rgba(34,197,94,0.1)' : 'rgba(239,68,68,0.1)',
             border: `1px solid ${importResult.type === 'success' ? 'rgba(34,197,94,0.3)' : 'rgba(239,68,68,0.3)'}`,
-            color: importResult.type === 'success' ? '#22c55e' : '#ef4444',
+            color: importResult.type === 'success' ? 'var(--success)' : 'var(--danger)',
             fontSize: 13,
             marginTop: 8,
           }}

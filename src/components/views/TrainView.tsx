@@ -12,6 +12,8 @@ import type { Exercise as LibExercise } from '../workout/ExerciseLibrary'
 import { SectionTitle } from '../ui/Shared'
 import { ProgressiveOverload } from '../tools/ProgressiveOverload'
 import { ExerciseVideoLink } from '../tools/ExerciseVideos'
+import { ProgramBuilder } from '../tools/ProgramBuilder'
+import { ExerciseDetail } from '../tools/ExerciseDetail'
 
 function getLastSet(workouts: AppState['workouts'], exerciseId: string) {
   for (let index = workouts.length - 1; index >= 0; index -= 1) {
@@ -50,6 +52,8 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
     const [routineExercises, setRoutineExercises] = useState<Array<{ exerciseId: string; sets: number; repMin: number; repMax: number; restSeconds: number }>>([])
     const [exerciseSearch, setExerciseSearch] = useState('')
     const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null)
+    const [showBuilder, setShowBuilder] = useState(false)
+    const [detailExerciseId, setDetailExerciseId] = useState<string | null>(null)
 
     const selectedProgram = getProgramById(state.selectedProgramId)
     const nextIndex = state.programCursor[selectedProgram?.id ?? ''] ?? 0
@@ -106,7 +110,18 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
               <section className="hevy-card stack-md" key={exercise.id}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                   <div>
-                    <h3 style={{ margin: 0 }}>{exercise.name} <ExerciseVideoLink exerciseId={exercise.id} /></h3>
+                    <h3 style={{ margin: 0 }}>
+                      <span
+                        onClick={() => setDetailExerciseId(exercise.id)}
+                        style={{ cursor: 'pointer', textDecoration: 'underline', textDecorationStyle: 'dotted', textUnderlineOffset: 3 }}
+                        role="button"
+                        tabIndex={0}
+                        onKeyDown={(e) => { if (e.key === 'Enter') setDetailExerciseId(exercise.id) }}
+                      >
+                        {exercise.name}
+                      </span>
+                      {' '}<ExerciseVideoLink exerciseId={exercise.id} />
+                    </h3>
                     <p style={{ margin: '2px 0 0', fontSize: '0.78rem', color: 'var(--muted)' }}>{target.sets}×{target.repMin}-{target.repMax} — RIR {target.targetRir} — Repos {target.restSeconds}s</p>
                   </div>
                   {previous && <span className="badge" style={{ fontSize: '0.72rem' }}>Dernier: {previous.weightKg}×{previous.reps}</span>}
@@ -153,6 +168,9 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
               </section>
             )
           })}
+
+          {showBuilder && <ProgramBuilder onClose={() => setShowBuilder(false)} />}
+          {detailExerciseId && <ExerciseDetail exerciseId={detailExerciseId} onClose={() => setDetailExerciseId(null)} />}
         </div>
       )
     }
@@ -184,6 +202,15 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
         <button className="secondary-btn" onClick={onStartWorkout} type="button" style={{ display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'center', width: '100%', padding: '12px 16px' }}>
           <span style={{ fontSize: '1.2rem' }}>⚡</span>
           <span>Séance rapide</span>
+        </button>
+
+        <button onClick={() => setShowBuilder(true)} type="button" style={{
+          width: '100%', padding: '14px', borderRadius: 12, border: '1px dashed var(--accent)',
+          background: 'rgba(255,140,0,0.06)', color: 'var(--accent)',
+          fontSize: '0.9rem', fontWeight: 700, cursor: 'pointer',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+        }}>
+          + Créer un programme personnalisé
         </button>
 
         <button className="primary-btn" onClick={() => setCreatingRoutine(true)} type="button" style={{ display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'center', width: '100%', padding: '14px 16px', fontSize: '1rem' }}>
@@ -304,18 +331,21 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
         <ConfirmDialog
           isOpen={confirmDeleteId !== null}
           title="Supprimer la routine"
-          message="Es-tu sûr de vouloir supprimer cette routine ? Cette action est irréversible."
+          message="Es-tu sur de vouloir supprimer cette routine ? Cette action est irreversible."
           confirmLabel="Supprimer"
           confirmColor="var(--accent-red)"
           onConfirm={() => {
             if (confirmDeleteId) {
               dispatch({ type: 'DELETE_CUSTOM_ROUTINE', payload: confirmDeleteId })
-              showToast('Routine supprimée', 'info')
+              showToast('Routine supprimee', 'info')
             }
             setConfirmDeleteId(null)
           }}
           onCancel={() => setConfirmDeleteId(null)}
         />
+
+        {showBuilder && <ProgramBuilder onClose={() => setShowBuilder(false)} />}
+        {detailExerciseId && <ExerciseDetail exerciseId={detailExerciseId} onClose={() => setDetailExerciseId(null)} />}
       </div>
     )
   }

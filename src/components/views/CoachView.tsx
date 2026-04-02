@@ -6,7 +6,6 @@ import { supabase } from '../../supabase'
 interface Message {
   role: 'user' | 'assistant'
   content: string
-  created_at?: string
 }
 
 export const CoachView: React.FC = React.memo(function CoachView() {
@@ -15,30 +14,79 @@ export const CoachView: React.FC = React.memo(function CoachView() {
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
   const [loadingHistory, setLoadingHistory] = useState(true)
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null)
+  const [authEmail, setAuthEmail] = useState('')
+  const [authPassword, setAuthPassword] = useState('')
+  const [authError, setAuthError] = useState('')
+  const [authLoading, setAuthLoading] = useState(false)
   const scrollRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
 
-  // Load history on mount
+  // Check auth status
   useEffect(() => {
-    async function loadHistory() {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (!session) { setLoadingHistory(false); return }
-      const { data } = await supabase
-        .from('coach_messages')
-        .select('role, content, created_at')
-        .eq('user_id', session.user.id)
-        .order('created_at', { ascending: true })
-        .limit(50)
-      if (data) setMessages(data as Message[])
-      setLoadingHistory(false)
-    }
-    loadHistory()
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setIsLoggedIn(!!session)
+      if (session) loadHistory(session.user.id)
+      else setLoadingHistory(false)
+    })
   }, [])
+
+  async function loadHistory(userId: string) {
+    const { data } = await supabase
+      .from('coach_messages')
+      .select('role, content')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: true })
+      .limit(50)
+    if (data) setMessages(data as Message[])
+    setLoadingHistory(false)
+  }
 
   // Auto-scroll
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' })
   }, [messages, loading])
+
+  const handleLogin = async () => {
+    if (!authEmail.trim() || !authPassword) return
+    setAuthLoading(true)
+    setAuthError('')
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: authEmail.trim(),
+        password: authPassword,
+      })
+      if (error) throw error
+      setIsLoggedIn(true)
+      localStorage.removeItem('sf_local_mode')
+      if (data.user) loadHistory(data.user.id)
+    } catch (e: any) {
+      setAuthError(e.message === 'Invalid login credentials'
+        ? 'Email ou mot de passe incorrect'
+        : e.message || 'Erreur de connexion')
+    }
+    setAuthLoading(false)
+  }
+
+  const handleSignup = async () => {
+    if (!authEmail.trim() || !authPassword) return
+    if (authPassword.length < 6) { setAuthError('Mot de passe : 6 caractères minimum'); return }
+    setAuthLoading(true)
+    setAuthError('')
+    try {
+      const { error } = await supabase.auth.signUp({
+        email: authEmail.trim(),
+        password: authPassword,
+      })
+      if (error) throw error
+      setAuthError('')
+      setIsLoggedIn(true)
+      localStorage.removeItem('sf_local_mode')
+    } catch (e: any) {
+      setAuthError(e.message || 'Erreur')
+    }
+    setAuthLoading(false)
+  }
 
   const buildContext = useCallback(() => {
     const nutrition = getDailyNutrition(state.foodEntries)
@@ -67,7 +115,7 @@ export const CoachView: React.FC = React.memo(function CoachView() {
 
     try {
       const { data: { session } } = await supabase.auth.getSession()
-      if (!session) throw new Error('Non connect\u00e9')
+      if (!session) throw new Error('Non connecté')
 
       const resp = await fetch(
         `https://kwgqkycuviybgzyharwb.supabase.co/functions/v1/coach-ai`,
@@ -104,12 +152,88 @@ export const CoachView: React.FC = React.memo(function CoachView() {
   }
 
   const suggestions = [
-    'Comment am\u00e9liorer mon d\u00e9velopp\u00e9 couch\u00e9 ?',
+    'Comment améliorer mon développé couché ?',
     'Programme pour prendre de la masse',
-    'Combien de prot\u00e9ines par jour ?',
-    'Conseils de r\u00e9cup\u00e9ration',
+    'Combien de protéines par jour ?',
+    'Conseils de récupération',
   ]
 
+  // ── Not logged in: show inline login ──
+  if (isLoggedIn === false) {
+    return (
+      <div className="page" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: 'calc(100vh - 100px)', padding: 24 }}>
+        <div style={{ fontSize: '3rem', marginBottom: 16 }}>{'🥊'}</div>
+        <h2 style={{ margin: '0 0 6px', color: 'var(--text)', fontSize: '1.2rem' }}>Coach Saiyan</h2>
+        <p style={{ color: 'var(--muted)', fontSize: '0.82rem', textAlign: 'center', margin: '0 0 20px', maxWidth: 300 }}>
+          Connecte-toi pour accéder au Coach IA. Utilise le même compte que Saiyan Fitness.
+        </p>
+        <div style={{ width: '100%', maxWidth: 320 }}>
+          <input
+            value={authEmail}
+            onChange={e => setAuthEmail(e.target.value)}
+            type="email"
+            placeholder="Email"
+            style={{
+              width: '100%', padding: '10px 14px', marginBottom: 8, borderRadius: 10,
+              border: '1px solid var(--stroke)', background: 'var(--bg-card)',
+              color: 'var(--text)', fontSize: '0.85rem', boxSizing: 'border-box',
+            }}
+          />
+          <input
+            value={authPassword}
+            onChange={e => setAuthPassword(e.target.value)}
+            type="password"
+            placeholder="Mot de passe"
+            onKeyDown={e => e.key === 'Enter' && handleLogin()}
+            style={{
+              width: '100%', padding: '10px 14px', marginBottom: 10, borderRadius: 10,
+              border: '1px solid var(--stroke)', background: 'var(--bg-card)',
+              color: 'var(--text)', fontSize: '0.85rem', boxSizing: 'border-box',
+            }}
+          />
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button
+              onClick={handleLogin}
+              disabled={authLoading}
+              type="button"
+              className="cta-button"
+              style={{ flex: 1, padding: '10px', fontSize: '0.85rem' }}
+            >
+              {authLoading ? '...' : 'Connexion'}
+            </button>
+            <button
+              onClick={handleSignup}
+              disabled={authLoading}
+              type="button"
+              style={{
+                flex: 1, padding: '10px', borderRadius: 10,
+                border: '1px solid var(--accent)', background: 'transparent',
+                color: 'var(--accent)', fontWeight: 600, fontSize: '0.85rem', cursor: 'pointer',
+              }}
+            >
+              Inscription
+            </button>
+          </div>
+          {authError && (
+            <p style={{ marginTop: 8, fontSize: '0.78rem', color: 'var(--accent-red)', textAlign: 'center' }}>
+              {authError}
+            </p>
+          )}
+        </div>
+      </div>
+    )
+  }
+
+  // ── Loading ──
+  if (isLoggedIn === null) {
+    return (
+      <div className="page" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 'calc(100vh - 100px)' }}>
+        <div style={{ color: 'var(--muted)', fontSize: '0.85rem' }}>Chargement...</div>
+      </div>
+    )
+  }
+
+  // ── Logged in: show chat ──
   return (
     <div className="page" style={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 80px)', padding: 0 }}>
       {/* Header */}
@@ -147,8 +271,7 @@ export const CoachView: React.FC = React.memo(function CoachView() {
             <div style={{ fontSize: '2.5rem', marginBottom: 12 }}>{'🥊'}</div>
             <h3 style={{ margin: '0 0 6px', color: 'var(--text)', fontSize: '1rem' }}>Coach Saiyan</h3>
             <p style={{ color: 'var(--muted)', fontSize: '0.82rem', margin: '0 0 16px' }}>
-              Pose-moi tes questions sur la musculation, la nutrition ou la r\u00e9cup\u00e9ration.
-              J'ai acc\u00e8s \u00e0 tes donn\u00e9es pour personnaliser mes conseils.
+              Pose-moi tes questions sur la musculation, la nutrition ou la récupération.
             </p>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, justifyContent: 'center' }}>
               {suggestions.map((s, i) => (
@@ -240,7 +363,7 @@ export const CoachView: React.FC = React.memo(function CoachView() {
             transition: 'all 0.2s',
           }}
         >
-          {'\u2191'}
+          {'↑'}
         </button>
       </div>
     </div>

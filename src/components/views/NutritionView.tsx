@@ -124,7 +124,7 @@ export const NutritionView: React.FC = React.memo(
         <MicronutrientEstimate />
 
         {/* Recent foods */}
-        <RecentFoods foods={state.foodEntries} onSelect={(food) => addFood({ ...food, id: makeId('recent'), date: todayIso() })} />
+        <RecentFoods foods={state.foodEntries} onSelect={(food: any) => addFood({ ...food, id: makeId('recent'), date: todayIso(), category: food.category || 'snack', grams: food.grams || 100 })} />
 
         {/* Add food form */}
         <section className="hevy-card stack-md">

@@ -1,4 +1,5 @@
 import type { AppState } from './types'
+import { migrateState } from './migrations'
 
 const STORAGE_KEY = 'saiyan-fitness-v1'
 
@@ -15,7 +16,7 @@ export function loadState(): AppState | null {
     if (!Array.isArray(parsed.savedMeals)) parsed.savedMeals = []
     if (typeof parsed.completedDailyQuests !== 'object' || parsed.completedDailyQuests === null) parsed.completedDailyQuests = {}
     if (typeof parsed.programCursor !== 'object' || parsed.programCursor === null) parsed.programCursor = {}
-    return parsed as AppState
+    return migrateState(parsed) as AppState
   } catch (e) {
     console.warn('[Saiyan] Failed to load state:', e)
     return null

@@ -105,7 +105,7 @@ export const VolumeDashboard: React.FC<VolumeDashboardProps> = React.memo(
                       color,
                     }}
                   >
-                    {vt.currentSets} series
+                    {vt.currentSets} séries
                   </span>
                 </div>
                 <div

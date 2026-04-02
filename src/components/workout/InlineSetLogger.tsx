@@ -656,6 +656,19 @@ export function InlineSetLogger({ exerciseId, target, onSetAdded }: Props) {
         >
           {'📝'} {showNotes ? 'Masquer notes' : exerciseNotes ? 'Voir notes' : 'Ajouter une note'}
         </button>
+      
+        <button
+          type="button"
+          onClick={() => setShowPlates(!showPlates)}
+          style={{
+            flex: 1, padding: '4px', border: 'none', borderRadius: 6,
+            background: showPlates ? 'rgba(49,130,206,0.1)' : 'transparent',
+            color: showPlates ? '#3182ce' : 'var(--text-secondary, #888)',
+            fontSize: '0.7rem', cursor: 'pointer',
+          }}
+        >
+          {'🏋️'} Plaques
+        </button>
       </div>
       {showNotes && (
         <textarea

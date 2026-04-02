@@ -6,7 +6,7 @@ import type {
 import { allExercises } from './data/exercises'
 import { allFoods } from './data/foods'
 import { additionalPrograms } from './data/programs'
-import { specializedPrograms } from './data/additional_programs'
+import { specializedPrograms, famousPrograms } from './data/additional_programs'
 
 export const exercises = allExercises
 
@@ -95,4 +95,5 @@ export const programs: ProgramTemplate[] = [
   },
   ...additionalPrograms,
   ...specializedPrograms,
+  ...famousPrograms,
 ]

@@ -6,7 +6,7 @@
 
 import { useState, useCallback, useMemo, useRef, useEffect } from 'react'
 import { useAppState } from '../../context/AppContext'
-import { getExerciseById, makeId } from '../../lib'
+import { getExerciseById } from '../../lib'
 import type { SetType, SetLog } from '../../types'
 
 // ── CSS keyframes injected once ──────────────────────────────────────────────

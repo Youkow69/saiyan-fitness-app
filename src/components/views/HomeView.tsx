@@ -10,6 +10,7 @@ import {
   getStreak,
   todayIso,
 } from '../../lib'
+import { getDeloadAdvice } from '../../lib/progression'
 import { WeeklyReport } from '../stats/WeeklyReport'
 import { MonthlyRecap } from '../stats/MonthlyRecap'
 import { DailyQuote } from '../gamification/MotivationalQuotes'
@@ -25,6 +26,7 @@ export const HomeView: React.FC<HomeViewProps> = React.memo(
   function HomeView({ onStartWorkout }) {
     const { state, dispatch } = useAppState()
     const [activePanel, setActivePanel] = useState<string | null>(null)
+    const deloadAdvice = useMemo(() => getDeloadAdvice(state), [state.workouts, state.sessionFeedback])
 
     const tf = useMemo(
       () => getCurrentTransformationFull(state),

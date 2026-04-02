@@ -32,13 +32,13 @@ const defaultOnboardingAnswers: OnboardingAnswers = {
 }
 
 const weakPointOptions = [
-  'Epaules', 'Bras', 'Jambes', 'Dos', 'Poitrine', 'Abdominaux', 'Mollets', 'Fessiers',
+  'Épaules', 'Bras', 'Jambes', 'Dos', 'Poitrine', 'Abdominaux', 'Mollets', 'Fessiers',
 ]
 const supplementOptions = [
-  'Creatine', 'Whey', 'Cafeine', 'Omega-3', 'Vitamine D', 'BCAA', 'Pre-workout', 'Aucun',
+  'Créatine', 'Whey', 'Caféine', 'Omega-3', 'Vitamine D', 'BCAA', 'Pré-workout', 'Aucun',
 ]
 const injuryOptions = [
-  'Epaule', 'Genou', 'Dos', 'Poignet', 'Cheville', 'Hanche', 'Coude', 'Aucune',
+  'Épaule', 'Genou', 'Dos', 'Poignet', 'Cheville', 'Hanche', 'Coude', 'Aucune',
 ]
 
 const toggle = (arr: string[], item: string) =>
@@ -56,7 +56,7 @@ export const OnboardingView: React.FC<OnboardingViewProps> = React.memo(
 
     const stepTitles = [
       'Profil de base',
-      'Entrainement',
+      'Entraînement',
       'Ton corps en detail',
       'Mode de vie',
       'Cibles quotidiennes',
@@ -74,7 +74,7 @@ export const OnboardingView: React.FC<OnboardingViewProps> = React.memo(
     return (
       <div className="page onboarding-shell">
         <section className="hero-card hero-card--scan">
-          <span className="eyebrow">Scouter Scan — Etape {step}/4</span>
+          <span className="eyebrow">Scouter Scan — Étape {step}/4</span>
           <h1>Saiyan Fitness</h1>
           <p style={{ marginBottom: 0 }}>{stepTitles[step - 1]}</p>
           <div style={{ display: 'flex', gap: 6, marginTop: 12 }}>
@@ -198,14 +198,14 @@ export const OnboardingView: React.FC<OnboardingViewProps> = React.memo(
         {step === 2 && (
           <section className="panel stack-lg">
             <div className="choice-group">
-              <span className="field-title">Niveau d'activite</span>
+              <span className="field-title">Niveau d'activité</span>
               <div className="chip-row">
                 {(
                   [
-                    ['sedentary', 'Sedentaire'],
-                    ['light', 'Legere'],
-                    ['moderate', 'Moderee'],
-                    ['high', 'Elevee'],
+                    ['sedentary', 'Sédentaire'],
+                    ['light', 'Légère'],
+                    ['moderate', 'Modérée'],
+                    ['high', 'Élevée'],
                     ['athlete', 'Athlete'],
                   ] as const
                 ).map(([v, l]) => (
@@ -226,13 +226,13 @@ export const OnboardingView: React.FC<OnboardingViewProps> = React.memo(
               </div>
             </div>
             <div className="choice-group">
-              <span className="field-title">Niveau d'experience</span>
+              <span className="field-title">Niveau d'expérience</span>
               <div className="chip-row">
                 {(
                   [
-                    ['beginner', 'Debutant'],
-                    ['intermediate', 'Intermediaire'],
-                    ['advanced', 'Avance'],
+                    ['beginner', 'Débutant'],
+                    ['intermediate', 'Intermédiaire'],
+                    ['advanced', 'Avancé'],
                   ] as const
                 ).map(([v, l]) => (
                   <button
@@ -253,7 +253,7 @@ export const OnboardingView: React.FC<OnboardingViewProps> = React.memo(
               </div>
             </div>
             <div className="choice-group">
-              <span className="field-title">Materiel disponible</span>
+              <span className="field-title">Matériel disponible</span>
               <div className="chip-row">
                 {(
                   [
@@ -296,7 +296,7 @@ export const OnboardingView: React.FC<OnboardingViewProps> = React.memo(
                 />
               </label>
               <label>
-                <span>Preference alimentaire</span>
+                <span>Préférence alimentaire</span>
                 <input
                   value={draft.dietaryPreference}
                   onChange={(e) =>
@@ -409,7 +409,7 @@ export const OnboardingView: React.FC<OnboardingViewProps> = React.memo(
               </div>
             </div>
             <div className="choice-group">
-              <span className="field-title">Supplements utilises</span>
+              <span className="field-title">Suppléments utilisés</span>
               <div className="chip-row">
                 {supplementOptions.map((item) => (
                   <button
@@ -514,7 +514,7 @@ export const OnboardingView: React.FC<OnboardingViewProps> = React.memo(
               </div>
             </div>
             <div className="choice-group">
-              <span className="field-title">Blessures passees ou actuelles</span>
+              <span className="field-title">Blessures passées ou actuelles</span>
               <div className="chip-row">
                 {injuryOptions.map((inj) => (
                   <button
@@ -533,12 +533,12 @@ export const OnboardingView: React.FC<OnboardingViewProps> = React.memo(
               <textarea
                 value={draft.injuryNotes}
                 onChange={(e) => setDraft({ ...draft, injuryNotes: e.target.value })}
-                placeholder="Decris tes blessures, limitations ou douleurs..."
+                placeholder="Décris tes blessures, limitations ou douleurs..."
                 style={{ width: '100%', minHeight: 60, resize: 'vertical', boxSizing: 'border-box' }}
               />
             </label>
             <div className="choice-group">
-              <span className="field-title">Supplements utilises</span>
+              <span className="field-title">Suppléments utilisés</span>
               <div className="chip-row">
                 {supplementOptions.map((sup) => (
                   <button
@@ -553,11 +553,11 @@ export const OnboardingView: React.FC<OnboardingViewProps> = React.memo(
               </div>
             </div>
             <label>
-              <span className="field-title">Objectif detaille</span>
+              <span className="field-title">Objectif détaillé</span>
               <textarea
                 value={answers.primaryGoalDetail}
                 onChange={(e) => setAnswers({ ...answers, primaryGoalDetail: e.target.value })}
-                placeholder="Decris ton objectif en detail (ex: prendre 5kg de muscle en 6 mois, descendre a 12% de gras...)"
+                placeholder="Décris ton objectif en detail (ex: prendre 5kg de muscle en 6 mois, descendre a 12% de gras...)"
                 style={{ width: '100%', minHeight: 60, resize: 'vertical', boxSizing: 'border-box' }}
               />
             </label>

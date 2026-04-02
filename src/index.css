@@ -2392,3 +2392,32 @@ select:focus {
   animation: pulse-glow 2s ease-in-out infinite;
 }
 
+/* Rest timer panel in workout */
+.timer-panel {
+  position: relative;
+  overflow: hidden;
+}
+.timer-panel::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,200,61,0.08), rgba(255,140,0,0.04));
+  animation: timer-shimmer 2s ease-in-out infinite;
+}
+@keyframes timer-shimmer {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+/* Streak fire animation */
+@keyframes fire-flicker {
+  0%, 100% { transform: scale(1) rotate(0deg); }
+  25% { transform: scale(1.05) rotate(-2deg); }
+  50% { transform: scale(0.95) rotate(2deg); }
+  75% { transform: scale(1.02) rotate(-1deg); }
+}
+.streak-fire {
+  display: inline-block;
+  animation: fire-flicker 0.8s ease-in-out infinite;
+}
+

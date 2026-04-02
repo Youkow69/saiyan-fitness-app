@@ -8,6 +8,7 @@ import {
   getMesocycleStatus,
   getPowerLevel,
   getStreak,
+  todayIso,
 } from '../../lib'
 import { WeeklyReport } from '../stats/WeeklyReport'
 import { MonthlyRecap } from '../stats/MonthlyRecap'
@@ -48,6 +49,8 @@ export const HomeView: React.FC<HomeViewProps> = React.memo(
       [state.foodEntries],
     )
     const targets = state.targets
+
+    const hasWorkoutToday = state.workouts.some(w => w.date === todayIso())
 
     const questsDone = useMemo(() => {
       const statuses = getDailyQuestStatus(state)
@@ -203,7 +206,7 @@ export const HomeView: React.FC<HomeViewProps> = React.memo(
 
         {/* 3. CTA button */}
         <button
-          className="cta-button"
+          className={`cta-button ${!hasWorkoutToday && !state.activeWorkout ? 'cta-button--pulse' : ''}`}
           onClick={onStartWorkout}
           type="button"
           style={{ fontFamily: "'Manrope', sans-serif", textTransform: 'none' as const, fontWeight: 700 }}

@@ -179,8 +179,9 @@ export function Leaderboard() {
                 gap: 10,
                 padding: '10px 12px',
                 borderRadius: 12,
-                background: isMe ? '#FF8C0012' : '#ffffff06',
-                border: isMe ? '1px solid #FF8C0033' : '1px solid transparent',
+                background: isMe ? 'rgba(255,140,0,0.07)' : 'rgba(255,255,255,0.024)',
+                border: isMe ? '1px solid rgba(255,140,0,0.2)' : '1px solid transparent',
+                transition: 'background 0.15s ease, transform 0.15s ease',
               }}
             >
               {/* Rank */}
@@ -202,7 +203,7 @@ export function Leaderboard() {
                   style={{
                     fontWeight: 600,
                     fontSize: '0.85rem',
-                    color: isMe ? '#FF8C00' : 'var(--text-primary)',
+                    color: isMe ? 'var(--accent)' : 'var(--text-primary)',
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',
                     whiteSpace: 'nowrap',
@@ -228,7 +229,7 @@ export function Leaderboard() {
                   style={{
                     background: 'none',
                     border: 'none',
-                    color: '#EF4444',
+                    color: 'var(--danger, #ef4444)',
                     cursor: 'pointer',
                     fontSize: '0.75rem',
                     padding: '2px 6px',
@@ -258,6 +259,7 @@ export function Leaderboard() {
             fontWeight: 600,
             fontSize: '0.82rem',
             cursor: 'pointer',
+            transition: 'border-color 0.15s ease, background 0.15s ease',
           }}
         >
           {showMyCode ? 'Masquer mon code' : 'Afficher mon code guerrier'}
@@ -352,7 +354,7 @@ const actionBtnStyle: React.CSSProperties = {
   padding: 12,
   borderRadius: 10,
   border: 'none',
-  background: 'linear-gradient(135deg, #FF8C00, #FF6B00)',
+  background: 'var(--accent, #FF8C00)',
   color: '#000',
   fontWeight: 700,
   fontSize: '0.85rem',

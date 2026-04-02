@@ -60,6 +60,25 @@ export function PersonalRecords({
   const [sortField, setSortField] = useState<SortField>('1rm')
   const [sortDir, setSortDir] = useState<SortDir>('desc')
   const [filter, setFilter] = useState('')
+  const [selectedExercise, setSelectedExercise] = useState<string | null>(null)
+
+  // e1RM evolution data for selected exercise
+  const e1rmHistory = useMemo(() => {
+    if (!selectedExercise) return []
+    const history: { date: string; e1rm: number }[] = []
+    const sorted = [...workouts].sort((a, b) => a.date.localeCompare(b.date))
+    sorted.forEach(w => {
+      let bestE1rm = 0
+      w.exercises.forEach(set => {
+        if (set.exerciseId === selectedExercise) {
+          const e = estimate1RM(set.weight, set.reps)
+          if (e > bestE1rm) bestE1rm = e
+        }
+      })
+      if (bestE1rm > 0) history.push({ date: w.date, e1rm: bestE1rm })
+    })
+    return history
+  }, [selectedExercise, workouts])
 
   const records = useMemo(() => {
     const exerciseMap = new Map<string, string>()
@@ -293,7 +312,60 @@ export function PersonalRecords({
             </tr>
           </thead>
           <tbody>
-            {sorted.map((pr) => (
+            
+      {/* e1RM Evolution Chart */}
+      {selectedExercise && e1rmHistory.length > 1 && (
+        <div style={{
+          background: 'var(--bg-card)', borderRadius: 12, padding: 14,
+          border: '1px solid var(--accent)', marginBottom: 12,
+        }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+            <div style={{ fontWeight: 700, fontSize: '0.85rem', color: 'var(--accent)' }}>
+              {'📈'} Evolution e1RM
+            </div>
+            <button
+              type="button"
+              onClick={() => setSelectedExercise(null)}
+              style={{ background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer', fontSize: '1rem' }}
+            >
+              {'✕'}
+            </button>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'flex-end', gap: 2, height: 100 }}>
+            {(() => {
+              const maxE = Math.max(...e1rmHistory.map(h => h.e1rm))
+              const minE = Math.min(...e1rmHistory.map(h => h.e1rm))
+              const range = maxE - minE || 1
+              return e1rmHistory.map((h, i) => {
+                const pct = ((h.e1rm - minE) / range) * 80 + 20
+                return (
+                  <div
+                    key={i}
+                    title={h.date + ': ' + h.e1rm + 'kg'}
+                    style={{
+                      flex: 1, height: pct + '%', minWidth: 3,
+                      background: i === e1rmHistory.length - 1
+                        ? 'var(--accent)'
+                        : 'var(--accent-orange)',
+                      borderRadius: '2px 2px 0 0',
+                      opacity: 0.5 + (i / e1rmHistory.length) * 0.5,
+                    }}
+                  />
+                )
+              })
+            })()}
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 4 }}>
+            <span style={{ fontSize: '0.6rem', color: 'var(--muted)' }}>{e1rmHistory[0]?.date.slice(5)}</span>
+            <span style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--accent)' }}>
+              {e1rmHistory[e1rmHistory.length - 1]?.e1rm}kg
+            </span>
+            <span style={{ fontSize: '0.6rem', color: 'var(--muted)' }}>{e1rmHistory[e1rmHistory.length - 1]?.date.slice(5)}</span>
+          </div>
+        </div>
+      )}
+
+{sorted.map((pr) => (
               <tr
                 key={pr.exerciseId}
                 style={{
@@ -339,7 +411,7 @@ export function PersonalRecords({
                         ★
                       </span>
                     )}
-                    <span>{pr.exerciseName}</span>
+                    <span><span onClick={(e) => { e.stopPropagation(); setSelectedExercise(selectedExercise === pr.exerciseId ? null : pr.exerciseId) }} style={{ cursor: "pointer", textDecoration: "underline", textDecorationStyle: "dotted" as const, textUnderlineOffset: "3px" }}>{pr.exerciseName}</span></span>
                   </div>
                 </td>
                 <td

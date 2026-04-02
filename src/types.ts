@@ -132,6 +132,7 @@ export interface LoggedExercise {
   exerciseId: string
   target: ProgramExercise
   sets: SetLog[]
+  notes?: string
 }
 
 export interface WorkoutLog {
@@ -142,6 +143,7 @@ export interface WorkoutLog {
   sessionName: string
   exercises: LoggedExercise[]
   durationMinutes: number
+  notes?: string
 }
 
 export interface WorkoutDraft {
@@ -150,6 +152,7 @@ export interface WorkoutDraft {
   startedAt: string
   sessionName?: string
   exercises: LoggedExercise[]
+  notes?: string
 }
 
 export interface Food {

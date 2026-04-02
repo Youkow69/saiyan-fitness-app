@@ -17,6 +17,7 @@ import { SectionTitle } from '../ui/Shared'
 import { ProgressPhotos } from '../tools/ProgressPhotos'
 import { ImportExport } from '../tools/ImportExport'
 import type { AppState } from '../../types'
+import { BodyweightChart } from '../stats/BodyweightChart'
 
 function countPRsFromWorkouts(workouts: AppState['workouts']): number {
   const bestByExercise = new Map<string, number>()
@@ -242,7 +243,6 @@ export const ProfileView: React.FC<ProfileViewProps> = React.memo(
       {/* Import/Export */}
       <section className="hevy-card stack-md">
         <ImportExport />
-import { BodyweightChart } from '../stats/BodyweightChart'
 
         {/* Reset Account */}
         <section className="hevy-card" style={{ padding: '14px', borderColor: 'rgba(239,68,68,0.2)' }}>

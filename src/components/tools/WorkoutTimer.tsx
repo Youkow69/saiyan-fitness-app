@@ -167,13 +167,13 @@ export function WorkoutTimer() {
           phases.push({
             label: `Travail ${i + 1}/8`,
             duration: 20,
-            color: '#e53e3e',
+            color: 'var(--danger)',
             isWork: true,
           })
           phases.push({
             label: `Repos ${i + 1}/8`,
             duration: 10,
-            color: '#38a169',
+            color: 'var(--success)',
             isWork: false,
           })
         }
@@ -197,14 +197,14 @@ export function WorkoutTimer() {
           phases.push({
             label: `Travail ${i + 1}/${customRounds}`,
             duration: customWork,
-            color: '#e53e3e',
+            color: 'var(--danger)',
             isWork: true,
           })
           if (i < customRounds - 1 || customRest > 0) {
             phases.push({
               label: `Repos ${i + 1}/${customRounds}`,
               duration: customRest,
-              color: '#38a169',
+              color: 'var(--success)',
               isWork: false,
             })
           }
@@ -216,7 +216,7 @@ export function WorkoutTimer() {
           {
             label: 'Decompte',
             duration: countdownSet,
-            color: '#3182ce',
+            color: 'var(--accent-blue)',
             isWork: true,
           },
         ]
@@ -326,7 +326,7 @@ export function WorkoutTimer() {
     padding: '8px 10px',
     borderRadius: 8,
     border: '2px solid #2d3748',
-    background: 'var(--border)',
+    background: 'var(--bg-card)',
     color: 'var(--text)',
     fontSize: 14,
     fontWeight: 600,
@@ -351,7 +351,7 @@ export function WorkoutTimer() {
           textAlign: 'center',
           margin: '0 0 20px',
           fontSize: 22,
-          background: 'linear-gradient(135deg, #f6ad55, #ed8936)',
+          background: 'linear-gradient(135deg, var(--accent-orange), var(--accent))',
           WebkitBackgroundClip: 'text',
           WebkitTextFillColor: 'transparent',
         }}
@@ -408,7 +408,7 @@ export function WorkoutTimer() {
                   borderRadius: 6,
                   border: 'none',
                   background: countdownSet === v ? 'var(--accent)' : 'var(--border)',
-                  color: countdownSet === v ? '#1a202c' : 'var(--text-secondary)',
+                  color: countdownSet === v ? 'var(--text)' : 'var(--text-secondary)',
                   cursor: 'pointer',
                   fontSize: 11,
                   fontWeight: 600,
@@ -541,8 +541,8 @@ export function WorkoutTimer() {
             borderRadius: 12,
             border: 'none',
             background: running
-              ? 'linear-gradient(135deg, #e53e3e, #c53030)'
-              : 'linear-gradient(135deg, #38a169, #2f855a)',
+              ? 'linear-gradient(135deg, var(--danger), var(--accent-red))'
+              : 'linear-gradient(135deg, var(--success), var(--accent-green))',
             color: 'var(--text)',
             fontSize: 16,
             fontWeight: 700,
@@ -581,7 +581,7 @@ export function WorkoutTimer() {
               height: 8,
               borderRadius: 4,
               overflow: 'hidden',
-              background: 'var(--border)',
+              background: 'var(--bg-card)',
             }}
           >
             {phases.map((phase, i) => (

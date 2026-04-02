@@ -99,8 +99,7 @@ export function MonthlyRecap() {
 
   // ── Share content builder ──────────────────────────────────────────────
 
-  const shareText = useMemo(() => {
-    const lines = [
+      const lines = [
       `Recap ${monthLabel}`,
       `${recap.sessions} seances | Volume: ${formatVolume(recap.volume)} kg`,
       `Duree moy: ${recap.avgDuration} min`,
@@ -141,7 +140,15 @@ export function MonthlyRecap() {
           </span>
           <h3 style={{ margin: '2px 0 0', textTransform: 'capitalize', fontSize: '1.1rem' }}>{monthLabel}</h3>
         </div>
-        <ShareButton text={shareText} label="Partager" />
+        <ShareButton data={{
+          type: 'weekly',
+          title: 'Recap mensuel — ' + month,
+          stats: [
+            { label: 'Seances', value: String(recap.sessions) },
+            { label: 'Volume', value: recap.volume.toLocaleString('fr-FR') + ' kg' },
+            { label: 'Duree moy.', value: recap.avgDuration + ' min' },
+          ],
+        }} label="Partager" />
       </div>
 
       {/* Stats grid */}

@@ -28,7 +28,7 @@ interface EnhancedSetLog {
   timestamp: string
   note?: string
   tempo?: Tempo
-  side?: 'left' | 'right'
+  side?: 'left' | 'right' | 'both'
   supersetGroupId?: string
 }
 

@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import type { AppState, CustomRoutine, SetType } from '../../types'
 import { useAppState } from '../../context/AppContext'
-import { exercises } from '../../data'
+import { exercises, programs } from '../../data'
 import { getExerciseById, getProgramById, makeId } from '../../lib'
 import { showToast } from '../ui/Toast'
 import { ConfirmDialog } from '../ui/ConfirmDialog'
@@ -55,6 +55,7 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
     const [detailExerciseId, setDetailExerciseId] = useState<string | null>(null)
     const [showLibrary, setShowLibrary] = useState(false)
     const [showTools, setShowTools] = useState(false)
+    const [expandedProgram, setExpandedProgram] = useState<string | null>(null)
 
     const selectedProgram = getProgramById(state.selectedProgramId)
     const nextIndex = state.programCursor[selectedProgram?.id ?? ''] ?? 0
@@ -63,87 +64,7 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
     const customRoutines = state.customRoutines
 
     /* ─────────────────────────────────────────────
-       NO PROGRAM SELECTED
-       ───────────────────────────────────────────── */
-    if (!selectedProgram) {
-      return (
-        <div className="page">
-          <section style={{ background: 'var(--bg-card)', borderRadius: 16, border: '1px solid var(--border)', padding: 16, marginBottom: 12, textAlign: 'center' }}>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', margin: '0 0 12px' }}>
-              Aucun programme sélectionné. Tu peux choisir un programme depuis le Profil, ou commencer une séance libre.
-            </p>
-            <button className="primary-btn" onClick={onStartWorkout} type="button" style={{ width: '100%', marginBottom: 8 }}>
-              Commencer une séance libre
-            </button>
-          </section>
-
-          <button onClick={() => setShowBuilder(true)} type="button" style={{
-            width: '100%', padding: 14, borderRadius: 12, border: '1px dashed var(--accent)',
-            background: 'rgba(255,140,0,0.06)', color: 'var(--accent)',
-            fontSize: '0.9rem', fontWeight: 700, cursor: 'pointer',
-            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, marginBottom: 12,
-          }}>
-            + Créer un programme personnalisé
-          </button>
-
-          {customRoutines.length > 0 && (
-            <>
-              <SectionTitle icon="⭐" label="Mes routines perso" />
-              {customRoutines.map((routine) => (
-                <section key={routine.id} className="routine-card" style={{ marginBottom: 8 }}>
-                  <div style={{ marginBottom: 12 }}>
-                    <h3 style={{ margin: 0 }}>{routine.name}</h3>
-                  </div>
-                  <div style={{ display: 'flex', gap: 10 }}>
-                    <button className="primary-btn" style={{ flex: 1 }} onClick={() => onStartCustomRoutine(routine)} type="button">Commencer</button>
-                    <button className="ghost-btn" style={{ padding: '8px 14px' }} onClick={() => { if (window.confirm('Supprimer cette routine ?')) dispatch({ type: 'DELETE_CUSTOM_ROUTINE', payload: routine.id }) }} type="button">🗑️</button>
-                  </div>
-                </section>
-              ))}
-            </>
-          )}
-
-          {/* Toggle buttons for tools & library */}
-          <div style={{ display: 'flex', gap: 8, marginTop: 8, marginBottom: 8 }}>
-            <button onClick={() => setShowTools(!showTools)} type="button" style={{
-              flex: 1, padding: '10px 16px', borderRadius: 12, border: '1px solid var(--border)',
-              background: showTools ? 'rgba(255,140,0,0.10)' : 'var(--bg-card)',
-              color: 'var(--text-secondary)', fontSize: '0.82rem', fontWeight: 600, cursor: 'pointer',
-              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
-            }}>
-              ⚙️ Outils
-            </button>
-            <button onClick={() => setShowLibrary(!showLibrary)} type="button" style={{
-              flex: 1, padding: '10px 16px', borderRadius: 12, border: '1px solid var(--border)',
-              background: showLibrary ? 'rgba(255,140,0,0.10)' : 'var(--bg-card)',
-              color: 'var(--text-secondary)', fontSize: '0.82rem', fontWeight: 600, cursor: 'pointer',
-              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
-            }}>
-              📖 Exercices
-            </button>
-          </div>
-
-          {showTools && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 12 }}>
-              <PlateCalculator />
-              <WorkoutTimer />
-            </div>
-          )}
-
-          {showLibrary && (
-            <div style={{ marginBottom: 12 }}>
-              <ExerciseLibrary />
-            </div>
-          )}
-
-          {showBuilder && <ProgramBuilder onClose={() => setShowBuilder(false)} />}
-          {detailExerciseId && <ExerciseDetail exerciseId={detailExerciseId} onClose={() => setDetailExerciseId(null)} />}
-        </div>
-      )
-    }
-
-    /* ─────────────────────────────────────────────
-       ACTIVE WORKOUT (with program)
+       ACTIVE WORKOUT
        ───────────────────────────────────────────── */
     if (activeWorkout && nextSession) {
       return (
@@ -286,40 +207,39 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
     }
 
     /* ─────────────────────────────────────────────
-       WITH PROGRAM, NO ACTIVE WORKOUT
+       PROGRAM BROWSER (no active workout)
        ───────────────────────────────────────────── */
     return (
       <div className="page">
-        <section className="hevy-hero">
-          <div style={{ flex: 1 }}>
-            <span className="eyebrow">{selectedProgram.saga}</span>
-            <h2 style={{ margin: '4px 0' }}>{selectedProgram.name}</h2>
-            <p style={{ margin: 0, color: 'var(--muted)', fontSize: '0.82rem' }}>{selectedProgram.split} — {selectedProgram.daysPerWeek} jours/semaine</p>
-          </div>
-          <div className="hero-badge" style={{ alignSelf: 'flex-start' }}>{selectedProgram.daysPerWeek} j/sem</div>
-        </section>
+        {/* ── Quick actions ── */}
+        <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
+          <button onClick={onStartWorkout} type="button" style={{
+            flex: 1, padding: '12px 16px', borderRadius: 12, border: '1px solid var(--border)',
+            background: 'var(--bg-card)', color: 'var(--text)', fontWeight: 700, fontSize: '0.88rem',
+            cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+          }}>
+            <span style={{ fontSize: '1.1rem' }}>⚡</span> Séance rapide
+          </button>
+          <button onClick={() => setShowBuilder(true)} type="button" style={{
+            flex: 1, padding: '12px 16px', borderRadius: 12, border: '1px dashed var(--accent)',
+            background: 'rgba(255,140,0,0.06)', color: 'var(--accent)', fontWeight: 700, fontSize: '0.88rem',
+            cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+          }}>
+            + Créer un programme
+          </button>
+        </div>
 
-        <button className="secondary-btn" onClick={onStartWorkout} type="button" style={{ display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'center', width: '100%', padding: '12px 16px' }}>
-          <span style={{ fontSize: '1.2rem' }}>⚡</span>
-          <span>Séance rapide</span>
-        </button>
-
-        <button onClick={() => setShowBuilder(true)} type="button" style={{
-          width: '100%', padding: '14px', borderRadius: 12, border: '1px dashed var(--accent)',
-          background: 'rgba(255,140,0,0.06)', color: 'var(--accent)',
-          fontSize: '0.9rem', fontWeight: 700, cursor: 'pointer',
-          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+        {/* ── Create routine inline form ── */}
+        <button onClick={() => setCreatingRoutine(true)} type="button" style={{
+          width: '100%', padding: '10px 16px', borderRadius: 12, border: '1px solid var(--border)',
+          background: 'var(--bg-card)', color: 'var(--text-secondary)', fontSize: '0.82rem', fontWeight: 600,
+          cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, marginBottom: 12,
         }}>
-          + Créer un programme personnalisé
-        </button>
-
-        <button className="primary-btn" onClick={() => setCreatingRoutine(true)} type="button" style={{ display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'center', width: '100%', padding: '14px 16px', fontSize: '1rem' }}>
-          <span style={{ fontSize: '1.2rem' }}>➕</span>
-          <span>Créer ma routine</span>
+          ➕ Créer ma routine
         </button>
 
         {creatingRoutine && (
-          <section className="hevy-card stack-md">
+          <section className="hevy-card stack-md" style={{ marginBottom: 12 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <SectionTitle icon="✏️" label="Nouvelle routine" />
               <button className="ghost-btn" style={{ minHeight: 34, padding: '4px 12px' }} onClick={() => { setCreatingRoutine(false); setRoutineName(''); setRoutineExercises([]); setExerciseSearch('') }} type="button">✕</button>
@@ -371,57 +291,40 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
           </section>
         )}
 
-        {nextSession && (
-          <ProgressiveOverload sessionExercises={nextSession.exercises} />
-        )}
-
-        <SectionTitle icon="📋" label="Séances pre-faites" />
-
-        {selectedProgram.sessions.map((session, idx) => {
-          const isNext = idx === nextIndex % selectedProgram.sessions.length
-          const exerciseNames = session.exercises.slice(0, 3).map((e) => getExerciseById(e.exerciseId)?.name ?? e.exerciseId.replace(/_/g, ' ')).join(', ')
-          const moreCount = session.exercises.length - 3
-          return (
-            <section key={session.id} className={`routine-card ${isNext ? 'routine-card--next' : ''}`}>
-              <div style={{ marginBottom: 12 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-                  <h3 style={{ margin: 0 }}>{session.name}</h3>
-                  {isNext && <span className="next-badge">PROCHAINE</span>}
-                </div>
-                <p style={{ margin: 0, fontSize: '0.78rem', color: 'var(--muted)' }}>{session.focus}</p>
-                <p style={{ margin: '4px 0 0', fontSize: '0.75rem', color: 'var(--muted)' }}>
-                  {exerciseNames}{moreCount > 0 ? ` +${moreCount} exercices` : ''}
-                </p>
-              </div>
-              <button className="cta-button" style={{ fontSize: '1.1rem', padding: '0.9rem' }} onClick={() => onStartSession(idx)} type="button">
-                Commencer la séance
-              </button>
-            </section>
-          )
-        })}
-
+        {/* ── Mes routines perso ── */}
         {customRoutines.length > 0 && (
           <>
             <SectionTitle icon="⭐" label="Mes routines perso" />
             {customRoutines.map((routine) => (
-              <section key={routine.id} className="routine-card">
-                <div style={{ marginBottom: 12 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-                    <h3 style={{ margin: 0 }}>{routine.name}</h3>
-                    <span className="next-badge" style={{ background: 'var(--accent-blue)', color: '#fff' }}>PERSO</span>
+              <div key={routine.id} style={{
+                background: 'var(--bg-card)', borderRadius: 12, border: '1px solid var(--border)',
+                padding: '12px 16px', marginBottom: 8,
+                display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+              }}>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <span style={{ fontWeight: 700, fontSize: '0.88rem' }}>{routine.name}</span>
+                    <span style={{
+                      fontSize: '0.6rem', fontWeight: 700, padding: '2px 6px', borderRadius: 4,
+                      background: 'var(--accent-blue)', color: '#fff', textTransform: 'uppercase',
+                    }}>PERSO</span>
                   </div>
-                  <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--muted)' }}>
+                  <div style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', marginTop: 2 }}>
                     {routine.exercises.slice(0, 3).map((e) => getExerciseById(e.exerciseId)?.name ?? e.exerciseId.replace(/_/g, ' ')).join(', ')}
-                    {routine.exercises.length > 3 ? ` +${routine.exercises.length - 3} exercices` : ''}
-                  </p>
+                    {routine.exercises.length > 3 ? ` +${routine.exercises.length - 3}` : ''}
+                  </div>
                 </div>
-                <div style={{ display: 'flex', gap: 10 }}>
-                  <button className="cta-button" style={{ fontSize: '1.1rem', padding: '0.9rem', flex: 1 }} onClick={() => onStartCustomRoutine(routine)} type="button">
-                    Commencer
-                  </button>
-                  <button className="ghost-btn" style={{ minHeight: 48, padding: '8px 14px', borderRadius: 12 }} onClick={() => setConfirmDeleteId(routine.id)} type="button">🗑️</button>
+                <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
+                  <button onClick={() => onStartCustomRoutine(routine)} type="button" style={{
+                    padding: '6px 14px', borderRadius: 8, border: 'none',
+                    background: 'var(--accent)', color: '#000', fontWeight: 700, fontSize: '0.78rem', cursor: 'pointer',
+                  }}>Commencer</button>
+                  <button onClick={() => setConfirmDeleteId(routine.id)} type="button" style={{
+                    padding: '6px 10px', borderRadius: 8, border: '1px solid var(--border)',
+                    background: 'transparent', color: 'var(--text-secondary)', fontSize: '0.85rem', cursor: 'pointer',
+                  }}>🗑️</button>
                 </div>
-              </section>
+              </div>
             ))}
           </>
         )}
@@ -442,16 +345,83 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
           onCancel={() => setConfirmDeleteId(null)}
         />
 
-        {/* Toggle buttons for tools & library -- with-program, no active workout */}
-        <div style={{ display: 'flex', gap: 8, marginTop: 8, marginBottom: 8 }}>
-          <button onClick={() => setShowTools(!showTools)} type="button" style={{
-            flex: 1, padding: '10px 14px', borderRadius: 12, border: '1px solid var(--border)',
-            background: showTools ? 'rgba(255,140,0,0.10)' : 'var(--bg-card)',
-            color: 'var(--text-secondary)', fontSize: '0.82rem', fontWeight: 600, cursor: 'pointer',
-            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+        {/* ── Programmes disponibles ── */}
+        <SectionTitle icon="📋" label="Programmes disponibles" />
+
+        {programs.map((program) => (
+          <div key={program.id} style={{
+            background: 'var(--bg-card)', borderRadius: 12, border: '1px solid var(--border)',
+            marginBottom: 8, overflow: 'hidden',
           }}>
-            ⚙️ Outils
-          </button>
+            <button
+              onClick={() => setExpandedProgram(expandedProgram === program.id ? null : program.id)}
+              type="button"
+              style={{
+                width: '100%', padding: '12px 16px', background: 'transparent', border: 'none',
+                color: 'var(--text)', textAlign: 'left', cursor: 'pointer', display: 'flex',
+                justifyContent: 'space-between', alignItems: 'center',
+              }}
+            >
+              <div>
+                <div style={{ fontWeight: 700, fontSize: '0.9rem' }}>{program.name}</div>
+                <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
+                  {program.saga} — {program.daysPerWeek} jours — {program.split}
+                </div>
+              </div>
+              <span style={{ color: 'var(--text-secondary)', fontSize: '0.8rem' }}>
+                {expandedProgram === program.id ? '▲' : '▼'}
+              </span>
+            </button>
+
+            {expandedProgram === program.id && (
+              <div style={{ padding: '0 16px 16px', borderTop: '1px solid var(--border)' }}>
+                <p style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', margin: '12px 0' }}>{program.description}</p>
+                {program.sessions.map((session, idx) => (
+                  <div key={session.id} style={{
+                    display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                    padding: '8px 0', borderBottom: '1px solid var(--border)',
+                  }}>
+                    <div>
+                      <div style={{ fontWeight: 600, fontSize: '0.85rem' }}>{session.name}</div>
+                      <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>{session.focus}</div>
+                    </div>
+                    <button
+                      onClick={() => { dispatch({ type: 'CHOOSE_PROGRAM', payload: program.id }); onStartSession(idx) }}
+                      type="button"
+                      style={{
+                        padding: '6px 14px', borderRadius: 8, border: 'none',
+                        background: 'var(--accent)', color: '#000', fontWeight: 700, fontSize: '0.78rem', cursor: 'pointer',
+                      }}
+                    >
+                      Lancer
+                    </button>
+                  </div>
+                ))}
+                {state.selectedProgramId !== program.id && (
+                  <button
+                    onClick={() => dispatch({ type: 'CHOOSE_PROGRAM', payload: program.id })}
+                    type="button"
+                    style={{
+                      width: '100%', marginTop: 10, padding: '10px', borderRadius: 10,
+                      border: '1px solid var(--accent)', background: 'rgba(255,140,0,0.06)',
+                      color: 'var(--accent)', fontWeight: 600, fontSize: '0.82rem', cursor: 'pointer',
+                    }}
+                  >
+                    Définir comme programme actif
+                  </button>
+                )}
+                {state.selectedProgramId === program.id && (
+                  <div style={{ textAlign: 'center', marginTop: 8, fontSize: '0.75rem', color: 'var(--accent)', fontWeight: 600 }}>
+                    ✓ Programme actif
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        ))}
+
+        {/* ── Bottom utility buttons ── */}
+        <div style={{ display: 'flex', gap: 8, marginTop: 8, marginBottom: 8 }}>
           <button onClick={() => setShowLibrary(!showLibrary)} type="button" style={{
             flex: 1, padding: '10px 14px', borderRadius: 12, border: '1px solid var(--border)',
             background: showLibrary ? 'rgba(255,140,0,0.10)' : 'var(--bg-card)',
@@ -460,18 +430,26 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
           }}>
             📖 Exercices
           </button>
+          <button onClick={() => setShowTools(!showTools)} type="button" style={{
+            flex: 1, padding: '10px 14px', borderRadius: 12, border: '1px solid var(--border)',
+            background: showTools ? 'rgba(255,140,0,0.10)' : 'var(--bg-card)',
+            color: 'var(--text-secondary)', fontSize: '0.82rem', fontWeight: 600, cursor: 'pointer',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+          }}>
+            ⚙️ Outils
+          </button>
         </div>
+
+        {showLibrary && (
+          <div style={{ marginBottom: 12 }}>
+            <ExerciseLibrary />
+          </div>
+        )}
 
         {showTools && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 12 }}>
             <PlateCalculator />
             <WorkoutTimer />
-          </div>
-        )}
-
-        {showLibrary && (
-          <div style={{ marginBottom: 12 }}>
-            <ExerciseLibrary />
           </div>
         )}
 

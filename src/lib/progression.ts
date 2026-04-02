@@ -1,7 +1,7 @@
 // ── Progression Tracking ────────────────────────────────────────────────────
 
 import type { AppState } from '../types'
-import { todayIso } from './dates'
+
 import { getDailyNutrition } from './nutrition'
 import { estimate1Rm, getWorkoutVolume, getWeeklyWorkouts } from './training'
 

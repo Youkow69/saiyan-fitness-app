@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react'
 import type { TabId } from '../../types'
-import { IconHome, IconDumbbell, IconBowl, IconChart, IconUser } from '../ui/Icons'
+import { IconHome, IconDumbbell, IconBowl, IconChart, IconCoach, IconUser } from '../ui/Icons'
 
 interface BottomNavProps {
   tab: TabId
@@ -8,7 +8,7 @@ interface BottomNavProps {
   restTimer: number
 }
 
-const TAB_IDS: TabId[] = ['home', 'train', 'nutrition', 'scouter', 'profile']
+const TAB_IDS: TabId[] = ['home', 'train', 'nutrition', 'scouter', 'coach', 'profile']
 
 const items: Array<{
   id: TabId

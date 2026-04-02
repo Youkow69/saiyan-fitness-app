@@ -40,6 +40,7 @@ type Action =
   | { type: 'DELETE_CUSTOM_ROUTINE'; payload: string }
   | { type: 'UPDATE_PROFILE'; payload: Partial<UserProfile> }
   | { type: 'ABANDON_WORKOUT' }
+  | { type: 'RESET_ACCOUNT' }
 
 // ── Default state ─────────────────────────────────────────────────────────────
 
@@ -153,6 +154,18 @@ function appReducer(state: AppState, action: Action): AppState {
                 (state.programCursor[workout.programId] ?? 0) + 1,
             },
       }
+    }
+
+    case 'RESET_ACCOUNT': {
+      // Clear all localStorage
+      try {
+        Object.keys(localStorage).forEach(key => {
+          if (key.startsWith('sf_') || key === 'saiyan_fitness_state') {
+            localStorage.removeItem(key)
+          }
+        })
+      } catch {}
+      return { ...defaultState }
     }
 
     case 'ABANDON_WORKOUT': {

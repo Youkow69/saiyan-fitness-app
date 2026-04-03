@@ -566,6 +566,7 @@ function AppInner({ user, pushToCloud, pullFromCloud, syncSteps, signOut }: AppI
       )}
       {tab === 'nutrition' && <NutritionView />}
       {tab === 'scouter' && <ScouterView />}
+      {tab === 'feed' && <FeedView />}
         {tab === 'coach' && <CoachView />}
       {tab === 'profile' && (
         <ProfileView

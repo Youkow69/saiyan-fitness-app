@@ -231,6 +231,7 @@ export const ScouterView: React.FC = React.memo(
               {modal === 'records' && <PersonalRecords workouts={prWorkouts} exercises={prExercises} />}
               {modal === 'recap' && <MonthlyRecap />}
               {modal === 'volume' && <VolumeDashboard state={state} />}
+              {modal === 'volume' && <RPETrendChart />}
               {modal === 'feed' && <FeedView />}
               {modal === 'leaderboard' && <Leaderboard />}
               {modal === 'charts' && (

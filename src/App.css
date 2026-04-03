@@ -182,3 +182,47 @@
     border-right-color: var(--border);
   }
 }
+
+/* ── Enhanced Light Theme (FEAT-F22) ── */
+[data-theme='light'],
+.light-theme {
+  --bg: #FFF8F0;
+  --bg-card: #FFFFFF;
+  --bg-card-hover: #FFF3E6;
+  --border: rgba(0,0,0,0.08);
+  --stroke: rgba(0,0,0,0.06);
+  --text: #1A1A1A;
+  --text-secondary: #666666;
+  --muted: #888888;
+  --accent: #FF8C00;
+  --accent-gold: #FFD700;
+  --accent-orange: #FF8C00;
+  --accent-red: #FF4500;
+  --success: #16a34a;
+  --warning: #d97706;
+  --danger: #dc2626;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.06);
+}
+
+/* Dark theme (default) explicit vars */
+[data-theme='dark'],
+:root {
+  --bg: #0D0D0D;
+  --bg-card: #1A1A2E;
+  --bg-card-hover: #222240;
+  --border: #2a2a40;
+  --stroke: rgba(255,255,255,0.07);
+  --text: #F0F4FF;
+  --text-secondary: #888;
+  --muted: #666;
+  --accent: #FF8C00;
+  --accent-gold: #FFD700;
+  --accent-orange: #FF8C00;
+  --accent-red: #FF4500;
+  --success: #22c55e;
+  --warning: #eab308;
+  --danger: #ef4444;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.4);
+}

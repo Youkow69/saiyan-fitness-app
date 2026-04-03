@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react'
 import type { AppState } from '../../types'
 import { MonthlyRecap } from '../stats/MonthlyRecap'
+import { RPETrendChart } from '../tools/RPETrendChart'
 import { useAppState } from '../../context/AppContext'
 import { exercises } from '../../data'
 import {

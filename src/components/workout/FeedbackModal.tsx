@@ -83,7 +83,17 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = React.memo(
       </div>
     )
 
+    // Check if user modified at least one value from defaults
+    const hasModified = muscles.some((m) => {
+      const e = entries[m]
+      return e.pump !== 3 || e.soreness !== 2 || e.performance !== 'same' || e.jointPain
+    })
+
     const handleSave = () => {
+      if (!hasModified) {
+        // Show confirmation if nothing was changed
+        if (!window.confirm('Tu n\'as rien modifie. Sauvegarder les valeurs par defaut ?')) return
+      }
       const feedback: SessionFeedback = {
         date: todayIso(),
         workoutId,

@@ -85,6 +85,7 @@ export interface Exercise {
   setupCues: string[]
   executionCues: string[]
   alternatives: string[]
+  gifUrl?: string
 }
 
 export interface ProgramExercise {

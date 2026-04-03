@@ -2469,3 +2469,32 @@ select:focus {
   border-radius: 2px;
 }
 
+
+
+/* ── Accessibility: :disabled, :invalid, prefers-reduced-motion (BUG-F24) ── */
+button:disabled,
+input:disabled,
+select:disabled,
+textarea:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+input:invalid,
+textarea:invalid,
+select:invalid {
+  border-color: var(--accent-red, #FF4500);
+  box-shadow: 0 0 0 2px rgba(255,69,0,0.15);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

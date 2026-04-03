@@ -11,25 +11,29 @@ export function RPETrendChart() {
     const feedbacks = (state.sessionFeedback || []).slice(-20)
     if (feedbacks.length < 2) return null
 
-    const points = feedbacks.map((f, i) => ({
-      index: i,
-      rpe: f.averageRpe ?? (f.rir != null ? 10 - f.rir : null),
-      date: f.date || '',
-      soreness: f.soreness ?? 0,
-    })).filter(p => p.rpe != null)
+    // Compute average soreness per session as a proxy for RPE
+    const points = feedbacks.map((f, i) => {
+      const groups = f.muscleGroups || []
+      if (groups.length === 0) return null
+      const avgSoreness = groups.reduce((s, g) => s + g.soreness, 0) / groups.length
+      // Map soreness 1-5 to RPE 6-10 scale
+      const rpe = 5 + avgSoreness
+      return { index: i, rpe, date: f.date || '' }
+    }).filter((p): p is { index: number; rpe: number; date: string } => p != null)
 
     if (points.length < 2) return null
 
-    const avgRpe = points.reduce((s, p) => s + (p.rpe || 0), 0) / points.length
-    const last3Avg = points.slice(-3).reduce((s, p) => s + (p.rpe || 0), 0) / Math.min(3, points.length)
+    const avgRpe = points.reduce((s, p) => s + p.rpe, 0) / points.length
+    const last3 = points.slice(-3)
+    const last3Avg = last3.reduce((s, p) => s + p.rpe, 0) / last3.length
     const isCritical = last3Avg > 9
 
-    return { points, avgRpe, last3Avg, isCritical }
+    return { points, avgRpe, isCritical }
   }, [state.sessionFeedback])
 
   if (!data) return null
 
-  const { points, avgRpe, last3Avg, isCritical } = data
+  const { points, avgRpe, isCritical } = data
   const maxIdx = points.length - 1
   const W = 280
   const H = 80

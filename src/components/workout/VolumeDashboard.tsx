@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react'
 import type { AppState } from '../../types'
-import { getWeeklySetsByMuscle, getVolumeStatus, getVolumeRecommendation } from '../../lib'
+import { getWeeklySetsByMuscle, getVolumeStatus } from '../../lib'
 import { SectionTitle } from '../ui/Shared'
 
 interface VolumeDashboardProps {

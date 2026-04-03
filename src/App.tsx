@@ -34,6 +34,7 @@ import { NutritionView } from './components/views/NutritionView'
 import { CoachView } from './components/views/CoachView'
 import { ScouterView } from './components/views/ScouterView'
 import { ProfileView } from './components/views/ProfileView'
+import { FeedView } from './components/views/FeedView'
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 

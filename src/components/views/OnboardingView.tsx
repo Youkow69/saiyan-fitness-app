@@ -32,17 +32,19 @@ const defaultOnboardingAnswers: OnboardingAnswers = {
 }
 
 const weakPointOptions = [
-  'Épaules', 'Bras', 'Jambes', 'Dos', 'Poitrine', 'Abdominaux', 'Mollets', 'Fessiers',
+  '\u00C9paules', 'Bras', 'Jambes', 'Dos', 'Poitrine', 'Abdominaux', 'Mollets', 'Fessiers',
 ]
 const supplementOptions = [
-  'Créatine', 'Whey', 'Caféine', 'Omega-3', 'Vitamine D', 'BCAA', 'Pré-workout', 'Aucun',
+  'Cr\u00E9atine', 'Whey', 'Caf\u00E9ine', 'Omega-3', 'Vitamine D', 'BCAA', 'Pr\u00E9-workout', 'Aucun',
 ]
 const injuryOptions = [
-  'Épaule', 'Genou', 'Dos', 'Poignet', 'Cheville', 'Hanche', 'Coude', 'Aucune',
+  '\u00C9paule', 'Genou', 'Dos', 'Poignet', 'Cheville', 'Hanche', 'Coude', 'Aucune',
 ]
 
 const toggle = (arr: string[], item: string) =>
   arr.includes(item) ? arr.filter((x) => x !== item) : [...arr, item]
+
+const TOTAL_STEPS = 4
 
 interface OnboardingViewProps {
   onComplete: (profile: UserProfile, answers: OnboardingAnswers) => void
@@ -56,9 +58,8 @@ export const OnboardingView: React.FC<OnboardingViewProps> = React.memo(
 
     const stepTitles = [
       'Profil de base',
-      'Entraînement',
-      'Ton corps en detail',
-      'Mode de vie',
+      'Entra\u00EEnement',
+      'Ton corps en d\u00E9tail',
       'Cibles quotidiennes',
     ]
 
@@ -74,11 +75,11 @@ export const OnboardingView: React.FC<OnboardingViewProps> = React.memo(
     return (
       <div className="page onboarding-shell">
         <section className="hero-card hero-card--scan">
-          <span className="eyebrow">Scouter Scan — Étape {step}/4</span>
+          <span className="eyebrow">Scouter Scan \u2014 \u00C9tape {step}/{TOTAL_STEPS}</span>
           <h1>Saiyan Fitness</h1>
           <p style={{ marginBottom: 0 }}>{stepTitles[step - 1]}</p>
           <div style={{ display: 'flex', gap: 6, marginTop: 12 }}>
-            {[1, 2, 3, 4, 5].map((s) => (
+            {Array.from({ length: TOTAL_STEPS }, (_, i) => i + 1).map((s) => (
               <div
                 key={s}
                 style={{
@@ -198,15 +199,15 @@ export const OnboardingView: React.FC<OnboardingViewProps> = React.memo(
         {step === 2 && (
           <section className="panel stack-lg">
             <div className="choice-group">
-              <span className="field-title">Niveau d'activité</span>
+              <span className="field-title">Niveau d'activit\u00E9</span>
               <div className="chip-row">
                 {(
                   [
-                    ['sedentary', 'Sédentaire'],
-                    ['light', 'Légère'],
-                    ['moderate', 'Modérée'],
-                    ['high', 'Élevée'],
-                    ['athlete', 'Athlete'],
+                    ['sedentary', 'S\u00E9dentaire'],
+                    ['light', 'L\u00E9g\u00E8re'],
+                    ['moderate', 'Mod\u00E9r\u00E9e'],
+                    ['high', '\u00C9lev\u00E9e'],
+                    ['athlete', 'Athl\u00E8te'],
                   ] as const
                 ).map(([v, l]) => (
                   <button
@@ -226,13 +227,13 @@ export const OnboardingView: React.FC<OnboardingViewProps> = React.memo(
               </div>
             </div>
             <div className="choice-group">
-              <span className="field-title">Niveau d'expérience</span>
+              <span className="field-title">Niveau d'exp\u00E9rience</span>
               <div className="chip-row">
                 {(
                   [
-                    ['beginner', 'Débutant'],
-                    ['intermediate', 'Intermédiaire'],
-                    ['advanced', 'Avancé'],
+                    ['beginner', 'D\u00E9butant'],
+                    ['intermediate', 'Interm\u00E9diaire'],
+                    ['advanced', 'Avanc\u00E9'],
                   ] as const
                 ).map(([v, l]) => (
                   <button
@@ -253,7 +254,7 @@ export const OnboardingView: React.FC<OnboardingViewProps> = React.memo(
               </div>
             </div>
             <div className="choice-group">
-              <span className="field-title">Matériel disponible</span>
+              <span className="field-title">Mat\u00E9riel disponible</span>
               <div className="chip-row">
                 {(
                   [
@@ -296,7 +297,7 @@ export const OnboardingView: React.FC<OnboardingViewProps> = React.memo(
                 />
               </label>
               <label>
-                <span>Préférence alimentaire</span>
+                <span>Pr\u00E9f\u00E9rence alimentaire</span>
                 <input
                   value={draft.dietaryPreference}
                   onChange={(e) =>
@@ -337,164 +338,6 @@ export const OnboardingView: React.FC<OnboardingViewProps> = React.memo(
             </div>
           </section>
         )}
-        {step === 5 && (
-          <section className="panel stack-lg">
-            <div className="choice-group">
-              <span className="field-title">Points faibles a cibler</span>
-              <div className="chip-row">
-                {weakPointOptions.map((item) => (
-                  <button
-                    key={item}
-                    className={`chip ${answers.weakPoints.includes(item) ? 'chip--active' : ''}`}
-                    onClick={() =>
-                      setAnswers({
-                        ...answers,
-                        weakPoints: toggle(answers.weakPoints, item),
-                      })
-                    }
-                    type="button"
-                  >
-                    {item}
-                  </button>
-                ))}
-              </div>
-            </div>
-            <div className="choice-group">
-              <span className="field-title">Cardio actuel</span>
-              <div className="chip-row">
-                {(
-                  [
-                    ['none', 'Aucun'],
-                    ['light', 'Leger'],
-                    ['moderate', 'Modere'],
-                    ['intense', 'Intense'],
-                  ] as const
-                ).map(([v, l]) => (
-                  <button
-                    key={v}
-                    className={`chip ${answers.currentCardio === v ? 'chip--active' : ''}`}
-                    onClick={() =>
-                      setAnswers({ ...answers, currentCardio: v })
-                    }
-                    type="button"
-                  >
-                    {l}
-                  </button>
-                ))}
-              </div>
-            </div>
-            <div className="choice-group">
-              <span className="field-title">Style de motivation</span>
-              <div className="chip-row">
-                {(
-                  [
-                    ['data', 'Data/Stats'],
-                    ['community', 'Communaute'],
-                    ['aesthetics', 'Esthetique'],
-                    ['performance', 'Performance'],
-                    ['health', 'Sante'],
-                  ] as const
-                ).map(([v, l]) => (
-                  <button
-                    key={v}
-                    className={`chip ${answers.motivationStyle === v ? 'chip--active' : ''}`}
-                    onClick={() =>
-                      setAnswers({ ...answers, motivationStyle: v })
-                    }
-                    type="button"
-                  >
-                    {l}
-                  </button>
-                ))}
-              </div>
-            </div>
-            <div className="choice-group">
-              <span className="field-title">Suppléments utilisés</span>
-              <div className="chip-row">
-                {supplementOptions.map((item) => (
-                  <button
-                    key={item}
-                    className={`chip ${answers.supplementsUsed.includes(item) ? 'chip--active' : ''}`}
-                    onClick={() =>
-                      setAnswers({
-                        ...answers,
-                        supplementsUsed: toggle(
-                          answers.supplementsUsed,
-                          item
-                        ),
-                      })
-                    }
-                    type="button"
-                  >
-                    {item}
-                  </button>
-                ))}
-              </div>
-            </div>
-            <div className="choice-group">
-              <span className="field-title">Blessures passees</span>
-              <div className="chip-row">
-                {injuryOptions.map((item) => (
-                  <button
-                    key={item}
-                    className={`chip ${answers.pastInjuries.includes(item) ? 'chip--active' : ''}`}
-                    onClick={() =>
-                      setAnswers({
-                        ...answers,
-                        pastInjuries: toggle(answers.pastInjuries, item),
-                      })
-                    }
-                    type="button"
-                  >
-                    {item}
-                  </button>
-                ))}
-              </div>
-            </div>
-            <div className="choice-group">
-              <span className="field-title">Niveau de stress</span>
-              <div className="chip-row">
-                {(
-                  [
-                    ['low', 'Faible'],
-                    ['moderate', 'Modere'],
-                    ['high', 'Eleve'],
-                    ['very_high', 'Tres eleve'],
-                  ] as const
-                ).map(([v, l]) => (
-                  <button
-                    key={v}
-                    className={`chip ${answers.stressLevel === v ? 'chip--active' : ''}`}
-                    onClick={() =>
-                      setAnswers({ ...answers, stressLevel: v })
-                    }
-                    type="button"
-                  >
-                    {l}
-                  </button>
-                ))}
-              </div>
-            </div>
-            <div style={{ display: 'flex', gap: 10 }}>
-              <button
-                className="ghost-btn"
-                style={{ flex: 1 }}
-                onClick={() => setStep(2)}
-                type="button"
-              >
-                Retour
-              </button>
-              <button
-                className="primary-btn"
-                style={{ flex: 2 }}
-                onClick={() => setStep(5)}
-                type="button"
-              >
-                Suivant
-              </button>
-            </div>
-          </section>
-        )}
 
         {step === 3 && (
           <section className="panel stack-lg">
@@ -514,7 +357,7 @@ export const OnboardingView: React.FC<OnboardingViewProps> = React.memo(
               </div>
             </div>
             <div className="choice-group">
-              <span className="field-title">Blessures passées ou actuelles</span>
+              <span className="field-title">Blessures pass\u00E9es ou actuelles</span>
               <div className="chip-row">
                 {injuryOptions.map((inj) => (
                   <button
@@ -533,12 +376,12 @@ export const OnboardingView: React.FC<OnboardingViewProps> = React.memo(
               <textarea
                 value={draft.injuryNotes}
                 onChange={(e) => setDraft({ ...draft, injuryNotes: e.target.value })}
-                placeholder="Décris tes blessures, limitations ou douleurs..."
+                placeholder="D\u00E9cris tes blessures, limitations ou douleurs..."
                 style={{ width: '100%', minHeight: 60, resize: 'vertical', boxSizing: 'border-box' }}
               />
             </label>
             <div className="choice-group">
-              <span className="field-title">Suppléments utilisés</span>
+              <span className="field-title">Suppl\u00E9ments utilis\u00E9s</span>
               <div className="chip-row">
                 {supplementOptions.map((sup) => (
                   <button
@@ -553,11 +396,11 @@ export const OnboardingView: React.FC<OnboardingViewProps> = React.memo(
               </div>
             </div>
             <label>
-              <span className="field-title">Objectif détaillé</span>
+              <span className="field-title">Objectif d\u00E9taill\u00E9</span>
               <textarea
                 value={answers.primaryGoalDetail}
                 onChange={(e) => setAnswers({ ...answers, primaryGoalDetail: e.target.value })}
-                placeholder="Décris ton objectif en detail (ex: prendre 5kg de muscle en 6 mois, descendre a 12% de gras...)"
+                placeholder="D\u00E9cris ton objectif en d\u00E9tail (ex: prendre 5kg de muscle en 6 mois, descendre \u00E0 12% de gras...)"
                 style={{ width: '100%', minHeight: 60, resize: 'vertical', boxSizing: 'border-box' }}
               />
             </label>
@@ -576,7 +419,7 @@ export const OnboardingView: React.FC<OnboardingViewProps> = React.memo(
           </section>
         )}
 
-                {step === 4 && (
+        {step === 4 && (
           <section className="panel stack-lg">
             <div className="choice-group">
               <span className="field-title">Objectif de pas quotidien</span>
@@ -662,8 +505,8 @@ export const OnboardingView: React.FC<OnboardingViewProps> = React.memo(
                 {(
                   [
                     ['none', 'Aucun'],
-                    ['light', 'Leger'],
-                    ['moderate', 'Modere'],
+                    ['light', 'L\u00E9ger'],
+                    ['moderate', 'Mod\u00E9r\u00E9'],
                     ['heavy', 'Full prep'],
                   ] as const
                 ).map(([v, l]) => (
@@ -698,7 +541,7 @@ export const OnboardingView: React.FC<OnboardingViewProps> = React.memo(
                 onClick={() => onComplete(draft, answers)}
                 type="button"
               >
-                Demarrer la premiere Saga
+                D\u00E9marrer la premi\u00E8re Saga
               </button>
             </div>
           </section>

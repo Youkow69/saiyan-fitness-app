@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react'
 import type { AppState } from '../../types'
-import { getWeeklySetsByMuscle, getVolumeStatus } from '../../lib'
+import { getWeeklySetsByMuscle, getVolumeStatus, getVolumeRecommendation } from '../../lib'
 import { SectionTitle } from '../ui/Shared'
 
 interface VolumeDashboardProps {
@@ -163,10 +163,38 @@ export const VolumeDashboard: React.FC<VolumeDashboardProps> = React.memo(
                   <span>MAV {vt.mav}</span>
                   <span>MRV {vt.mrv}</span>
                 </div>
+                {/* Volume recommendation */}
+                <div style={{
+                  marginTop: 4, fontSize: '0.68rem', fontWeight: 500,
+                  color: status === 'below_mev' ? 'var(--accent-red)' : status === 'above_mrv' ? 'var(--accent-red)' : status === 'productive' ? '#4fffb0' : 'var(--muted)',
+                  fontStyle: 'italic',
+                }}>
+                  {status === 'none' && 'Aucun travail cette semaine'}
+                  {status === 'below_mev' && `\u2191 Ajoute ${vt.mev - vt.currentSets} series pour atteindre le MEV`}
+                  {status === 'productive' && '\u2705 Volume dans la zone optimale'}
+                  {status === 'high' && '\u26a0\ufe0f Volume eleve - surveille la recuperation'}
+                  {status === 'above_mrv' && `\u2193 Reduis de ${vt.currentSets - vt.mrv} series (au-dessus du MRV)`}
+                </div>
               </div>
             )
           })}
         </div>
+        {/* Global score */}
+        {(() => {
+          const optimal = volumeTargets.filter(vt => {
+            const s = getVolumeStatus(vt.currentSets, vt.mev, vt.mav, vt.mrv)
+            return s === 'productive' || s === 'high'
+          }).length
+          return (
+            <div style={{
+              textAlign: 'center', padding: '8px 0', marginTop: 4,
+              fontSize: '0.78rem', fontWeight: 600,
+              color: optimal >= 8 ? '#4fffb0' : optimal >= 5 ? 'var(--accent-gold)' : 'var(--accent-red)',
+            }}>
+              Volume productif : {optimal}/{volumeTargets.length} muscles dans la zone optimale
+            </div>
+          )
+        })()}
       </section>
     )
   }

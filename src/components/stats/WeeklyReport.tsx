@@ -4,6 +4,20 @@ import { getTotalVolume, getStreak, daysAgoIso, getExerciseById } from '../../li
 import { ShareButton } from '../tools/ShareCard'
 import type { WorkoutLog } from '../../types'
 
+function getWeekWorkouts(workouts: WorkoutLog[], weeksAgo: number): WorkoutLog[] {
+  const today = new Date()
+  today.setDate(today.getDate() - weeksAgo * 7)
+  const dayOfWeek = today.getDay()
+  const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek
+  const monday = new Date(today)
+  monday.setDate(today.getDate() + mondayOffset)
+  const sunday = new Date(monday)
+  sunday.setDate(monday.getDate() + 6)
+  const monStr = `${monday.getFullYear()}-${String(monday.getMonth() + 1).padStart(2, '0')}-${String(monday.getDate()).padStart(2, '0')}`
+  const sunStr = `${sunday.getFullYear()}-${String(sunday.getMonth() + 1).padStart(2, '0')}-${String(sunday.getDate()).padStart(2, '0')}`
+  return workouts.filter(w => (w.date ?? '') >= monStr && (w.date ?? '') <= sunStr)
+}
+
 function getThisWeekWorkouts(workouts: WorkoutLog[]): WorkoutLog[] {
   const today = new Date()
   const dayOfWeek = today.getDay()

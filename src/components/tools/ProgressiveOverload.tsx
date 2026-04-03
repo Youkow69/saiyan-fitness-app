@@ -108,7 +108,7 @@ function getSuggestions(
       reason = `${last.reps} reps sous la cible -- reduis`
       trend = 'down'
     } else {
-      reason = 'Continue a ce poids'
+      reason = `${last.reps} reps @ RIR ${last.rir} \u2014 progresse bien, essaie +1 rep avant d'augmenter le poids`
     }
 
     return {

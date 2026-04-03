@@ -44,7 +44,7 @@ const injuryOptions = [
 const toggle = (arr: string[], item: string) =>
   arr.includes(item) ? arr.filter((x) => x !== item) : [...arr, item]
 
-const TOTAL_STEPS = 4
+const TOTAL_STEPS = 5
 
 interface OnboardingViewProps {
   onComplete: (profile: UserProfile, answers: OnboardingAnswers) => void
@@ -542,6 +542,90 @@ export const OnboardingView: React.FC<OnboardingViewProps> = React.memo(
                 type="button"
               >
                 D\u00E9marrer la premi\u00E8re Saga
+              </button>
+            </div>
+          </section>
+        )}
+
+        {step === 5 && (
+          <section className="panel stack-lg">
+            <div className="choice-group">
+              <span className="field-title">Cardio actuel</span>
+              <div className="chip-row">
+                {([
+                  ['none', 'Aucun'],
+                  ['light', 'L\u00e9ger'],
+                  ['moderate', 'Mod\u00e9r\u00e9'],
+                  ['intense', 'Intense'],
+                ] as const).map(([v, l]) => (
+                  <button
+                    key={v}
+                    className={`chip ${answers.currentCardio === v ? 'chip--active' : ''}`}
+                    onClick={() => setAnswers({ ...answers, currentCardio: v })}
+                    type="button"
+                  >
+                    {l}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="choice-group">
+              <span className="field-title">Niveau de stress</span>
+              <div className="chip-row">
+                {([
+                  ['low', 'Faible'],
+                  ['moderate', 'Mod\u00e9r\u00e9'],
+                  ['high', '\u00c9lev\u00e9'],
+                  ['very_high', 'Tr\u00e8s \u00e9lev\u00e9'],
+                ] as const).map(([v, l]) => (
+                  <button
+                    key={v}
+                    className={`chip ${answers.stressLevel === v ? 'chip--active' : ''}`}
+                    onClick={() => setAnswers({ ...answers, stressLevel: v })}
+                    type="button"
+                  >
+                    {l}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="choice-group">
+              <span className="field-title">Style de motivation</span>
+              <div className="chip-row">
+                {([
+                  ['data', 'Data/Stats'],
+                  ['community', 'Communaut\u00e9'],
+                  ['aesthetics', 'Esth\u00e9tique'],
+                  ['performance', 'Performance'],
+                  ['health', 'Sant\u00e9'],
+                ] as const).map(([v, l]) => (
+                  <button
+                    key={v}
+                    className={`chip ${answers.motivationStyle === v ? 'chip--active' : ''}`}
+                    onClick={() => setAnswers({ ...answers, motivationStyle: v })}
+                    type="button"
+                  >
+                    {l}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div style={{ display: 'flex', gap: 10 }}>
+              <button
+                className="ghost-btn"
+                style={{ flex: 1 }}
+                onClick={() => setStep(4)}
+                type="button"
+              >
+                Retour
+              </button>
+              <button
+                className="primary-btn"
+                style={{ flex: 2 }}
+                onClick={() => onComplete(draft, answers)}
+                type="button"
+              >
+                D\u00e9marrer la premi\u00e8re Saga
               </button>
             </div>
           </section>

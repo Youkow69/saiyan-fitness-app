@@ -28,8 +28,11 @@ export function WeeklyReport() {
     // Muscles worked this week
     const musclesWorked = new Set<string>()
     weekWorkouts.forEach(w => w.exercises.forEach(e => {
-      // We'd need getExerciseById here but can skip for now
-      musclesWorked.add(e.exerciseId)
+      const def = getExerciseById(e.exerciseId)
+      if (def) {
+        def.primaryMuscles.forEach(m => musclesWorked.add(m))
+        def.secondaryMuscles.forEach(m => musclesWorked.add(m))
+      }
     }))
 
     // Avg daily calories this week

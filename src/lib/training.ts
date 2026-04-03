@@ -1,6 +1,6 @@
 // ── Training Logic ──────────────────────────────────────────────────────────
 
-import type { AppState, MuscleGroup, MuscleVolumeTarget, WorkoutLog, WorkoutDraft, LoggedExercise, ProgramExercise } from '../types'
+import type { AppState, MuscleGroup, SessionFeedback, MuscleVolumeTarget, WorkoutLog, WorkoutDraft, LoggedExercise, ProgramExercise } from '../types'
 import { startOfWeekIso } from './dates'
 import { getExerciseById } from './utils'
 import { allExercises } from '../data/exercises'
@@ -140,7 +140,7 @@ export function getVolumeByMuscle(workouts: WorkoutLog[]) {
 // ── FEAT-F5: Generation intelligente de seance basee sur la fatigue ──────────
 
 /** Calcule la fatigue par groupe musculaire sur les 7 derniers jours (0-100%). */
-export function getFatigueByMuscle(workouts: WorkoutLog[]): Map<string, number> {
+export function getFatigueByMuscle(workouts: WorkoutLog[], sessionFeedback?: SessionFeedback[]): Map<string, number> {
   const now = Date.now()
   const SEVEN_DAYS = 7 * 24 * 60 * 60 * 1000
   const recentWorkouts = workouts.filter(w => {

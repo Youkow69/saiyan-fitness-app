@@ -71,7 +71,7 @@ export function RPETrendChart() {
           borderRadius: 8, padding: '6px 10px', marginBottom: 8,
           fontSize: '0.72rem', color: '#ef4444', fontWeight: 600,
         }}>
-          Fatigue critique ! RPE moyen > 9 sur 3 seances. Envisage un deload.
+          Fatigue critique ! RPE moyen {'>'} 9 sur 3 seances. Envisage un deload.
         </div>
       )}
 

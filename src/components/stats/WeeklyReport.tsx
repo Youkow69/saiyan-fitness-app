@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { useAppState } from '../../context/AppContext'
-import { getTotalVolume, getStreak, daysAgoIso } from '../../lib'
+import { getTotalVolume, getStreak, daysAgoIso, getExerciseById } from '../../lib'
 import { ShareButton } from '../tools/ShareCard'
 import type { WorkoutLog } from '../../types'
 
@@ -49,7 +49,7 @@ export function WeeklyReport() {
       duration: totalDuration,
       streak,
       prs: 0,
-      exercises: musclesWorked.size,
+      muscleCount: musclesWorked.size,
       avgCalories: avgCal,
     }
   }, [state.workouts, state.foodEntries])

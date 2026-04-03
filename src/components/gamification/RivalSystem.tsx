@@ -93,12 +93,9 @@ export function RivalSystem() {
   const streak = useMemo(() => getStreak(state), [state])
 
   // Determine if user has been active recently
-  const userIsActive = streak > 0 || (() => {
-    if (state.workouts.length === 0) return false
-    const lastWorkout = state.workouts[state.workouts.length - 1]
-    const daysSince = daysBetween(lastWorkout.date, todayISO())
-    return daysSince <= INACTIVE_THRESHOLD_DAYS
-  })()
+  const hasRecentWorkout = state.workouts.length > 0
+    && daysBetween(state.workouts[state.workouts.length - 1].date, todayISO()) <= INACTIVE_THRESHOLD_DAYS
+  const userIsActive = streak > 0 || hasRecentWorkout
 
   // Initialize rival on first use
   const initRival = useCallback(() => {

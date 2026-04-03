@@ -11,6 +11,7 @@ import {
   todayIso,
 } from '../../lib'
 import { getDeloadAdvice } from '../../lib/progression'
+import { DAILY_QUESTS } from '../../lib/gamification'
 import { WeeklyReport } from '../stats/WeeklyReport'
 import { MonthlyRecap } from '../stats/MonthlyRecap'
 import { DailyQuote } from '../gamification/MotivationalQuotes'
@@ -83,7 +84,7 @@ export const HomeView: React.FC<HomeViewProps> = React.memo(
           display: 'flex', flexDirection: 'column', gap: 6,
         }}>
           {[
-            { id: 'quests', icon: '🎯', label: questsDone + '/8' },
+            { id: 'quests', icon: '🎯', label: questsDone + '/' + DAILY_QUESTS.length },
             { id: 'recovery', icon: '💚', label: '' },
             { id: 'stats', icon: '📊', label: '' },
           ].map((pill) => (

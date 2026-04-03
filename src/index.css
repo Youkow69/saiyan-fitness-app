@@ -76,7 +76,7 @@
 
 [data-theme="light"] {
   /* Backgrounds */
-  --bg: #f5f5fa;
+  --bg: #FFF8F0;
   --bg-card: #ffffff;
   --bg-elev: #ffffff;
   --panel: rgba(255, 255, 255, 0.95);
@@ -127,7 +127,7 @@
   --carbs: #2563eb;
   --fat: #d97706;
 
-  background: #f5f5fa;
+  background: #FFF8F0;
 }
 
 /* ── Light mode: card & panel backgrounds ──────────────────────────────── */

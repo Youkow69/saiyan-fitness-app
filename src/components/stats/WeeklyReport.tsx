@@ -59,6 +59,12 @@ export function WeeklyReport() {
     }
     const avgCal = daysTracked > 0 ? Math.round(totalCal / daysTracked) : 0
 
+    // S-1 comparison
+    const prevWeekWorkouts = getWeekWorkouts(state.workouts, 1)
+    const prevVolume = getTotalVolume(prevWeekWorkouts)
+    const prevSets = prevWeekWorkouts.reduce((t: number, w: WorkoutLog) => t + w.exercises.reduce((s: number, e) => s + e.sets.length, 0), 0)
+    const prevSessions = prevWeekWorkouts.length
+
     return {
       sessions: weekWorkouts.length,
       volume: weekVolume,

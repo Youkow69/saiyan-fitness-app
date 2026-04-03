@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react'
 import type { TabId } from '../../types'
-import { IconHome, IconDumbbell, IconBowl, IconChart, IconCoach, IconUser } from '../ui/Icons'
+import { IconHome, IconDumbbell, IconBowl, IconChart, IconFlame, IconCoach, IconUser } from '../ui/Icons'
 
 interface BottomNavProps {
   tab: TabId
@@ -8,7 +8,7 @@ interface BottomNavProps {
   restTimer: number
 }
 
-const TAB_IDS: TabId[] = ['home', 'train', 'nutrition', 'scouter', 'coach', 'profile']
+const TAB_IDS: TabId[] = ['home', 'train', 'nutrition', 'scouter', 'feed', 'coach', 'profile']
 
 const items: Array<{
   id: TabId
@@ -20,6 +20,7 @@ const items: Array<{
   { id: 'train', icon: IconDumbbell, label: 'Training', ariaLabel: 'Entraînement' },
   { id: 'nutrition', icon: IconBowl, label: 'Nutrition', ariaLabel: 'Nutrition' },
   { id: 'scouter', icon: IconChart, label: 'Stats', ariaLabel: 'Statistiques' },
+  { id: 'feed', icon: IconFlame, label: 'Ar\u00e8ne', ariaLabel: 'Ar\u00e8ne sociale' },
   { id: 'coach', icon: IconCoach, label: 'Coach', ariaLabel: 'Coach IA' },
     { id: 'profile', icon: IconUser, label: 'Profil', ariaLabel: 'Profil' },
 ]

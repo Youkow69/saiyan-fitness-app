@@ -74,6 +74,9 @@ export function WeeklyReport() {
       prs: 0,
       muscleCount: musclesWorked.size,
       avgCalories: avgCal,
+      prevSessions,
+      prevVolume,
+      prevSets,
     }
   }, [state.workouts, state.foodEntries])
 
@@ -113,6 +116,28 @@ export function WeeklyReport() {
           </div>
         ))}
       </div>
+      {/* vs Semaine precedente */}
+      {report.prevSessions > 0 && (
+        <div style={{ marginTop: 10, padding: '8px 12px', background: 'rgba(255,255,255,0.02)', borderRadius: 10, border: '1px solid var(--border)' }}>
+          <div style={{ fontSize: '0.68rem', color: 'var(--muted)', fontWeight: 600, marginBottom: 4 }}>vs Semaine precedente</div>
+          <div style={{ display: 'flex', gap: 12, fontSize: '0.72rem', flexWrap: 'wrap' }}>
+            {[
+              { label: 'Seances', curr: report.sessions, prev: report.prevSessions },
+              { label: 'Volume', curr: report.volume, prev: report.prevVolume },
+              { label: 'Series', curr: report.sets, prev: report.prevSets },
+            ].map(d => {
+              const pct = d.prev > 0 ? Math.round(((d.curr - d.prev) / d.prev) * 100) : 0
+              const color = pct > 0 ? '#22c55e' : pct < 0 ? '#ef4444' : 'var(--muted)'
+              const arrow = pct > 0 ? '\u2191' : pct < 0 ? '\u2193' : '='
+              return (
+                <span key={d.label} style={{ color }}>
+                  {arrow} {d.label}: {pct > 0 ? '+' : ''}{pct}%
+                </span>
+              )
+            })}
+          </div>
+        </div>
+      )}
     </div>
   )
 }

@@ -172,6 +172,27 @@ export function getFatigueByMuscle(workouts: WorkoutLog[], sessionFeedback?: Ses
     })
   })
 
+
+  // FEAT-F4: Boost fatigue from session feedback (soreness/pain/performance)
+  if (sessionFeedback && sessionFeedback.length > 0) {
+    const recent = sessionFeedback.slice(-3)
+    recent.forEach(fb => {
+      fb.muscleGroups.forEach(mg => {
+        const key = mg.muscle
+        if (mg.soreness > 3) {
+          const boost = (mg.soreness - 3) * 8
+          fatigue.set(key, Math.min(100, (fatigue.get(key) ?? 0) + boost))
+        }
+        if (mg.performance === 'worse') {
+          fatigue.set(key, Math.min(100, (fatigue.get(key) ?? 0) + 10))
+        }
+        if (mg.jointPain) {
+          fatigue.set(key, Math.min(100, (fatigue.get(key) ?? 0) + 20))
+        }
+      })
+    })
+  }
+
   return fatigue
 }
 

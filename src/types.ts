@@ -145,6 +145,7 @@ export interface WorkoutLog {
   exercises: LoggedExercise[]
   durationMinutes: number
   notes?: string
+  finishedAt?: number
 }
 
 export interface WorkoutDraft {

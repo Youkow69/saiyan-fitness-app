@@ -117,7 +117,7 @@ function appReducer(state: AppState, action: Action): AppState {
       return {
         ...state,
         activeWorkout: {
-          ...state.activeWorkout,
+          ...state.activeWorkout, ...(finishedAt ? { finishedAt } : {}),
           exercises: state.activeWorkout.exercises.map((e) =>
             e.exerciseId === exerciseId
               ? {
@@ -143,6 +143,7 @@ function appReducer(state: AppState, action: Action): AppState {
     }
 
     case 'FINISH_WORKOUT': {
+      const finishedAt = (action as any).finishedAt as number | undefined
       if (!state.activeWorkout) return state
       const hasAnySets = state.activeWorkout.exercises.some(e => e.sets.length > 0)
       if (!hasAnySets) return state

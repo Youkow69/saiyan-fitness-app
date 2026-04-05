@@ -70,26 +70,30 @@ export function getPowerLevel(state: AppState) {
   )
 }
 
-/** RP-style auto-deload detection from session feedback. */
+/** BUG-F9: Thin wrapper - unified deload detection via evaluateFatigueStatus. */
 export function shouldDeload(state: AppState): boolean {
-  const recentFeedback = (state.sessionFeedback ?? []).slice(-4)
-  if (recentFeedback.length < DELOAD_MIN_SESSIONS) return false
-
-  const avgWorseCount = recentFeedback.reduce((sum, fb) => {
-    const worse = fb.muscleGroups.filter(m => m.performance === 'worse').length
-    return sum + worse
-  }, 0) / recentFeedback.length
-
-  const avgSoreness = recentFeedback.reduce((sum, fb) => {
-    const total = fb.muscleGroups.reduce((s, m) => s + m.soreness, 0)
-    return sum + total / Math.max(1, fb.muscleGroups.length)
-  }, 0) / recentFeedback.length
-
-  return avgWorseCount > DELOAD_WORSE_THRESHOLD || avgSoreness > DELOAD_SORENESS_THRESHOLD
+  const feedbacks = (state.sessionFeedback ?? []).map(fb => ({
+    soreness: fb.muscleGroups.reduce((s, m) => s + m.soreness, 0) / Math.max(1, fb.muscleGroups.length),
+    performance: fb.muscleGroups.filter(m => m.performance === 'worse').length >= 2 ? 2 : 3,
+    pump: fb.muscleGroups.reduce((s, m) => s + m.pump, 0) / Math.max(1, fb.muscleGroups.length),
+  }))
+  return evaluateFatigueStatus({ workouts: state.workouts, feedbacks }).shouldDeload
 }
 
-/** Enhanced deload detection: RPE-based + PR stagnation. */
+/** BUG-F9: Thin wrapper - unified deload advice via evaluateFatigueStatus. */
 export function getDeloadAdvice(state: AppState): { needed: boolean; reason: string; suggestion: string } | null {
+  const feedbacks = (state.sessionFeedback ?? []).map(fb => ({
+    soreness: fb.muscleGroups.reduce((s, m) => s + m.soreness, 0) / Math.max(1, fb.muscleGroups.length),
+    performance: fb.muscleGroups.filter(m => m.performance === 'worse').length >= 2 ? 2 : 3,
+    pump: fb.muscleGroups.reduce((s, m) => s + m.pump, 0) / Math.max(1, fb.muscleGroups.length),
+  }))
+  const fatigue = evaluateFatigueStatus({ workouts: state.workouts, feedbacks })
+  if (!fatigue.shouldDeload) return null
+  const suggestion = fatigue.severity === 'high'
+    ? 'Reduis le volume de 40% cette semaine. Senzu Bean obligatoire !'
+    : 'Reduis le volume de 20-30% cette semaine. Un deload strategique accelerera ta progression.'
+  return { needed: true, reason: fatigue.reason || 'Signaux de fatigue detectes', suggestion }
+} | null {
   const recent = state.workouts.slice(-6)
   if (recent.length < 3) return null
 

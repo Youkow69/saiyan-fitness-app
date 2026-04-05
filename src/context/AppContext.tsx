@@ -44,6 +44,8 @@ type Action =
   | { type: 'ABANDON_WORKOUT' }
   | { type: 'ADD_CUSTOM_FOOD'; payload: Food }
   | { type: 'DELETE_CUSTOM_FOOD'; payload: string }
+  | { type: 'ACTIVATE_DELOAD' }
+  | { type: 'DISMISS_DELOAD' }
   | { type: 'RESET_ACCOUNT' }
 
 // ── Default state ─────────────────────────────────────────────────────────────
@@ -172,6 +174,12 @@ function appReducer(state: AppState, action: Action): AppState {
       return { ...state, customFoods: (state.customFoods || []).filter(f => f.id !== action.payload) }
     }
 
+    case 'ACTIVATE_DELOAD': {
+      return { ...state, deloadActive: true, deloadActivatedAt: Date.now() }
+    }
+    case 'DISMISS_DELOAD': {
+      return { ...state, deloadActive: false }
+    }
     case 'RESET_ACCOUNT': {
       // Clear all localStorage
       try {

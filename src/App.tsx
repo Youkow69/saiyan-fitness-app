@@ -450,6 +450,7 @@ function AppInner({ user, pushToCloud, pullFromCloud, syncSteps, signOut }: AppI
           (Date.now() - new Date(activeWorkout.startedAt).getTime()) / 60000
         )
       ),
+      finishedAt: Date.now(),
     }
 
     dispatch({

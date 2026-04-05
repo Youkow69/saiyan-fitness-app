@@ -226,7 +226,32 @@ export const HomeView: React.FC<HomeViewProps> = React.memo(
               <strong style={{ color: 'var(--accent-red)', fontSize: '0.85rem' }}>Senzu Bean recommandé !</strong>
             </div>
             <p style={{ color: 'var(--text)', fontSize: '0.78rem', margin: '0 0 4px' }}>{deloadAdvice.reason}</p>
-            <p style={{ color: 'var(--muted)', fontSize: '0.72rem', margin: 0 }}>{deloadAdvice.suggestion}</p>
+            <p style={{ color: 'var(--muted)', fontSize: '0.72rem', margin: '0 0 10px' }}>{deloadAdvice.suggestion}</p>
+            <div style={{ display: 'flex', gap: 8 }}>
+              <button
+                type="button"
+                onClick={() => dispatch({ type: 'ACTIVATE_DELOAD' })}
+                style={{
+                  flex: 2, padding: '10px 14px', borderRadius: 10, border: 'none',
+                  background: 'linear-gradient(135deg, #22c55e, #16a34a)',
+                  color: '#fff', fontWeight: 700, fontSize: '0.82rem', cursor: 'pointer',
+                }}
+                aria-label="Activer le Deload Senzu Bean"
+              >
+                Activer Deload
+              </button>
+              <button
+                type="button"
+                onClick={() => dispatch({ type: 'DISMISS_DELOAD' })}
+                style={{
+                  flex: 1, padding: '10px', borderRadius: 10,
+                  border: '1px solid var(--border)', background: 'transparent',
+                  color: 'var(--muted)', fontWeight: 500, fontSize: '0.78rem', cursor: 'pointer',
+                }}
+              >
+                Ignorer
+              </button>
+            </div>
           </div>
         )}
 

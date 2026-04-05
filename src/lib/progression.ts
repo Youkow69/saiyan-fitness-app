@@ -93,64 +93,6 @@ export function getDeloadAdvice(state: AppState): { needed: boolean; reason: str
     ? 'Reduis le volume de 40% cette semaine. Senzu Bean obligatoire !'
     : 'Reduis le volume de 20-30% cette semaine. Un deload strategique accelerera ta progression.'
   return { needed: true, reason: fatigue.reason || 'Signaux de fatigue detectes', suggestion }
-} | null {
-  const recent = state.workouts.slice(-6)
-  if (recent.length < 3) return null
-
-  // Check average RIR across last 3 sessions (low RIR = high RPE)
-  const last3 = recent.slice(-3)
-  let totalRir = 0
-  let totalSets = 0
-  for (const w of last3) {
-    for (const ex of w.exercises) {
-      for (const s of ex.sets) {
-        if (s.setType === 'normal' || s.setType === 'top') {
-          totalRir += s.rir
-          totalSets++
-        }
-      }
-    }
-  }
-  const avgRir = totalSets > 0 ? totalRir / totalSets : 2
-  const avgRpe = 10 - avgRir
-
-  // Check PR stagnation: 3+ consecutive sessions without any PR
-  const bestByExercise = new Map<string, number>()
-  let sessionsWithoutPR = 0
-  const sorted = [...state.workouts].sort((a, b) => a.date.localeCompare(b.date))
-  for (const w of sorted) {
-    let hasPR = false
-    for (const ex of w.exercises) {
-      for (const s of ex.sets) {
-        const e1rm = estimate1Rm(s.weightKg, s.reps)
-        const prev = bestByExercise.get(ex.exerciseId) || 0
-        if (e1rm > prev) {
-          if (prev > 0) hasPR = true
-          bestByExercise.set(ex.exerciseId, e1rm)
-        }
-      }
-    }
-    if (hasPR) sessionsWithoutPR = 0
-    else sessionsWithoutPR++
-  }
-
-  if (avgRpe >= 9 && totalSets > 5) {
-    return {
-      needed: true,
-      reason: 'RPE moyen de ' + avgRpe.toFixed(1) + ' sur tes 3 dernieres seances',
-      suggestion: 'Reduis le volume de 40% cette semaine. Senzu Bean recommande !',
-    }
-  }
-
-  if (sessionsWithoutPR >= 3 && avgRpe >= 8) {
-    return {
-      needed: true,
-      reason: sessionsWithoutPR + ' seances sans nouveau PR',
-      suggestion: 'Ton corps a besoin de recuperer pour progresser. Deload strategique !',
-    }
-  }
-
-  return null
 }
 
 /** Mesocycle status derived from workout history + feedback. */

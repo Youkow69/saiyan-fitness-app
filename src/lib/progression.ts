@@ -13,9 +13,6 @@ const POWER_PER_BODYWEIGHT  = 30
 const POWER_PROTEIN_BONUS   = 150
 const PROTEIN_HIT_THRESHOLD = 0.9
 
-const DELOAD_WORSE_THRESHOLD   = 1.5
-const DELOAD_SORENESS_THRESHOLD = 3.5
-const DELOAD_MIN_SESSIONS       = 3
 
 /** Counts personal records across workout history. */
 export function countPRs(state: AppState): number {

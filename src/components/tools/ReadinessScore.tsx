@@ -120,8 +120,11 @@ function computeReadiness(state: any): ReadinessResult {
   let recoveryDetail = "Pas d'entrainement recent"
 
   if (lastWorkout) {
-    const hoursSince =
-      (Date.now() - new Date(lastWorkout.date + 'T12:00:00').getTime()) / 3_600_000
+    // BUG-F13: Use finishedAt timestamp if available, else fallback to date noon
+    const workoutTs = (lastWorkout as any).finishedAt
+      ? (lastWorkout as any).finishedAt
+      : new Date(lastWorkout.date + 'T12:00:00').getTime()
+    const hoursSince = (Date.now() - workoutTs) / 3_600_000
 
     if (hoursSince < 12) recoveryScore = 5
     else if (hoursSince < 24) recoveryScore = 12

@@ -454,6 +454,7 @@ function AppInner({ user, pushToCloud, pullFromCloud, syncSteps, signOut }: AppI
 
     dispatch({
       type: 'FINISH_WORKOUT',
+      finishedAt: Date.now(),
       payload: { workout, isCustom },
     })
     setRestTimer(0)

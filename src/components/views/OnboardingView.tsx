@@ -538,10 +538,10 @@ export const OnboardingView: React.FC<OnboardingViewProps> = React.memo(
               <button
                 className="primary-btn"
                 style={{ flex: 2 }}
-                onClick={() => onComplete(draft, answers)}
+                onClick={() => setStep(5)}
                 type="button"
               >
-                D\u00E9marrer la premi\u00E8re Saga
+                Suivant
               </button>
             </div>
           </section>

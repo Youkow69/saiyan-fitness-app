@@ -46,6 +46,10 @@ export function RecoveryMap() {
         for (const m of def?.primaryMuscles ?? []) {
           if (!lastHit[m] || ts > lastHit[m]) lastHit[m] = ts
         }
+        // BUG-F14: Include secondary muscles
+        for (const m of def?.secondaryMuscles ?? []) {
+          if (!lastHit[m] || ts > lastHit[m]) lastHit[m] = ts
+        }
       }
     }
 

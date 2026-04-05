@@ -324,6 +324,8 @@ export interface CustomRoutine {
 
 export interface AppState {
   schemaVersion?: number
+  deloadActive?: boolean
+  deloadActivatedAt?: number
   profile: UserProfile | null
   targets: GoalTargets | null
   selectedProgramId: string | null

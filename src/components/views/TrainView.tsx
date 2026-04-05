@@ -324,9 +324,11 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
               onClick={() => {
                 const routine: CustomRoutine = { id: editingRoutineId || makeId('cr'), name: routineName.trim(), exercises: routineExercises }
                 if (editingRoutineId) {
-                  dispatch({ type: 'DELETE_CUSTOM_ROUTINE', payload: editingRoutineId })
+                  // BUG-F4: Preserve routine ID on edit via UPDATE action
+                  dispatch({ type: 'UPDATE_CUSTOM_ROUTINE', payload: { id: editingRoutineId, routine } })
+                } else {
+                  dispatch({ type: 'ADD_CUSTOM_ROUTINE', payload: routine })
                 }
-                dispatch({ type: 'ADD_CUSTOM_ROUTINE', payload: routine })
                 showToast(`Routine "${routine.name}" creee`, 'success')
                 setCreatingRoutine(false); setEditingRoutineId(null); setRoutineName(''); setRoutineExercises([]); setExerciseSearch('')
               }}>

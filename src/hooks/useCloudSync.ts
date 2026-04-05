@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { supabase } from '../supabase'
 import type { AppState } from '../types'
 
@@ -18,6 +18,16 @@ export function useCloudSync(user: any) {
   const [syncStatus, setSyncStatus] = useState<SyncStatus>({
     state: 'idle', lastSyncedAt: null, error: null, retryCount: 0 as number,
   })
+
+  // BUG-F3: cleanup retry timeout on unmount to prevent leaks
+  useEffect(() => {
+    return () => {
+      if (retryTimeoutRef.current) {
+        clearTimeout(retryTimeoutRef.current)
+        retryTimeoutRef.current = undefined
+      }
+    }
+  }, [])
 
   // Upload local state to cloud with retry logic
   const pushToCloud = useCallback(async (state: AppState) => {

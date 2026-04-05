@@ -154,6 +154,29 @@ function computeReadiness(state: any): ReadinessResult {
     detail: `${last7Workouts} séance${last7Workouts > 1 ? 's' : ''} cette semaine`,
   })
 
+  // ---- 6. Nutrition (0-15 pts) ----
+  let nutritionScore = 0
+  let nutritionDetail = 'Pas de donnees nutrition'
+  try {
+    const targets = (state as any).targets
+    const foodEntries: any[] = (state as any).foodEntries || []
+    if (targets && targets.calories > 0) {
+      const yd = new Date()
+      yd.setDate(yd.getDate() - 1)
+      const yIso = yd.toISOString().slice(0, 10)
+      const yEntries = foodEntries.filter((f) => f.date === yIso)
+      const yCal = yEntries.reduce((s, f) => s + (f.calories || 0), 0)
+      const yProt = yEntries.reduce((s, f) => s + (f.protein || 0), 0)
+      const calPct = yCal / targets.calories
+      const protPct = targets.protein > 0 ? yProt / targets.protein : 1
+      if (calPct >= 0.85 && protPct >= 0.85) nutritionScore = 15
+      else if (calPct >= 0.7 && protPct >= 0.7) nutritionScore = 10
+      else if (calPct >= 0.5) nutritionScore = 5
+      nutritionDetail = 'Hier: ' + Math.round(calPct * 100) + '% cal, ' + Math.round(protPct * 100) + '% prot'
+    }
+  } catch { /* no data */ }
+  components.push({ name: 'Nutrition', score: nutritionScore, maxScore: 15, detail: nutritionDetail })
+
   // ---- Aggregate ----
   const totalScore = components.reduce((sum, c) => sum + c.score, 0)
 

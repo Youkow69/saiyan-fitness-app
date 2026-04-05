@@ -119,7 +119,7 @@ function appReducer(state: AppState, action: Action): AppState {
       return {
         ...state,
         activeWorkout: {
-          ...state.activeWorkout, ...(finishedAt ? { finishedAt } : {}),
+          ...state.activeWorkout,
           exercises: state.activeWorkout.exercises.map((e) =>
             e.exerciseId === exerciseId
               ? {

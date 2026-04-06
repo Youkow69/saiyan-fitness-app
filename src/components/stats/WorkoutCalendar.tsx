@@ -103,7 +103,7 @@ export function WorkoutCalendar({ workouts }: { workouts: CalendarWorkoutLog[] }
 
   const todayStr = todayIso()
 
-  return (
+  return (<>
     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
         <button type='button' onClick={() => setMonthOffset(o => o + 3)} style={{ background: 'none', border: 'none', color: 'var(--accent)', fontSize: '1.2rem', cursor: 'pointer', padding: '4px 8px' }}>
           {'\u25C0'}
@@ -337,5 +337,7 @@ export function WorkoutCalendar({ workouts }: { workouts: CalendarWorkoutLog[] }
         </div>
       )}
     </div>
+      </>
+    </>
   )
 }

@@ -2,7 +2,6 @@
 // Side-by-side comparison of progress photos
 
 import { useState } from 'react'
-import { useAppState } from '../../context/AppContext'
 
 interface Photo {
   date: string
@@ -19,7 +18,6 @@ const CATEGORIES = [
 ]
 
 export function ProgressPhotoCompare() {
-  const { state } = useAppState()
   const [selectedCategory, setSelectedCategory] = useState<string>('front')
   const [beforeIdx, setBeforeIdx] = useState(0)
   const [afterIdx, setAfterIdx] = useState(-1)

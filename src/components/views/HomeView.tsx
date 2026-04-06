@@ -20,6 +20,7 @@ import { RecoveryMap } from '../tools/RecoveryMap'
 import { ReadinessScore } from '../tools/ReadinessScore'
 import { WeeklyNutritionReport } from '../tools/WeeklyNutritionReport'
 import { DailySummaryWidget } from '../tools/DailySummaryWidget'
+import { AdaptiveMacroReport } from '../tools/AdaptiveMacroReport'
 
 interface HomeViewProps {
   onStartWorkout: () => void
@@ -257,6 +258,7 @@ export const HomeView: React.FC<HomeViewProps> = React.memo(
 
               {/* Daily Summary Widget */}
       <DailySummaryWidget />
+        {new Date().getDay() === 0 && <AdaptiveMacroReport />}
 
       {/* 3. CTA button */}
         <button

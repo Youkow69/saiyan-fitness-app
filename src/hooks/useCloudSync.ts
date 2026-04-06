@@ -55,7 +55,7 @@ export function useCloudSync(user: any) {
       setSyncStatus(s => {
         const retries = s.retryCount + 1
         if (retries <= MAX_RETRIES) {
-          retryTimeoutRef.current = setTimeout(() => { if (!user) return; pushToCloud(state) }, RETRY_DELAYS[retries - 1] || 30000)
+          // Retry removed: periodic sync handles retransmission to avoid stale state closure
         }
         return { state: 'error', lastSyncedAt: s.lastSyncedAt, error: msg, retryCount: retries }
       })

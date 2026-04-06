@@ -720,7 +720,7 @@ export function InlineSetLogger({ exerciseId, target, onSetAdded }: Props) {
             fontSize: '0.7rem', cursor: 'pointer',
           }}
         >
-          {'🏋️'} Plaques
+          {String.fromCodePoint(0x1F3CB)} Plaques
         </button>
         <button
           type="button"
@@ -735,14 +735,14 @@ export function InlineSetLogger({ exerciseId, target, onSetAdded }: Props) {
           {'🎬'} Démo
         </button>
       </div>
-      {showPlates && (
+      {showPlates && (<>
         <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
           <button type="button" onClick={() => setShowPlateCalc(p => !p)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '1rem', padding: 2 }} aria-label="Calculateur de plaques">
             {showPlateCalc ? '\u2716' : '\U0001f3cb\ufe0f'}
           </button>
         </div>
         {showPlateCalc && <MiniPlateCalc weight={parseFloat(draft.weight) || 0} />}
-      )}
+      </>)}
       {showDemo && (
         <ExerciseDemo exerciseId={exerciseId} />
       )}

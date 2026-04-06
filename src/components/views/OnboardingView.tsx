@@ -61,6 +61,7 @@ export const OnboardingView: React.FC<OnboardingViewProps> = React.memo(
       'Entra\u00EEnement',
       'Ton corps en d\u00E9tail',
       'Cibles quotidiennes',
+          'Mode de vie',
     ]
 
     const step1Invalid =

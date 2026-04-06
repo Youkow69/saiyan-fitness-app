@@ -34,6 +34,7 @@ import { NutritionView } from './components/views/NutritionView'
 import { CoachView } from './components/views/CoachView'
 import { ScouterView } from './components/views/ScouterView'
 import { ProfileView } from './components/views/ProfileView'
+import { syncToLeaderboard } from './components/stats/Leaderboard'
 import { FeedView } from './components/views/FeedView'
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
@@ -464,7 +465,13 @@ function AppInner({ user, pushToCloud, pullFromCloud, syncSteps, signOut }: AppI
       'success'
     )
 
-    // Push to cloud immediately after finishing a workout
+    
+    // FEAT-F22: Sync leaderboard after workout
+    if (user) {
+      const pl = getPowerLevel(stateRef.current)
+      syncToLeaderboard(user.id, { displayName: stateRef.current.profile?.name || 'Saiyan', powerLevel: pl, weeklyVolume: 0, streak: 0, prCount: 0 }).catch(() => {})
+    }
+// Push to cloud immediately after finishing a workout
     if (user) {
       setTimeout(() => pushToCloud(stateRef.current), 500)
     }

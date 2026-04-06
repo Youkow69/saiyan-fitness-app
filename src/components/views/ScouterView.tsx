@@ -178,7 +178,7 @@ export const ScouterView: React.FC = React.memo(
                 fontWeight: 600, cursor: 'pointer',
               }}
             >
-              {id === 'calendar' ? '�� Calendrier' : id === 'records' ? '�� Records' : id === 'recap' ? '�� Récap' : id === 'volume' ? '�� Volume' : '�� Charts'}
+              {id === 'calendar' ? 'Calendrier' : id === 'records' ? 'Records' : id === 'recap' ? 'Récap' : id === 'volume' ? 'Volume' : 'Charts'}
             </button>
           ))}
         

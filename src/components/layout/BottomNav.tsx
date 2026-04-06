@@ -75,7 +75,7 @@ export const BottomNav: React.FC<BottomNavProps> = React.memo(
                   transform: 'translateX(14px)',
                   background: 'var(--accent-gold)',
                   color: '#000',
-                  fontSize: '0.58rem',
+                  fontSize: 'max(0.7rem, 0.58rem)',
                   fontWeight: 800,
                   borderRadius: 8,
                   padding: '1px 5px',

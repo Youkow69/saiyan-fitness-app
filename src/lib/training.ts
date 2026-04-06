@@ -257,7 +257,7 @@ export function generateSmartWorkout(state: { workouts: WorkoutLog[]; profile?: 
   }))
 
   return {
-    programId: 'smart_generated',
+    programId: 'custom',
     sessionId: 'smart_' + Date.now(),
     startedAt: new Date().toISOString(),
     sessionName: 'Seance intelligente',

@@ -288,32 +288,7 @@ export function PersonalRecords({
 
       {/* Table */}
       <div style={{ overflowX: 'auto' }}>
-        <table
-          style={{
-            width: '100%',
-            borderCollapse: 'collapse',
-            fontSize: 13,
-          }}
-        >
-          <thead>
-            <tr>
-              <th style={headerStyle('name')} onClick={() => handleSort('name')}>
-                Exercice{sortArrow('name')}
-              </th>
-              <th style={headerStyle('weight')} onClick={() => handleSort('weight')}>
-                Meilleur Poids{sortArrow('weight')}
-              </th>
-              <th style={headerStyle('reps')} onClick={() => handleSort('reps')}>
-                Meilleures Reps{sortArrow('reps')}
-              </th>
-              <th style={headerStyle('1rm')} onClick={() => handleSort('1rm')}>
-                1RM estimé{sortArrow('1rm')}
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            
-      {/* e1RM Evolution Chart */}
+        {/* e1RM Evolution Chart */}
       {selectedExercise && e1rmHistory.length > 1 && (
         <div style={{
           background: 'var(--bg-card)', borderRadius: 12, padding: 14,
@@ -365,6 +340,32 @@ export function PersonalRecords({
         </div>
       )}
 
+      <table
+          style={{
+            width: '100%',
+            borderCollapse: 'collapse',
+            fontSize: 13,
+          }}
+        >
+          <thead>
+            <tr>
+              <th style={headerStyle('name')} onClick={() => handleSort('name')}>
+                Exercice{sortArrow('name')}
+              </th>
+              <th style={headerStyle('weight')} onClick={() => handleSort('weight')}>
+                Meilleur Poids{sortArrow('weight')}
+              </th>
+              <th style={headerStyle('reps')} onClick={() => handleSort('reps')}>
+                Meilleures Reps{sortArrow('reps')}
+              </th>
+              <th style={headerStyle('1rm')} onClick={() => handleSort('1rm')}>
+                1RM estimé{sortArrow('1rm')}
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            
+      
 {sorted.map((pr) => (
               <tr
                 key={pr.exerciseId}

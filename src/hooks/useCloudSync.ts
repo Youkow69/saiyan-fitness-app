@@ -9,8 +9,6 @@ interface SyncStatus {
   retryCount: number
 }
 
-const MAX_RETRIES = 3
-const RETRY_DELAYS = [5000, 15000, 30000] // exponential backoff
 
 export function useCloudSync(user: any) {
   const syncingRef = useRef(false)
@@ -54,7 +52,6 @@ export function useCloudSync(user: any) {
       const msg = e?.message?.includes('fetch') ? 'Pas de connexion' : (e?.message || 'Erreur sync')
       setSyncStatus(s => {
         const retries = s.retryCount + 1
-        if (retries <= MAX_RETRIES) {
           // Retry removed: periodic sync handles retransmission to avoid stale state closure
         }
         return { state: 'error', lastSyncedAt: s.lastSyncedAt, error: msg, retryCount: retries }

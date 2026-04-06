@@ -4,7 +4,7 @@
 // Honest heuristic, French labels, dark theme, ARIA.
 // =============================================================================
 
-import { useMemo } from 'react'
+import React, { useMemo } from 'react'
 import { useAppState } from '../../context/AppContext'
 import { todayIso, daysAgoIso } from '../../lib'
 
@@ -327,7 +327,7 @@ export function ReadinessScore() {
         <div
           style={{ position: 'relative', width: 80, height: 80, flexShrink: 0 }}
           role="img"
-          aria-label={`Score : ${readiness.score} sur 115`}
+          aria-label={`Score : ${totalWithSubjective} sur 115`}
         >
           <svg
             viewBox="0 0 36 36"

@@ -80,7 +80,7 @@ export function DailySummaryWidget() {
         <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#22c55e' }}>
           {summary.nutrition.calories}
         </div>
-        <div style={{ fontSize: '0.6rem', color: 'var(--text-secondary)' }}>
+        <div style={{ fontSize: 'max(0.75rem, 0.6rem)', color: 'var(--text-secondary)' }}>
           P: {summary.nutrition.protein}g
         </div>
       </div>
@@ -96,7 +96,7 @@ export function DailySummaryWidget() {
             <div style={{ fontSize: '0.82rem', fontWeight: 700, color: '#3b82f6', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               {summary.lastWorkout.sessionName || 'S\u00e9ance'}
             </div>
-            <div style={{ fontSize: '0.6rem', color: 'var(--text-secondary)' }}>
+            <div style={{ fontSize: 'max(0.75rem, 0.6rem)', color: 'var(--text-secondary)' }}>
               {summary.lastWorkout.date}
             </div>
           </>

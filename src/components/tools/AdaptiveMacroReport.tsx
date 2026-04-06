@@ -6,7 +6,7 @@ import { useAppState } from '../../context/AppContext'
 import { getAdaptiveTDEEStatus } from '../../lib'
 
 export function AdaptiveMacroReport() {
-  const { state } = useAppState()
+  const { state, dispatch } = useAppState()
   const [show, setShow] = useState(false)
 
   const tdeeStatus = getAdaptiveTDEEStatus(state)
@@ -110,6 +110,25 @@ export function AdaptiveMacroReport() {
           Nouveaux macros : {newProtein}g P / {newCarbs}g G / {newFat}g L = {newTdee} kcal
         </div>
       </div>
+      <button
+        type="button"
+        onClick={() => {
+          if (state.targets) {
+            dispatch({ type: 'UPDATE_PROFILE', payload: { weightKg: Math.round(avgRecent * 10) / 10 } })
+            // Update targets with new macros
+            const newTargets = { ...state.targets, calories: newTdee, protein: newProtein, carbs: newCarbs, fats: newFat }
+            try { localStorage.setItem('sf_targets_override', JSON.stringify(newTargets)) } catch {}
+          }
+          setShow(false)
+        }}
+        style={{
+          width: '100%', padding: '12px', borderRadius: 12, border: 'none',
+          background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)',
+          color: '#fff', fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer',
+        }}
+      >
+        Appliquer les nouveaux macros
+      </button>
     </div>
   )
 }

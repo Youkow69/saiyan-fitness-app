@@ -73,7 +73,7 @@ export function Leaderboard() {
       const { data } = await supabase
         .from('leaderboard')
         .select('*')
-        .order('power_level', { ascending: false })
+        .order(sortBy, { ascending: false })
         .limit(50)
 
       if (data && data.length > 0) {

@@ -571,6 +571,7 @@ function AppInner({ user, pushToCloud, pullFromCloud, syncSteps, signOut }: AppI
           onFinishWorkout={finishWorkout}
           restTimer={restTimer}
           onSkipTimer={() => setRestTimer(0)}
+          onSetRestTimer={(s: number) => setRestTimer(s)}
         />
       )}
       {tab === 'nutrition' && <NutritionView />}

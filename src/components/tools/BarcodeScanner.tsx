@@ -137,6 +137,32 @@ export function BarcodeScanner({ onDetected, onClose }: BarcodeScannerProps) {
         </p>
       )}
 
+      {/* FEAT-F13: Product preview after scan */}
+      {detectedBarcode && (
+        <div style={{ padding: 16, background: 'var(--bg-card)', borderRadius: 12, border: '1px solid var(--border)', marginTop: 12, maxWidth: 400, width: '100%' }}>
+          {loadingProduct && <div style={{ textAlign: 'center', padding: 16, color: 'var(--muted)' }}>Chargement...</div>}
+          {productData && (
+            <div>
+              {productData.image && <img src={productData.image} alt='' style={{ width: 60, height: 60, borderRadius: 8, objectFit: 'cover', marginBottom: 8 }} />}
+              <div style={{ fontWeight: 700, fontSize: '0.85rem', marginBottom: 8 }}>{productData.name}</div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 6, marginBottom: 12 }}>
+                {editMacros && Object.entries({ Kcal: 'cal', Prot: 'prot', Gluc: 'carbs', Lip: 'fat' }).map(([label, key]) => (
+                  <label key={key} style={{ textAlign: 'center' }}>
+                    <div style={{ fontSize: 'max(0.75rem, 0.65rem)', color: 'var(--muted)', marginBottom: 2 }}>{label}</div>
+                    <input type='number' value={(editMacros as any)[key]} onChange={e => setEditMacros(m => m ? { ...m, [key]: Number(e.target.value) } : m)} style={{ width: '100%', padding: 6, borderRadius: 6, border: '1px solid var(--border)', background: 'var(--bg)', color: 'var(--text)', textAlign: 'center', fontSize: '0.82rem' }} />
+                  </label>
+                ))}
+              </div>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <button type='button' onClick={() => { onDetected(detectedBarcode); onClose() }} style={{ flex: 1, padding: 10, borderRadius: 8, border: 'none', background: 'linear-gradient(135deg, #22c55e, #16a34a)', color: '#fff', fontWeight: 700, cursor: 'pointer' }}>Ajouter</button>
+                <button type='button' onClick={() => { setDetectedBarcode(null); setProductData(null); setScanning(true); detectedRef.current = false }} style={{ flex: 1, padding: 10, borderRadius: 8, border: '1px solid var(--border)', background: 'transparent', color: 'var(--text)', fontWeight: 600, cursor: 'pointer' }}>Re-scanner</button>
+              </div>
+            </div>
+          )}
+          {!loadingProduct && !productData && <div style={{ textAlign: 'center', padding: 12, color: 'var(--muted)' }}>Produit non trouve</div>}
+        </div>
+      )}
+
       <button
         onClick={() => { stopCamera(); onClose() }}
         type="button"

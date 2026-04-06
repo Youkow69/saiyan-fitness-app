@@ -337,7 +337,6 @@ export function WorkoutCalendar({ workouts }: { workouts: CalendarWorkoutLog[] }
         </div>
       )}
     </div>
-      </>
     </>
   )
 }

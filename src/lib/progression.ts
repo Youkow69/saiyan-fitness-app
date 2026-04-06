@@ -24,7 +24,7 @@ export function countPRs(state: AppState): number {
       ex.sets.forEach(set => {
         const e1rm = estimate1Rm(set.weightKg, set.reps)
         const prev = bestByExercise.get(ex.exerciseId) ?? 0
-        if (prev === 0 || e1rm > prev) prCount++
+        if (prev > 0 && e1rm > prev) prCount++
         if (e1rm > prev) bestByExercise.set(ex.exerciseId, e1rm)
       })
     })

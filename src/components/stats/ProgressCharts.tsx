@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { useAppState } from '../../context/AppContext'
 
 // Types expected by chart components
 export interface BodyweightEntry {
@@ -161,6 +162,25 @@ export function WeightChart({ entries }: { entries: BodyweightEntry[] }) {
           opacity={0.7}
         />
 
+        {/* FEAT-F12: Target weight line */}
+        {(() => {
+          const ty = inset.top + plotH - ((targetWeight - minW + padding) / (range + padding * 2)) * plotH
+          if (ty >= inset.top && ty <= inset.top + plotH) {
+            return <line x1={inset.left} x2={svgW - inset.right} y1={ty} y2={ty} stroke="#FFD700" strokeDasharray="6 4" strokeWidth={1} opacity={0.6} />
+          }
+          return null
+        })()}
+
+        {/* FEAT-F12: 14-day projection */}
+        {sorted.length >= 14 && (() => {
+          const last14 = sorted.slice(-14)
+          const slope = (last14[last14.length - 1].weight - last14[0].weight) / 14
+          const lastP = points[points.length - 1]
+          const projWeight = sorted[sorted.length - 1].weight + slope * 30
+          const projY = inset.top + plotH - ((projWeight - minW + padding) / (range + padding * 2)) * plotH
+          return <line x1={lastP.x} y1={lastP.y} x2={svgW - inset.right} y2={Math.max(inset.top, Math.min(inset.top + plotH, projY))} stroke="var(--accent)" strokeDasharray="8 6" strokeWidth={1} opacity={0.3} />
+        })()}
+
         {/* Data points */}
         {points.map((p, i) => (
           <circle key={i} cx={p.x} cy={p.y} r={3} fill="#ed8936" stroke="var(--bg-card)" strokeWidth={1.5} />
@@ -186,6 +206,7 @@ export function WeightChart({ entries }: { entries: BodyweightEntry[] }) {
       <div style={{ display: 'flex', gap: 16, justifyContent: 'center', marginTop: 8, fontSize: 11 }}>
         <span style={{ color: 'var(--accent-orange)' }}>-- Poids</span>
         <span style={{ color: 'var(--accent-orange)', opacity: 0.7 }}>--- Moyenne mobile</span>
+        <span style={{ color: '#FFD700' }}>--- Poids cible</span>
       </div>
     </ChartContainer>
   )

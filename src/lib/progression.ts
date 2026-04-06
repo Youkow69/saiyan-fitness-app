@@ -129,7 +129,7 @@ export function evaluateFatigueStatus(state: { workouts: any[]; feedbacks?: any[
   reason: string
   severity: 'low' | 'medium' | 'high'
 } {
-  const feedbacks = (state as any).feedbacks || []
+  const feedbacks = (state as any).sessionFeedback || []
   const recentFb = feedbacks.slice(-5)
   const recentWorkouts = state.workouts.slice(-5)
 

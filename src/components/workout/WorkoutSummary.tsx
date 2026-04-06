@@ -411,18 +411,6 @@ export function WorkoutSummary({ workout, previousPowerLevel, onClose }: Props) 
       const bestWeight = Math.max(...ex.sets.map(s => s.weightKg), 0)
       const bestReps = Math.max(...ex.sets.map(s => s.reps), 0)
   
-    // FEAT-F9: Average RPE of the session
-    let totalRir = 0
-    let rirCount = 0
-    workout.exercises.forEach(ex => {
-      ex.sets.forEach(s => {
-        if (s.setType !== 'warmup' && typeof s.rir === 'number') {
-          totalRir += s.rir
-          rirCount++
-        }
-      })
-    })
-    const avgRpe = rirCount > 0 ? Math.round((10 - totalRir / rirCount) * 10) / 10 : null
 
     return {
         name: exerciseData?.name ?? ex.exerciseId.replace(/_/g, ' '),
@@ -431,6 +419,20 @@ export function WorkoutSummary({ workout, previousPowerLevel, onClose }: Props) 
         bestReps,
       }
     })
+
+
+    // FEAT-F9: Average RPE of the session
+    let totalRir = 0
+    let rirCount = 0
+    workout.exercises.forEach(ex => {
+      ex.sets.forEach(s => {
+        if (s.setType !== "warmup" && typeof s.rir === "number") {
+          totalRir += s.rir
+          rirCount++
+        }
+      })
+    })
+    const avgRpe = rirCount > 0 ? Math.round((10 - totalRir / rirCount) * 10) / 10 : null
 
     return {
       volume,

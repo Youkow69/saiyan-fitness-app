@@ -314,7 +314,7 @@ export const DailyQuestsPanel: React.FC<DailyQuestsPanelProps> = React.memo(
                       </>
                     )}
                     {['steps', 'water', 'sleep'].includes(q.id) && !q.isComplete && (
-                      <span style={{ fontSize: '0.6rem', fontWeight: 700, color: 'var(--muted)', background: 'rgba(255,255,255,0.06)', border: '1px solid var(--stroke)', borderRadius: 4, padding: '1px 5px', letterSpacing: '0.06em' }}>SYNC</span>
+                      <span style={{ fontSize: 'max(0.75rem, 0.6rem)', fontWeight: 700, color: 'var(--muted)', background: 'rgba(255,255,255,0.06)', border: '1px solid var(--stroke)', borderRadius: 4, padding: '1px 5px', letterSpacing: '0.06em' }}>SYNC</span>
                     )}
                     {(q.id === 'no_junk' || isAutoCalc) &&
                       !q.isComplete &&

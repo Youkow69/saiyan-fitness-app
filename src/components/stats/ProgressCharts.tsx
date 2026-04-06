@@ -56,6 +56,8 @@ function estimate1RM(weight: number, reps: number): number {
 // ─── Weight Trend Chart ─────────────────────────────────────────────────────
 
 export function WeightChart({ entries }: { entries: BodyweightEntry[] }) {
+  const { state } = useAppState()
+  const targetWeight = state.profile?.goal === 'fat_loss' ? (state.profile.weightKg - 5) : state.profile?.goal === 'muscle_gain' ? (state.profile.weightKg + 3) : state.profile?.weightKg || 70
   const sorted = useMemo(
     () => [...entries].sort((a, b) => a.date.localeCompare(b.date)),
     [entries]

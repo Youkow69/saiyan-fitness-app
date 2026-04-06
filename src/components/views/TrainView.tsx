@@ -100,6 +100,12 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
                 <h3 style={{ margin: '4px 0 0' }}>{nextSession.name}</h3>
               </div>
               <div style={{ display: 'flex', gap: 8 }}>
+                <button type="button" onClick={() => {
+                  const note = window.prompt("Note de seance:", (activeWorkout as any).sessionNotes || "")
+                  if (note !== null) dispatch({ type: "SET_STATE", payload: { ...state, activeWorkout: { ...activeWorkout, sessionNotes: note } } as any })
+                }} style={{ padding: "6px 10px", borderRadius: 8, border: "1px solid var(--border)", background: "transparent", color: "var(--text-secondary)", fontSize: "0.85rem", cursor: "pointer" }}>
+                  {String.fromCodePoint(0x1F4DD)}
+                </button>
                 <button onClick={() => { if (window.confirm('Annuler la séance ? Tes séries non terminées seront perdues.')) { dispatch({ type: 'ABANDON_WORKOUT' }) } }} type="button" style={{ padding: '8px 16px', borderRadius: 10, border: '1px solid var(--border)', background: 'transparent', color: 'var(--text-secondary)', fontWeight: 600, fontSize: '0.85rem', cursor: 'pointer' }}>
                   ← Annuler
                 </button>

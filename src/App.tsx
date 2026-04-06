@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback, useRef } from 'react'
 import { AppProvider, useAppState } from './context/AppContext'
 import { saveState } from './storage'
 import { ToastContainer, showToast } from './components/ui/Toast'
-import { getExerciseById, getProgramById, makeId, todayIso } from './lib'
+import { getExerciseById, getProgramById, makeId, todayIso , getPowerLevel} from './lib'
 import { useAuth } from './hooks/useAuth'
 import { useCloudSync } from './hooks/useCloudSync'
 import { AuthScreen } from './components/views/AuthScreen'
@@ -469,7 +469,7 @@ function AppInner({ user, pushToCloud, pullFromCloud, syncSteps, signOut }: AppI
     // FEAT-F22: Sync leaderboard after workout
     if (user) {
       const pl = getPowerLevel(stateRef.current)
-      syncToLeaderboard(user.id, { displayName: stateRef.current.profile?.name || 'Saiyan', powerLevel: pl, weeklyVolume: 0, streak: 0, prCount: 0 }).catch(() => {})
+      syncToLeaderboard(user.id, { displayName: stateRef.current.profile?.name || 'Saiyan', powerLevel: pl, totalVolume: 0, streak: 0, prCount: 0, transformation: '' }).catch(() => {})
     }
 // Push to cloud immediately after finishing a workout
     if (user) {

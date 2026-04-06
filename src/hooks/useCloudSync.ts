@@ -50,12 +50,8 @@ export function useCloudSync(user: any) {
       setSyncStatus({ state: 'synced', lastSyncedAt: new Date().toISOString(), error: null, retryCount: 0 })
     } catch (e: any) {
       const msg = e?.message?.includes('fetch') ? 'Pas de connexion' : (e?.message || 'Erreur sync')
-      setSyncStatus(s => {
-        const retries = s.retryCount + 1
-          // Retry removed: periodic sync handles retransmission to avoid stale state closure
-        }
-        return { state: 'error', lastSyncedAt: s.lastSyncedAt, error: msg, retryCount: retries }
-      })
+      // Retry removed: periodic sync handles retransmission
+      setSyncStatus(s => ({ state: 'error', lastSyncedAt: s.lastSyncedAt, error: msg, retryCount: s.retryCount + 1 }))
     } finally {
       syncingRef.current = false
     }

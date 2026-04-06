@@ -121,8 +121,8 @@ function computeReadiness(state: any): ReadinessResult {
 
   if (lastWorkout) {
     // BUG-F13: Use finishedAt timestamp if available, else fallback to date noon
-    const workoutTs = (lastWorkout as any).finishedAt
-      ? (lastWorkout as any).finishedAt
+    const workoutTs = lastWorkout.finishedAt
+      ? lastWorkout.finishedAt
       : new Date(lastWorkout.date + 'T12:00:00').getTime()
     const hoursSince = (Date.now() - workoutTs) / 3_600_000
 
@@ -161,8 +161,8 @@ function computeReadiness(state: any): ReadinessResult {
   let nutritionScore = 0
   let nutritionDetail = 'Pas de donnees nutrition'
   try {
-    const targets = (state as any).targets
-    const foodEntries: any[] = (state as any).foodEntries || []
+    const targets = state.targets
+    const foodEntries: any[] = state.foodEntries || []
     if (targets && targets.calories > 0) {
       const yd = new Date()
       yd.setDate(yd.getDate() - 1)

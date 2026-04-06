@@ -103,8 +103,8 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
               </div>
               <div style={{ display: 'flex', gap: 8 }}>
                 <button type="button" onClick={() => {
-                  const note = window.prompt("Note de seance:", (activeWorkout as any).sessionNotes || "")
-                  if (note !== null) dispatch({ type: "SET_STATE", payload: { ...state, activeWorkout: { ...activeWorkout, sessionNotes: note } } as any })
+                  const note = window.prompt("Note de seance:", activeWorkout.sessionName || "")
+                  if (note !== null) dispatch({ type: "SET_STATE", payload: { ...state, activeWorkout: { ...activeWorkout, sessionName: note } } as any })
                 }} style={{ padding: "6px 10px", borderRadius: 8, border: "1px solid var(--border)", background: "transparent", color: "var(--text-secondary)", fontSize: "0.85rem", cursor: "pointer" }}>
                   {String.fromCodePoint(0x1F4DD)}
                 </button>

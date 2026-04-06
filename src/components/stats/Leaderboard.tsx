@@ -65,7 +65,7 @@ export function Leaderboard() {
 
   useEffect(() => {
     loadLeaderboard()
-  }, [])
+  }, [sortBy])
 
   const loadLeaderboard = async () => {
     setLoading(true)

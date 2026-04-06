@@ -45,6 +45,7 @@ const DAY_LABELS = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim']
 
 export function WorkoutCalendar({ workouts }: { workouts: CalendarWorkoutLog[] }) {
   const [selectedDay, setSelectedDay] = useState<string | null>(null)
+  const [monthOffset, setMonthOffset] = useState(0)
 
   const { months, dayMap, maxVolume, workoutDates, totalWorkouts } = useMemo(() => {
     // Build day -> volume map

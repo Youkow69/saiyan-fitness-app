@@ -161,7 +161,7 @@ export function WeeklyReport() {
           <div key={s.label} style={{ background: 'rgba(255,255,255,0.02)', borderRadius: 12, padding: '12px 10px', textAlign: 'center', border: '1px solid var(--border)' }}>
             <div style={{ fontSize: '1.1rem', marginBottom: 2 }}>{s.icon}</div>
             <div style={{ fontSize: '1.2rem', fontWeight: 800, color: s.color, fontVariantNumeric: 'tabular-nums' }}>{s.value}</div>
-            <div style={{ fontSize: '0.65rem', color: 'var(--text-secondary)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em' }}>{s.label}</div>
+            <div style={{ fontSize: 'max(0.75rem, 0.65rem)', color: 'var(--text-secondary)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em' }}>{s.label}</div>
           </div>
         ))}
       </div>
@@ -179,17 +179,17 @@ export function WeeklyReport() {
       {/* FEAT-F20: Top muscles + assiduite */}
       <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
         <div style={{ flex: 1, padding: '8px', background: 'rgba(255,255,255,0.02)', borderRadius: 8, border: '1px solid var(--border)' }}>
-          <div style={{ fontSize: '0.65rem', color: 'var(--muted)', marginBottom: 2 }}>Top muscles</div>
+          <div style={{ fontSize: 'max(0.75rem, 0.65rem)', color: 'var(--muted)', marginBottom: 2 }}>Top muscles</div>
           {report.topMuscles.map(([m, s]) => (
             <div key={m} style={{ fontSize: '0.68rem', color: 'var(--text)' }}>{m}: {s}s</div>
           ))}
         </div>
         <div style={{ flex: 1, padding: '8px', background: 'rgba(255,255,255,0.02)', borderRadius: 8, border: '1px solid var(--border)', textAlign: 'center' }}>
-          <div style={{ fontSize: '0.65rem', color: 'var(--muted)', marginBottom: 2 }}>Assiduite</div>
+          <div style={{ fontSize: 'max(0.75rem, 0.65rem)', color: 'var(--muted)', marginBottom: 2 }}>Assiduite</div>
           <div style={{ fontSize: '1.2rem', fontWeight: 800, color: report.assiduity >= 80 ? '#22c55e' : report.assiduity >= 50 ? '#f59e0b' : '#ef4444' }}>
             {report.assiduity}%
           </div>
-          <div style={{ fontSize: '0.6rem', color: 'var(--muted)' }}>{report.sessions}/{state.profile?.trainingDaysPerWeek || 4} seances</div>
+          <div style={{ fontSize: 'max(0.75rem, 0.6rem)', color: 'var(--muted)' }}>{report.sessions}/{state.profile?.trainingDaysPerWeek || 4} seances</div>
         </div>
       </div>
       {/* vs Semaine precedente */}

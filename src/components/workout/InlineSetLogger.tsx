@@ -9,6 +9,7 @@ import { useAppState } from '../../context/AppContext'
 import { getExerciseById } from '../../lib'
 import type { SetType, SetLog } from '../../types'
 import { MiniPlateCalc } from '../tools/MiniPlateCalc'
+import { RPESlider } from '../tools/RPESlider'
 import { ExerciseDemo } from '../tools/ExerciseDemo'
 
 // ── CSS keyframes injected once ──────────────────────────────────────────────
@@ -624,6 +625,11 @@ export function InlineSetLogger({ exerciseId, target, onSetAdded }: Props) {
             aria-label="RIR"
             style={{ fontSize: '0.82rem' }}
           />
+                <RPESlider
+                  rir={parseInt(draft.rir, 10) || target.targetRir}
+                  onChange={(newRir) => setDraft(d => ({ ...d, rir: String(newRir) }))}
+                  compact
+                />
         )}
 
         {/* Set type selector (mini) */}

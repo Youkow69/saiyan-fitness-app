@@ -229,6 +229,22 @@ export function ReadinessScore() {
   const { state } = useAppState()
   const readiness = useMemo(() => computeReadiness(state), [state.workouts])
 
+
+  // FEAT-F17: Subjective morning input
+  const READINESS_KEY = 'saiyan-readiness-today'
+  const todayKey = new Date().toISOString().slice(0, 10)
+  const [soreness, setSoreness] = React.useState(() => {
+    try { const d = JSON.parse(localStorage.getItem(READINESS_KEY) || '{}'); return d.date === todayKey ? d.soreness ?? 2 : 2 } catch { return 2 }
+  })
+  const [energy, setEnergy] = React.useState(() => {
+    try { const d = JSON.parse(localStorage.getItem(READINESS_KEY) || '{}'); return d.date === todayKey ? d.energy ?? 3 : 3 } catch { return 3 }
+  })
+  const subjectiveScore = (5 - soreness + energy) * 2 // max 10 pts
+  const totalWithSubjective = readiness.score + subjectiveScore
+  React.useEffect(() => {
+    localStorage.setItem(READINESS_KEY, JSON.stringify({ date: todayKey, soreness, energy }))
+  }, [soreness, energy, todayKey])
+
   const scoreColor =
     readiness.score >= 80
       ? 'var(--success)'
@@ -270,6 +286,37 @@ export function ReadinessScore() {
       >
         Readiness — Senzu Check
       </h3>
+
+      {/* FEAT-F17: Subjective morning input */}
+      <div style={{ display: 'flex', gap: 12, marginBottom: 12, padding: '8px 0' }}>
+        <div style={{ flex: 1 }}>
+          <div style={{ fontSize: '0.68rem', color: 'var(--text-secondary)', marginBottom: 4 }}>Courbatures</div>
+          <div style={{ display: 'flex', gap: 3 }}>
+            {[1,2,3,4,5].map(v => (
+              <button key={v} type='button' onClick={() => setSoreness(v)}
+                style={{ flex: 1, height: 28, borderRadius: 6, border: 'none', cursor: 'pointer',
+                  background: v <= soreness ? (soreness > 3 ? '#ef4444' : '#f59e0b') + '33' : 'var(--border)',
+                  color: v <= soreness ? (soreness > 3 ? '#ef4444' : '#f59e0b') : 'var(--muted)',
+                  fontWeight: 700, fontSize: '0.72rem'
+                }}>{v}</button>
+            ))}
+          </div>
+        </div>
+        <div style={{ flex: 1 }}>
+          <div style={{ fontSize: '0.68rem', color: 'var(--text-secondary)', marginBottom: 4 }}>Energie</div>
+          <div style={{ display: 'flex', gap: 3 }}>
+            {[1,2,3,4,5].map(v => (
+              <button key={v} type='button' onClick={() => setEnergy(v)}
+                style={{ flex: 1, height: 28, borderRadius: 6, border: 'none', cursor: 'pointer',
+                  background: v <= energy ? '#22c55e33' : 'var(--border)',
+                  color: v <= energy ? '#22c55e' : 'var(--muted)',
+                  fontWeight: 700, fontSize: '0.72rem'
+                }}>{v}</button>
+            ))}
+          </div>
+        </div>
+      </div>
+
 
       {/* Big score circle + label */}
       <div

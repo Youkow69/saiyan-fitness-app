@@ -74,7 +74,7 @@ export function BodyweightTrendChart({ height = 200, showTarget = true }: Props)
       {showTarget && targetW >= minW && targetW <= maxW && (
         <line x1={PAD.left} y1={yScale(targetW)} x2={W - PAD.right} y2={yScale(targetW)}
           stroke="#FFD700" strokeWidth={1} strokeDasharray="4,4" opacity={0.5} />
-      
+      )}
 
       {/* FEAT-F12: Projection line based on 14-day slope */}
       {entries.length >= 14 && (() => {
@@ -91,7 +91,6 @@ export function BodyweightTrendChart({ height = 200, showTarget = true }: Props)
         }
         return null
       })()}
-)}
 
       {/* Moving average line (gold) */}
       <polyline points={pointsStr} fill="none" stroke="var(--accent)" strokeWidth={1} opacity={0.4} />

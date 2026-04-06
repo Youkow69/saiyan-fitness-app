@@ -269,7 +269,7 @@ export const HomeView: React.FC<HomeViewProps> = React.memo(
         </button>
 
         {/* 4. Mesocycle with DBZ phases */}
-        <section className="hevy-card" style={{ padding: '10px 14px', borderColor:  }}>
+        <section className="hevy-card" style={{ padding: '10px 14px', borderColor: mesocycle.color + "33" }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
             <span style={{ fontWeight: 700, fontSize: '0.82rem', color: mesocycle.color }}>{mesocycle.label}</span>
             <span style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: '1.4rem', color: 'var(--accent-gold)', lineHeight: 1 }}>{streak}j</span>

@@ -248,6 +248,7 @@ function setTypeBadge(t: SetType) {
 export function InlineSetLogger({ exerciseId, target, onSetAdded }: Props) {
   const { state, dispatch } = useAppState()
   const [showRir, setShowRir] = useState(false)
+  const [showPlateCalc, setShowPlateCalc] = useState(false)
   const [removingId, setRemovingId] = useState<string | null>(null)
   const [showNotes, setShowNotes] = useState(false)
   const [showPlates, setShowPlates] = useState(false)
@@ -735,7 +736,12 @@ export function InlineSetLogger({ exerciseId, target, onSetAdded }: Props) {
         </button>
       </div>
       {showPlates && (
-        <MiniPlateCalc weight={parseFloat(draft.weight) || 0} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+          <button type="button" onClick={() => setShowPlateCalc(p => !p)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '1rem', padding: 2 }} aria-label="Calculateur de plaques">
+            {showPlateCalc ? '\u2716' : '\U0001f3cb\ufe0f'}
+          </button>
+        </div>
+        {showPlateCalc && <MiniPlateCalc weight={parseFloat(draft.weight) || 0} />}
       )}
       {showDemo && (
         <ExerciseDemo exerciseId={exerciseId} />

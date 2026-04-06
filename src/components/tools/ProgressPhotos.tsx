@@ -74,7 +74,8 @@ export function ProgressPhotos() {
   const filteredPhotos = categoryFilter === 'all' ? photos : photos.filter(p => (p as any).category === categoryFilter)
 
 return (
-    <div style={{ display: 'flex', gap: 6, marginBottom: 10, flexWrap: 'wrap' }}>
+    <>
+      <div style={{ display: 'flex', gap: 6, marginBottom: 10, flexWrap: 'wrap' }}>
           {['all', 'front', 'back', 'side_left', 'side_right'].map(cat => (
             <button key={cat} type="button" onClick={() => setCategoryFilter(cat)}
               style={{ padding: '4px 10px', borderRadius: 8, border: '1px solid var(--border)', background: categoryFilter === cat ? 'var(--accent)' : 'transparent', color: categoryFilter === cat ? '#000' : 'var(--text-secondary)', fontSize: '0.68rem', fontWeight: 600, cursor: 'pointer' }}>
@@ -164,5 +165,6 @@ return (
         </div>
       )}
     </div>
+    </>
   )
 }

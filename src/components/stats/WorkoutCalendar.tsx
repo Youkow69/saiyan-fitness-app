@@ -69,7 +69,7 @@ export function WorkoutCalendar({ workouts }: { workouts: CalendarWorkoutLog[] }
     const months: { year: number; month: number; days: DayData[] }[] = []
 
     for (let m = 2; m >= 0; m--) {
-      const d = new Date(today.getFullYear(), today.getMonth() - m, 1)
+      const d = new Date(today.getFullYear(), today.getMonth() - m - monthOffset, 1)
       const year = d.getFullYear()
       const month = d.getMonth()
       const daysInMonth = getDaysInMonth(year, month)
@@ -104,7 +104,18 @@ export function WorkoutCalendar({ workouts }: { workouts: CalendarWorkoutLog[] }
   const todayStr = todayIso()
 
   return (
-    <div
+    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+        <button type='button' onClick={() => setMonthOffset(o => o + 3)} style={{ background: 'none', border: 'none', color: 'var(--accent)', fontSize: '1.2rem', cursor: 'pointer', padding: '4px 8px' }}>
+          {'\u25C0'}
+        </button>
+        <span style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--text)' }}>
+          {monthOffset === 0 ? 'Ce trimestre' : `Il y a ${monthOffset} mois`}
+        </span>
+        <button type='button' onClick={() => setMonthOffset(o => Math.max(0, o - 3))} disabled={monthOffset === 0} style={{ background: 'none', border: 'none', color: monthOffset === 0 ? 'var(--muted)' : 'var(--accent)', fontSize: '1.2rem', cursor: monthOffset === 0 ? 'default' : 'pointer', padding: '4px 8px' }}>
+          {'\u25B6'}
+        </button>
+      </div>
+      <div
       style={{
         background: 'var(--bg-card)',
         borderRadius: 16,

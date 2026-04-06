@@ -686,7 +686,7 @@ h3, h2, h1 {
 
 .next-badge {
   display: inline-block;
-  font-size: 0.62rem;
+  font-size: max(0.75rem, 0.62rem);
   font-weight: 800;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -768,7 +768,7 @@ h3, h2, h1 {
 }
 
 .profile-stat-label {
-  font-size: 0.62rem;
+  font-size: max(0.75rem, 0.62rem);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -813,7 +813,7 @@ h3, h2, h1 {
 
 .auto-badge {
   display: inline-block;
-  font-size: 0.55rem;
+  font-size: max(0.75rem, 0.55rem);
   font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -858,7 +858,7 @@ h3, h2, h1 {
   gap: 4px;
   padding: 4px 12px;
   border-radius: 999px;
-  font-size: 0.72rem;
+  font-size: max(0.75rem, 0.72rem);
   font-weight: 700;
   letter-spacing: 0.04em;
   background: rgba(255, 140, 0, 0.12);
@@ -1119,7 +1119,7 @@ select:focus {
 
 .chip--sm {
   padding: 4px 10px;
-  font-size: 0.72rem;
+  font-size: max(0.75rem, 0.72rem);
 }
 
 .chip-icon {
@@ -1188,7 +1188,7 @@ select:focus {
 }
 
 .set-previous-label {
-  font-size: 0.6rem;
+  font-size: max(0.75rem, 0.6rem);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -1275,7 +1275,7 @@ select:focus {
 .nav-icon { font-size: 1.4rem; line-height: 1; }
 
 .nav-label {
-  font-size: 0.65rem;
+  font-size: max(0.75rem, 0.65rem);
   font-weight: 700;
   letter-spacing: 0.02em;
 }
@@ -1291,7 +1291,7 @@ select:focus {
   right: 2px;
   background: var(--accent);
   color: #000;
-  font-size: 0.55rem;
+  font-size: max(0.75rem, 0.55rem);
   padding: 1px 4px;
   border-radius: 6px;
   font-weight: 700;
@@ -1410,7 +1410,7 @@ select:focus {
 }
 
 .timeline-node .timeline-label {
-  font-size: 0.6rem;
+  font-size: max(0.75rem, 0.6rem);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -1489,7 +1489,7 @@ select:focus {
 }
 
 .macro-bar-label {
-  font-size: 0.72rem;
+  font-size: max(0.75rem, 0.72rem);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -1677,7 +1677,7 @@ select:focus {
 }
 
 .activity-grid-label {
-  font-size: 0.55rem;
+  font-size: max(0.75rem, 0.55rem);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -2109,7 +2109,7 @@ select:focus {
 }
 
 .power-card-label {
-  font-size: 0.72rem;
+  font-size: max(0.75rem, 0.72rem);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -2181,7 +2181,7 @@ select:focus {
 .profile-footer {
   text-align: center;
   color: var(--muted);
-  font-size: 0.72rem;
+  font-size: max(0.75rem, 0.72rem);
   padding: 12px 0 4px;
   opacity: 0.55;
   letter-spacing: 0.04em;

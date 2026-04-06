@@ -364,7 +364,8 @@ function AppInner({ user, pushToCloud, pullFromCloud, syncSteps, signOut }: AppI
       weightKg: number,
       reps: number,
       rir: number,
-      setType: SetType
+      setType: SetType,
+      skipRest?: boolean
     ) => {
       if (!stateRef.current.activeWorkout || reps <= 0 || weightKg < 0) return
       const isPR = checkForPR(stateRef.current.workouts, exerciseId, weightKg, reps)
@@ -375,7 +376,7 @@ function AppInner({ user, pushToCloud, pullFromCloud, syncSteps, signOut }: AppI
       const exerciseTarget = stateRef.current.activeWorkout.exercises.find(
         (e) => e.exerciseId === exerciseId
       )?.target
-      setRestTimer(exerciseTarget?.restSeconds ?? DEFAULT_REST_SECONDS)
+      if (!skipRest) setRestTimer(exerciseTarget?.restSeconds ?? DEFAULT_REST_SECONDS)
 
       // Immediate cloud push after adding a set
       if (user) {

@@ -268,24 +268,30 @@ export const HomeView: React.FC<HomeViewProps> = React.memo(
           {state.activeWorkout ? "Reprendre l'entraînement" : "Commencer l'entraînement"}
         </button>
 
-        {/* 4. Mesocycle compact line */}
-        <section className="hevy-card" style={{ padding: '8px 14px', borderColor: `${mesocycle.color}33` }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <span style={{ fontWeight: 700, fontSize: '0.82rem', color: mesocycle.color }}>
-                Mésocycle: {mesocycle.label}
-              </span>
-              <span style={{ fontSize: '0.72rem', color: 'var(--muted)' }}>{mesocycle.detail}</span>
-            </div>
-            <span style={{
-              fontFamily: 'Bebas Neue, sans-serif', fontSize: '1.4rem',
-              color: 'var(--accent-gold)', lineHeight: 1,
-            }}>
-              {streak}j
-            </span>
+        {/* 4. Mesocycle with DBZ phases */}
+        <section className="hevy-card" style={{ padding: '10px 14px', borderColor:  }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+            <span style={{ fontWeight: 700, fontSize: '0.82rem', color: mesocycle.color }}>{mesocycle.label}</span>
+            <span style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: '1.4rem', color: 'var(--accent-gold)', lineHeight: 1 }}>{streak}j</span>
           </div>
+          {(() => {
+            const wk = typeof mesocycle.weekNumber === 'number' ? mesocycle.weekNumber : 1
+            const phases = ['Echauffement', 'Montee en puissance', 'Climax', 'Senzu Bean']
+            const phaseColors = ['#22c55e', '#eab308', '#FF8C00', '#22c55e']
+            return (
+              <div>
+                <div style={{ display: 'flex', gap: 4, marginBottom: 4 }}>
+                  {[1, 2, 3, 4].map(w => (
+                    <div key={w} style={{ flex: 1, height: 5, borderRadius: 3, background: w <= wk ? phaseColors[w - 1] : 'var(--stroke)', opacity: w === wk ? 1 : w < wk ? 0.5 : 0.2 }} />
+                  ))}
+                </div>
+                <div style={{ fontSize: '0.68rem', color: 'var(--muted)', textAlign: 'center' }}>
+                  Semaine {wk}/4 {"—"} Arc {phases[wk - 1] || 'En cours'}
+                </div>
+              </div>
+            )
+          })()}
         </section>
-
         {/* 5. Compact calories today */}
         {targets && (
           <section className="hevy-card" style={{ padding: '8px 14px' }}>

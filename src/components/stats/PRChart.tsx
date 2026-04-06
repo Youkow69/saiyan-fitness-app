@@ -194,14 +194,14 @@ export function PRChart({ exerciseId, workouts }: Props) {
             padding: '8px 6px', textAlign: 'center',
             border: `1px solid ${cat.color}22`,
           }}>
-            <div style={{ fontSize: '0.62rem', color: '#888', fontWeight: 600, textTransform: 'uppercase' }}>
+            <div style={{ fontSize: 'max(0.75rem, 0.62rem)', color: 'var(--text-secondary, #999)', fontWeight: 600, textTransform: 'uppercase' }}>
               {cat.label}
             </div>
             <div style={{ fontSize: '1rem', fontWeight: 800, color: cat.color, margin: '2px 0' }}>
               {cat.value}
             </div>
             {cat.date && (
-              <div style={{ fontSize: '0.58rem', color: '#666' }}>
+              <div style={{ fontSize: 'max(0.75rem, 0.58rem)', color: 'var(--text-secondary, #999)' }}>
                 {formatDate(cat.date)}
               </div>
             )}

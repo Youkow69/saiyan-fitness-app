@@ -331,11 +331,11 @@ export function PersonalRecords({
             })()}
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 4 }}>
-            <span style={{ fontSize: '0.6rem', color: 'var(--muted)' }}>{e1rmHistory[0]?.date.slice(5)}</span>
+            <span style={{ fontSize: 'max(0.75rem, 0.6rem)', color: 'var(--muted)' }}>{e1rmHistory[0]?.date.slice(5)}</span>
             <span style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--accent)' }}>
               {e1rmHistory[e1rmHistory.length - 1]?.e1rm}kg
             </span>
-            <span style={{ fontSize: '0.6rem', color: 'var(--muted)' }}>{e1rmHistory[e1rmHistory.length - 1]?.date.slice(5)}</span>
+            <span style={{ fontSize: 'max(0.75rem, 0.6rem)', color: 'var(--muted)' }}>{e1rmHistory[e1rmHistory.length - 1]?.date.slice(5)}</span>
           </div>
         </div>
       )}

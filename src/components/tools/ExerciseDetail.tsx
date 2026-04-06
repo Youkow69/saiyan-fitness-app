@@ -119,16 +119,7 @@ export function ExerciseDetail({
         aria-label="Detail exercice"
       >
         <div style={cardStyle} onClick={(e) => e.stopPropagation()}>
-          {/* FEAT-F21: Exercise GIF */}
-          {exercise.gifUrl && (
-            <img
-              src={exercise.gifUrl}
-              alt={exercise.name}
-              loading="lazy"
-              style={{ width: '100%', maxHeight: 200, objectFit: 'contain', borderRadius: 12, marginBottom: 12, background: 'rgba(0,0,0,0.3)' }}
-            />
-          )}
-
+          
           <p style={{ color: 'var(--danger)', textAlign: 'center', margin: 20 }}>
             Exercice non trouve
           </p>
@@ -163,6 +154,16 @@ export function ExerciseDetail({
       aria-label={`Detail de ${exercise.name}`}
     >
       <div style={cardStyle} onClick={(e) => e.stopPropagation()}>
+          {/* FEAT-F21: Exercise GIF */}
+          {exercise.gifUrl && (
+            <img
+              src={exercise.gifUrl}
+              alt={exercise.name}
+              loading="lazy"
+              style={{ width: '100%', maxHeight: 200, objectFit: 'contain', borderRadius: 12, marginBottom: 12, background: 'rgba(0,0,0,0.3)' }}
+            />
+          )}
+
         {/* En-tete */}
         <div style={cardHeaderStyle}>
           <div style={{ flex: 1 }}>

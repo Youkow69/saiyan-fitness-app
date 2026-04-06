@@ -210,7 +210,7 @@ export const ScouterView: React.FC = React.memo(
 
         {/* Modal overlay */}
         {modal && (
-          <div style={{
+          <div role="dialog" aria-modal="true" style={{
             position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.8)',
             zIndex: 1000, overflowY: 'auto', padding: 16,
           }}>

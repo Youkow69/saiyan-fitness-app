@@ -73,7 +73,7 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
     /* ─────────────────────────────────────────────
        ACTIVE WORKOUT
        ───────────────────────────────────────────── */
-    if (activeWorkout && nextSession) {
+    if (activeWorkout) {
       return (
         <div className="page">
           {restTimer > 0 && (
@@ -97,7 +97,7 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
                 <SectionTitle icon="🏋️" label="Séance en cours" />
-                <h3 style={{ margin: '4px 0 0' }}>{nextSession.name}</h3>
+                <h3 style={{ margin: '4px 0 0' }}>{nextSession?.name || activeWorkout.sessionName || 'Seance personnalisee'}</h3>
               </div>
               <div style={{ display: 'flex', gap: 8 }}>
                 <button type="button" onClick={() => {

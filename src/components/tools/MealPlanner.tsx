@@ -156,6 +156,40 @@ function generateSuggestions(remaining: RemainingMacros): MealSuggestion[] {
         totalCarbs: totals.carbs,
         totalFat: totals.fat,
       })
+
+  // FEAT-F19: Extended meal combos
+  // Breakfast options
+  const oats = findFood('oats')
+  const eggs = findFood('eggs')
+  const yogurt = findFood('yogurt')
+  if (oats && remaining.calories > 150) {
+    suggestions.push({ name: 'Oats + Banana + Whey', items: [scaledItem('oats', 'Flocons avoine', 80, oats)], totalCal: Math.round(oats.kcalPer100 * 0.8), totalProtein: Math.round(oats.proteinPer100 * 0.8), match: 70 })
+  }
+  if (eggs && remaining.calories > 200) {
+    suggestions.push({ name: 'Oeufs brouilles + Toast', items: [scaledItem('eggs', 'Oeufs', 150, eggs)], totalCal: Math.round(eggs.kcalPer100 * 1.5), totalProtein: Math.round(eggs.proteinPer100 * 1.5), match: 65 })
+  }
+  if (yogurt && remaining.calories > 100) {
+    suggestions.push({ name: 'Yaourt + Granola', items: [scaledItem('yogurt', 'Yaourt grec', 200, yogurt)], totalCal: Math.round(yogurt.kcalPer100 * 2), totalProtein: Math.round(yogurt.proteinPer100 * 2), match: 60 })
+  }
+  // Dinner options
+  const turkey = findFood('turkey')
+  const tofu = findFood('tofu')
+  if (turkey && remaining.calories > 250) {
+    suggestions.push({ name: 'Dinde + Couscous', items: [scaledItem('turkey', 'Dinde', 180, turkey)], totalCal: Math.round(turkey.kcalPer100 * 1.8), totalProtein: Math.round(turkey.proteinPer100 * 1.8), match: 72 })
+  }
+  if (tofu && remaining.calories > 200) {
+    suggestions.push({ name: 'Tofu + Nouilles + Champignons', items: [scaledItem('tofu', 'Tofu', 200, tofu)], totalCal: Math.round(tofu.kcalPer100 * 2), totalProtein: Math.round(tofu.proteinPer100 * 2), match: 55 })
+  }
+  // Snack options
+  const cottage = findFood('cottage_cheese')
+  const peanut_butter = findFood('peanut_butter')
+  if (cottage && remaining.calories > 100) {
+    suggestions.push({ name: 'Cottage Cheese + Amandes', items: [scaledItem('cottage_cheese', 'Fromage blanc', 200, cottage)], totalCal: Math.round(cottage.kcalPer100 * 2), totalProtein: Math.round(cottage.proteinPer100 * 2), match: 68 })
+  }
+  if (peanut_butter && remaining.calories > 150) {
+    suggestions.push({ name: 'Pomme + Beurre de cacahuete', items: [scaledItem('peanut_butter', 'Beurre cacahuete', 30, peanut_butter)], totalCal: Math.round(peanut_butter.kcalPer100 * 0.3) + 80, totalProtein: Math.round(peanut_butter.proteinPer100 * 0.3), match: 50 })
+  }
+
     }
   }
 

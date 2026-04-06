@@ -170,43 +170,43 @@ function generateSuggestions(remaining: RemainingMacros): MealSuggestion[] {
     const g = 80
     const items = [scaledItem('oats', 'Flocons avoine', g, { calories: oats.calories, protein: oats.protein, carbs: oats.carbs, fats: oats.fats })]
     const totals = items.reduce((a, i) => ({ calories: a.calories + i.calories, protein: a.protein + i.protein, carbs: a.carbs + i.carbs, fat: a.fat + i.fat }), { calories: 0, protein: 0, carbs: 0, fat: 0 })
-    suggestions.push({ name: 'Oats + Banana + Whey', items, totalCalories: totals.calories, totalProtein: totals.protein, match: 70 })
+    suggestions.push({ name: 'Oats + Banana + Whey', items, totalCalories: totals.calories, totalProtein: totals.protein, totalCarbs: totals.carbs, totalFat: totals.fat, description: 'Suggestion auto', category: 'rapide' })
   }
   if (eggs && remaining.calories > 200) {
     const g = 150
     const items = [scaledItem('eggs', 'Oeufs', g, { calories: eggs.calories, protein: eggs.protein, carbs: eggs.carbs, fats: eggs.fats })]
     const totals = items.reduce((a, i) => ({ calories: a.calories + i.calories, protein: a.protein + i.protein, carbs: a.carbs + i.carbs, fat: a.fat + i.fat }), { calories: 0, protein: 0, carbs: 0, fat: 0 })
-    suggestions.push({ name: 'Oeufs brouilles + Toast', items, totalCalories: totals.calories, totalProtein: totals.protein, match: 65 })
+    suggestions.push({ name: 'Oeufs brouilles + Toast', items, totalCalories: totals.calories, totalProtein: totals.protein, totalCarbs: totals.carbs, totalFat: totals.fat, description: 'Suggestion auto', category: 'rapide' })
   }
   if (yogurt && remaining.calories > 100) {
     const g = 200
     const items = [scaledItem('yogurt', 'Yaourt grec', g, { calories: yogurt.calories, protein: yogurt.protein, carbs: yogurt.carbs, fats: yogurt.fats })]
     const totals = items.reduce((a, i) => ({ calories: a.calories + i.calories, protein: a.protein + i.protein, carbs: a.carbs + i.carbs, fat: a.fat + i.fat }), { calories: 0, protein: 0, carbs: 0, fat: 0 })
-    suggestions.push({ name: 'Yaourt + Granola', items, totalCalories: totals.calories, totalProtein: totals.protein, match: 60 })
+    suggestions.push({ name: 'Yaourt + Granola', items, totalCalories: totals.calories, totalProtein: totals.protein, totalCarbs: totals.carbs, totalFat: totals.fat, description: 'Suggestion auto', category: 'rapide' })
   }
   if (turkey && remaining.calories > 250) {
     const g = 180
     const items = [scaledItem('turkey', 'Dinde', g, { calories: turkey.calories, protein: turkey.protein, carbs: turkey.carbs, fats: turkey.fats })]
     const totals = items.reduce((a, i) => ({ calories: a.calories + i.calories, protein: a.protein + i.protein, carbs: a.carbs + i.carbs, fat: a.fat + i.fat }), { calories: 0, protein: 0, carbs: 0, fat: 0 })
-    suggestions.push({ name: 'Dinde + Couscous', items, totalCalories: totals.calories, totalProtein: totals.protein, match: 72 })
+    suggestions.push({ name: 'Dinde + Couscous', items, totalCalories: totals.calories, totalProtein: totals.protein, totalCarbs: totals.carbs, totalFat: totals.fat, description: 'Suggestion auto', category: 'rapide' })
   }
   if (tofu && remaining.calories > 200) {
     const g = 200
     const items = [scaledItem('tofu', 'Tofu', g, { calories: tofu.calories, protein: tofu.protein, carbs: tofu.carbs, fats: tofu.fats })]
     const totals = items.reduce((a, i) => ({ calories: a.calories + i.calories, protein: a.protein + i.protein, carbs: a.carbs + i.carbs, fat: a.fat + i.fat }), { calories: 0, protein: 0, carbs: 0, fat: 0 })
-    suggestions.push({ name: 'Tofu + Nouilles', items, totalCalories: totals.calories, totalProtein: totals.protein, match: 55 })
+    suggestions.push({ name: 'Tofu + Nouilles', items, totalCalories: totals.calories, totalProtein: totals.protein, totalCarbs: totals.carbs, totalFat: totals.fat, description: 'Suggestion auto', category: 'rapide' })
   }
   if (cottage && remaining.calories > 100) {
     const g = 200
     const items = [scaledItem('cottage_cheese', 'Fromage blanc', g, { calories: cottage.calories, protein: cottage.protein, carbs: cottage.carbs, fats: cottage.fats })]
     const totals = items.reduce((a, i) => ({ calories: a.calories + i.calories, protein: a.protein + i.protein, carbs: a.carbs + i.carbs, fat: a.fat + i.fat }), { calories: 0, protein: 0, carbs: 0, fat: 0 })
-    suggestions.push({ name: 'Cottage Cheese + Amandes', items, totalCalories: totals.calories, totalProtein: totals.protein, match: 68 })
+    suggestions.push({ name: 'Cottage Cheese + Amandes', items, totalCalories: totals.calories, totalProtein: totals.protein, totalCarbs: totals.carbs, totalFat: totals.fat, description: 'Suggestion auto', category: 'rapide' })
   }
   if (peanut_butter && remaining.calories > 150) {
     const g = 30
     const items = [scaledItem('peanut_butter', 'Beurre cacahuete', g, { calories: peanut_butter.calories, protein: peanut_butter.protein, carbs: peanut_butter.carbs, fats: peanut_butter.fats })]
     const totals = items.reduce((a, i) => ({ calories: a.calories + i.calories, protein: a.protein + i.protein, carbs: a.carbs + i.carbs, fat: a.fat + i.fat }), { calories: 0, protein: 0, carbs: 0, fat: 0 })
-    suggestions.push({ name: 'Pomme + Beurre de cacahuete', items, totalCalories: totals.calories + 80, totalProtein: totals.protein, match: 50 })
+    suggestions.push({ name: 'Pomme + Beurre de cacahuete', items, totalCalories: totals.calories + 80, totalProtein: totals.protein, totalCarbs: totals.carbs, totalFat: totals.fat, description: 'Suggestion auto', category: 'rapide' })
   }
 
   }

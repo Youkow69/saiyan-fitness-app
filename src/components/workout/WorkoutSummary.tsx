@@ -8,6 +8,7 @@ import { useAppState } from '../../context/AppContext'
 import { getWorkoutVolume, estimate1Rm, getExerciseById, getPowerLevel } from '../../lib'
 import type { WorkoutLog } from '../../types'
 import { Confetti } from '../ui/Confetti'
+import { supabase } from '../../supabase'
 
 // ── Props ────────────────────────────────────────────────────────────────────
 
@@ -610,6 +611,24 @@ export function WorkoutSummary({ workout, previousPowerLevel, onClose }: Props) 
         )}
 
         {/* ── Close button ────────────────────────────────────────────── */}
+        {/* Share to Arena */}
+        <button
+          type="button"
+          onClick={async () => {
+            try {
+              await supabase.from('workout_shares').insert({
+                display_name: state.profile?.name || 'Saiyan',
+                workout_data: { volume: stats.volume, sets: stats.totalSets, duration: stats.duration, exercises: stats.exerciseSummaries.length, prs: stats.prs.length },
+                caption: stats.prs.length > 0 ? stats.prs.length + ' PR cette seance !' : 'Seance terminee',
+                power_level: stats.newPowerLevel,
+              })
+            } catch {}
+          }}
+          className="ws-close-btn"
+          style={{ marginBottom: 8, background: 'linear-gradient(135deg, rgba(255,140,0,0.15), rgba(255,69,0,0.1))', border: '1px solid rgba(255,140,0,0.3)' }}
+        >
+          Partager dans l'Arene
+        </button>
         <button
           className="ws-close-btn"
           onClick={onClose}

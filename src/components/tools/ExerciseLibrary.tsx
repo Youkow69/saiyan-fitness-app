@@ -20,7 +20,7 @@ export function ExerciseLibrary({ onSelect, compact = false }: Props) {
   const [filterDiff, setFilterDiff] = useState<number | 0>(0)
   const [selectedId, setSelectedId] = useState<string | null>(null)
 
-  const allExs = [...allExercises, ...customExercises]
+  const allExs = [...allExercises]
 
   const filtered = useMemo(() => {
     return allExs.filter(ex => {

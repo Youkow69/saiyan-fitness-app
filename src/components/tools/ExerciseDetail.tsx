@@ -92,7 +92,24 @@ export function ExerciseDetail({
 
   // ── Exercice non trouve ────────────────────────────────────────────────
   if (!exercise) {
-    return (
+  
+  // FEAT-F2: e1RM history chart data
+  const e1RmHistory = useMemo(() => {
+    const points: { date: string; e1rm: number }[] = []
+    for (const w of state.workouts) {
+      const ex = w.exercises.find(e => e.exerciseId === exerciseId)
+      if (!ex) continue
+      let best = 0
+      ex.sets.forEach(s => {
+        const val = estimate1Rm(s.weightKg, s.reps)
+        if (val > best) best = val
+      })
+      if (best > 0) points.push({ date: w.date, e1rm: Math.round(best) })
+    }
+    return points.slice(-20)
+  }, [state.workouts, exerciseId])
+
+  return (
       <div
         style={overlayStyle}
         onClick={onClose}

@@ -9,6 +9,25 @@ export function BarcodeScanner({ onDetected, onClose }: BarcodeScannerProps) {
   const videoRef = useRef<HTMLVideoElement>(null)
   const streamRef = useRef<MediaStream | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [detectedBarcode, setDetectedBarcode] = useState<string | null>(null)
+  const [productData, setProductData] = useState<any>(null)
+  const [loadingProduct, setLoadingProduct] = useState(false)
+  const [editMacros, setEditMacros] = useState<{ cal: number; prot: number; carbs: number; fat: number } | null>(null)
+
+  const fetchProductData = useCallback(async (barcode: string) => {
+    setLoadingProduct(true)
+    try {
+      const resp = await fetch('https://world.openfoodfacts.org/api/v0/product/' + barcode + '.json')
+      const data = await resp.json()
+      if (data.status === 1 && data.product) {
+        const p = data.product
+        const n = p.nutriments || {}
+        setProductData({ name: p.product_name || 'Produit inconnu', image: p.image_url, cal: Math.round(n['energy-kcal_100g'] || 0), prot: Math.round(n.proteins_100g || 0), carbs: Math.round(n.carbohydrates_100g || 0), fat: Math.round(n.fat_100g || 0) })
+        setEditMacros({ cal: Math.round(n['energy-kcal_100g'] || 0), prot: Math.round(n.proteins_100g || 0), carbs: Math.round(n.carbohydrates_100g || 0), fat: Math.round(n.fat_100g || 0) })
+      } else { setProductData(null) }
+    } catch { setProductData(null) }
+    setLoadingProduct(false)
+  }, [])
   const [scanning, setScanning] = useState(true)
   const detectedRef = useRef(false)
 
@@ -48,7 +67,9 @@ export function BarcodeScanner({ onDetected, onClose }: BarcodeScannerProps) {
                 detectedRef.current = true
                 setScanning(false)
                 stopCamera()
-                onDetected(barcodes[0].rawValue)
+                // FEAT-F13: Fetch OpenFoodFacts before calling onDetected
+                setDetectedBarcode(barcodes[0].rawValue)
+                fetchProductData(barcodes[0].rawValue)
               }
             } catch {}
           }, 300)

@@ -234,7 +234,7 @@ export function RivalSystem() {
       </p>
 
       {/* Info */}
-      <p style={{ fontSize: '0.72rem', color: '#666', margin: '0 0 8px', textAlign: 'center' }}>
+      <p style={{ fontSize: '0.72rem', color: 'var(--text-secondary, #999)', margin: '0 0 8px', textAlign: 'center' }}>
         Vegeta gagne {DAILY_GAIN_ACTIVE}/jour si tu t'entraines, {DAILY_GAIN_INACTIVE}/jour sinon.
         {!userIsActive && (
           <span style={{ color: '#EF4444' }}> Tu es inactif !</span>

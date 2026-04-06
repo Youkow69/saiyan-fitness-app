@@ -1,11 +1,14 @@
-// ── Leaderboard.tsx ───────────────────────────────────────────────────────────
-// Tenkaichi Budokai rankings by power level, volume, streak, PRs.
+// ── Leaderboard.tsx ─────────────────────────────────────────────────────────────────
+// Tenkaichi Budokai — Supabase leaderboard with sortable rankings.
+// Fetches from Supabase, fallback to demo data if offline.
 // ─────────────────────────────────────────────────────────────────────────────
 
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useCallback } from 'react'
 import { useAppState } from '../../context/AppContext'
 import { getPowerLevel, getWorkoutVolume } from '../../lib'
 import { supabase } from '../../supabase'
+
+// ── Types ──────────────────────────────────────────────────────────────────
 
 interface LeaderboardEntry {
   id: string
@@ -21,33 +24,34 @@ interface LeaderboardEntry {
 type SortKey = 'power_level' | 'total_volume' | 'streak' | 'pr_count'
 
 const SORT_OPTIONS: { key: SortKey; label: string; icon: string }[] = [
-  { key: 'power_level', label: 'Power Level', icon: '\u26A1' },
-  { key: 'total_volume', label: 'Volume total', icon: '\U0001f4aa' },
-  { key: 'streak', label: 'Streak', icon: '\U0001f525' },
-  { key: 'pr_count', label: 'Records', icon: '\U0001f3c6' },
+  { key: 'power_level', label: 'Power Level', icon: String.fromCodePoint(0x26A1) },
+  { key: 'total_volume', label: 'Volume', icon: String.fromCodePoint(0x1F4AA) },
+  { key: 'streak', label: 'Streak', icon: String.fromCodePoint(0x1F525) },
+  { key: 'pr_count', label: 'Records', icon: String.fromCodePoint(0x1F3C6) },
 ]
+
+// ── Component ───────────────────────────────────────────────────────────────
 
 export function Leaderboard() {
   const { state } = useAppState()
   const [entries, setEntries] = useState<LeaderboardEntry[]>([])
   const [sortBy, setSortBy] = useState<SortKey>('power_level')
   const [loading, setLoading] = useState(true)
+  const [source, setSource] = useState<'supabase' | 'demo'>('supabase')
 
-  // Calculate my stats
-  const myStats = useMemo(() => {
+  // Calculate my stats from local data
+  const myStats = useMemo((): LeaderboardEntry => {
     const pl = getPowerLevel(state)
     const totalVol = state.workouts.reduce((sum, w) => sum + getWorkoutVolume(w), 0)
-    // Count PRs: check max weight per exercise across all workouts
     const maxWeights: Record<string, number> = {}
     let prCount = 0
     state.workouts.forEach(w => {
       w.exercises.forEach(ex => {
         ex.sets.forEach(s => {
-          const key = ex.exerciseId
-          const prev = maxWeights[key] || 0
+          const prev = maxWeights[ex.exerciseId] || 0
           if (s.weightKg > prev) {
             if (prev > 0) prCount++
-            maxWeights[key] = s.weightKg
+            maxWeights[ex.exerciseId] = s.weightKg
           }
         })
       })
@@ -63,38 +67,62 @@ export function Leaderboard() {
     }
   }, [state])
 
-  useEffect(() => {
-    loadLeaderboard()
-  }, [sortBy])
-
-  const loadLeaderboard = async () => {
+  // Fetch from Supabase, re-fetch when sortBy changes
+  const fetchLeaderboard = useCallback(async () => {
     setLoading(true)
     try {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from('leaderboard')
         .select('*')
         .order(sortBy, { ascending: false })
         .limit(50)
 
+      if (error) throw error
+
       if (data && data.length > 0) {
-        setEntries(data as LeaderboardEntry[])
+        setEntries(data.map(d => ({
+          id: d.user_id || d.id || Math.random().toString(),
+          username: d.display_name || 'Guerrier',
+          avatar_level: Math.min(9, Math.floor((d.power_level || 0) / 1000)),
+          power_level: d.power_level || 0,
+          total_volume: d.total_volume || d.weekly_volume || 0,
+          streak: d.streak || 0,
+          pr_count: d.pr_count || 0,
+        })))
+        setSource('supabase')
       } else {
+        // Empty table — show demo
         setEntries(getDemoLeaderboard())
+        setSource('demo')
       }
     } catch {
+      // Supabase failed (offline or table missing) — fallback to demo
       setEntries(getDemoLeaderboard())
+      setSource('demo')
     }
     setLoading(false)
-  }
+  }, [sortBy])
 
+  useEffect(() => {
+    fetchLeaderboard()
+  }, [fetchLeaderboard])
+
+  // Merge my stats + sort
   const sorted = useMemo(() => {
-    const all = [...entries.filter(e => e.id !== 'me'), myStats]
+    const others = entries.filter(e => e.id !== 'me')
+    const all = [...others, myStats]
     return all
       .sort((a, b) => (b[sortBy] || 0) - (a[sortBy] || 0))
       .map((e, i) => ({ ...e, rank: i + 1 }))
   }, [entries, myStats, sortBy])
 
   const myRank = sorted.find(e => e.id === 'me')?.rank || 0
+
+  // Medal emoji helper
+  const medalEmoji = (rank: number) =>
+    rank === 1 ? String.fromCodePoint(0x1F947) :
+    rank === 2 ? String.fromCodePoint(0x1F948) :
+    rank === 3 ? String.fromCodePoint(0x1F949) : null
 
   return (
     <div>
@@ -105,23 +133,30 @@ export function Leaderboard() {
           fontSize: '1.1rem', letterSpacing: '0.05em', margin: '0 0 4px',
           color: 'var(--accent-gold, #ffd700)',
         }}>
-          {'\U0001f3c6'} Tenkaichi Budokai
+          {String.fromCodePoint(0x1F3C6)} Tenkaichi Budokai
         </h3>
-        <p style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', margin: 0 }}>
-          Classement des guerriers
+        <p style={{ fontSize: 'max(0.75rem, 0.72rem)', color: 'var(--text-secondary)', margin: 0 }}>
+          Classement des guerriers {source === 'demo' ? '(demo)' : ''}
         </p>
       </div>
 
-      {/* Sort tabs */}
-      <div style={{ display: 'flex', gap: 4, marginBottom: 12, overflowX: 'auto' }}>
+      {/* Sort chips */}
+      <div style={{ display: 'flex', gap: 4, marginBottom: 12, overflowX: 'auto' }} role="tablist" aria-label="Critere de tri">
         {SORT_OPTIONS.map(opt => (
-          <button key={opt.key} type="button" onClick={() => setSortBy(opt.key)} style={{
-            flex: 1, padding: '6px 8px', borderRadius: 8,
-            border: sortBy === opt.key ? '1px solid var(--accent)' : '1px solid var(--border, #333)',
-            background: sortBy === opt.key ? 'rgba(255,140,0,0.12)' : 'transparent',
-            color: sortBy === opt.key ? 'var(--accent)' : 'var(--text-secondary, #888)',
-            fontSize: '0.68rem', fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap',
-          }}>
+          <button
+            key={opt.key}
+            type="button"
+            role="tab"
+            aria-selected={sortBy === opt.key}
+            onClick={() => setSortBy(opt.key)}
+            style={{
+              flex: 1, padding: '6px 8px', borderRadius: 8,
+              border: sortBy === opt.key ? '1px solid var(--accent)' : '1px solid var(--border, #333)',
+              background: sortBy === opt.key ? 'rgba(255,140,0,0.12)' : 'transparent',
+              color: sortBy === opt.key ? 'var(--accent)' : 'var(--text-secondary, #888)',
+              fontSize: 'max(0.75rem, 0.68rem)', fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap',
+            }}
+          >
             {opt.icon} {opt.label}
           </button>
         ))}
@@ -135,41 +170,52 @@ export function Leaderboard() {
         display: 'flex', justifyContent: 'space-between', alignItems: 'center',
       }}>
         <div>
-          <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Ton rang</div>
+          <div style={{ fontSize: 'max(0.75rem, 0.72rem)', color: 'var(--text-secondary)' }}>Ton rang</div>
           <div style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--accent-gold, #ffd700)' }}>
             #{myRank}
           </div>
         </div>
         <div style={{ textAlign: 'right' }}>
-          <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>{SORT_OPTIONS.find(o => o.key === sortBy)?.label}</div>
+          <div style={{ fontSize: 'max(0.75rem, 0.72rem)', color: 'var(--text-secondary)' }}>
+            {SORT_OPTIONS.find(o => o.key === sortBy)?.label}
+          </div>
           <div style={{ fontSize: '1.1rem', fontWeight: 700 }}>
-            {sortBy === 'total_volume' ? myStats[sortBy].toLocaleString() + ' kg' : myStats[sortBy].toLocaleString()}
+            {sortBy === 'total_volume'
+              ? myStats.total_volume.toLocaleString('fr-FR') + ' kg'
+              : myStats[sortBy].toLocaleString('fr-FR')
+            }
           </div>
         </div>
       </div>
 
       {/* Leaderboard list */}
       {loading ? (
-        <div style={{ textAlign: 'center', padding: 24, color: 'var(--text-secondary)' }}>Chargement...</div>
+        <div style={{ textAlign: 'center', padding: 24, color: 'var(--text-secondary)' }}>
+          Chargement du tournoi...
+        </div>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }} role="list" aria-label="Classement">
           {sorted.slice(0, 20).map(entry => {
             const isMe = entry.id === 'me'
-            const medalColors: Record<number, string> = { 1: '#ffd700', 2: '#c0c0c0', 3: '#cd7f32' }
             return (
-              <div key={entry.id} style={{
-                display: 'flex', alignItems: 'center', gap: 10,
-                padding: '8px 12px', borderRadius: 10,
-                background: isMe ? 'rgba(255,140,0,0.08)' : 'var(--bg-card, #1a1a1a)',
-                border: isMe ? '1px solid var(--accent)' : '1px solid var(--border, #333)',
-              }}>
+              <div
+                key={entry.id}
+                role="listitem"
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 10,
+                  padding: '8px 12px', borderRadius: 10,
+                  background: isMe ? 'rgba(255,215,0,0.1)' : 'var(--bg-card, #1a1a1a)',
+                  border: isMe ? '2px solid var(--accent-gold, #ffd700)' : '1px solid var(--border, #333)',
+                  boxShadow: isMe ? '0 0 12px rgba(255,215,0,0.15)' : 'none',
+                }}
+              >
                 {/* Rank */}
                 <span style={{
                   width: 28, textAlign: 'center', fontWeight: 800,
                   fontSize: entry.rank && entry.rank <= 3 ? '1rem' : '0.85rem',
-                  color: (entry.rank && medalColors[entry.rank]) || 'var(--text-secondary, #888)',
+                  color: entry.rank === 1 ? '#ffd700' : entry.rank === 2 ? '#c0c0c0' : entry.rank === 3 ? '#cd7f32' : 'var(--text-secondary, #888)',
                 }}>
-                  {entry.rank && entry.rank <= 3 ? (entry.rank === 1 ? '\U0001f947' : entry.rank === 2 ? '\U0001f948' : '\U0001f949') : `#${entry.rank}`}
+                  {entry.rank && entry.rank <= 3 ? medalEmoji(entry.rank) : '#' + entry.rank}
                 </span>
 
                 {/* Avatar */}
@@ -177,7 +223,7 @@ export function Leaderboard() {
                   width: 32, height: 32, borderRadius: '50%', flexShrink: 0,
                   background: `linear-gradient(135deg, ${entry.avatar_level >= 5 ? '#ffd700' : '#ff8c00'}, #333)`,
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontWeight: 800, fontSize: '0.7rem', color: '#000',
+                  fontWeight: 800, fontSize: 'max(0.75rem, 0.7rem)', color: '#000',
                 }}>
                   {entry.avatar_level}
                 </div>
@@ -186,21 +232,22 @@ export function Leaderboard() {
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{
                     fontWeight: isMe ? 800 : 600, fontSize: '0.85rem',
-                    color: isMe ? 'var(--accent)' : 'var(--text)',
+                    color: isMe ? 'var(--accent-gold, #ffd700)' : 'var(--text)',
                     overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
                   }}>
-                    {entry.username} {isMe ? '(toi)' : ''}
+                    {entry.username}{isMe ? ' (toi)' : ''}
                   </div>
                 </div>
 
                 {/* Score */}
                 <span style={{
                   fontWeight: 700, fontSize: '0.85rem', flexShrink: 0,
-                  color: isMe ? 'var(--accent)' : 'var(--text)',
+                  color: isMe ? 'var(--accent-gold, #ffd700)' : 'var(--text)',
+                  fontVariantNumeric: 'tabular-nums',
                 }}>
                   {sortBy === 'total_volume'
-                    ? Math.round(entry[sortBy]).toLocaleString() + ' kg'
-                    : entry[sortBy].toLocaleString()
+                    ? Math.round(entry.total_volume).toLocaleString('fr-FR') + ' kg'
+                    : (entry[sortBy] || 0).toLocaleString('fr-FR')
                   }
                 </span>
               </div>
@@ -211,6 +258,8 @@ export function Leaderboard() {
     </div>
   )
 }
+
+// ── Helpers ─────────────────────────────────────────────────────────────────
 
 function calculateStreak(dates: string[]): number {
   if (dates.length === 0) return 0
@@ -238,11 +287,15 @@ function getDemoLeaderboard(): LeaderboardEntry[] {
   ]
 }
 
+// ── Export: sync to Supabase ─────────────────────────────────────────────────────
 
-// Push current stats to leaderboard table
 export async function syncToLeaderboard(userId: string, data: {
-  displayName: string; powerLevel: number; totalVolume: number;
-  streak: number; prCount: number; transformation: string;
+  displayName: string
+  powerLevel: number
+  totalVolume: number
+  streak: number
+  prCount: number
+  transformation: string
 }) {
   try {
     await supabase.from('leaderboard').upsert({
@@ -255,5 +308,7 @@ export async function syncToLeaderboard(userId: string, data: {
       transformation: data.transformation,
       updated_at: new Date().toISOString(),
     }, { onConflict: 'user_id' })
-  } catch (e) { console.warn('Leaderboard sync failed:', e) }
+  } catch (e) {
+    console.warn('[Leaderboard] Sync failed:', e)
+  }
 }

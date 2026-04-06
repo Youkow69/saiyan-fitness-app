@@ -47,17 +47,20 @@ async function compressImage(file: File): Promise<string> {
 export function ProgressPhotos() {
   const [photos, setPhotos] = useState<ProgressPhoto[]>(loadPhotos)
   const [selectedPhoto, setSelectedPhoto] = useState<ProgressPhoto | null>(null)
+  const [pendingFile, setPendingFile] = useState<File | null>(null)
+  const [selectedCategory, setSelectedCat] = useState<string>('front')
   const [compareMode, setCompareMode] = useState(false)
   const [compareIdx, setCompareIdx] = useState<[number, number]>([0, 0])
   const inputRef = useRef<HTMLInputElement>(null)
 
-  const addPhoto = useCallback(async (file: File) => {
+  const addPhoto = useCallback(async (file: File, category: string) => {
     const dataUrl = await compressImage(file)
     const photo: ProgressPhoto = {
       id: makeId(),
       date: todayIso(),
       dataUrl,
-    }
+      category,
+    } as any
     const updated = [photo, ...photos].slice(0, MAX_PHOTOS)
     setPhotos(updated)
     savePhotos(updated)
@@ -109,14 +112,30 @@ return (
       </div>
 
       <input ref={inputRef} type="file" accept="image/*" capture="environment" style={{ display: 'none' }}
-        onChange={e => { const f = e.target.files?.[0]; if (f) addPhoto(f); e.target.value = '' }} />
+        onChange={e => { const f = e.target.files?.[0]; if (f) setPendingFile(f); e.target.value = '' }} />
 
       {compareMode && photos.length >= 2 ? (
         <div>
           <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
             <select value={compareIdx[0]} onChange={e => setCompareIdx([Number(e.target.value), compareIdx[1]])}
               style={{ flex: 1, padding: 8, borderRadius: 8, border: '1px solid var(--border)', background: 'var(--bg-card)', color: 'var(--text)', fontSize: '0.8rem' }}>
-              {photos.map((p, i) => <option key={p.id} value={i}>{p.date}</option>)}
+              {/* FEAT-F23: Category selection for new photo */}
+      {pendingFile && (
+        <div style={{ padding: 16, background: 'var(--bg-card)', borderRadius: 12, border: '1px solid var(--accent)', marginBottom: 12 }}>
+          <div style={{ fontSize: '0.82rem', fontWeight: 700, marginBottom: 8 }}>Categorie de la photo</div>
+          <div style={{ display: 'flex', gap: 6, marginBottom: 12 }}>
+            {['front', 'back', 'side_left', 'side_right'].map(cat => (
+              <button key={cat} type='button' onClick={() => setSelectedCat(cat)}
+                style={{ flex: 1, padding: '8px 4px', borderRadius: 8, border: selectedCategory === cat ? '2px solid var(--accent)' : '1px solid var(--border)', background: selectedCategory === cat ? 'rgba(255,140,0,0.1)' : 'transparent', color: selectedCategory === cat ? 'var(--accent)' : 'var(--text-secondary)', fontSize: '0.72rem', fontWeight: 600, cursor: 'pointer' }}>
+                {cat === 'front' ? 'Face' : cat === 'back' ? 'Dos' : cat === 'side_left' ? 'Gauche' : 'Droite'}
+              </button>
+            ))}
+          </div>
+          <button type='button' onClick={() => { addPhoto(pendingFile, selectedCategory); setPendingFile(null) }} style={{ width: '100%', padding: 10, borderRadius: 8, border: 'none', background: 'var(--accent)', color: '#000', fontWeight: 700, cursor: 'pointer' }}>Sauvegarder</button>
+        </div>
+      )}
+
+      {photos.map((p, i) => <option key={p.id} value={i}>{p.date}</option>)}
             </select>
             <select value={compareIdx[1]} onChange={e => setCompareIdx([compareIdx[0], Number(e.target.value)])}
               style={{ flex: 1, padding: 8, borderRadius: 8, border: '1px solid var(--border)', background: 'var(--bg-card)', color: 'var(--text)', fontSize: '0.8rem' }}>

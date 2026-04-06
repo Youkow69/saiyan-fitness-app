@@ -70,8 +70,19 @@ export function ProgressPhotos() {
     setSelectedPhoto(null)
   }, [photos])
 
-  return (
-    <div>
+    const [categoryFilter, setCategoryFilter] = useState<string>('all')
+  const filteredPhotos = categoryFilter === 'all' ? photos : photos.filter(p => (p as any).category === categoryFilter)
+
+return (
+    <div style={{ display: 'flex', gap: 6, marginBottom: 10, flexWrap: 'wrap' }}>
+          {['all', 'front', 'back', 'side_left', 'side_right'].map(cat => (
+            <button key={cat} type="button" onClick={() => setCategoryFilter(cat)}
+              style={{ padding: '4px 10px', borderRadius: 8, border: '1px solid var(--border)', background: categoryFilter === cat ? 'var(--accent)' : 'transparent', color: categoryFilter === cat ? '#000' : 'var(--text-secondary)', fontSize: '0.68rem', fontWeight: 600, cursor: 'pointer' }}>
+              {cat === 'all' ? 'Tous' : cat === 'front' ? 'Face' : cat === 'back' ? 'Dos' : cat === 'side_left' ? 'Gauche' : 'Droite'}
+            </button>
+          ))}
+        </div>
+        <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
         <h3 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: '1.1rem', letterSpacing: '0.05em', textTransform: 'uppercase', color: 'var(--accent)' }}>
           Photos de progression

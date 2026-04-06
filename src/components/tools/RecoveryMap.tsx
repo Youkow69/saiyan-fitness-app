@@ -38,31 +38,29 @@ export function RecoveryMap() {
   const muscleData = useMemo(() => {
     const now = Date.now()
     const lastHit: Record<string, number> = {}
+    const SECONDARY_OFFSET = 24 * 3_600_000 // 24h offset = secondary muscles recover faster
 
-    const lastHitPrimary: Record<string, number> = {}
-    const lastHitSecondary: Record<string, number> = {}
     for (const w of state.workouts ?? []) {
       const ts = new Date(w.date).getTime()
       for (const ex of w.exercises ?? []) {
         const def = getExerciseById(ex.exerciseId)
+        // Primary muscles: full fatigue (real timestamp)
         for (const m of def?.primaryMuscles ?? []) {
-          if (!lastHitPrimary[m] || ts > lastHitPrimary[m]) lastHitPrimary[m] = ts
           if (!lastHit[m] || ts > lastHit[m]) lastHit[m] = ts
         }
-        // BUG-F14: Secondary muscles tracked separately (0.5 fatigue factor)
+        // BUG-F14: Secondary muscles use offset timestamp (0.5 factor)
+        // Offset by 24h = they appear "hit earlier" = recover faster
         for (const m of def?.secondaryMuscles ?? []) {
-          if (!lastHitSecondary[m] || ts > lastHitSecondary[m]) lastHitSecondary[m] = ts
-          if (!lastHit[m] || ts > lastHit[m]) lastHit[m] = ts
+          const adjusted = ts - SECONDARY_OFFSET
+          // Only apply if no more recent PRIMARY hit exists
+          if (!lastHit[m] || adjusted > lastHit[m]) lastHit[m] = adjusted
         }
       }
     }
 
     return MUSCLES.map((m) => {
       const ts = lastHit[m] ?? null
-      // Apply 0.5 factor: if only hit as secondary, recover 50% faster
-      const wasPrimary = !!lastHitPrimary[m] && lastHitPrimary[m] === ts
-      const rawHours = ts ? (now - ts) / 3_600_000 : null
-      const hours = rawHours !== null ? Math.round(wasPrimary ? rawHours : rawHours * 1.5) : null
+      const hours = ts ? Math.round((now - ts) / 3_600_000) : null
       const status = getStatus(hours)
       const pct = getPercent(hours)
       return { key: m, fr: FR[m], hours, status, pct, ...STATUS_META[status] }

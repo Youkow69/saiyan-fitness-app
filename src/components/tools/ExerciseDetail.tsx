@@ -90,9 +90,6 @@ export function ExerciseDetail({
     }
   }, [state.workouts, exerciseId])
 
-  // ── Exercice non trouve ────────────────────────────────────────────────
-  if (!exercise) {
-  
   // FEAT-F2: e1RM history chart data
   const e1RmHistory = useMemo(() => {
     const points: { date: string; e1rm: number }[] = []
@@ -108,6 +105,10 @@ export function ExerciseDetail({
     }
     return points.slice(-20)
   }, [state.workouts, exerciseId])
+
+  // ── Exercice non trouve ────────────────────────────────────────────────
+  if (!exercise) {
+  
 
   return (
       <div

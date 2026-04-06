@@ -71,7 +71,6 @@ export function ProgressPhotos() {
   }, [photos])
 
     const [categoryFilter, setCategoryFilter] = useState<string>('all')
-  const filteredPhotos = categoryFilter === 'all' ? photos : photos.filter(p => (p as any).category === categoryFilter)
 
 return (
     <>

@@ -144,7 +144,16 @@ export function ExerciseDetail({
 
   // ── Rendu ──────────────────────────────────────────────────────────────
   return (
-    <div
+    {/* FEAT-F21: Exercise GIF */}
+          {exercise.gifUrl && (
+            <img
+              src={exercise.gifUrl}
+              alt={exercise.name}
+              loading="lazy"
+              style={{ width: '100%', maxHeight: 200, objectFit: 'contain', borderRadius: 12, marginBottom: 12, background: 'rgba(0,0,0,0.3)' }}
+            />
+          )}
+          <div
       style={overlayStyle}
       onClick={onClose}
       role="dialog"

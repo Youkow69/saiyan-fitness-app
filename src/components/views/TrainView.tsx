@@ -82,6 +82,14 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
                 <SectionTitle icon="⏱️" label="Repos" />
                 <h3 style={{ fontSize: '3.2rem', margin: '4px 0 0', color: 'var(--accent-gold)' }}>{restTimer}s</h3>
               </div>
+              <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 6 }}>
+                {[60, 90, 120, 180, 300].map(t => (
+                  <button key={t} type="button" onClick={() => {/* FEAT-F15: would need setRestTimer prop */}}
+                    style={{ padding: '4px 10px', borderRadius: 8, border: '1px solid var(--border)', background: 'rgba(255,200,61,0.08)', color: 'var(--accent-gold)', fontSize: '0.68rem', fontWeight: 600, cursor: 'pointer' }}>
+                    {t}s
+                  </button>
+                ))}
+              </div>
               <button className="ghost-btn" onClick={onSkipTimer} type="button">Passer</button>
             </section>
           )}

@@ -24,8 +24,14 @@ export function ProgressPhotoCompare() {
   const [beforeIdx, setBeforeIdx] = useState(0)
   const [afterIdx, setAfterIdx] = useState(-1)
 
-  // Get photos from state (stored as base64 or URLs)
-  const photos: Photo[] = ((state as any).progressPhotos || [])
+  // Get photos from localStorage (matching ProgressPhotos storage)
+  const allPhotos: Photo[] = (() => {
+    try {
+      const raw = localStorage.getItem('saiyan-progress-photos')
+      return raw ? JSON.parse(raw) : []
+    } catch { return [] }
+  })()
+  const photos: Photo[] = allPhotos
     .filter((p: Photo) => p.category === selectedCategory)
     .sort((a: Photo, b: Photo) => a.date.localeCompare(b.date))
 

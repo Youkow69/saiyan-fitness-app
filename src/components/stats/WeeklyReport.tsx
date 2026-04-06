@@ -32,6 +32,12 @@ export function WeeklyReport() {
   const { state } = useAppState()
 
   const report = useMemo(() => {
+    const today = new Date()
+    const dow = today.getDay()
+    const mOff = dow === 0 ? -6 : 1 - dow
+    const mon = new Date(today)
+    mon.setDate(today.getDate() + mOff)
+    const mondayStr = mon.getFullYear() + "-" + String(mon.getMonth() + 1).padStart(2, "0") + "-" + String(mon.getDate()).padStart(2, "0")
     const weekWorkouts = getThisWeekWorkouts(state.workouts)
     const weekVolume = getTotalVolume(weekWorkouts)
     const totalSets = weekWorkouts.reduce((t, w) => t + w.exercises.reduce((s, e) => s + e.sets.length, 0), 0)

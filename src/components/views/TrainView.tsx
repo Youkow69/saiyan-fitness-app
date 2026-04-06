@@ -33,7 +33,7 @@ interface TrainViewProps {
   onStartWorkout: () => void
   onStartSession: (sessionIndex: number) => void
   onStartCustomRoutine: (routine: CustomRoutine) => void
-  onAddSet: (exerciseId: string, weightKg: number, reps: number, rir: number, setType: SetType) => void
+  onAddSet: (exerciseId: string, weightKg: number, reps: number, rir: number, setType: SetType, skipRest?: boolean) => void
   onFinishWorkout: () => void
 }
 
@@ -155,7 +155,12 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
                     </div>
                   </div>
                 </div>
-                <button className="secondary-btn" type="button" onClick={() => onAddSet(exercise.id, Number(currentInput.weight || 0), Number(currentInput.reps || 0), Number(currentInput.rir || target.targetRir), currentInput.setType)}>
+                <button className="secondary-btn" type="button" onClick={() => {
+                  // FEAT-F3: Skip rest timer for non-last exercises in superset group
+                  const group = supersetGroups.find(g => g.includes(exercise.id))
+                  const isLastInGroup = !group || group[group.length - 1] === exercise.id
+                  onAddSet(exercise.id, Number(currentInput.weight || 0), Number(currentInput.reps || 0), Number(currentInput.rir || target.targetRir), currentInput.setType, !isLastInGroup)
+                }}>
                   + Ajouter la série
                 </button>
                 <div className="set-list">

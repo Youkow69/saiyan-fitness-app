@@ -316,7 +316,35 @@ export function ExerciseDetail({
               + Ajouter au workout
             </button>
           )}
-          <button type="button" onClick={onClose} style={closeBtnStyle}>
+          {/* FEAT-F2: e1RM History Chart */}
+      {e1RmHistory.length >= 2 && (
+        <div style={{ marginTop: 16, padding: 12, background: "rgba(255,255,255,0.02)", borderRadius: 12, border: "1px solid var(--border)" }}>
+          <div style={{ fontSize: "0.78rem", fontWeight: 700, marginBottom: 8, color: "var(--accent)" }}>Progression e1RM</div>
+          <svg viewBox="0 0 280 80" style={{ width: "100%", height: 60 }}>
+            {(() => {
+              const W = 280, HH = 80
+              const vals = e1RmHistory.map(p => p.e1rm)
+              const minY = Math.min(...vals)
+              const maxY = Math.max(...vals)
+              const rng = maxY - minY || 1
+              const sx = (i: number) => (i / Math.max(1, e1RmHistory.length - 1)) * W
+              const sy = (v: number) => HH - ((v - minY) / rng) * HH * 0.8 - HH * 0.1
+              const d = e1RmHistory.map((p, i) => `${i === 0 ? "M" : "L"}${sx(i).toFixed(1)},${sy(p.e1rm).toFixed(1)}`).join(" ")
+              return (<>
+                <path d={d} fill="none" stroke="#FF8C00" strokeWidth="2" strokeLinecap="round" />
+                {e1RmHistory.map((p, i) => <circle key={i} cx={sx(i)} cy={sy(p.e1rm)} r="3" fill="#FF8C00" stroke="var(--bg-card)" strokeWidth="1.5" />)}
+              </>)
+            })()}
+          </svg>
+          <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.6rem", color: "var(--muted)", marginTop: 4 }}>
+            <span>{e1RmHistory[0]?.date}</span>
+            <span>{Math.round(Math.max(...e1RmHistory.map(p => p.e1rm)))} kg</span>
+            <span>{e1RmHistory[e1RmHistory.length - 1]?.date}</span>
+          </div>
+        </div>
+      )}
+
+      <button type="button" onClick={onClose} style={closeBtnStyle}>
             Fermer
           </button>
         </div>

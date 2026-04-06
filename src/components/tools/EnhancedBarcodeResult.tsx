@@ -98,7 +98,7 @@ export function EnhancedBarcodeResult({ data, onConfirm, onCancel }: Props) {
             background: `${color}11`, borderRadius: 10, padding: '8px 6px',
             textAlign: 'center', border: `1px solid ${color}22`,
           }}>
-            <div style={{ fontSize: '0.6rem', color: 'var(--text-secondary)', marginBottom: 2 }}>{label}</div>
+            <div style={{ fontSize: 'max(0.75rem, 0.6rem)', color: 'var(--text-secondary)', marginBottom: 2 }}>{label}</div>
             {editMode ? (
               <input
                 type="number"

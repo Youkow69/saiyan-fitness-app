@@ -39,15 +39,19 @@ export function RecoveryMap() {
     const now = Date.now()
     const lastHit: Record<string, number> = {}
 
+    const lastHitPrimary: Record<string, number> = {}
+    const lastHitSecondary: Record<string, number> = {}
     for (const w of state.workouts ?? []) {
       const ts = new Date(w.date).getTime()
       for (const ex of w.exercises ?? []) {
         const def = getExerciseById(ex.exerciseId)
         for (const m of def?.primaryMuscles ?? []) {
+          if (!lastHitPrimary[m] || ts > lastHitPrimary[m]) lastHitPrimary[m] = ts
           if (!lastHit[m] || ts > lastHit[m]) lastHit[m] = ts
         }
-        // BUG-F14: Include secondary muscles
+        // BUG-F14: Secondary muscles tracked separately (0.5 fatigue factor)
         for (const m of def?.secondaryMuscles ?? []) {
+          if (!lastHitSecondary[m] || ts > lastHitSecondary[m]) lastHitSecondary[m] = ts
           if (!lastHit[m] || ts > lastHit[m]) lastHit[m] = ts
         }
       }
@@ -55,7 +59,10 @@ export function RecoveryMap() {
 
     return MUSCLES.map((m) => {
       const ts = lastHit[m] ?? null
-      const hours = ts ? Math.round((now - ts) / 3_600_000) : null
+      // Apply 0.5 factor: if only hit as secondary, recover 50% faster
+      const wasPrimary = !!lastHitPrimary[m] && lastHitPrimary[m] === ts
+      const rawHours = ts ? (now - ts) / 3_600_000 : null
+      const hours = rawHours !== null ? Math.round(wasPrimary ? rawHours : rawHours * 1.5) : null
       const status = getStatus(hours)
       const pct = getPercent(hours)
       return { key: m, fr: FR[m], hours, status, pct, ...STATUS_META[status] }

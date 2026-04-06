@@ -604,7 +604,6 @@ export function InlineSetLogger({ exerciseId, target, onSetAdded }: Props) {
           placeholder="kg"
           aria-label="Poids en kg"
         />
-        {previousSet && <div onClick={() => setDraft(d => ({...d, weight: String(previousSet.weightKg)}))} style={{ fontSize: '0.6rem', color: 'var(--text-secondary)', textAlign: 'center', cursor: 'pointer', marginTop: 1 }}>{previousSet.weightKg}kg</div>}
 
         {/* Reps input */}
         <input
@@ -615,7 +614,6 @@ export function InlineSetLogger({ exerciseId, target, onSetAdded }: Props) {
           placeholder="reps"
           aria-label="Nombre de répétitions"
         />
-        {previousSet && <div onClick={() => setDraft(d => ({...d, reps: String(previousSet.reps)}))} style={{ fontSize: '0.6rem', color: 'var(--text-secondary)', textAlign: 'center', cursor: 'pointer', marginTop: 1 }}>{previousSet.reps}r</div>}
 
         {/* RIR input (collapsible) */}
         {showRir && (<>

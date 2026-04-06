@@ -106,14 +106,16 @@ export function FeedView() {
   }
 
   const toggleLike = async (id: string) => {
+    // Capture current state before optimistic update
+    const item = feed.find(f => f.id === id)
+    if (!item) return
+    const newLikes = item.liked_by_me ? item.likes - 1 : item.likes + 1
     setFeed(prev => prev.map(f =>
-      f.id === id ? { ...f, likes: f.liked_by_me ? f.likes - 1 : f.likes + 1, liked_by_me: !f.liked_by_me } : f
+      f.id === id ? { ...f, likes: newLikes, liked_by_me: !f.liked_by_me } : f
     ))
     try {
-      await supabase.from('workout_shares').update({
-        likes: feed.find(f => f.id === id)?.liked_by_me ? feed.find(f => f.id === id)!.likes - 1 : (feed.find(f => f.id === id)?.likes || 0) + 1,
-      }).eq('id', id)
-    } catch { /* optimistic update */ }
+      await supabase.from('workout_shares').update({ likes: newLikes }).eq('id', id)
+    } catch { /* optimistic update fallback */ }
   }
 
   const lastWorkout = state.workouts.length > 0 ? state.workouts[state.workouts.length - 1] : null

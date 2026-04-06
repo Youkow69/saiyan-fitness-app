@@ -510,7 +510,7 @@ export function InlineSetLogger({ exerciseId, target, onSetAdded }: Props) {
           />
 
           {/* RIR (editable, collapsible) */}
-          {showRir && (
+          {showRir && (<>
             <EditableCell
               value={set.rir}
               onChange={v => updateSet(set.id, 'rir', v)}
@@ -630,7 +630,7 @@ export function InlineSetLogger({ exerciseId, target, onSetAdded }: Props) {
                   onChange={(newRir) => setDraft(d => ({ ...d, rir: String(newRir) }))}
                   compact
                 />
-        )}
+        </>)}
 
         {/* Set type selector (mini) */}
         <select

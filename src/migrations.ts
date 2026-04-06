@@ -16,9 +16,9 @@ const migrations: Migration[] = [
     version: 2,
     migrate: (state: any) => {
       const migrated = { ...state }
-      if (!Array.isArray(migrated.measurements)) {
-        const existing = migrated.measurements
-        migrated.measurements = existing ? [{ ...existing, date: new Date().toISOString().slice(0, 10) }] : []
+      if (!Array.isArray(migrated.measurementEntries)) {
+        const existing = migrated.measurementEntries
+        migrated.measurementEntries = existing ? [{ ...existing, date: new Date().toISOString().slice(0, 10) }] : []
       }
       if (!Array.isArray(migrated.customFoods)) {
         migrated.customFoods = []

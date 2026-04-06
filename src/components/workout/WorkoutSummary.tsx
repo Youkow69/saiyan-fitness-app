@@ -590,6 +590,23 @@ export function WorkoutSummary({ workout, previousPowerLevel, onClose }: Props) 
           }
         </div>
 
+        {/* FEAT-F9: RPE moyen */}
+        {stats.avgRpe !== null && (
+          <div style={{
+            display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
+            padding: "8px 16px", borderRadius: 12, marginBottom: 12,
+            background: stats.avgRpe > 8 ? "rgba(239,68,68,0.12)" : stats.avgRpe > 7 ? "rgba(249,115,22,0.12)" : "rgba(34,197,94,0.12)",
+          }}>
+            <span style={{ fontSize: "0.72rem", color: "var(--text-secondary)" }}>RPE moyen</span>
+            <span style={{ fontSize: "1.1rem", fontWeight: 800, color: stats.avgRpe > 8 ? "#ef4444" : stats.avgRpe > 7 ? "#f97316" : "#22c55e" }}>
+              {stats.avgRpe.toFixed(1)}
+            </span>
+            <span style={{ fontSize: "0.68rem", color: "var(--text-secondary)" }}>
+              {stats.avgRpe > 9 ? "Max effort" : stats.avgRpe > 8 ? "Intense" : stats.avgRpe > 7 ? "Modere" : "Facile"}
+            </span>
+          </div>
+        )}
+
         {/* ── Close button ────────────────────────────────────────────── */}
         <button
           className="ws-close-btn"

@@ -1,3 +1,4 @@
+import { useAppState } from '../../context/AppContext'
 import { useState, useCallback, useRef } from 'react'
 import { todayIso, makeId } from '../../lib'
 
@@ -49,7 +50,23 @@ export function ProgressPhotos() {
   const [selectedPhoto, setSelectedPhoto] = useState<ProgressPhoto | null>(null)
   const [pendingFile, setPendingFile] = useState<File | null>(null)
   const [selectedCategory, setSelectedCat] = useState<string>('front')
-  const [compareMode, setCompareMode] = useState(false)
+  
+  // FEAT-F23: Get weight overlay for photo date
+  const { state: appState } = useAppState()
+  const getWeightForDate = (date: string): string | null => {
+    const entries = appState.bodyweightEntries || []
+    if (entries.length === 0) return null
+    let closest = entries[0]
+    let minDiff = Math.abs(new Date(date).getTime() - new Date(closest.date).getTime())
+    for (const e of entries) {
+      const diff = Math.abs(new Date(date).getTime() - new Date(e.date).getTime())
+      if (diff < minDiff) { minDiff = diff; closest = e }
+    }
+    // Only show if within 7 days
+    if (minDiff > 7 * 24 * 3600 * 1000) return null
+    return closest.weightKg + ' kg'
+  }
+const [compareMode, setCompareMode] = useState(false)
   const [compareIdx, setCompareIdx] = useState<[number, number]>([0, 0])
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -162,6 +179,12 @@ return (
           {photos.map(p => (
             <div key={p.id} onClick={() => setSelectedPhoto(p)} style={{ cursor: 'pointer', position: 'relative' }}>
               <img src={p.dataUrl} alt={p.date} style={{ width: '100%', borderRadius: 10, objectFit: 'cover', aspectRatio: '3/4' }} />
+              {/* FEAT-F23: Weight overlay */}
+              {getWeightForDate(p.date) && (
+                <div style={{ position: 'absolute', bottom: 6, right: 6, padding: '2px 8px', borderRadius: 6, background: 'rgba(0,0,0,0.6)', color: '#FFD700', fontSize: 'max(0.75rem, 0.68rem)', fontWeight: 700, backdropFilter: 'blur(4px)' }}>
+                  {getWeightForDate(p.date)}
+                </div>
+              )}
               <div style={{ position: 'absolute', bottom: 4, left: 4, right: 4, textAlign: 'center', fontSize: '0.6rem', fontWeight: 700, color: '#fff', textShadow: '0 1px 3px rgba(0,0,0,0.8)' }}>
                 {p.date}
               </div>

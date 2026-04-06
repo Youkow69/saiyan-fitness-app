@@ -30,6 +30,7 @@ function getLastSet(workouts: AppState['workouts'], exerciseId: string) {
 interface TrainViewProps {
   restTimer: number
   onSkipTimer: () => void
+  onSetRestTimer?: (seconds: number) => void
   onStartWorkout: () => void
   onStartSession: (sessionIndex: number) => void
   onStartCustomRoutine: (routine: CustomRoutine) => void
@@ -41,6 +42,7 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
   function TrainView({
     restTimer,
     onSkipTimer,
+    onSetRestTimer,
     onStartWorkout,
     onStartSession,
     onStartCustomRoutine,
@@ -84,7 +86,7 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
               </div>
               <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 6 }}>
                 {[60, 90, 120, 180, 300].map(t => (
-                  <button key={t} type="button" onClick={() => {/* FEAT-F15: would need setRestTimer prop */}}
+                  <button key={t} type="button" onClick={() => onSetRestTimer?.(t)}
                     style={{ padding: '4px 10px', borderRadius: 8, border: '1px solid var(--border)', background: 'rgba(255,200,61,0.08)', color: 'var(--accent-gold)', fontSize: '0.68rem', fontWeight: 600, cursor: 'pointer' }}>
                     {t}s
                   </button>

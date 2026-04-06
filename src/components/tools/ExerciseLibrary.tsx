@@ -2,7 +2,6 @@
 // Enhanced exercise library with filters and search
 
 import { useState, useMemo } from 'react'
-import { useAppState } from '../../context/AppContext'
 import { allExercises } from '../../data/exercises'
 import type { Exercise, MuscleGroup } from '../../types'
 
@@ -15,14 +14,12 @@ interface Props {
 }
 
 export function ExerciseLibrary({ onSelect, compact = false }: Props) {
-  const { state } = useAppState()
   const [search, setSearch] = useState('')
   const [filterMuscle, setFilterMuscle] = useState<MuscleGroup | ''>('')
   const [filterEquip, setFilterEquip] = useState('')
   const [filterDiff, setFilterDiff] = useState<number | 0>(0)
   const [selectedId, setSelectedId] = useState<string | null>(null)
 
-  const customExercises = [] as any[]
   const allExs = [...allExercises, ...customExercises]
 
   const filtered = useMemo(() => {

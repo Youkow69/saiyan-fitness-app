@@ -183,7 +183,7 @@ function appReducer(state: AppState, action: Action): AppState {
       // Clear all localStorage
       try {
         Object.keys(localStorage).forEach(key => {
-          if (key.startsWith('sf_') || key === 'saiyan_fitness_state') {
+          if (key.startsWith('sf_') || key === 'saiyan_fitness_state' || key === 'saiyan-fitness-v1') {
             localStorage.removeItem(key)
           }
         })

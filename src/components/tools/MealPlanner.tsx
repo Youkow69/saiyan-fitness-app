@@ -209,6 +209,8 @@ function generateSuggestions(remaining: RemainingMacros): MealSuggestion[] {
     suggestions.push({ name: 'Pomme + Beurre de cacahuete', items, totalCalories: totals.calories + 80, totalProtein: totals.protein, match: 50 })
   }
 
+  }
+  }
   return suggestions
 }
 

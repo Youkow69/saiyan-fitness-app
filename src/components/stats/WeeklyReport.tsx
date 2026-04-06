@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { useAppState } from '../../context/AppContext'
-import { getTotalVolume, getStreak, daysAgoIso, getExerciseById } from '../../lib'
+import { getTotalVolume, getStreak, daysAgoIso, getExerciseById, estimate1Rm } from '../../lib'
 import { ShareButton } from '../tools/ShareCard'
 import type { WorkoutLog } from '../../types'
 
@@ -37,7 +37,48 @@ export function WeeklyReport() {
     const totalSets = weekWorkouts.reduce((t, w) => t + w.exercises.reduce((s, e) => s + e.sets.length, 0), 0)
     const totalDuration = weekWorkouts.reduce((t, w) => t + (w.durationMinutes ?? 0), 0)
     const streak = getStreak(state)
-    // PRs tracked via lib // total PRs (can't easily filter to this week only)
+    // FEAT-F20: Detect PRs this week
+    const bestByExercise = new Map<string, number>()
+    // Build historical bests from ALL workouts before this week
+    state.workouts.forEach(w => {
+      if ((w.date ?? '') >= mondayStr) return // skip this week
+      w.exercises.forEach(ex => {
+        let best = bestByExercise.get(ex.exerciseId) || 0
+        ex.sets.forEach(s => {
+          const e = estimate1Rm(s.weightKg, s.reps)
+          if (e > best) best = e
+        })
+        if (best > 0) bestByExercise.set(ex.exerciseId, best)
+      })
+    })
+    const weekPRs: { name: string; e1rm: number }[] = []
+    weekWorkouts.forEach(w => {
+      w.exercises.forEach(ex => {
+        let bestThisWeek = 0
+        ex.sets.forEach(s => {
+          const e = estimate1Rm(s.weightKg, s.reps)
+          if (e > bestThisWeek) bestThisWeek = e
+        })
+        const prev = bestByExercise.get(ex.exerciseId) || 0
+        if (bestThisWeek > prev && prev > 0) {
+          const def = getExerciseById(ex.exerciseId)
+          weekPRs.push({ name: def?.name || ex.exerciseId, e1rm: Math.round(bestThisWeek) })
+        }
+      })
+    })
+
+    // FEAT-F20: Top 3 muscles worked this week (by set count)
+    const muscleSetCount = new Map<string, number>()
+    weekWorkouts.forEach(w => w.exercises.forEach(e => {
+      const def = getExerciseById(e.exerciseId)
+      const sets = e.sets.length
+      if (def) def.primaryMuscles.forEach(m => muscleSetCount.set(m, (muscleSetCount.get(m) || 0) + sets))
+    }))
+    const topMuscles = [...muscleSetCount.entries()].sort((a, b) => b[1] - a[1]).slice(0, 3)
+
+    // FEAT-F20: Assiduity score
+    const plannedDays = state.profile?.trainingDaysPerWeek || 4
+    const assiduity = Math.min(100, Math.round((weekWorkouts.length / plannedDays) * 100))
 
     // Muscles worked this week
     const musclesWorked = new Set<string>()
@@ -71,12 +112,14 @@ export function WeeklyReport() {
       sets: totalSets,
       duration: totalDuration,
       streak,
-      prs: 0,
+      prs: weekPRs,
       muscleCount: musclesWorked.size,
       avgCalories: avgCal,
       prevSessions,
       prevVolume,
       prevSets,
+      topMuscles,
+      assiduity,
     }
   }, [state.workouts, state.foodEntries])
 
@@ -115,6 +158,33 @@ export function WeeklyReport() {
             <div style={{ fontSize: '0.65rem', color: 'var(--text-secondary)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em' }}>{s.label}</div>
           </div>
         ))}
+      </div>
+      {/* FEAT-F20: PRs de la semaine */}
+      {report.prs.length > 0 && (
+        <div style={{ marginTop: 10, padding: '8px 12px', background: 'rgba(255,215,0,0.06)', borderRadius: 10, border: '1px solid rgba(255,215,0,0.2)' }}>
+          <div style={{ fontSize: '0.72rem', fontWeight: 700, color: '#FFD700', marginBottom: 4 }}>PRs cette semaine</div>
+          {report.prs.map((pr, i) => (
+            <div key={i} style={{ fontSize: '0.72rem', color: 'var(--text)' }}>
+              {pr.name} : {pr.e1rm} kg e1RM
+            </div>
+          ))}
+        </div>
+      )}
+      {/* FEAT-F20: Top muscles + assiduite */}
+      <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+        <div style={{ flex: 1, padding: '8px', background: 'rgba(255,255,255,0.02)', borderRadius: 8, border: '1px solid var(--border)' }}>
+          <div style={{ fontSize: '0.65rem', color: 'var(--muted)', marginBottom: 2 }}>Top muscles</div>
+          {report.topMuscles.map(([m, s]) => (
+            <div key={m} style={{ fontSize: '0.68rem', color: 'var(--text)' }}>{m}: {s}s</div>
+          ))}
+        </div>
+        <div style={{ flex: 1, padding: '8px', background: 'rgba(255,255,255,0.02)', borderRadius: 8, border: '1px solid var(--border)', textAlign: 'center' }}>
+          <div style={{ fontSize: '0.65rem', color: 'var(--muted)', marginBottom: 2 }}>Assiduite</div>
+          <div style={{ fontSize: '1.2rem', fontWeight: 800, color: report.assiduity >= 80 ? '#22c55e' : report.assiduity >= 50 ? '#f59e0b' : '#ef4444' }}>
+            {report.assiduity}%
+          </div>
+          <div style={{ fontSize: '0.6rem', color: 'var(--muted)' }}>{report.sessions}/{state.profile?.trainingDaysPerWeek || 4} seances</div>
+        </div>
       </div>
       {/* vs Semaine precedente */}
       {report.prevSessions > 0 && (

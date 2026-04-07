@@ -427,55 +427,57 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
                 })}
               </div>
             )}
-            {/* Grouper des exercices (series alternees) */}
-            {routineExercises.length >= 2 && (
-              <div style={{ padding: 10, borderRadius: 10, border: "1px dashed rgba(155,89,182,0.4)", background: "rgba(155,89,182,0.05)" }}>
-                {!groupingMode ? (
-                  <button type="button" onClick={() => setGroupingMode(true)} style={{ width: "100%", padding: 8, borderRadius: 8, border: "none", background: "rgba(155,89,182,0.15)", color: "#9b59b6", fontWeight: 700, fontSize: "0.82rem", cursor: "pointer" }}>
-                    {String.fromCodePoint(0x26A1)} Grouper des exercices (séries alternées)
-                  </button>
-                ) : (
-                  <div>
-                    <p style={{ fontSize: "0.75rem", color: "var(--muted)", margin: "0 0 8px" }}>Sélectionne 2+ exercices à alterner :</p>
-                    <div style={{ display: "flex", flexDirection: "column", gap: 4, marginBottom: 8 }}>
-                      {routineExercises.map(re => {
-                        const ex = getExerciseById(re.exerciseId)
-                        const isSelected = groupSelection.includes(re.exerciseId)
-                        const alreadyGrouped = routineGroups.some(g => g.exerciseIds.includes(re.exerciseId))
-                        return (
-                          <button key={re.exerciseId} type="button" disabled={alreadyGrouped}
-                            onClick={() => setGroupSelection(prev => isSelected ? prev.filter(id => id !== re.exerciseId) : [...prev, re.exerciseId])}
-                            style={{ padding: "8px 12px", borderRadius: 8, border: isSelected ? "2px solid #9b59b6" : alreadyGrouped ? "1px solid var(--border)" : "1px solid var(--border)", background: isSelected ? "rgba(155,89,182,0.15)" : "transparent", color: alreadyGrouped ? "var(--muted)" : "var(--text)", textAlign: "left", fontSize: "0.82rem", cursor: alreadyGrouped ? "default" : "pointer", opacity: alreadyGrouped ? 0.5 : 1 }}>
-                            {isSelected ? String.fromCodePoint(0x2705) + " " : ""}{ex?.name || re.exerciseId}
-                          </button>
-                        )
-                      })}
-                    </div>
-                    <div style={{ display: "flex", gap: 6 }}>
-                      <div style={{ display: "flex", gap: 6, marginBottom: 8 }}>
-                      <button type="button" onClick={() => setGroupType("alternating")} style={{ flex: 1, padding: "6px 8px", borderRadius: 8, border: groupType === "alternating" ? "2px solid #9b59b6" : "1px solid var(--border)", background: groupType === "alternating" ? "rgba(155,89,182,0.15)" : "transparent", color: groupType === "alternating" ? "#9b59b6" : "var(--muted)", fontSize: "0.75rem", fontWeight: 600, cursor: "pointer" }}>Séries alternées (repos entre chaque)</button>
-                      <button type="button" onClick={() => setGroupType("superset")} style={{ flex: 1, padding: "6px 8px", borderRadius: 8, border: groupType === "superset" ? "2px solid #e74c3c" : "1px solid var(--border)", background: groupType === "superset" ? "rgba(231,76,60,0.15)" : "transparent", color: groupType === "superset" ? "#e74c3c" : "var(--muted)", fontSize: "0.75rem", fontWeight: 600, cursor: "pointer" }}>Superset (pas de repos entre)</button>
-                    </div>
-                    <button type="button" disabled={groupSelection.length < 2} onClick={() => {
-                        setRoutineGroups(prev => [...prev, { exerciseIds: groupSelection, type: groupType }])
-                        setGroupSelection([])
-                        setGroupingMode(false)
-                      }} style={{ flex: 1, padding: 8, borderRadius: 8, border: "none", background: "#9b59b6", color: "#fff", fontWeight: 700, fontSize: "0.82rem", cursor: "pointer", opacity: groupSelection.length < 2 ? 0.5 : 1 }}>Valider le groupe</button>
-                      <button type="button" onClick={() => { setGroupingMode(false); setGroupSelection([]) }} style={{ padding: "8px 14px", borderRadius: 8, border: "1px solid var(--border)", background: "transparent", color: "var(--muted)", fontSize: "0.82rem", cursor: "pointer" }}>Annuler</button>
-                    </div>
-                    {routineGroups.length > 0 && (
-                      <div style={{ marginTop: 8 }}>
-                        <span style={{ fontSize: "0.72rem", color: "#9b59b6", fontWeight: 600 }}>Groupes créés :</span>
-                        {routineGroups.map((g, gi) => (
-                          <div key={gi} style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 4 }}>
-                            <span style={{ fontSize: "0.72rem", color: "var(--text)" }}>{g.exerciseIds.map(id => getExerciseById(id)?.name || id).join(" + ")} <span style={{ color: "#9b59b6", fontSize: "0.65rem" }}>({g.type === "superset" ? "superset" : "alterné"})</span></span>
-                            <button type="button" onClick={() => setRoutineGroups(prev => prev.filter((_: any, i: number) => i !== gi))} style={{ background: "none", border: "none", color: "var(--accent-red)", cursor: "pointer", fontSize: "0.75rem" }}>{String.fromCodePoint(0x2716)}</button>
-                          </div>
-                        ))}
-                      </div>
-                    )}
+            {/* 2 boutons: Superset + Series alternees */}
+            {routineExercises.length >= 2 && !groupingMode && (
+              <div style={{ display: "flex", gap: 8 }}>
+                <button type="button" onClick={() => { setGroupingMode(true); setGroupType("superset") }} style={{ flex: 1, padding: "10px 8px", borderRadius: 10, border: "1px solid rgba(231,76,60,0.4)", background: "rgba(231,76,60,0.08)", color: "#e74c3c", fontWeight: 700, fontSize: "0.8rem", cursor: "pointer" }}>
+                  {String.fromCodePoint(0x1F525)} Superset
+                </button>
+                <button type="button" onClick={() => { setGroupingMode(true); setGroupType("alternating") }} style={{ flex: 1, padding: "10px 8px", borderRadius: 10, border: "1px solid rgba(155,89,182,0.4)", background: "rgba(155,89,182,0.08)", color: "#9b59b6", fontWeight: 700, fontSize: "0.8rem", cursor: "pointer" }}>
+                  {String.fromCodePoint(0x26A1)} Séries alternées
+                </button>
+              </div>
+            )}
+            {groupingMode && (
+              <div style={{ padding: 10, borderRadius: 10, border: groupType === "superset" ? "1px dashed rgba(231,76,60,0.4)" : "1px dashed rgba(155,89,182,0.4)", background: groupType === "superset" ? "rgba(231,76,60,0.05)" : "rgba(155,89,182,0.05)" }}>
+                <p style={{ fontSize: "0.78rem", fontWeight: 700, color: groupType === "superset" ? "#e74c3c" : "#9b59b6", margin: "0 0 6px" }}>
+                  {groupType === "superset" ? String.fromCodePoint(0x1F525) + " Superset (pas de repos entre les exos)" : String.fromCodePoint(0x26A1) + " Séries alternées (repos entre chaque exo)"}
+                </p>
+                <p style={{ fontSize: "0.72rem", color: "var(--muted)", margin: "0 0 8px" }}>Sélectionne 2+ exercices :</p>
+                <div style={{ display: "flex", flexDirection: "column", gap: 4, marginBottom: 8 }}>
+                  {routineExercises.map(re => {
+                    const ex = getExerciseById(re.exerciseId)
+                    const isSelected = groupSelection.includes(re.exerciseId)
+                    const alreadyGrouped = routineGroups.some(g => g.exerciseIds.includes(re.exerciseId))
+                    const accentColor = groupType === "superset" ? "#e74c3c" : "#9b59b6"
+                    return (
+                      <button key={re.exerciseId} type="button" disabled={alreadyGrouped}
+                        onClick={() => setGroupSelection(prev => isSelected ? prev.filter(id => id !== re.exerciseId) : [...prev, re.exerciseId])}
+                        style={{ padding: "8px 12px", borderRadius: 8, border: isSelected ? "2px solid " + accentColor : "1px solid var(--border)", background: isSelected ? accentColor + "22" : "transparent", color: alreadyGrouped ? "var(--muted)" : "var(--text)", textAlign: "left", fontSize: "0.82rem", cursor: alreadyGrouped ? "default" : "pointer", opacity: alreadyGrouped ? 0.5 : 1 }}>
+                        {isSelected ? String.fromCodePoint(0x2705) + " " : ""}{ex?.name || re.exerciseId}
+                      </button>
+                    )
+                  })}
+                </div>
+                <div style={{ display: "flex", gap: 6 }}>
+                  <button type="button" disabled={groupSelection.length < 2} onClick={() => {
+                    setRoutineGroups(prev => [...prev, { exerciseIds: groupSelection, type: groupType }])
+                    setGroupSelection([])
+                    setGroupingMode(false)
+                  }} style={{ flex: 1, padding: 10, borderRadius: 8, border: "none", background: groupType === "superset" ? "#e74c3c" : "#9b59b6", color: "#fff", fontWeight: 700, fontSize: "0.82rem", cursor: "pointer", opacity: groupSelection.length < 2 ? 0.5 : 1 }}>Valider</button>
+                  <button type="button" onClick={() => { setGroupingMode(false); setGroupSelection([]) }} style={{ padding: "10px 14px", borderRadius: 8, border: "1px solid var(--border)", background: "transparent", color: "var(--muted)", fontSize: "0.82rem", cursor: "pointer" }}>Annuler</button>
+                </div>
+              </div>
+            )}
+            {routineGroups.length > 0 && (
+              <div style={{ marginTop: 4 }}>
+                {routineGroups.map((g, gi) => (
+                  <div key={gi} style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 4, padding: "6px 10px", borderRadius: 8, background: g.type === "superset" ? "rgba(231,76,60,0.06)" : "rgba(155,89,182,0.06)", border: "1px solid " + (g.type === "superset" ? "rgba(231,76,60,0.2)" : "rgba(155,89,182,0.2)") }}>
+                    <span style={{ fontSize: "0.75rem", color: g.type === "superset" ? "#e74c3c" : "#9b59b6", fontWeight: 700 }}>{g.type === "superset" ? String.fromCodePoint(0x1F525) : String.fromCodePoint(0x26A1)}</span>
+                    <span style={{ fontSize: "0.75rem", color: "var(--text)", flex: 1 }}>{g.exerciseIds.map(id => getExerciseById(id)?.name || id).join(" + ")}</span>
+                    <button type="button" onClick={() => setRoutineGroups(prev => prev.filter((_: any, i: number) => i !== gi))} style={{ background: "none", border: "none", color: "var(--accent-red)", cursor: "pointer", fontSize: "0.85rem", padding: 2 }}>{String.fromCodePoint(0x2716)}</button>
                   </div>
-                )}
+                ))}
               </div>
             )}
             <button className="primary-btn" type="button" disabled={!routineName.trim() || routineExercises.length === 0}

@@ -72,7 +72,7 @@ export function WorkoutHistory({ workouts, onDelete }: WorkoutHistoryProps) {
 
       <div style={{ fontSize: '0.68rem', color: 'var(--muted)', marginBottom: 6 }}>
         {filtered.length} seance{filtered.length > 1 ? 's' : ''}
-        {totalPages > 1 && ` \u2014 page ${page + 1}/${totalPages}`}
+        {totalPages > 1 && ` — page ${page + 1}/${totalPages}`}
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
@@ -101,11 +101,11 @@ export function WorkoutHistory({ workouts, onDelete }: WorkoutHistoryProps) {
                     {w.sessionName || w.date}
                   </div>
                   <div style={{ fontSize: '0.72rem', color: 'var(--muted)', marginTop: 2 }}>
-                    {w.date} \u00b7 {w.exercises.length} exo{w.exercises.length > 1 ? 's' : ''} \u00b7 {totalSets} series \u00b7 {formatNumber(volume)} kg
+                    {w.date} · {w.exercises.length} exo{w.exercises.length > 1 ? 's' : ''} · {totalSets} series · {formatNumber(volume)} kg
                   </div>
                 </div>
                 <span style={{ color: 'var(--muted)', fontSize: '0.75rem' }}>
-                  {isExpanded ? '\u25b2' : '\u25bc'}
+                  {isExpanded ? '▲' : '▼'}
                 </span>
               </button>
 

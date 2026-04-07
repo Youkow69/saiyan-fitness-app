@@ -13,6 +13,7 @@ import { ProgramBuilder } from '../tools/ProgramBuilder'
 import { WorkoutHistory } from '../stats/WorkoutHistory'
 import { SmartWorkoutGenerator } from '../tools/SmartWorkoutGenerator'
 import { MesocycleProgress } from '../tools/MesocycleProgress'
+import { SupersetManager } from '../tools/SupersetIndicator'
 import { ExerciseDetail } from '../tools/ExerciseDetail'
 
 function getLastSet(workouts: AppState['workouts'], exerciseId: string) {

@@ -74,6 +74,7 @@ function AppInner({ user, pushToCloud, pullFromCloud, syncSteps, signOut }: AppI
   const { state, dispatch } = useAppState()
   const [tab, setTab] = useState<TabId>('home')
   const [restTimer, setRestTimer] = useState(0)
+  const restEndTimeRef = useRef<number>(0) // absolute timestamp when rest ends
   const [pendingFeedback, setPendingFeedback] = useState<{
     workoutId: string
     muscles: MuscleGroup[]
@@ -377,7 +378,11 @@ function AppInner({ user, pushToCloud, pullFromCloud, syncSteps, signOut }: AppI
       const exerciseTarget = stateRef.current.activeWorkout.exercises.find(
         (e) => e.exerciseId === exerciseId
       )?.target
-      if (!skipRest) setRestTimer(exerciseTarget?.restSeconds ?? DEFAULT_REST_SECONDS)
+      if (!skipRest) {
+        const seconds = exerciseTarget?.restSeconds ?? DEFAULT_REST_SECONDS
+        restEndTimeRef.current = Date.now() + seconds * 1000
+        setRestTimer(seconds)
+      }
 
       // Immediate cloud push after adding a set
       if (user) {
@@ -459,7 +464,7 @@ function AppInner({ user, pushToCloud, pullFromCloud, syncSteps, signOut }: AppI
       type: 'FINISH_WORKOUT',
       payload: { workout, isCustom },
     })
-    setRestTimer(0)
+    restEndTimeRef.current = 0; setRestTimer(0)
     showToast(
       `Séance terminée ! ${workout.durationMinutes} min`,
       'success'
@@ -570,8 +575,8 @@ function AppInner({ user, pushToCloud, pullFromCloud, syncSteps, signOut }: AppI
           onAddSet={addSet}
           onFinishWorkout={finishWorkout}
           restTimer={restTimer}
-          onSkipTimer={() => setRestTimer(0)}
-          onSetRestTimer={(s: number) => setRestTimer(s)}
+          onSkipTimer={() => { restEndTimeRef.current = 0; setRestTimer(0) }}
+          onSetRestTimer={(s: number) => { restEndTimeRef.current = Date.now() + s * 1000; setRestTimer(s) }}
         />
       )}
       {tab === 'nutrition' && <NutritionView />}

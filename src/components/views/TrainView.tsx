@@ -53,9 +53,10 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
     const [creatingRoutine, setCreatingRoutine] = useState(false)
     const [routineName, setRoutineName] = useState('')
     const [routineExercises, setRoutineExercises] = useState<Array<{ exerciseId: string; sets: number; repMin: number; repMax: number; restSeconds: number }>>([])
-    const [routineGroups, setRoutineGroups] = useState<string[][]>([])
+    const [routineGroups, setRoutineGroups] = useState<{ exerciseIds: string[]; type: 'superset' | 'alternating' }[]>([])
     const [groupingMode, setGroupingMode] = useState(false)
     const [groupSelection, setGroupSelection] = useState<string[]>([])
+    const [groupType, setGroupType] = useState<'superset' | 'alternating'>('alternating')
     const [exerciseSearch, setExerciseSearch] = useState('')
     const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null)
     const [editingRoutineId, setEditingRoutineId] = useState<string | null>(null)
@@ -189,10 +190,10 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
 
             return (
               <div>
-                {/* Groupe alterné label */}
+                {/* Groupe label */}
                 {supersetGroup && supersetGroup.length > 1 && (
                   <div style={{ textAlign: 'center', padding: '4px 12px', marginBottom: 8, borderRadius: 8, background: 'rgba(155,89,182,0.1)', border: '1px solid rgba(155,89,182,0.3)', fontSize: '0.75rem', fontWeight: 700, color: '#9b59b6' }}>
-                    {String.fromCodePoint(0x26A1)} Groupe alterné {String.fromCharCode(8212)} {supersetGroup.length} exercices
+                    {String.fromCodePoint(0x26A1)} Groupe {String.fromCharCode(8212)} {supersetGroup.length} exercices
                   </div>
                 )}
 
@@ -239,8 +240,13 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
                             <label><span>RIR</span><input value={currentInput.rir} onChange={(e) => setDraftInputs({ ...draftInputs, [exercise.id]: { ...currentInput, rir: e.target.value } })} /></label>
                           </div>
                           <button className='primary-btn' type='button' style={{ width: '100%', marginTop: 8 }} onClick={() => {
-                            // Series alternees: repos apres CHAQUE serie (meme entre exercices du groupe)
-                            onAddSet(exercise.id, Number(currentInput.weight || 0), Number(currentInput.reps || 0), Number(currentInput.rir || target.targetRir), currentInput.setType, false)
+                            // Check group type: superset = skip rest between, alternating = always rest
+                            const routineData = customRoutines.find(cr => cr.exercises.some(e => e.exerciseId === exercise.id))
+                            const groupDef = (routineData as any)?.exerciseGroups?.find((g: any) => g.exerciseIds?.includes(exercise.id))
+                            const isSuperset = groupDef?.type === 'superset'
+                            const isLastInRotation = !supersetGroup || supersetGroup[supersetGroup.length - 1] === exercise.id
+                            const shouldSkipRest = isSuperset && !isLastInRotation
+                            onAddSet(exercise.id, Number(currentInput.weight || 0), Number(currentInput.reps || 0), Number(currentInput.rir || target.targetRir), currentInput.setType, shouldSkipRest)
                           }}>
                             S\u00e9rie {setsCompleted + 1}/{setsTarget}
                           </button>
@@ -435,7 +441,7 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
                       {routineExercises.map(re => {
                         const ex = getExerciseById(re.exerciseId)
                         const isSelected = groupSelection.includes(re.exerciseId)
-                        const alreadyGrouped = routineGroups.some(g => g.includes(re.exerciseId))
+                        const alreadyGrouped = routineGroups.some(g => g.exerciseIds.includes(re.exerciseId))
                         return (
                           <button key={re.exerciseId} type="button" disabled={alreadyGrouped}
                             onClick={() => setGroupSelection(prev => isSelected ? prev.filter(id => id !== re.exerciseId) : [...prev, re.exerciseId])}
@@ -446,8 +452,12 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
                       })}
                     </div>
                     <div style={{ display: "flex", gap: 6 }}>
-                      <button type="button" disabled={groupSelection.length < 2} onClick={() => {
-                        setRoutineGroups(prev => [...prev, groupSelection])
+                      <div style={{ display: "flex", gap: 6, marginBottom: 8 }}>
+                      <button type="button" onClick={() => setGroupType("alternating")} style={{ flex: 1, padding: "6px 8px", borderRadius: 8, border: groupType === "alternating" ? "2px solid #9b59b6" : "1px solid var(--border)", background: groupType === "alternating" ? "rgba(155,89,182,0.15)" : "transparent", color: groupType === "alternating" ? "#9b59b6" : "var(--muted)", fontSize: "0.75rem", fontWeight: 600, cursor: "pointer" }}>Séries alternées (repos entre chaque)</button>
+                      <button type="button" onClick={() => setGroupType("superset")} style={{ flex: 1, padding: "6px 8px", borderRadius: 8, border: groupType === "superset" ? "2px solid #e74c3c" : "1px solid var(--border)", background: groupType === "superset" ? "rgba(231,76,60,0.15)" : "transparent", color: groupType === "superset" ? "#e74c3c" : "var(--muted)", fontSize: "0.75rem", fontWeight: 600, cursor: "pointer" }}>Superset (pas de repos entre)</button>
+                    </div>
+                    <button type="button" disabled={groupSelection.length < 2} onClick={() => {
+                        setRoutineGroups(prev => [...prev, { exerciseIds: groupSelection, type: groupType }])
                         setGroupSelection([])
                         setGroupingMode(false)
                       }} style={{ flex: 1, padding: 8, borderRadius: 8, border: "none", background: "#9b59b6", color: "#fff", fontWeight: 700, fontSize: "0.82rem", cursor: "pointer", opacity: groupSelection.length < 2 ? 0.5 : 1 }}>Valider le groupe</button>
@@ -458,8 +468,8 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
                         <span style={{ fontSize: "0.72rem", color: "#9b59b6", fontWeight: 600 }}>Groupes créés :</span>
                         {routineGroups.map((g, gi) => (
                           <div key={gi} style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 4 }}>
-                            <span style={{ fontSize: "0.72rem", color: "var(--text)" }}>{g.map(id => getExerciseById(id)?.name || id).join(" + ")}</span>
-                            <button type="button" onClick={() => setRoutineGroups(prev => prev.filter((_, i) => i !== gi))} style={{ background: "none", border: "none", color: "var(--accent-red)", cursor: "pointer", fontSize: "0.75rem" }}>{String.fromCodePoint(0x2716)}</button>
+                            <span style={{ fontSize: "0.72rem", color: "var(--text)" }}>{g.exerciseIds.map(id => getExerciseById(id)?.name || id).join(" + ")} <span style={{ color: "#9b59b6", fontSize: "0.65rem" }}>({g.type === "superset" ? "superset" : "alterné"})</span></span>
+                            <button type="button" onClick={() => setRoutineGroups(prev => prev.filter((_: any, i: number) => i !== gi))} style={{ background: "none", border: "none", color: "var(--accent-red)", cursor: "pointer", fontSize: "0.75rem" }}>{String.fromCodePoint(0x2716)}</button>
                           </div>
                         ))}
                       </div>
@@ -470,7 +480,7 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
             )}
             <button className="primary-btn" type="button" disabled={!routineName.trim() || routineExercises.length === 0}
               onClick={() => {
-                const routine: CustomRoutine = { id: editingRoutineId || makeId('cr'), name: routineName.trim(), exercises: routineExercises, alternatingGroups: routineGroups.length > 0 ? routineGroups : undefined }
+                const routine: CustomRoutine = { id: editingRoutineId || makeId('cr'), name: routineName.trim(), exercises: routineExercises, exerciseGroups: routineGroups.length > 0 ? routineGroups : undefined }
                 if (editingRoutineId) {
                   // BUG-F4: Preserve routine ID on edit via UPDATE action
                   dispatch({ type: 'UPDATE_CUSTOM_ROUTINE', payload: { id: editingRoutineId, routine } })

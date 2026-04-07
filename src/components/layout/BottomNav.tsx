@@ -20,7 +20,7 @@ const items: Array<{
   { id: 'train', icon: IconDumbbell, label: 'Training', ariaLabel: 'Entraînement' },
   { id: 'nutrition', icon: IconBowl, label: 'Nutrition', ariaLabel: 'Nutrition' },
   { id: 'scouter', icon: IconChart, label: 'Stats', ariaLabel: 'Statistiques' },
-  { id: 'feed', icon: IconFlame, label: 'Ar\u00e8ne', ariaLabel: 'Ar\u00e8ne sociale' },
+  { id: 'feed', icon: IconFlame, label: 'Arène', ariaLabel: 'Arène sociale' },
   { id: 'coach', icon: IconCoach, label: 'Coach', ariaLabel: 'Coach IA' },
     { id: 'profile', icon: IconUser, label: 'Profil', ariaLabel: 'Profil' },
 ]

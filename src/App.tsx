@@ -160,16 +160,16 @@ function AppInner({ user, pushToCloud, pullFromCloud, syncSteps, signOut }: AppI
     return () => clearInterval(interval)
   }, [user, pushToCloud])
 
-  // Rest timer effect
+  // Rest timer effect — uses Date.now() to survive background throttling
   useEffect(() => {
     if (restTimer <= 0) return
-    if (restTimer === 3) {
-      try {
-        navigator.vibrate?.(100)
-      } catch {}
-    }
-    const timer = window.setTimeout(() => {
-      if (restTimer === 1) {
+
+    // Tick every 250ms using absolute time for accuracy in background
+    const tick = window.setInterval(() => {
+      const remaining = Math.ceil((restEndTimeRef.current - Date.now()) / 1000)
+      if (remaining <= 0) {
+        setRestTimer(0)
+        restEndTimeRef.current = 0
         try {
           navigator.vibrate?.([200, 100, 200, 100, 200])
           const ctx = new AudioContext()
@@ -180,11 +180,27 @@ function AppInner({ user, pushToCloud, pullFromCloud, syncSteps, signOut }: AppI
           osc.start()
           osc.stop(ctx.currentTime + 0.5)
         } catch {}
+      } else {
+        setRestTimer(remaining)
+        if (remaining === 3) { try { navigator.vibrate?.(100) } catch {} }
       }
-      setRestTimer((c) => c - 1)
-    }, 1000)
-    return () => window.clearTimeout(timer)
-  }, [restTimer])
+    }, 250)
+
+    // Recalculate immediately when app returns to foreground
+    const onVisible = () => {
+      if (document.visibilityState === 'visible' && restEndTimeRef.current > 0) {
+        const rem = Math.ceil((restEndTimeRef.current - Date.now()) / 1000)
+        setRestTimer(rem > 0 ? rem : 0)
+      }
+    }
+    document.addEventListener('visibilitychange', onVisible)
+
+    return () => {
+      window.clearInterval(tick)
+      document.removeEventListener('visibilitychange', onVisible)
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [restTimer > 0])
 
   // Theme effect
   useEffect(() => {

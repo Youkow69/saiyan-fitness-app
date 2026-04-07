@@ -54,7 +54,7 @@ export function DailySummaryWidget() {
         borderRadius: 12, padding: '10px 12px',
         border: '1px solid rgba(255,215,0,0.15)',
       }}>
-        <div style={{ fontSize: '0.65rem', color: 'var(--text-secondary)', marginBottom: 2 }}>{'\u26A1'} Power Level</div>
+        <div style={{ fontSize: '0.65rem', color: 'var(--text-secondary)', marginBottom: 2 }}>{'⚡'} Power Level</div>
         <div style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--accent-gold, #ffd700)' }}>
           {summary.powerLevel.toLocaleString()}
         </div>
@@ -65,7 +65,7 @@ export function DailySummaryWidget() {
         background: 'rgba(255,140,0,0.06)', borderRadius: 12, padding: '10px 12px',
         border: '1px solid rgba(255,140,0,0.12)',
       }}>
-        <div style={{ fontSize: '0.65rem', color: 'var(--text-secondary)', marginBottom: 2 }}>{'\U0001f525'} Streak</div>
+        <div style={{ fontSize: '0.65rem', color: 'var(--text-secondary)', marginBottom: 2 }}>{'🔥'} Streak</div>
         <div style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--accent)' }}>
           {summary.streak} jour{summary.streak !== 1 ? 's' : ''}
         </div>
@@ -76,7 +76,7 @@ export function DailySummaryWidget() {
         background: 'rgba(34,197,94,0.06)', borderRadius: 12, padding: '10px 12px',
         border: '1px solid rgba(34,197,94,0.12)',
       }}>
-        <div style={{ fontSize: '0.65rem', color: 'var(--text-secondary)', marginBottom: 2 }}>{'\U0001f355'} Calories</div>
+        <div style={{ fontSize: '0.65rem', color: 'var(--text-secondary)', marginBottom: 2 }}>{'🍕'} Calories</div>
         <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#22c55e' }}>
           {summary.nutrition.calories}
         </div>
@@ -90,11 +90,11 @@ export function DailySummaryWidget() {
         background: 'rgba(59,130,246,0.06)', borderRadius: 12, padding: '10px 12px',
         border: '1px solid rgba(59,130,246,0.12)',
       }}>
-        <div style={{ fontSize: '0.65rem', color: 'var(--text-secondary)', marginBottom: 2 }}>{'\U0001f3cb'} Dernier</div>
+        <div style={{ fontSize: '0.65rem', color: 'var(--text-secondary)', marginBottom: 2 }}>{'🏋'} Dernier</div>
         {summary.lastWorkout ? (
           <>
             <div style={{ fontSize: '0.82rem', fontWeight: 700, color: '#3b82f6', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-              {summary.lastWorkout.sessionName || 'S\u00e9ance'}
+              {summary.lastWorkout.sessionName || 'Séance'}
             </div>
             <div style={{ fontSize: 'max(0.75rem, 0.6rem)', color: 'var(--text-secondary)' }}>
               {summary.lastWorkout.date}

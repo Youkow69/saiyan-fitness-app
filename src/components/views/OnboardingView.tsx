@@ -32,13 +32,13 @@ const defaultOnboardingAnswers: OnboardingAnswers = {
 }
 
 const weakPointOptions = [
-  '\u00C9paules', 'Bras', 'Jambes', 'Dos', 'Poitrine', 'Abdominaux', 'Mollets', 'Fessiers',
+  'Épaules', 'Bras', 'Jambes', 'Dos', 'Poitrine', 'Abdominaux', 'Mollets', 'Fessiers',
 ]
 const supplementOptions = [
-  'Cr\u00E9atine', 'Whey', 'Caf\u00E9ine', 'Omega-3', 'Vitamine D', 'BCAA', 'Pr\u00E9-workout', 'Aucun',
+  'Créatine', 'Whey', 'Caféine', 'Omega-3', 'Vitamine D', 'BCAA', 'Pré-workout', 'Aucun',
 ]
 const injuryOptions = [
-  '\u00C9paule', 'Genou', 'Dos', 'Poignet', 'Cheville', 'Hanche', 'Coude', 'Aucune',
+  'Épaule', 'Genou', 'Dos', 'Poignet', 'Cheville', 'Hanche', 'Coude', 'Aucune',
 ]
 
 const toggle = (arr: string[], item: string) =>
@@ -58,8 +58,8 @@ export const OnboardingView: React.FC<OnboardingViewProps> = React.memo(
 
     const stepTitles = [
       'Profil de base',
-      'Entra\u00EEnement',
-      'Ton corps en d\u00E9tail',
+      'Entraînement',
+      'Ton corps en détail',
       'Cibles quotidiennes',
           'Mode de vie',
     ]
@@ -76,7 +76,7 @@ export const OnboardingView: React.FC<OnboardingViewProps> = React.memo(
     return (
       <div className="page onboarding-shell">
         <section className="hero-card hero-card--scan">
-          <span className="eyebrow">Scouter Scan \u2014 \u00C9tape {step}/{TOTAL_STEPS}</span>
+          <span className="eyebrow">Scouter Scan — Étape {step}/{TOTAL_STEPS}</span>
           <h1>Saiyan Fitness</h1>
           <p style={{ marginBottom: 0 }}>{stepTitles[step - 1]}</p>
           <div style={{ display: 'flex', gap: 6, marginTop: 12 }}>
@@ -200,15 +200,15 @@ export const OnboardingView: React.FC<OnboardingViewProps> = React.memo(
         {step === 2 && (
           <section className="panel stack-lg">
             <div className="choice-group">
-              <span className="field-title">Niveau d'activit\u00E9</span>
+              <span className="field-title">Niveau d'activité</span>
               <div className="chip-row">
                 {(
                   [
-                    ['sedentary', 'S\u00E9dentaire'],
-                    ['light', 'L\u00E9g\u00E8re'],
-                    ['moderate', 'Mod\u00E9r\u00E9e'],
-                    ['high', '\u00C9lev\u00E9e'],
-                    ['athlete', 'Athl\u00E8te'],
+                    ['sedentary', 'Sédentaire'],
+                    ['light', 'Légère'],
+                    ['moderate', 'Modérée'],
+                    ['high', 'Élevée'],
+                    ['athlete', 'Athlète'],
                   ] as const
                 ).map(([v, l]) => (
                   <button
@@ -228,13 +228,13 @@ export const OnboardingView: React.FC<OnboardingViewProps> = React.memo(
               </div>
             </div>
             <div className="choice-group">
-              <span className="field-title">Niveau d'exp\u00E9rience</span>
+              <span className="field-title">Niveau d'expérience</span>
               <div className="chip-row">
                 {(
                   [
-                    ['beginner', 'D\u00E9butant'],
-                    ['intermediate', 'Interm\u00E9diaire'],
-                    ['advanced', 'Avanc\u00E9'],
+                    ['beginner', 'Débutant'],
+                    ['intermediate', 'Intermédiaire'],
+                    ['advanced', 'Avancé'],
                   ] as const
                 ).map(([v, l]) => (
                   <button
@@ -255,7 +255,7 @@ export const OnboardingView: React.FC<OnboardingViewProps> = React.memo(
               </div>
             </div>
             <div className="choice-group">
-              <span className="field-title">Mat\u00E9riel disponible</span>
+              <span className="field-title">Matériel disponible</span>
               <div className="chip-row">
                 {(
                   [
@@ -298,7 +298,7 @@ export const OnboardingView: React.FC<OnboardingViewProps> = React.memo(
                 />
               </label>
               <label>
-                <span>Pr\u00E9f\u00E9rence alimentaire</span>
+                <span>Préférence alimentaire</span>
                 <input
                   value={draft.dietaryPreference}
                   onChange={(e) =>
@@ -358,7 +358,7 @@ export const OnboardingView: React.FC<OnboardingViewProps> = React.memo(
               </div>
             </div>
             <div className="choice-group">
-              <span className="field-title">Blessures pass\u00E9es ou actuelles</span>
+              <span className="field-title">Blessures passées ou actuelles</span>
               <div className="chip-row">
                 {injuryOptions.map((inj) => (
                   <button
@@ -377,12 +377,12 @@ export const OnboardingView: React.FC<OnboardingViewProps> = React.memo(
               <textarea
                 value={draft.injuryNotes}
                 onChange={(e) => setDraft({ ...draft, injuryNotes: e.target.value })}
-                placeholder="D\u00E9cris tes blessures, limitations ou douleurs..."
+                placeholder="Décris tes blessures, limitations ou douleurs..."
                 style={{ width: '100%', minHeight: 60, resize: 'vertical', boxSizing: 'border-box' }}
               />
             </label>
             <div className="choice-group">
-              <span className="field-title">Suppl\u00E9ments utilis\u00E9s</span>
+              <span className="field-title">Suppléments utilisés</span>
               <div className="chip-row">
                 {supplementOptions.map((sup) => (
                   <button
@@ -397,11 +397,11 @@ export const OnboardingView: React.FC<OnboardingViewProps> = React.memo(
               </div>
             </div>
             <label>
-              <span className="field-title">Objectif d\u00E9taill\u00E9</span>
+              <span className="field-title">Objectif détaillé</span>
               <textarea
                 value={answers.primaryGoalDetail}
                 onChange={(e) => setAnswers({ ...answers, primaryGoalDetail: e.target.value })}
-                placeholder="D\u00E9cris ton objectif en d\u00E9tail (ex: prendre 5kg de muscle en 6 mois, descendre \u00E0 12% de gras...)"
+                placeholder="Décris ton objectif en détail (ex: prendre 5kg de muscle en 6 mois, descendre à 12% de gras...)"
                 style={{ width: '100%', minHeight: 60, resize: 'vertical', boxSizing: 'border-box' }}
               />
             </label>
@@ -506,8 +506,8 @@ export const OnboardingView: React.FC<OnboardingViewProps> = React.memo(
                 {(
                   [
                     ['none', 'Aucun'],
-                    ['light', 'L\u00E9ger'],
-                    ['moderate', 'Mod\u00E9r\u00E9'],
+                    ['light', 'Léger'],
+                    ['moderate', 'Modéré'],
                     ['heavy', 'Full prep'],
                   ] as const
                 ).map(([v, l]) => (
@@ -555,8 +555,8 @@ export const OnboardingView: React.FC<OnboardingViewProps> = React.memo(
               <div className="chip-row">
                 {([
                   ['none', 'Aucun'],
-                  ['light', 'L\u00e9ger'],
-                  ['moderate', 'Mod\u00e9r\u00e9'],
+                  ['light', 'Léger'],
+                  ['moderate', 'Modéré'],
                   ['intense', 'Intense'],
                 ] as const).map(([v, l]) => (
                   <button
@@ -575,9 +575,9 @@ export const OnboardingView: React.FC<OnboardingViewProps> = React.memo(
               <div className="chip-row">
                 {([
                   ['low', 'Faible'],
-                  ['moderate', 'Mod\u00e9r\u00e9'],
-                  ['high', '\u00c9lev\u00e9'],
-                  ['very_high', 'Tr\u00e8s \u00e9lev\u00e9'],
+                  ['moderate', 'Modéré'],
+                  ['high', 'Élevé'],
+                  ['very_high', 'Très élevé'],
                 ] as const).map(([v, l]) => (
                   <button
                     key={v}
@@ -595,10 +595,10 @@ export const OnboardingView: React.FC<OnboardingViewProps> = React.memo(
               <div className="chip-row">
                 {([
                   ['data', 'Data/Stats'],
-                  ['community', 'Communaut\u00e9'],
-                  ['aesthetics', 'Esth\u00e9tique'],
+                  ['community', 'Communauté'],
+                  ['aesthetics', 'Esthétique'],
                   ['performance', 'Performance'],
-                  ['health', 'Sant\u00e9'],
+                  ['health', 'Santé'],
                 ] as const).map(([v, l]) => (
                   <button
                     key={v}
@@ -626,7 +626,7 @@ export const OnboardingView: React.FC<OnboardingViewProps> = React.memo(
                 onClick={() => onComplete(draft, answers)}
                 type="button"
               >
-                D\u00e9marrer la premi\u00e8re Saga
+                Démarrer la première Saga
               </button>
             </div>
           </section>

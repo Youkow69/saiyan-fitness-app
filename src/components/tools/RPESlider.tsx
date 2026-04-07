@@ -21,9 +21,9 @@ const RPE_COLORS: Record<number, string> = {
 
 const RPE_LABELS: Record<number, string> = {
   6: 'Facile',
-  7: 'Mod\u00e9r\u00e9',
+  7: 'Modéré',
   8: 'Dur',
-  9: 'Tr\u00e8s dur',
+  9: 'Très dur',
   10: 'Max',
 }
 

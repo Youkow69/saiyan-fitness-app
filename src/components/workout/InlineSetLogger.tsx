@@ -558,7 +558,7 @@ export function InlineSetLogger({ exerciseId, target, onSetAdded }: Props) {
               fontSize: '0.68rem', fontWeight: 600, cursor: 'pointer',
             }}
           >
-            Copier la derni\u00e8re s\u00e9rie
+            Copier la dernière série
           </button>
         </div>
       )}
@@ -568,7 +568,7 @@ export function InlineSetLogger({ exerciseId, target, onSetAdded }: Props) {
           background: 'rgba(239,68,68,0.08)', fontSize: '0.7rem',
           color: '#ef4444', fontWeight: 600,
         }}>
-          \u26A0\uFE0F Tu \u00e9tais \u00e0 fond la derni\u00e8re fois
+          ⚠️ Tu étais à fond la dernière fois
         </div>
       )}
 
@@ -690,7 +690,7 @@ export function InlineSetLogger({ exerciseId, target, onSetAdded }: Props) {
         onClick={() => setShowRir(prev => !prev)}
         type="button"
       >
-        {showRir ? 'Masquer RIR \u25B2' : 'Afficher RIR \u25BC'}
+        {showRir ? 'Masquer RIR ▲' : 'Afficher RIR ▼'}
       </button>
 
       {/* Notes */}
@@ -736,7 +736,7 @@ export function InlineSetLogger({ exerciseId, target, onSetAdded }: Props) {
       {showPlates && (<>
         <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
           <button type="button" onClick={() => setShowPlateCalc(p => !p)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '1rem', padding: 2 }} aria-label="Calculateur de plaques">
-            {showPlateCalc ? '\u2716' : '\U0001f3cb\ufe0f'}
+            {showPlateCalc ? '✖' : '🏋️'}
           </button>
         </div>
         {showPlateCalc && <MiniPlateCalc weight={parseFloat(draft.weight) || 0} />}

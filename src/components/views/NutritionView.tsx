@@ -108,7 +108,7 @@ export const NutritionView: React.FC = React.memo(
             }}
             style={{ background: 'var(--bg-card)', border: '1px solid var(--stroke)', borderRadius: 8, padding: '6px 10px', color: 'var(--text)', cursor: 'pointer', fontSize: '0.9rem' }}
           >
-            {'\u25c0'}
+            {'◀'}
           </button>
           <input
             type="date"
@@ -129,7 +129,7 @@ export const NutritionView: React.FC = React.memo(
             }}
             style={{ background: 'var(--bg-card)', border: '1px solid var(--stroke)', borderRadius: 8, padding: '6px 10px', color: 'var(--text)', cursor: 'pointer', fontSize: '0.9rem' }}
           >
-            {'\u25b6'}
+            {'▶'}
           </button>
           {selectedDate !== todayIso() && (
             <button
@@ -160,7 +160,7 @@ export const NutritionView: React.FC = React.memo(
               setSelectedDate(todayIso())
             }}
           >
-            {'\U0001f4cb'} Copier cette journee vers aujourd'hui
+            {'📋'} Copier cette journee vers aujourd'hui
           </button>
         )}
 
@@ -274,7 +274,7 @@ export const NutritionView: React.FC = React.memo(
                 type="button"
                 style={{ marginTop: 10, width: '100%' }}
                 onClick={() => {
-                  if (!customName.trim()) { showToast('Donne un nom \u00e0 ton aliment', 'error'); return }
+                  if (!customName.trim()) { showToast('Donne un nom à ton aliment', 'error'); return }
                   const newFood: Food = {
                     id: makeId('custom'),
                     name: customName.trim(),

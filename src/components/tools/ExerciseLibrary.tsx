@@ -39,7 +39,7 @@ export function ExerciseLibrary({ onSelect, compact = false }: Props) {
         type="text"
         value={search}
         onChange={e => setSearch(e.target.value)}
-        placeholder={'\U0001f50d Rechercher un exercice...'}
+        placeholder={'🔍 Rechercher un exercice...'}
         style={{
           width: '100%', padding: '10px 12px', borderRadius: 10,
           border: '1px solid var(--border, #333)', background: 'var(--bg-card, #1a1a2e)',
@@ -56,21 +56,21 @@ export function ExerciseLibrary({ onSelect, compact = false }: Props) {
         </select>
         <select value={filterEquip} onChange={e => setFilterEquip(e.target.value)}
           style={{ padding: '4px 8px', borderRadius: 6, border: '1px solid var(--border)', background: 'var(--bg-card)', color: 'var(--text)', fontSize: '0.72rem' }}>
-          <option value="">{'\u00c9quipement'}</option>
+          <option value="">{'Équipement'}</option>
           {EQUIPMENT_OPTIONS.map(eq => <option key={eq} value={eq}>{eq}</option>)}
         </select>
         <select value={filterDiff || ''} onChange={e => setFilterDiff(Number(e.target.value) || 0)}
           style={{ padding: '4px 8px', borderRadius: 6, border: '1px solid var(--border)', background: 'var(--bg-card)', color: 'var(--text)', fontSize: '0.72rem' }}>
-          <option value="0">Difficult\u00e9</option>
-          <option value="1">D\u00e9butant</option>
-          <option value="2">Interm\u00e9diaire</option>
-          <option value="3">Avanc\u00e9</option>
+          <option value="0">Difficulté</option>
+          <option value="1">Débutant</option>
+          <option value="2">Intermédiaire</option>
+          <option value="3">Avancé</option>
         </select>
       </div>
 
       {/* Count */}
       <div style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', marginBottom: 8 }}>
-        {filtered.length} exercice{filtered.length !== 1 ? 's' : ''} trouv\u00e9{filtered.length !== 1 ? 's' : ''}
+        {filtered.length} exercice{filtered.length !== 1 ? 's' : ''} trouvé{filtered.length !== 1 ? 's' : ''}
       </div>
 
       {/* List */}

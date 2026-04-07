@@ -192,8 +192,8 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
               <div>
                 {/* Groupe label */}
                 {supersetGroup && supersetGroup.length > 1 && (
-                  <div style={{ textAlign: 'center', padding: '4px 12px', marginBottom: 8, borderRadius: 8, background: 'rgba(155,89,182,0.1)', border: '1px solid rgba(155,89,182,0.3)', fontSize: '0.75rem', fontWeight: 700, color: '#9b59b6' }}>
-                    {String.fromCodePoint(0x26A1)} Groupe {String.fromCharCode(8212)} {supersetGroup.length} exercices
+                  <div style={{ textAlign: 'center', padding: '4px 12px', marginBottom: 8, borderRadius: 8, background: (() => { const rd = customRoutines.find(cr => cr.exercises.some(e => e.exerciseId === currentExLog.exerciseId)); const gd = (rd as any)?.exerciseGroups?.find((g: any) => g.exerciseIds?.includes(currentExLog.exerciseId)); return gd?.type === 'superset' ? 'rgba(231,76,60,0.1)' : 'rgba(155,89,182,0.1)' })(), border: '1px solid ' + (() => { const rd = customRoutines.find(cr => cr.exercises.some(e => e.exerciseId === currentExLog.exerciseId)); const gd = (rd as any)?.exerciseGroups?.find((g: any) => g.exerciseIds?.includes(currentExLog.exerciseId)); return gd?.type === 'superset' ? 'rgba(231,76,60,0.3)' : 'rgba(155,89,182,0.3)' })(), fontSize: '0.75rem', fontWeight: 700, color: (() => { const rd = customRoutines.find(cr => cr.exercises.some(e => e.exerciseId === currentExLog.exerciseId)); const gd = (rd as any)?.exerciseGroups?.find((g: any) => g.exerciseIds?.includes(currentExLog.exerciseId)); return gd?.type === 'superset' ? '#e74c3c' : '#9b59b6' })() }}>
+{(() => { const rd = customRoutines.find(cr => cr.exercises.some(e => e.exerciseId === currentExLog.exerciseId)); const gd = (rd as any)?.exerciseGroups?.find((g: any) => g.exerciseIds?.includes(currentExLog.exerciseId)); return gd?.type === 'superset' ? String.fromCodePoint(0x1F525) + ' SUPERSET (encha\u00eener sans repos)' : String.fromCodePoint(0x26A1) + ' S\u00c9RIES ALTERN\u00c9ES (repos entre chaque)' })()
                   </div>
                 )}
 
@@ -215,8 +215,23 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
                   // In superset: highlight the exercise that needs the next set
                   const isActiveInGroup = nextInGroup?.exerciseId === exerciseLog.exerciseId
 
+                  // Visual separator between grouped exercises
+                  const exIdxInGroup = displayExercises.indexOf(exerciseLog)
+                  const routineRef = customRoutines.find(cr => cr.exercises.some(e => e.exerciseId === currentExLog.exerciseId))
+                  const groupRef = (routineRef as any)?.exerciseGroups?.find((g: any) => g.exerciseIds?.includes(currentExLog.exerciseId))
+                  const isSupersetType = groupRef?.type === 'superset'
+
                   return (
-                    <section key={exercise.id} className='hevy-card stack-md' style={{ borderColor: isActiveInGroup && supersetGroup ? '#9b59b633' : undefined, borderWidth: isActiveInGroup && supersetGroup ? 2 : undefined }}>
+                    <div key={exercise.id}>
+                    {exIdxInGroup > 0 && supersetGroup && (
+                      <div style={{ textAlign: 'center', padding: isSupersetType ? '0' : '2px 0' }}>
+                        {isSupersetType
+                          ? <div style={{ width: 3, height: 10, background: '#e74c3c', margin: '0 auto', borderRadius: 2 }} />
+                          : <div style={{ color: '#9b59b6', fontSize: '1.4rem', lineHeight: 1 }}>{String.fromCodePoint(0x2195)}</div>
+                        }
+                      </div>
+                    )}
+                    <section className='hevy-card stack-md' style={{ borderColor: isActiveInGroup && supersetGroup ? '#9b59b633' : undefined, borderWidth: isActiveInGroup && supersetGroup ? 2 : undefined }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                         <div>
                           <h3 style={{ margin: 0 }}>
@@ -264,6 +279,7 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
                         </div>
                       )}
                     </section>
+                    </div>
                   )
                 })}
 

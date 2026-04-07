@@ -11,10 +11,10 @@ interface Photo {
 }
 
 const CATEGORIES = [
-  { id: 'front', label: 'Face', emoji: '\U0001f9cd' },
-  { id: 'back', label: 'Dos', emoji: '\U0001f9cd\u200d\u2642\ufe0f' },
-  { id: 'side_left', label: 'Gauche', emoji: '\u2b05' },
-  { id: 'side_right', label: 'Droite', emoji: '\u27a1' },
+  { id: 'front', label: 'Face', emoji: '🧍' },
+  { id: 'back', label: 'Dos', emoji: '🧍‍♂️' },
+  { id: 'side_left', label: 'Gauche', emoji: '⬅' },
+  { id: 'side_right', label: 'Droite', emoji: '➡' },
 ]
 
 export function ProgressPhotoCompare() {
@@ -36,7 +36,7 @@ export function ProgressPhotoCompare() {
   if (photos.length < 2) {
     return (
       <div style={{ textAlign: 'center', padding: 20, color: 'var(--text-secondary)' }}>
-        <div style={{ fontSize: '2rem', marginBottom: 8 }}>{'\U0001f4f8'}</div>
+        <div style={{ fontSize: '2rem', marginBottom: 8 }}>{'📸'}</div>
         <p style={{ fontSize: '0.82rem' }}>Ajoute au moins 2 photos pour comparer ta progression</p>
       </div>
     )
@@ -79,12 +79,12 @@ export function ProgressPhotoCompare() {
           </div>
         </div>
         <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', marginBottom: 4 }}>APR\u00c8S</div>
+          <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', marginBottom: 4 }}>APRÈS</div>
           <div style={{
             aspectRatio: '3/4', borderRadius: 12, overflow: 'hidden',
             background: 'var(--bg-card)', border: '2px solid rgba(57,255,20,0.3)',
           }}>
-            {afterPhoto.url && <img src={afterPhoto.url} alt="Apr\u00e8s" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
+            {afterPhoto.url && <img src={afterPhoto.url} alt="Après" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
           </div>
           <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', marginTop: 4 }}>
             {afterPhoto.date} {afterPhoto.weightKg ? '| ' + afterPhoto.weightKg + 'kg' : ''}

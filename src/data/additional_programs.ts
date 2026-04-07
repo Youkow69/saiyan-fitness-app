@@ -1028,7 +1028,7 @@ export const famousPrograms: ProgramTemplate[] = [
   // ── 1. Starting Strength 3J "Les Debuts de Goku" ──
   {
     id: 'starting_strength_3j',
-    name: 'Starting Strength 3J "Les D\u00e9buts de Goku"',
+    name: 'Starting Strength 3J "Les Débuts de Goku"',
     saga: 'Saga Saiyan',
     split: 'Full Body A/B',
     goalTags: ['strength'],
@@ -1059,7 +1059,7 @@ export const famousPrograms: ProgramTemplate[] = [
   // ── 2. StrongLifts 5x5 3J "Entrainement de Tortue Geniale" ──
   {
     id: 'stronglifts_5x5_3j',
-    name: 'StrongLifts 5\u00d75 3J "Entra\u00eenement de Tortue G\u00e9niale"',
+    name: 'StrongLifts 5×5 3J "Entraînement de Tortue Géniale"',
     saga: 'Saga Tortue Geniale',
     split: 'Full Body A/B',
     goalTags: ['strength', 'muscle_gain'],
@@ -1090,7 +1090,7 @@ export const famousPrograms: ProgramTemplate[] = [
   // ── 3. nSuns 5/3/1 LP 5J "Gravite x100 (Namek)" ──
   {
     id: 'nsuns_531_5j',
-    name: 'nSuns 5/3/1 LP 5J "Gravit\u00e9 \u00d7100 (Namek)"',
+    name: 'nSuns 5/3/1 LP 5J "Gravité ×100 (Namek)"',
     saga: 'Saga Namek',
     split: 'T1+T2 par jour',
     goalTags: ['strength'],
@@ -1150,7 +1150,7 @@ export const famousPrograms: ProgramTemplate[] = [
   // ── 4. GZCLP 4J "Maitrise du Ki (Ginyu)" ──
   {
     id: 'gzclp_4j',
-    name: 'GZCLP 4J "Ma\u00eetrise du Ki (Ginyu)"',
+    name: 'GZCLP 4J "Maîtrise du Ki (Ginyu)"',
     saga: 'Saga Ginyu',
     split: 'T1/T2/T3',
     goalTags: ['strength', 'muscle_gain'],
@@ -1201,7 +1201,7 @@ export const famousPrograms: ProgramTemplate[] = [
   // ── 5. PPL Reddit 6J "Preparation Cell Games" ──
   {
     id: 'ppl_reddit_6j',
-    name: 'PPL Reddit 6J "Pr\u00e9paration Cell Games"',
+    name: 'PPL Reddit 6J "Préparation Cell Games"',
     saga: 'Saga Cell',
     split: 'Push/Pull/Legs x2',
     goalTags: ['muscle_gain'],
@@ -1341,7 +1341,7 @@ export const famousPrograms: ProgramTemplate[] = [
   // ── 7. 5/3/1 BBB 4J "Entrainement de Whis" ──
   {
     id: 'bbb_531_4j',
-    name: '5/3/1 BBB 4J "Entra\u00eenement de Whis"',
+    name: '5/3/1 BBB 4J "Entraînement de Whis"',
     saga: 'Saga DBS',
     split: '5/3/1 + BBB',
     goalTags: ['strength', 'muscle_gain'],

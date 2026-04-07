@@ -1,4 +1,4 @@
-const CACHE = 'saiyan-fitness-v2';
+const CACHE = 'saiyan-fitness-v3';
 const FONT_CACHE = 'saiyan-fonts-v1';
 
 self.addEventListener('install', e => {
@@ -48,7 +48,15 @@ self.addEventListener('notificationclick', e => {
 
 // Handle messages from the app (timer notification)
 self.addEventListener('message', e => {
-  if (e.data && e.data.type === 'TIMER_DONE') {
+  if (!e.data) return;
+
+  // Force activate new SW immediately when app requests it
+  if (e.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+    return;
+  }
+
+  if (e.data.type === 'TIMER_DONE') {
     self.registration.showNotification('Saiyan Fitness', {
       body: e.data.message || 'Repos termin\u00e9 ! Reprends ta s\u00e9rie !',
       icon: '/saiyan-fitness-app/icon-192.png',
@@ -88,7 +96,20 @@ self.addEventListener('fetch', e => {
     return;
   }
 
-  // App assets - stale-while-revalidate
+  // HTML/JS navigation requests - network first (ensures fresh app on each visit)
+  if (e.request.mode === 'navigate' || e.request.destination === 'document') {
+    e.respondWith(
+      fetch(e.request).then(resp => {
+        if (resp.ok) {
+          caches.open(CACHE).then(c => c.put(e.request, resp.clone()));
+        }
+        return resp;
+      }).catch(() => caches.match(e.request).then(c => c || caches.match('/saiyan-fitness-app/index.html')))
+    );
+    return;
+  }
+
+  // Other assets (JS/CSS/images) - stale-while-revalidate
   e.respondWith(
     caches.match(e.request).then(cached => {
       const fetchPromise = fetch(e.request).then(resp => {

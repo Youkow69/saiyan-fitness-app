@@ -23,6 +23,18 @@ self.addEventListener('activate', e => {
 // Handle notification actions
 self.addEventListener('notificationclick', e => {
   e.notification.close();
+
+  // Handle 'skip' action from timer notification
+  if (e.action === 'skip') {
+    e.waitUntil(
+      self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(clients => {
+        clients.forEach(c => c.postMessage({ type: 'SKIP_TIMER' }));
+        if (clients.length > 0) clients[0].focus();
+      })
+    );
+    return;
+  }
+
   e.waitUntil(
     self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(clients => {
       if (clients.length > 0) {

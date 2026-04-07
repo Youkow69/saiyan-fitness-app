@@ -45,7 +45,7 @@ export const ShareWorkoutButton: React.FC<ShareWorkoutButtonProps> = ({ workout,
         username: state.profile?.name || 'Saiyan',
         avatar_level: Math.min(9, Math.floor((state.workouts.length || 0) / 10)),
         workout_date: workout.date,
-        session_name: workout.sessionName || 'Entra\u00eenement',
+        session_name: workout.sessionName || 'Entraînement',
         duration_min: workout.durationMinutes,
         total_volume: volume,
         exercises_summary: exerciseNames,
@@ -53,7 +53,7 @@ export const ShareWorkoutButton: React.FC<ShareWorkoutButtonProps> = ({ workout,
       })
 
       if (error) throw error
-      showToast('S\u00e9ance partag\u00e9e avec succ\u00e8s !', 'success')
+      showToast('Séance partagée avec succès !', 'success')
       setShowPreview(false)
       onShared?.()
     } catch (err) {
@@ -99,7 +99,7 @@ export const ShareWorkoutButton: React.FC<ShareWorkoutButtonProps> = ({ workout,
               WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
               fontSize: '1.1rem',
             }}>
-              {'\uD83D\uDD25'} Aper\u00e7u du partage
+              {'\uD83D\uDD25'} Aperçu du partage
             </h3>
 
             <div style={{
@@ -107,7 +107,7 @@ export const ShareWorkoutButton: React.FC<ShareWorkoutButtonProps> = ({ workout,
               marginBottom: 16,
             }}>
               <h4 style={{ margin: '0 0 8px', color: 'var(--accent)', fontSize: '0.95rem' }}>
-                {workout.sessionName || 'Entra\u00eenement'}
+                {workout.sessionName || 'Entraînement'}
               </h4>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
                 <div style={{ textAlign: 'center', padding: 8, background: 'rgba(255,255,255,0.04)', borderRadius: 8 }}>

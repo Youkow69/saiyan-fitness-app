@@ -12,26 +12,40 @@ interface Message {
 // Local fallback when Gemini edge function is unavailable
 function getLocalFallback(question: string, context: any): string {
   const q = question.toLowerCase()
+  const offline = '\n\n⚠️ Réponse hors-ligne. Vérifie ta clé Gemini dans Supabase > Edge Functions > coach-ai > Secrets.'
 
-  if (q.includes('programme') || q.includes('routine') || q.includes('seance') || q.includes('séance')) {
-    const goal = context?.goal || 'muscle_gain'
+  if (q.includes('programme') || q.includes('routine') || q.includes('ance')) {
     const days = context?.trainingDays || 4
-    if (goal === 'fat_loss') {
-      return \`Pour la perte de gras avec \${days} jours/semaine, je recommande un split Upper/Lower :\n\n• Jour 1 : Upper (Bench, Row, OHP, Curl)\n• Jour 2 : Lower (Squat, RDL, Leg Press, Calf Raise)\n• Jour 3 : Upper (Incline Bench, Pull-up, Lateral Raise)\n• Jour 4 : Lower (Deadlift, Lunges, Leg Curl)\n\nAjoute 20-30 min de cardio après chaque séance.\n\n⚠️ Réponse hors-ligne. Connecte-toi pour des conseils personnalisés via Whis (Gemini AI).\`
-    }
-    return \`Pour la prise de masse avec \${days} jours/semaine, je recommande un PPL :\n\n• Jour 1 : Push (Bench Press, OHP, Dips, Lateral Raise)\n• Jour 2 : Pull (Deadlift, Barbell Row, Pull-up, Curl)\n• Jour 3 : Legs (Squat, RDL, Leg Press, Calf Raise)\n• Jour 4 : Upper (Incline Bench, Chin-up, Face Pull)\n\nVise 3-4 sets de 8-12 reps, RIR 2.\n\n⚠️ Réponse hors-ligne. Connecte-toi pour des conseils personnalisés via Whis (Gemini AI).\`
+    return 'Pour ' + days + ' jours/semaine, je recommande un PPL :\n'
+      + '\n• Jour 1 : Push (Bench, OHP, Dips, Lateral Raise)'
+      + '\n• Jour 2 : Pull (Deadlift, Row, Pull-up, Curl)'
+      + '\n• Jour 3 : Legs (Squat, RDL, Leg Press, Calf Raise)'
+      + '\n• Jour 4 : Upper (Incline Bench, Chin-up, Face Pull)'
+      + '\n\nVise 3-4 sets de 8-12 reps, RIR 2.' + offline
   }
 
-  if (q.includes('nutrition') || q.includes('macro') || q.includes('calorie') || q.includes('repas') || q.includes('manger')) {
-    const weight = context?.weight || 75
-    return \`Macros recommandés pour \${weight}kg :\n\n• Protéines : \${Math.round(weight * 2)}g/jour (priorité #1)\n• Lipides : \${Math.round(weight * 0.8)}g/jour\n• Glucides : le reste de tes calories\n\nSources de protéines : poulet, thon, oeufs, whey, fromage blanc.\n\n⚠️ Réponse hors-ligne. Connecte-toi pour des conseils personnalisés.\`
+  if (q.includes('nutrition') || q.includes('macro') || q.includes('calorie') || q.includes('manger')) {
+    const w = context?.weight || 75
+    return 'Macros recommandés pour ' + w + 'kg :\n'
+      + '\n• Protéines : ' + Math.round(w * 2) + 'g/jour'
+      + '\n• Lipides : ' + Math.round(w * 0.8) + 'g/jour'
+      + '\n• Glucides : le reste de tes calories'
+      + '\n\nSources : poulet, thon, oeufs, whey, fromage blanc.' + offline
   }
 
-  if (q.includes('deload') || q.includes('repos') || q.includes('fatigue') || q.includes('récup')) {
-    return "Signes qu'un deload est nécessaire :\n\n• RIR moyen < 1 sur 3 séances consécutives\n• Courbatures persistantes > 72h\n• Aucun PR depuis 3+ séances\n• Motivation en baisse\n\nDeload = réduis le volume de 40% et le poids de 20% pendant 1 semaine. C'est ton Senzu Bean ! \n\n⚠️ Réponse hors-ligne."
+  if (q.includes('deload') || q.includes('repos') || q.includes('fatigue')) {
+    return 'Signes de deload nécessaire :\n'
+      + '\n• RIR moyen < 1 sur 3 séances'
+      + '\n• Courbatures > 72h'
+      + '\n• Aucun PR depuis 3+ séances'
+      + '\n\nDeload = -40% volume, -20% poids pendant 1 semaine. Senzu Bean !' + offline
   }
 
-  return "Le coach Whis est temporairement indisponible (problème de connexion avec Gemini AI).\n\nEn attendant, voici ce que tu peux faire :\n• Utilise le générateur de séance intelligent (onglet Training)\n• Consulte ton ReadinessScore pour savoir si tu peux pousser\n• Vérifie tes macros dans l'onglet Nutrition\n\nPour réactiver Whis : vérifie ta clé API Gemini dans Supabase Dashboard → Edge Functions → coach-ai → Secrets."
+  return 'Le coach Whis est temporairement indisponible.\n\n'
+    + 'En attendant :\n'
+    + '• Générateur de séance (onglet Training)\n'
+    + '• ReadinessScore pour évaluer ta forme\n'
+    + '• Macros dans l\'onglet Nutrition' + offline
 }
 
 export const CoachView: React.FC = React.memo(function CoachView() {

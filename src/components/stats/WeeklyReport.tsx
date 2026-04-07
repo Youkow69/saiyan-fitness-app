@@ -156,7 +156,7 @@ export function WeeklyReport() {
           { icon: '', label: 'Séries', value: report.sets, color: 'var(--warning, #f59e0b)' },
           { icon: '', label: 'Durée', value: `${report.duration} min`, color: 'var(--success, #22c55e)' },
           { icon: '', label: 'Streak', value: `${report.streak} jours`, color: '#FF4500' },
-          { icon: '', label: 'Cal/jour moy.', value: report.avgCalories > 0 ? `${report.avgCalories} kcal` : '\u2014', color: 'var(--calories, #FF8C00)' },
+          { icon: '', label: 'Cal/jour moy.', value: report.avgCalories > 0 ? `${report.avgCalories} kcal` : '—', color: 'var(--calories, #FF8C00)' },
         ].map(s => (
           <div key={s.label} style={{ background: 'rgba(255,255,255,0.02)', borderRadius: 12, padding: '12px 10px', textAlign: 'center', border: '1px solid var(--border)' }}>
             <div style={{ fontSize: '1.1rem', marginBottom: 2 }}>{s.icon}</div>
@@ -204,7 +204,7 @@ export function WeeklyReport() {
             ].map(d => {
               const pct = d.prev > 0 ? Math.round(((d.curr - d.prev) / d.prev) * 100) : 0
               const color = pct > 0 ? '#22c55e' : pct < 0 ? '#ef4444' : 'var(--muted)'
-              const arrow = pct > 0 ? '\u2191' : pct < 0 ? '\u2193' : '='
+              const arrow = pct > 0 ? '↑' : pct < 0 ? '↓' : '='
               return (
                 <span key={d.label} style={{ color }}>
                   {arrow} {d.label}: {pct > 0 ? '+' : ''}{pct}%

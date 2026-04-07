@@ -13,7 +13,7 @@ import { ProgramBuilder } from '../tools/ProgramBuilder'
 import { WorkoutHistory } from '../stats/WorkoutHistory'
 import { SmartWorkoutGenerator } from '../tools/SmartWorkoutGenerator'
 import { MesocycleProgress } from '../tools/MesocycleProgress'
-import { Groupe alternéManager } from '../tools/Groupe alternéIndicator'
+import { SupersetManager } from '../tools/SupersetIndicator'
 import { ExerciseDetail } from '../tools/ExerciseDetail'
 
 function getLastSet(workouts: AppState['workouts'], exerciseId: string) {
@@ -63,7 +63,7 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
     const [showHistory, setShowHistory] = useState(false)
     const [expandedProgram, setExpandedProgram] = useState<string | null>(null)
     const [showAiGenerator, setShowAiGenerator] = useState(false)
-    const [supersetGroups, setGroupe alternéGroups] = useState<string[][]>([])
+    const [supersetGroups, setSupersetGroups] = useState<string[][]>([])
     const [currentExIdx, setCurrentExIdx] = useState(0)
 
     const selectedProgram = getProgramById(state.selectedProgramId)
@@ -156,9 +156,9 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
 
           <MesocycleProgress />
 
-          <Groupe alternéManager
+          <SupersetManager
             exercises={activeWorkout.exercises}
-            onGroupExercises={setGroupe alternéGroups}
+            onGroupExercises={setSupersetGroups}
           />
 
           {/* === GUIDED MODE: One exercise at a time (superset-aware) === */}

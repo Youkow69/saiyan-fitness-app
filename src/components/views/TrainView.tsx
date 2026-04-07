@@ -162,11 +162,6 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
 
           <MesocycleProgress />
 
-          {/* SupersetManager hidden in guided mode - groups come from routine */}
-          {false && <SupersetManager
-            exercises={activeWorkout.exercises}
-            onGroupExercises={setSupersetGroups}
-          />
 
           {/* === GUIDED MODE: One exercise at a time (superset-aware) === */}
           {(() => {

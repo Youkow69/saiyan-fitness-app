@@ -15,7 +15,7 @@ export function BodyweightTrendChart({ height = 200, showTarget = true }: Props)
   if (entries.length < 2) {
     return (
       <div style={{ textAlign: 'center', padding: 20, color: 'var(--text-secondary)' }}>
-        {'\u2696\uFE0F'} Ajoute au moins 2 pes\u00e9es pour voir la courbe
+        {'⚖️'} Ajoute au moins 2 pesées pour voir la courbe
       </div>
     )
   }

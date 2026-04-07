@@ -18,7 +18,22 @@
     <script type="module" src="/src/main.tsx"></script>
     <script>
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('/saiyan-fitness-app/sw.js').catch(() => {});
+        navigator.serviceWorker.register('/saiyan-fitness-app/sw.js').then(function(reg) {
+          // Force check for new SW on every app open
+          reg.update();
+          // Auto-activate new SW when found
+          reg.addEventListener('updatefound', function() {
+            var newSW = reg.installing;
+            if (newSW) {
+              newSW.addEventListener('statechange', function() {
+                if (newSW.state === 'installed' && navigator.serviceWorker.controller) {
+                  newSW.postMessage({ type: 'SKIP_WAITING' });
+                  window.location.reload();
+                }
+              });
+            }
+          });
+        }).catch(function() {});
       }
     </script>
   </body>

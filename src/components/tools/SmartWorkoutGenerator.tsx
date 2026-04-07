@@ -1,6 +1,6 @@
 // ── SmartWorkoutGenerator.tsx ──────────────────────────────────────────────
 // Generates workout suggestions using Gemini AI based on fatigue & history.
-// Theme: "Whis analyse ton ki et programme ton entra\u00eenement"
+// Theme: "Whis analyse ton ki et programme ton entraînement"
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { useState } from 'react'
@@ -56,21 +56,21 @@ export function SmartWorkoutGenerator({ onClose }: { onClose: () => void }) {
     }))
 
     const profile = state.profile || { goal: 'muscle_gain', experienceLevel: 'intermediate' }
-    const prompt = `Tu es Whis, le coach d'entra\u00eenement de l'univers Dragon Ball.
-Analyse l'historique d'entra\u00eenement et g\u00e9n\u00e8re une s\u00e9ance optimale.
+    const prompt = `Tu es Whis, le coach d'entraînement de l'univers Dragon Ball.
+Analyse l'historique d'entraînement et génère une séance optimale.
 
-Profil: ${profile.goal || 'muscle_gain'}, exp\u00e9rience: ${profile.experienceLevel || 'intermediate'}
-Dur\u00e9e souhait\u00e9e: ${preferences.duration} min
+Profil: ${profile.goal || 'muscle_gain'}, expérience: ${profile.experienceLevel || 'intermediate'}
+Durée souhaitée: ${preferences.duration} min
 Focus: ${preferences.focus === 'auto' ? 'automatique (selon la fatigue)' : preferences.focus}
-Intensit\u00e9: ${preferences.intensity}
+Intensité: ${preferences.intensity}
 
-Derniers entra\u00eenements:
+Derniers entraînements:
 ${JSON.stringify(recentWorkouts, null, 2)}
 
-R\u00e9ponds UNIQUEMENT en JSON valide avec cette structure exacte:
+Réponds UNIQUEMENT en JSON valide avec cette structure exacte:
 {
-  "name": "Nom de la s\u00e9ance (th\u00e8me DBZ)",
-  "focus": "muscles cibl\u00e9s",
+  "name": "Nom de la séance (thème DBZ)",
+  "focus": "muscles ciblés",
   "exercises": [
     {
       "exerciseId": "id_exercice_existant",
@@ -83,11 +83,11 @@ R\u00e9ponds UNIQUEMENT en JSON valide avec cette structure exacte:
       "reason": "Courte raison du choix"
     }
   ],
-  "explanation": "Explication g\u00e9n\u00e9rale de la s\u00e9ance en 2-3 phrases, style Whis"
+  "explanation": "Explication générale de la séance en 2-3 phrases, style Whis"
 }
 
 Utilise uniquement des exercices parmi: bench_press, squat, deadlift, overhead_press, barbell_row, pull_up, chin_up, dip, lat_pulldown, cable_row, leg_press, leg_curl, leg_extension, calf_raise, lateral_raise, face_pull, bicep_curl, tricep_pushdown, hammer_curl, incline_bench, cable_fly, romanian_deadlift, hip_thrust, front_squat, bulgarian_split_squat, plank, hanging_leg_raise, cable_crunch.
-Limite-toi \u00e0 5-8 exercices.`
+Limite-toi à 5-8 exercices.`
 
     try {
       const session = await supabase.auth.getSession()
@@ -114,7 +114,7 @@ Limite-toi \u00e0 5-8 exercices.`
 
       // Extract JSON from response
       const jsonMatch = text.match(/\{[\s\S]*\}/)
-      if (!jsonMatch) throw new Error('R\u00e9ponse IA invalide')
+      if (!jsonMatch) throw new Error('Réponse IA invalide')
 
       const parsed: GeneratedWorkout = JSON.parse(jsonMatch[0])
       setResult(parsed)
@@ -151,7 +151,7 @@ Limite-toi \u00e0 5-8 exercices.`
         startedAt: new Date().toISOString(),
       },
     })
-    showToast('S\u00e9ance IA lanc\u00e9e !', 'success')
+    showToast('Séance IA lancée !', 'success')
     onClose()
   }
 
@@ -168,23 +168,23 @@ Limite-toi \u00e0 5-8 exercices.`
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
           <h2 style={{ margin: 0, fontSize: '1.1rem' }}>
-            {'\u2728'} G\u00e9n\u00e9rateur IA - Whis
+            {'✨'} Générateur IA - Whis
           </h2>
           <button type="button" onClick={onClose} style={{
             background: 'transparent', border: 'none', color: 'var(--text-secondary)',
             fontSize: '1.2rem', cursor: 'pointer', padding: 4,
-          }}>{'\u2715'}</button>
+          }}>{'✕'}</button>
         </div>
 
         {!result ? (
           <>
             <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary, #888)', margin: '0 0 16px' }}>
-              Whis analyse ton ki et programme ton entra\u00eenement optimal.
+              Whis analyse ton ki et programme ton entraînement optimal.
             </p>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 16 }}>
               <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                <span style={{ fontSize: '0.75rem', fontWeight: 600 }}>Dur\u00e9e (min)</span>
+                <span style={{ fontSize: '0.75rem', fontWeight: 600 }}>Durée (min)</span>
                 <select value={preferences.duration} onChange={e => setPreferences(p => ({ ...p, duration: e.target.value }))}
                   style={{ padding: 8, borderRadius: 8, border: '1px solid var(--border)', background: 'var(--bg)', color: 'var(--text)', fontSize: '0.85rem' }}>
                   <option value="30">30 min</option>
@@ -211,11 +211,11 @@ Limite-toi \u00e0 5-8 exercices.`
               </label>
 
               <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                <span style={{ fontSize: '0.75rem', fontWeight: 600 }}>Intensit\u00e9</span>
+                <span style={{ fontSize: '0.75rem', fontWeight: 600 }}>Intensité</span>
                 <select value={preferences.intensity} onChange={e => setPreferences(p => ({ ...p, intensity: e.target.value }))}
                   style={{ padding: 8, borderRadius: 8, border: '1px solid var(--border)', background: 'var(--bg)', color: 'var(--text)', fontSize: '0.85rem' }}>
-                  <option value="light">L\u00e9g\u00e8re (deload)</option>
-                  <option value="moderate">Mod\u00e9r\u00e9e</option>
+                  <option value="light">Légère (deload)</option>
+                  <option value="moderate">Modérée</option>
                   <option value="hard">Intense</option>
                   <option value="max">Maximale</option>
                 </select>
@@ -232,7 +232,7 @@ Limite-toi \u00e0 5-8 exercices.`
                 color: '#000', fontWeight: 800, fontSize: '0.95rem', cursor: loading ? 'wait' : 'pointer',
               }}
             >
-              {loading ? 'Whis analyse ton ki...' : '\u2728 G\u00e9n\u00e9rer ma s\u00e9ance'}
+              {loading ? 'Whis analyse ton ki...' : '✨ Générer ma séance'}
             </button>
 
             {error && (
@@ -282,14 +282,14 @@ Limite-toi \u00e0 5-8 exercices.`
                 background: 'transparent', color: 'var(--text)', fontWeight: 600,
                 fontSize: '0.85rem', cursor: 'pointer',
               }}>
-                Reg\u00e9n\u00e9rer
+                Regénérer
               </button>
               <button type="button" onClick={startGeneratedWorkout} style={{
                 flex: 2, padding: 12, borderRadius: 10, border: 'none',
                 background: 'linear-gradient(135deg, #ff8c00, #ffd700)',
                 color: '#000', fontWeight: 800, fontSize: '0.9rem', cursor: 'pointer',
               }}>
-                Commencer cette s\u00e9ance
+                Commencer cette séance
               </button>
             </div>
           </>

@@ -248,8 +248,8 @@ export const ProfileView: React.FC<ProfileViewProps> = React.memo(
         <section className="hevy-card" style={{ padding: '14px', borderColor: 'rgba(239,68,68,0.2)' }}>
           <button
             onClick={() => {
-              if (window.confirm('ATTENTION : Ceci va supprimer TOUTES tes donn\u00e9es (workouts, nutrition, profil). Cette action est irr\u00e9versible. Continuer ?')) {
-                if (window.confirm('Derni\u00e8re chance ! Tout sera perdu. Vraiment r\u00e9initialiser ?')) {
+              if (window.confirm('ATTENTION : Ceci va supprimer TOUTES tes données (workouts, nutrition, profil). Cette action est irréversible. Continuer ?')) {
+                if (window.confirm('Dernière chance ! Tout sera perdu. Vraiment réinitialiser ?')) {
                   dispatch({ type: 'RESET_ACCOUNT' })
                   window.location.reload()
                 }
@@ -263,10 +263,10 @@ export const ProfileView: React.FC<ProfileViewProps> = React.memo(
               cursor: 'pointer',
             }}
           >
-            R\u00e9initialiser mon compte
+            Réinitialiser mon compte
           </button>
           <p style={{ margin: '6px 0 0', fontSize: '0.7rem', color: 'var(--muted)', textAlign: 'center' }}>
-            Supprime toutes les donn\u00e9es et recommence \u00e0 z\u00e9ro
+            Supprime toutes les données et recommence à zéro
           </p>
         </section>
 

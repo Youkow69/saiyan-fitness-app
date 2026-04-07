@@ -257,12 +257,20 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
                             <label><span>RIR</span><input value={currentInput.rir} onChange={(e) => setDraftInputs({ ...draftInputs, [exercise.id]: { ...currentInput, rir: e.target.value } })} /></label>
                           </div>
                           <button className='primary-btn' type='button' style={{ width: '100%', marginTop: 8 }} onClick={() => {
-                            // Check group type: superset = skip rest between, alternating = always rest
+                            // Determine rest: skip if exercise is in a superset sub-group within alternating
                             const routineData = customRoutines.find(cr => cr.exercises.some(e => e.exerciseId === exercise.id))
                             const groupDef = (routineData as any)?.exerciseGroups?.find((g: any) => g.exerciseIds?.includes(exercise.id))
-                            const isSuperset = groupDef?.type === 'superset'
-                            const isLastInRotation = !supersetGroup || supersetGroup[supersetGroup.length - 1] === exercise.id
-                            const shouldSkipRest = isSuperset && !isLastInRotation
+                            let shouldSkipRest = false
+                            if (groupDef?.type === 'superset') {
+                              // Pure superset: skip rest unless last in group
+                              shouldSkipRest = supersetGroup ? supersetGroup[supersetGroup.length - 1] !== exercise.id : false
+                            } else if (groupDef?.type === 'alternating' && groupDef?.items) {
+                              // Alternating with nested supersets: skip rest if same item (superset sub-group)
+                              const item = groupDef.items.find((it: string[]) => it.includes(exercise.id))
+                              if (item && item.length > 1) {
+                                shouldSkipRest = item[item.length - 1] !== exercise.id
+                              }
+                            }
                             onAddSet(exercise.id, Number(currentInput.weight || 0), Number(currentInput.reps || 0), Number(currentInput.rir || target.targetRir), currentInput.setType, shouldSkipRest)
                           }}>
                             S\u00e9rie {setsCompleted + 1}/{setsTarget}
@@ -463,15 +471,33 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
                 </p>
                 <p style={{ fontSize: "0.72rem", color: "var(--muted)", margin: "0 0 8px" }}>Sélectionne 2+ exercices :</p>
                 <div style={{ display: "flex", flexDirection: "column", gap: 4, marginBottom: 8 }}>
+                  {/* Show existing supersets as selectable blocks (for alternating mode) */}
+                  {groupType === "alternating" && routineGroups.filter(g => g.type === "superset").map((ss, si) => {
+                    const ssKey = "ss-" + si
+                    const isSelected = groupSelection.includes(ssKey)
+                    return (
+                      <button key={ssKey} type="button"
+                        onClick={() => setGroupSelection(prev => isSelected ? prev.filter(id => id !== ssKey) : [...prev, ssKey])}
+                        style={{ padding: "8px 12px", borderRadius: 8, border: isSelected ? "2px solid #9b59b6" : "1px solid rgba(231,76,60,0.3)", background: isSelected ? "rgba(155,89,182,0.15)" : "rgba(231,76,60,0.06)", color: "var(--text)", textAlign: "left", fontSize: "0.82rem", cursor: "pointer" }}>
+                        {isSelected ? String.fromCodePoint(0x2705) + " " : String.fromCodePoint(0x1F525) + " "}{ss.exerciseIds.map(id => getExerciseById(id)?.name || id).join(" + ")}
+                        <span style={{ fontSize: "0.65rem", color: "#e74c3c", marginLeft: 6 }}>(superset)</span>
+                      </button>
+                    )
+                  })}
+                  {/* Show individual exercises */}
                   {routineExercises.map(re => {
                     const ex = getExerciseById(re.exerciseId)
                     const isSelected = groupSelection.includes(re.exerciseId)
-                    const alreadyGrouped = routineGroups.some(g => g.exerciseIds.includes(re.exerciseId))
+                    const inSuperset = routineGroups.some(g => g.type === "superset" && g.exerciseIds.includes(re.exerciseId))
+                    const inAlternating = routineGroups.some(g => g.type === "alternating" && g.exerciseIds.includes(re.exerciseId))
                     const accentColor = groupType === "superset" ? "#e74c3c" : "#9b59b6"
+                    // In alternating mode, hide exercises that are in a superset (they show as a block above)
+                    if (groupType === "alternating" && inSuperset) return null
+                    if (inAlternating) return null
                     return (
-                      <button key={re.exerciseId} type="button" disabled={alreadyGrouped}
+                      <button key={re.exerciseId} type="button"
                         onClick={() => setGroupSelection(prev => isSelected ? prev.filter(id => id !== re.exerciseId) : [...prev, re.exerciseId])}
-                        style={{ padding: "8px 12px", borderRadius: 8, border: isSelected ? "2px solid " + accentColor : "1px solid var(--border)", background: isSelected ? accentColor + "22" : "transparent", color: alreadyGrouped ? "var(--muted)" : "var(--text)", textAlign: "left", fontSize: "0.82rem", cursor: alreadyGrouped ? "default" : "pointer", opacity: alreadyGrouped ? 0.5 : 1 }}>
+                        style={{ padding: "8px 12px", borderRadius: 8, border: isSelected ? "2px solid " + accentColor : "1px solid var(--border)", background: isSelected ? accentColor + "22" : "transparent", color: "var(--text)", textAlign: "left", fontSize: "0.82rem", cursor: "pointer" }}>
                         {isSelected ? String.fromCodePoint(0x2705) + " " : ""}{ex?.name || re.exerciseId}
                       </button>
                     )
@@ -479,7 +505,20 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
                 </div>
                 <div style={{ display: "flex", gap: 6 }}>
                   <button type="button" disabled={groupSelection.length < 2} onClick={() => {
-                    setRoutineGroups(prev => [...prev, { exerciseIds: groupSelection, type: groupType }])
+                    // Build items: resolve superset references
+                    const supersets = routineGroups.filter(g => g.type === "superset")
+                    const allExIds: string[] = []
+                    const items: string[][] = []
+                    groupSelection.forEach(sel => {
+                      if (sel.startsWith("ss-")) {
+                        const idx = parseInt(sel.replace("ss-", ""))
+                        const ss = supersets[idx]
+                        if (ss) { items.push(ss.exerciseIds); ss.exerciseIds.forEach(id => allExIds.push(id)) }
+                      } else {
+                        items.push([sel]); allExIds.push(sel)
+                      }
+                    })
+                    setRoutineGroups(prev => [...prev, { exerciseIds: allExIds, type: groupType, items }])
                     setGroupSelection([])
                     setGroupingMode(false)
                   }} style={{ flex: 1, padding: 10, borderRadius: 8, border: "none", background: groupType === "superset" ? "#e74c3c" : "#9b59b6", color: "#fff", fontWeight: 700, fontSize: "0.82rem", cursor: "pointer", opacity: groupSelection.length < 2 ? 0.5 : 1 }}>Valider</button>
@@ -492,7 +531,15 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
                 {routineGroups.map((g, gi) => (
                   <div key={gi} style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 4, padding: "6px 10px", borderRadius: 8, background: g.type === "superset" ? "rgba(231,76,60,0.06)" : "rgba(155,89,182,0.06)", border: "1px solid " + (g.type === "superset" ? "rgba(231,76,60,0.2)" : "rgba(155,89,182,0.2)") }}>
                     <span style={{ fontSize: "0.75rem", color: g.type === "superset" ? "#e74c3c" : "#9b59b6", fontWeight: 700 }}>{g.type === "superset" ? String.fromCodePoint(0x1F525) : String.fromCodePoint(0x26A1)}</span>
-                    <span style={{ fontSize: "0.75rem", color: "var(--text)", flex: 1 }}>{g.exerciseIds.map(id => getExerciseById(id)?.name || id).join(" + ")}</span>
+                    <span style={{ fontSize: "0.75rem", color: "var(--text)", flex: 1 }}>{g.items ? g.items.map((item, ii) => (
+                        <span key={ii}>
+                          {ii > 0 && <span style={{ color: "var(--muted)", margin: "0 4px" }}>{String.fromCodePoint(0x2195)}</span>}
+                          {item.length > 1
+                            ? <span style={{ color: "#e74c3c" }}>[{item.map(id => getExerciseById(id)?.name || id).join(" + ")}]</span>
+                            : <span>{getExerciseById(item[0])?.name || item[0]}</span>
+                          }
+                        </span>
+                      )) : g.exerciseIds.map(id => getExerciseById(id)?.name || id).join(" + ")}</span>
                     <button type="button" onClick={() => setRoutineGroups(prev => prev.filter((_: any, i: number) => i !== gi))} style={{ background: "none", border: "none", color: "var(--accent-red)", cursor: "pointer", fontSize: "0.85rem", padding: 2 }}>{String.fromCodePoint(0x2716)}</button>
                   </div>
                 ))}

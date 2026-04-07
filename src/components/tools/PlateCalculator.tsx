@@ -370,7 +370,7 @@ export function PlateCalculator() {
                   textAlign: 'center',
                 }}
               >
-                Chaque c\u00f4t\u00e9 : {plates.join(' + ')} kg
+                Chaque côté : {plates.join(' + ')} kg
               </div>
             )}
 

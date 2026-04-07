@@ -66,7 +66,7 @@ export function MesocycleProgress() {
     }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
         <span style={{ fontWeight: 700, fontSize: '0.85rem' }}>
-          {'\U0001f4ca'} M\u00e9socycle
+          {'📊'} Mésocycle
         </span>
         <span style={{
           fontSize: '0.72rem', padding: '2px 8px', borderRadius: 6,
@@ -74,7 +74,7 @@ export function MesocycleProgress() {
           color: mesoInfo.shouldDeload ? '#ef4444' : '#22c55e',
           fontWeight: 600,
         }}>
-          {mesoInfo.shouldDeload ? 'Deload recommand\u00e9' : `Semaine ${mesoInfo.currentWeek}/4`}
+          {mesoInfo.shouldDeload ? 'Deload recommandé' : `Semaine ${mesoInfo.currentWeek}/4`}
         </span>
       </div>
 

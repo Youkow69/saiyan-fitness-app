@@ -65,6 +65,11 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
     const [showAiGenerator, setShowAiGenerator] = useState(false)
     const [supersetGroups, setSupersetGroups] = useState<string[][]>([])
     const [currentExIdx, setCurrentExIdx] = useState(0)
+
+    const selectedProgram = getProgramById(state.selectedProgramId)
+    const nextIndex = state.programCursor[selectedProgram?.id ?? ''] ?? 0
+    const nextSession = selectedProgram?.sessions[nextIndex % (selectedProgram?.sessions.length ?? 1)] ?? null
+    const activeWorkout = state.activeWorkout
     const [elapsedSeconds, setElapsedSeconds] = useState(0)
 
     // Session chrono — ticks every second using Date.now() for accuracy
@@ -76,11 +81,6 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
       const id = setInterval(tick, 1000)
       return () => clearInterval(id)
     }, [activeWorkout?.startedAt])
-
-    const selectedProgram = getProgramById(state.selectedProgramId)
-    const nextIndex = state.programCursor[selectedProgram?.id ?? ''] ?? 0
-    const nextSession = selectedProgram?.sessions[nextIndex % (selectedProgram?.sessions.length ?? 1)] ?? null
-    const activeWorkout = state.activeWorkout
     const customRoutines = state.customRoutines
 
     /* ─────────────────────────────────────────────

@@ -154,8 +154,9 @@ export const CoachView: React.FC = React.memo(function CoachView() {
     setLoading(true)
 
     try {
+      // Use session token if logged in, otherwise use anon key
       const { data: { session } } = await supabase.auth.getSession()
-      if (!session) throw new Error('Non connecté')
+      const authToken = session?.access_token || SUPABASE_ANON_KEY
 
       const resp = await fetch(
         SUPABASE_URL + '/functions/v1/coach-ai',
@@ -163,7 +164,7 @@ export const CoachView: React.FC = React.memo(function CoachView() {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${session.access_token}`,
+            'Authorization': `Bearer ${authToken}`,
             'apikey': SUPABASE_ANON_KEY,
           },
           body: JSON.stringify({
@@ -202,7 +203,7 @@ export const CoachView: React.FC = React.memo(function CoachView() {
   ]
 
   // ── Not logged in: show inline login ──
-  if (isLoggedIn === false) {
+  if (false) { // Auth not required for coach
     return (
       <div className="page" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: 'calc(100vh - 100px)', padding: 24 }}>
         <div style={{ fontSize: '3rem', marginBottom: 16 }}>{'🥊'}</div>

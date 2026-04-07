@@ -79,7 +79,7 @@ export function ThemeSwitcher() {
       color: 'var(--text)', fontSize: '0.78rem', fontWeight: 600,
       display: 'flex', alignItems: 'center', gap: 6,
     }}>
-      {theme === 'dark' ? '\u2600\ufe0f' : '\U0001f319'} {theme === 'dark' ? 'Mode clair' : 'Mode sombre'}
+      {theme === 'dark' ? '☀️' : '🌙'} {theme === 'dark' ? 'Mode clair' : 'Mode sombre'}
     </button>
   )
 }

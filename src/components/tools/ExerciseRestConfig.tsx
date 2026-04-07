@@ -27,7 +27,7 @@ export function ExerciseRestConfig({ currentRest, onChangeRest }: Props) {
         }}
         title="Modifier le repos"
       >
-        {'\u23F1'} {currentRest}s
+        {'⏱'} {currentRest}s
       </button>
     )
   }
@@ -38,11 +38,11 @@ export function ExerciseRestConfig({ currentRest, onChangeRest }: Props) {
       padding: '8px 10px', marginTop: 4, marginBottom: 4,
     }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
-        <span style={{ fontSize: '0.72rem', fontWeight: 600 }}>Repos entre s\u00e9ries</span>
+        <span style={{ fontSize: '0.72rem', fontWeight: 600 }}>Repos entre séries</span>
         <button type="button" onClick={() => setEditing(false)} style={{
           background: 'transparent', border: 'none', color: 'var(--text-secondary)',
           cursor: 'pointer', fontSize: '0.8rem',
-        }}>{'\u2715'}</button>
+        }}>{'✕'}</button>
       </div>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
         {PRESETS.map(s => (

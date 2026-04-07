@@ -13,7 +13,7 @@ import { ProgramBuilder } from '../tools/ProgramBuilder'
 import { WorkoutHistory } from '../stats/WorkoutHistory'
 import { SmartWorkoutGenerator } from '../tools/SmartWorkoutGenerator'
 import { MesocycleProgress } from '../tools/MesocycleProgress'
-import { SupersetManager } from '../tools/SupersetIndicator'
+import { Groupe alternéManager } from '../tools/Groupe alternéIndicator'
 import { ExerciseDetail } from '../tools/ExerciseDetail'
 
 function getLastSet(workouts: AppState['workouts'], exerciseId: string) {
@@ -63,7 +63,7 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
     const [showHistory, setShowHistory] = useState(false)
     const [expandedProgram, setExpandedProgram] = useState<string | null>(null)
     const [showAiGenerator, setShowAiGenerator] = useState(false)
-    const [supersetGroups, setSupersetGroups] = useState<string[][]>([])
+    const [supersetGroups, setGroupe alternéGroups] = useState<string[][]>([])
     const [currentExIdx, setCurrentExIdx] = useState(0)
 
     const selectedProgram = getProgramById(state.selectedProgramId)
@@ -156,9 +156,9 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
 
           <MesocycleProgress />
 
-          <SupersetManager
+          <Groupe alternéManager
             exercises={activeWorkout.exercises}
-            onGroupExercises={setSupersetGroups}
+            onGroupExercises={setGroupe alternéGroups}
           />
 
           {/* === GUIDED MODE: One exercise at a time (superset-aware) === */}
@@ -186,10 +186,10 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
 
             return (
               <div>
-                {/* Superset label */}
+                {/* Groupe alterné label */}
                 {supersetGroup && supersetGroup.length > 1 && (
                   <div style={{ textAlign: 'center', padding: '4px 12px', marginBottom: 8, borderRadius: 8, background: 'rgba(155,89,182,0.1)', border: '1px solid rgba(155,89,182,0.3)', fontSize: '0.75rem', fontWeight: 700, color: '#9b59b6' }}>
-                    {String.fromCodePoint(0x26A1)} Superset {String.fromCharCode(8212)} {supersetGroup.length} exercices
+                    {String.fromCodePoint(0x26A1)} Groupe alterné {String.fromCharCode(8212)} {supersetGroup.length} exercices
                   </div>
                 )}
 
@@ -236,9 +236,8 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
                             <label><span>RIR</span><input value={currentInput.rir} onChange={(e) => setDraftInputs({ ...draftInputs, [exercise.id]: { ...currentInput, rir: e.target.value } })} /></label>
                           </div>
                           <button className='primary-btn' type='button' style={{ width: '100%', marginTop: 8 }} onClick={() => {
-                            // In superset: skip rest unless it's the last exercise in the group rotation
-                            const isLastInRotation = !supersetGroup || supersetGroup[supersetGroup.length - 1] === exercise.id
-                            onAddSet(exercise.id, Number(currentInput.weight || 0), Number(currentInput.reps || 0), Number(currentInput.rir || target.targetRir), currentInput.setType, !isLastInRotation)
+                            // Series alternees: repos apres CHAQUE serie (meme entre exercices du groupe)
+                            onAddSet(exercise.id, Number(currentInput.weight || 0), Number(currentInput.reps || 0), Number(currentInput.rir || target.targetRir), currentInput.setType, false)
                           }}>
                             S\u00e9rie {setsCompleted + 1}/{setsTarget}
                           </button>

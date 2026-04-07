@@ -65,6 +65,7 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
     const [expandedProgram, setExpandedProgram] = useState<string | null>(null)
     const [showAiGenerator, setShowAiGenerator] = useState(false)
     const [supersetGroups, setSupersetGroups] = useState<string[][]>([])
+    const [currentExIdx, setCurrentExIdx] = useState(0)
 
     const selectedProgram = getProgramById(state.selectedProgramId)
     const nextIndex = state.programCursor[selectedProgram?.id ?? ''] ?? 0
@@ -111,10 +112,29 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
                 <button onClick={() => { if (window.confirm('Annuler la séance ? Tes séries non terminées seront perdues.')) { dispatch({ type: 'ABANDON_WORKOUT' }) } }} type="button" style={{ padding: '8px 16px', borderRadius: 10, border: '1px solid var(--border)', background: 'transparent', color: 'var(--text-secondary)', fontWeight: 600, fontSize: '0.85rem', cursor: 'pointer' }}>
                   ← Annuler
                 </button>
-                <button className="primary-btn" onClick={onFinishWorkout} type="button" style={{ flex: 1 }}>Terminer la séance</button>
+                {/* Terminer moved to guided mode bottom */}
               </div>
             </div>
           </section>
+
+
+          {/* === GUIDED MODE: Progress bar === */}
+          {(() => {
+            const total = activeWorkout.exercises.length
+            const safeIdx = Math.min(currentExIdx, total - 1)
+            const pct = ((safeIdx + 1) / total) * 100
+            return (
+              <div style={{ marginBottom: 8 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.78rem', fontWeight: 600, marginBottom: 4 }}>
+                  <span style={{ color: 'var(--accent)' }}>Exercice {safeIdx + 1}/{total}</span>
+                  <span style={{ color: 'var(--muted)' }}>{Math.round(pct)}%</span>
+                </div>
+                <div style={{ height: 6, borderRadius: 3, background: 'var(--stroke)', overflow: 'hidden' }}>
+                  <div style={{ height: '100%', borderRadius: 3, width: pct + '%', background: 'var(--accent)', transition: 'width 0.3s ease' }} />
+                </div>
+              </div>
+            )
+          })()}
 
           <MesocycleProgress />
 
@@ -123,7 +143,11 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
             onGroupExercises={setSupersetGroups}
           />
 
-          {activeWorkout.exercises.map((exerciseLog) => {
+          {/* === GUIDED MODE: One exercise at a time === */}
+          {(() => {
+            const safeIdx = Math.min(currentExIdx, activeWorkout.exercises.length - 1)
+            const exerciseLog = activeWorkout.exercises[safeIdx]
+            if (!exerciseLog) return null
             const exercise = getExerciseById(exerciseLog.exerciseId)
             if (!exercise) return null
             const target = exerciseLog.target
@@ -134,75 +158,71 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
               rir: String(target.targetRir),
               setType: 'normal' as SetType,
             }
+            const setsCompleted = exerciseLog.sets.length
+            const setsTarget = target.sets
+            const isComplete = setsCompleted >= setsTarget
+            const isLastExercise = safeIdx >= activeWorkout.exercises.length - 1
+
             return (
-              <section className="hevy-card stack-md" key={exercise.id} style={{ position: 'relative' }}>
-                <SupersetBar exerciseId={exercise.id} groups={supersetGroups} />
+              <section className='hevy-card stack-md'>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                   <div>
                     <h3 style={{ margin: 0 }}>
-                      <span
-                        onClick={() => setDetailExerciseId(exercise.id)}
-                        style={{ cursor: 'pointer', textDecoration: 'underline', textDecorationStyle: 'dotted', textUnderlineOffset: 3 }}
-                        role="button"
-                        tabIndex={0}
-                        onKeyDown={(e) => { if (e.key === 'Enter') setDetailExerciseId(exercise.id) }}
-                      >
+                      <span onClick={() => setDetailExerciseId(exercise.id)} style={{ cursor: 'pointer', textDecoration: 'underline', textDecorationStyle: 'dotted', textUnderlineOffset: 3 }} role='button' tabIndex={0}>
                         {exercise.name}
                       </span>
-                      {' '}<ExerciseVideoLink exerciseId={exercise.id} />
                     </h3>
-                    <p style={{ margin: '2px 0 0', fontSize: '0.78rem', color: 'var(--muted)' }}>{target.sets}×{target.repMin}-{target.repMax} — RIR {target.targetRir} — Repos {target.restSeconds}s</p>
+                    <p style={{ margin: '2px 0 0', fontSize: '0.78rem', color: 'var(--muted)' }}>{target.sets}{String.fromCharCode(215)}{target.repMin}-{target.repMax} | RIR {target.targetRir} | Repos {target.restSeconds}s</p>
                   </div>
-                  {previous && <span className="badge" style={{ fontSize: '0.72rem' }}>Dernier: {previous.weightKg}×{previous.reps}</span>}
+                  <div style={{ textAlign: 'center', padding: '6px 14px', borderRadius: 10, background: isComplete ? 'rgba(34,197,94,0.12)' : 'rgba(255,140,0,0.1)', border: '1px solid ' + (isComplete ? '#22c55e33' : 'var(--accent)' + '33') }}>
+                    <div style={{ fontSize: '1.2rem', fontWeight: 800, color: isComplete ? '#22c55e' : 'var(--accent)' }}>{setsCompleted}/{setsTarget}</div>
+                    <div style={{ fontSize: '0.65rem', color: 'var(--muted)' }}>Séries</div>
+                  </div>
                 </div>
-                <div className="field-grid compact-grid">
-                  <label><span>Poids (kg)</span><input value={currentInput.weight} onChange={(e) => setDraftInputs({ ...draftInputs, [exercise.id]: { ...currentInput, weight: e.target.value } })} /></label>
-                  <label><span>Reps</span><input value={currentInput.reps} onChange={(e) => setDraftInputs({ ...draftInputs, [exercise.id]: { ...currentInput, reps: e.target.value } })} /></label>
-                  <label><span>RIR</span><input value={currentInput.rir} onChange={(e) => setDraftInputs({ ...draftInputs, [exercise.id]: { ...currentInput, rir: e.target.value } })} /></label>
-                  <div style={{ gridColumn: 'span 2' }}>
-                    <span style={{ fontSize: '0.75rem', color: 'var(--muted)', marginBottom: 4, display: 'block' }}>Type</span>
-                    <div className="chip-row">
-                      {([['warmup', 'Échauffement'], ['normal', 'Normal'], ['top', 'Top set'], ['backoff', 'Back-off'], ['drop', 'Drop set'], ['amrap', 'AMRAP']] as [SetType, string][]).map(([val, label]) => (
-                        <button key={val} type="button"
-                          className={`chip chip--sm ${currentInput.setType === val ? 'chip--active' : ''}`}
-                          onClick={() => setDraftInputs({ ...draftInputs, [exercise.id]: { ...currentInput, setType: val } })}
-                        >{label}</button>
-                      ))}
+                {previous && <div style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', marginBottom: 4 }}>Dernier: {previous.weightKg}kg {String.fromCharCode(215)} {previous.reps} @ RIR {previous.rir}</div>}
+                {!isComplete && (
+                  <div>
+                    <div className='field-grid compact-grid'>
+                      <label><span>Poids (kg)</span><input value={currentInput.weight} onChange={(e) => setDraftInputs({ ...draftInputs, [exercise.id]: { ...currentInput, weight: e.target.value } })} /></label>
+                      <label><span>Reps</span><input value={currentInput.reps} onChange={(e) => setDraftInputs({ ...draftInputs, [exercise.id]: { ...currentInput, reps: e.target.value } })} /></label>
+                      <label><span>RIR</span><input value={currentInput.rir} onChange={(e) => setDraftInputs({ ...draftInputs, [exercise.id]: { ...currentInput, rir: e.target.value } })} /></label>
                     </div>
+                    <button className='primary-btn' type='button' style={{ width: '100%', marginTop: 8 }} onClick={() => {
+                      const group = supersetGroups.find(g => g.includes(exercise.id))
+                      const isLastInGroup = !group || group[group.length - 1] === exercise.id
+                      onAddSet(exercise.id, Number(currentInput.weight || 0), Number(currentInput.reps || 0), Number(currentInput.rir || target.targetRir), currentInput.setType, !isLastInGroup)
+                    }}>
+                      Série {setsCompleted + 1}/{setsTarget}
+                    </button>
                   </div>
+                )}
+                <div className='set-list'>
+                  {exerciseLog.sets.map((set) => (
+                    <div className='set-row' key={set.id}>
+                      <span>S{set.setIndex}</span>
+                      <strong>{set.weightKg} kg {String.fromCharCode(215)} {set.reps}</strong>
+                      <span>RIR {set.rir}</span>
+                    </div>
+                  ))}
                 </div>
-                <button className="secondary-btn" type="button" onClick={() => {
-                  // FEAT-F3: Skip rest timer for non-last exercises in superset group
-                  const group = supersetGroups.find(g => g.includes(exercise.id))
-                  const isLastInGroup = !group || group[group.length - 1] === exercise.id
-                  onAddSet(exercise.id, Number(currentInput.weight || 0), Number(currentInput.reps || 0), Number(currentInput.rir || target.targetRir), currentInput.setType, !isLastInGroup)
-                }}>
-                  + Ajouter la série
-                </button>
-                <div className="set-list">
-                  {exerciseLog.sets.length === 0
-                    ? <div className="empty-state" style={{ padding: '10px 0' }}><p style={{ margin: 0, fontSize: '0.83rem' }}>Commence avec la charge précédente.</p></div>
-                    : exerciseLog.sets.map((set) => (
-                        <div className="set-row" key={set.id}>
-                          <span>S{set.setIndex}</span>
-                          <strong>{set.weightKg} kg × {set.reps}</strong>
-                          <span>RIR {set.rir}</span>
-                          <span>{set.setType}</span>
-                        </div>
-                      ))
-                  }
-                </div>
-                {exercise.alternatives.length > 0 && (
-                  <div className="chip-row">
-                    {exercise.alternatives.map((altId) => (
-                      <span className="chip chip--static" key={altId} style={{ fontSize: '0.72rem' }}>{getExerciseById(altId)?.name ?? altId.replace(/_/g, ' ')}</span>
-                    ))}
-                  </div>
+                {isComplete && !isLastExercise && (
+                  <button className='primary-btn' type='button' style={{ width: '100%', background: 'linear-gradient(135deg, #22c55e, #16a34a)' }} onClick={() => setCurrentExIdx(i => i + 1)}>
+                    Exercice suivant {String.fromCodePoint(0x27A1)}
+                  </button>
+                )}
+                {isComplete && isLastExercise && (
+                  <button className='primary-btn' type='button' style={{ width: '100%', background: 'linear-gradient(135deg, #FFD700, #FF8C00)' }} onClick={onFinishWorkout}>
+                    {String.fromCodePoint(0x1F3C6)} Terminer la séance
+                  </button>
+                )}
+                {!isComplete && (
+                  <button type='button' onClick={() => { if (window.confirm('Passer cet exercice ? Les séries manquantes ne seront pas comptées.')) setCurrentExIdx(i => Math.min(i + 1, activeWorkout.exercises.length - 1)) }} style={{ width: '100%', marginTop: 6, padding: 8, borderRadius: 8, border: '1px solid var(--border)', background: 'transparent', color: 'var(--muted)', fontSize: '0.75rem', cursor: 'pointer' }}>
+                    Passer cet exercice
+                  </button>
                 )}
               </section>
             )
-          })}
-
+          })()}
           {/* Small toggle buttons at the bottom of active workout */}
           <div style={{ display: 'flex', gap: 8, marginTop: 8, marginBottom: 8 }}>
             <button onClick={() => setShowTools(!showTools)} type="button" style={{

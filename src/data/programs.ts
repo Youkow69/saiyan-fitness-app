@@ -10,12 +10,12 @@ export const additionalPrograms: ProgramTemplate[] = [
     levelTags: ['intermediate', 'advanced'],
     equipmentTags: ['full_gym'],
     daysPerWeek: 3,
-    description: 'Programme de force pure ax\u00e9 sur les mouvements compos\u00e9s. R\u00e9p\u00e9titions basses, temps de repos longs et surcharge progressive sur le squat, le d\u00e9velopp\u00e9 couch\u00e9 et le soulev\u00e9 de terre.',
+    description: 'Programme de force pure axé sur les mouvements composés. Répétitions basses, temps de repos longs et surcharge progressive sur le squat, le développé couché et le soulevé de terre.',
     sessions: [
       {
         id: 'str_a',
         name: 'Force A',
-        focus: 'Squat et d\u00e9velopp\u00e9 couch\u00e9',
+        focus: 'Squat et développé couché',
         exercises: [
           { exerciseId: 'back_squat', sets: 5, repMin: 3, repMax: 5, targetRir: 2, restSeconds: 180 },
           { exerciseId: 'barbell_bench_press', sets: 5, repMin: 3, repMax: 5, targetRir: 2, restSeconds: 180 },
@@ -26,7 +26,7 @@ export const additionalPrograms: ProgramTemplate[] = [
       {
         id: 'str_b',
         name: 'Force B',
-        focus: 'Soulev\u00e9 de terre et d\u00e9velopp\u00e9 militaire',
+        focus: 'Soulevé de terre et développé militaire',
         exercises: [
           { exerciseId: 'deadlift', sets: 5, repMin: 3, repMax: 5, targetRir: 2, restSeconds: 240 },
           { exerciseId: 'overhead_press', sets: 5, repMin: 3, repMax: 5, targetRir: 2, restSeconds: 180 },
@@ -56,12 +56,12 @@ export const additionalPrograms: ProgramTemplate[] = [
     levelTags: ['intermediate', 'advanced'],
     equipmentTags: ['full_gym'],
     daysPerWeek: 4,
-    description: 'Combinaison de travail lourd compos\u00e9 et d\u2019accessoires en hypertrophie. Le meilleur des deux mondes pour devenir \u00e0 la fois fort et muscl\u00e9.',
+    description: 'Combinaison de travail lourd composé et d’accessoires en hypertrophie. Le meilleur des deux mondes pour devenir à la fois fort et musclé.',
     sessions: [
       {
         id: 'pb_upper_heavy',
         name: 'Haut Force',
-        focus: 'D\u00e9velopp\u00e9s lourds et tirage',
+        focus: 'Développés lourds et tirage',
         exercises: [
           { exerciseId: 'barbell_bench_press', sets: 5, repMin: 3, repMax: 5, targetRir: 2, restSeconds: 180 },
           { exerciseId: 'barbell_row', sets: 4, repMin: 5, repMax: 7, targetRir: 2, restSeconds: 150 },
@@ -73,7 +73,7 @@ export const additionalPrograms: ProgramTemplate[] = [
       {
         id: 'pb_lower_heavy',
         name: 'Bas Force',
-        focus: 'Squat et soulev\u00e9 de terre lourds',
+        focus: 'Squat et soulevé de terre lourds',
         exercises: [
           { exerciseId: 'back_squat', sets: 5, repMin: 3, repMax: 5, targetRir: 2, restSeconds: 180 },
           { exerciseId: 'romanian_deadlift', sets: 4, repMin: 5, repMax: 8, targetRir: 2, restSeconds: 150 },
@@ -97,7 +97,7 @@ export const additionalPrograms: ProgramTemplate[] = [
       {
         id: 'pb_lower_hyper',
         name: 'Bas Hypertrophie',
-        focus: 'Volume jambes et cha\u00eene post\u00e9rieure',
+        focus: 'Volume jambes et chaîne postérieure',
         exercises: [
           { exerciseId: 'leg_press', sets: 4, repMin: 10, repMax: 15, targetRir: 1, restSeconds: 90 },
           { exerciseId: 'barbell_hip_thrust', sets: 4, repMin: 8, repMax: 12, targetRir: 1, restSeconds: 90 },
@@ -112,17 +112,17 @@ export const additionalPrograms: ProgramTemplate[] = [
     id: 'hypertrophy_6d',
     name: 'Hypertrophie Pure 6J',
     saga: 'Saga Buu',
-    split: 'Pouss\u00e9 Tir\u00e9 Jambes',
+    split: 'Poussé Tiré Jambes',
     goalTags: ['muscle_gain'],
     levelTags: ['advanced'],
     equipmentTags: ['full_gym'],
     daysPerWeek: 6,
-    description: 'Programme PPL en double rotation pour un volume maximal. Poids mod\u00e9r\u00e9s, temps de repos courts et concentration sur la contraction musculaire. R\u00e9serv\u00e9 aux pratiquants exp\u00e9riment\u00e9s.',
+    description: 'Programme PPL en double rotation pour un volume maximal. Poids modérés, temps de repos courts et concentration sur la contraction musculaire. Réservé aux pratiquants expérimentés.',
     sessions: [
       {
         id: 'hyp_push_1',
-        name: 'Pouss\u00e9 1',
-        focus: 'Pectoraux et \u00e9paules',
+        name: 'Poussé 1',
+        focus: 'Pectoraux et épaules',
         exercises: [
           { exerciseId: 'barbell_bench_press', sets: 4, repMin: 8, repMax: 12, targetRir: 1, restSeconds: 90 },
           { exerciseId: 'db_incline_press', sets: 3, repMin: 10, repMax: 12, targetRir: 1, restSeconds: 75 },
@@ -134,7 +134,7 @@ export const additionalPrograms: ProgramTemplate[] = [
       },
       {
         id: 'hyp_pull_1',
-        name: 'Tir\u00e9 1',
+        name: 'Tiré 1',
         focus: 'Dos et biceps',
         exercises: [
           { exerciseId: 'pull_ups', sets: 4, repMin: 6, repMax: 10, targetRir: 1, restSeconds: 90 },
@@ -160,7 +160,7 @@ export const additionalPrograms: ProgramTemplate[] = [
       },
       {
         id: 'hyp_push_2',
-        name: 'Pouss\u00e9 2',
+        name: 'Poussé 2',
         focus: 'Volume pectoraux et triceps',
         exercises: [
           { exerciseId: 'db_bench_press', sets: 4, repMin: 8, repMax: 12, targetRir: 1, restSeconds: 90 },
@@ -173,7 +173,7 @@ export const additionalPrograms: ProgramTemplate[] = [
       },
       {
         id: 'hyp_pull_2',
-        name: 'Tir\u00e9 2',
+        name: 'Tiré 2',
         focus: 'Largeur du dos et biceps',
         exercises: [
           { exerciseId: 'lat_pulldown_wide', sets: 4, repMin: 8, repMax: 12, targetRir: 1, restSeconds: 90 },
@@ -187,7 +187,7 @@ export const additionalPrograms: ProgramTemplate[] = [
       {
         id: 'hyp_legs_2',
         name: 'Jambes 2',
-        focus: 'Cha\u00eene post\u00e9rieure et volume',
+        focus: 'Chaîne postérieure et volume',
         exercises: [
           { exerciseId: 'romanian_deadlift', sets: 4, repMin: 8, repMax: 12, targetRir: 1, restSeconds: 120 },
           { exerciseId: 'hack_squat', sets: 3, repMin: 10, repMax: 14, targetRir: 1, restSeconds: 90 },
@@ -208,12 +208,12 @@ export const additionalPrograms: ProgramTemplate[] = [
     levelTags: ['beginner', 'intermediate'],
     equipmentTags: ['home_gym'],
     daysPerWeek: 3,
-    description: 'Programme au poids du corps sans \u00e9quipement. Id\u00e9al pour s\u2019entra\u00eener \u00e0 la maison ou en d\u00e9placement. Pompes, tractions, dips et gainage.',
+    description: 'Programme au poids du corps sans équipement. Idéal pour s’entraîner à la maison ou en déplacement. Pompes, tractions, dips et gainage.',
     sessions: [
       {
         id: 'bw_a',
         name: 'Guerrier A',
-        focus: 'Pouss\u00e9 et gainage',
+        focus: 'Poussé et gainage',
         exercises: [
           { exerciseId: 'push_ups', sets: 4, repMin: 10, repMax: 20, targetRir: 1, restSeconds: 60 },
           { exerciseId: 'dips_triceps', sets: 3, repMin: 8, repMax: 15, targetRir: 1, restSeconds: 60 },
@@ -225,7 +225,7 @@ export const additionalPrograms: ProgramTemplate[] = [
       {
         id: 'bw_b',
         name: 'Guerrier B',
-        focus: 'Tir\u00e9 et dos',
+        focus: 'Tiré et dos',
         exercises: [
           { exerciseId: 'pull_ups', sets: 4, repMin: 5, repMax: 12, targetRir: 1, restSeconds: 90 },
           { exerciseId: 'chin_ups', sets: 3, repMin: 5, repMax: 10, targetRir: 1, restSeconds: 90 },
@@ -251,14 +251,14 @@ export const additionalPrograms: ProgramTemplate[] = [
   },
   {
     id: 'arm_specialization_4d',
-    name: 'Sp\u00e9cialisation Bras',
-    saga: 'Entra\u00eenement de Vegeta',
+    name: 'Spécialisation Bras',
+    saga: 'Entraînement de Vegeta',
     split: 'Haut/Bas',
     goalTags: ['muscle_gain'],
     levelTags: ['intermediate', 'advanced'],
     equipmentTags: ['full_gym'],
     daysPerWeek: 4,
-    description: 'Programme haut/bas avec un volume suppl\u00e9mentaire sur les biceps et les triceps. Pour ceux qui veulent des bras dignes du Prince des Saiyans.',
+    description: 'Programme haut/bas avec un volume supplémentaire sur les biceps et les triceps. Pour ceux qui veulent des bras dignes du Prince des Saiyans.',
     sessions: [
       {
         id: 'arm_upper_1',
@@ -288,7 +288,7 @@ export const additionalPrograms: ProgramTemplate[] = [
       {
         id: 'arm_upper_2',
         name: 'Haut 2 + Bras',
-        focus: 'Hypertrophie haut du corps et bras isol\u00e9s',
+        focus: 'Hypertrophie haut du corps et bras isolés',
         exercises: [
           { exerciseId: 'db_incline_press', sets: 3, repMin: 8, repMax: 12, targetRir: 1, restSeconds: 90 },
           { exerciseId: 'chest_supported_row', sets: 3, repMin: 8, repMax: 12, targetRir: 1, restSeconds: 90 },
@@ -302,7 +302,7 @@ export const additionalPrograms: ProgramTemplate[] = [
       {
         id: 'arm_lower_2',
         name: 'Bas 2',
-        focus: 'Cha\u00eene post\u00e9rieure',
+        focus: 'Chaîne postérieure',
         exercises: [
           { exerciseId: 'romanian_deadlift', sets: 4, repMin: 6, repMax: 10, targetRir: 2, restSeconds: 120 },
           { exerciseId: 'barbell_hip_thrust', sets: 3, repMin: 8, repMax: 12, targetRir: 1, restSeconds: 90 },
@@ -315,18 +315,18 @@ export const additionalPrograms: ProgramTemplate[] = [
   },
   {
     id: 'force_athletique_4d',
-    name: 'Force Athl\u00e9tique',
+    name: 'Force Athlétique',
     saga: 'Tournoi des Arts Martiaux',
     split: 'Haut/Bas',
     goalTags: ['strength'],
     levelTags: ['intermediate', 'advanced'],
     equipmentTags: ['full_gym'],
     daysPerWeek: 4,
-    description: 'Programme de force athl\u00e9tique avec p\u00e9riodisation. Les quatre grands mouvements (squat, d\u00e9velopp\u00e9 couch\u00e9, soulev\u00e9 de terre, d\u00e9velopp\u00e9 militaire) comme piliers de chaque s\u00e9ance.',
+    description: 'Programme de force athlétique avec périodisation. Les quatre grands mouvements (squat, développé couché, soulevé de terre, développé militaire) comme piliers de chaque séance.',
     sessions: [
       {
         id: 'fa_squat',
-        name: 'S\u00e9ance Squat',
+        name: 'Séance Squat',
         focus: 'Squat principal et accessoires jambes',
         exercises: [
           { exerciseId: 'back_squat', sets: 5, repMin: 3, repMax: 5, targetRir: 2, restSeconds: 240 },
@@ -338,8 +338,8 @@ export const additionalPrograms: ProgramTemplate[] = [
       },
       {
         id: 'fa_bench',
-        name: 'S\u00e9ance D\u00e9velopp\u00e9 couch\u00e9',
-        focus: 'Bench principal et accessoires pouss\u00e9',
+        name: 'Séance Développé couché',
+        focus: 'Bench principal et accessoires poussé',
         exercises: [
           { exerciseId: 'barbell_bench_press', sets: 5, repMin: 3, repMax: 5, targetRir: 2, restSeconds: 240 },
           { exerciseId: 'close_grip_bench', sets: 3, repMin: 6, repMax: 8, targetRir: 2, restSeconds: 120 },
@@ -350,8 +350,8 @@ export const additionalPrograms: ProgramTemplate[] = [
       },
       {
         id: 'fa_deadlift',
-        name: 'S\u00e9ance Soulev\u00e9 de terre',
-        focus: 'Deadlift principal et cha\u00eene post\u00e9rieure',
+        name: 'Séance Soulevé de terre',
+        focus: 'Deadlift principal et chaîne postérieure',
         exercises: [
           { exerciseId: 'deadlift', sets: 5, repMin: 3, repMax: 5, targetRir: 2, restSeconds: 240 },
           { exerciseId: 'romanian_deadlift', sets: 3, repMin: 6, repMax: 8, targetRir: 2, restSeconds: 150 },
@@ -362,8 +362,8 @@ export const additionalPrograms: ProgramTemplate[] = [
       },
       {
         id: 'fa_ohp',
-        name: 'S\u00e9ance D\u00e9velopp\u00e9 militaire',
-        focus: 'OHP principal et accessoires \u00e9paules',
+        name: 'Séance Développé militaire',
+        focus: 'OHP principal et accessoires épaules',
         exercises: [
           { exerciseId: 'overhead_press', sets: 5, repMin: 3, repMax: 5, targetRir: 2, restSeconds: 180 },
           { exerciseId: 'db_shoulder_press', sets: 3, repMin: 8, repMax: 10, targetRir: 1, restSeconds: 90 },

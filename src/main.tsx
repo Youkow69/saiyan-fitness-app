@@ -36,7 +36,7 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boole
               Exporter mes données (backup)
             </button>
             <button onClick={() => {
-              const input = window.prompt('ATTENTION : Ceci supprimera TOUTES tes donn\u00e9es. Tape SUPPRIMER pour confirmer :')
+              const input = window.prompt('ATTENTION : Ceci supprimera TOUTES tes données. Tape SUPPRIMER pour confirmer :')
               if (input === 'SUPPRIMER') {
                 localStorage.removeItem('saiyan-fitness-v1')
                 window.location.reload()

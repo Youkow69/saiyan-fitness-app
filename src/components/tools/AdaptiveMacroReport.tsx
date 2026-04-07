@@ -32,13 +32,13 @@ export function AdaptiveMacroReport() {
   let calorieAdjust = 0
   let adjustReason = ''
   if (profile.goal === 'fat_loss') {
-    if (weeklyChange > -0.2) { calorieAdjust = -150; adjustReason = 'Stagnation en perte - r\u00e9duction' }
+    if (weeklyChange > -0.2) { calorieAdjust = -150; adjustReason = 'Stagnation en perte - réduction' }
     else if (weeklyChange < -0.8) { calorieAdjust = 150; adjustReason = 'Perte trop rapide - augmentation' }
-    else { adjustReason = 'Progression id\u00e9ale !' }
+    else { adjustReason = 'Progression idéale !' }
   } else if (profile.goal === 'muscle_gain') {
     if (weeklyChange < 0.1) { calorieAdjust = 150; adjustReason = 'Stagnation en prise - augmentation' }
-    else if (weeklyChange > 0.5) { calorieAdjust = -150; adjustReason = 'Prise trop rapide - r\u00e9duction' }
-    else { adjustReason = 'Progression id\u00e9ale !' }
+    else if (weeklyChange > 0.5) { calorieAdjust = -150; adjustReason = 'Prise trop rapide - réduction' }
+    else { adjustReason = 'Progression idéale !' }
   }
 
   const newTdee = Math.round(tdeeStatus.tdee + calorieAdjust)
@@ -59,7 +59,7 @@ export function AdaptiveMacroReport() {
           cursor: 'pointer',
         }}
       >
-        {'\U0001f4ca'} Rapport de Bulma - Macros adaptatifs
+        {'📊'} Rapport de Bulma - Macros adaptatifs
       </button>
     )
   }
@@ -71,12 +71,12 @@ export function AdaptiveMacroReport() {
     }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
         <h3 style={{ margin: 0, fontSize: '1rem', color: '#93c5fd' }}>
-          {'\U0001f4ca'} Rapport de Bulma
+          {'📊'} Rapport de Bulma
         </h3>
         <button type="button" onClick={() => setShow(false)} style={{
           background: 'transparent', border: 'none', color: 'var(--text-secondary)',
           cursor: 'pointer', fontSize: '1.1rem',
-        }}>{'\u2715'}</button>
+        }}>{'✕'}</button>
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 12 }}>

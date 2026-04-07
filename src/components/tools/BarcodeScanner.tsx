@@ -79,8 +79,8 @@ export function BarcodeScanner({ onDetected, onClose }: BarcodeScannerProps) {
       } catch (err: any) {
         if (!cancelled) {
           setError(err.name === 'NotAllowedError'
-            ? "Autorise l'acc\u00e8s \u00e0 la cam\u00e9ra dans les param\u00e8tres."
-            : "Impossible d'acc\u00e9der \u00e0 la cam\u00e9ra.")
+            ? "Autorise l'accès à la caméra dans les paramètres."
+            : "Impossible d'accéder à la caméra.")
         }
       }
     }

@@ -188,12 +188,18 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
               : safeIdx
             const isLastGroup = groupEndIdx >= activeWorkout.exercises.length - 1
 
+            // Detect group type (superset vs alternating)
+            const routineRef = customRoutines.find(cr => cr.exercises.some(e => e.exerciseId === currentExLog.exerciseId))
+            const groupDef = (routineRef as any)?.exerciseGroups?.find((g: any) => g.exerciseIds?.includes(currentExLog.exerciseId))
+            const isSupersetGroup = groupDef?.type === "superset"
+            const groupColor = isSupersetGroup ? "#e74c3c" : "#9b59b6"
+
             return (
               <div>
                 {/* Groupe label */}
                 {supersetGroup && supersetGroup.length > 1 && (
-                  <div style={{ textAlign: 'center', padding: '4px 12px', marginBottom: 8, borderRadius: 8, background: (() => { const rd = customRoutines.find(cr => cr.exercises.some(e => e.exerciseId === currentExLog.exerciseId)); const gd = (rd as any)?.exerciseGroups?.find((g: any) => g.exerciseIds?.includes(currentExLog.exerciseId)); return gd?.type === 'superset' ? 'rgba(231,76,60,0.1)' : 'rgba(155,89,182,0.1)' })(), border: '1px solid ' + (() => { const rd = customRoutines.find(cr => cr.exercises.some(e => e.exerciseId === currentExLog.exerciseId)); const gd = (rd as any)?.exerciseGroups?.find((g: any) => g.exerciseIds?.includes(currentExLog.exerciseId)); return gd?.type === 'superset' ? 'rgba(231,76,60,0.3)' : 'rgba(155,89,182,0.3)' })(), fontSize: '0.75rem', fontWeight: 700, color: (() => { const rd = customRoutines.find(cr => cr.exercises.some(e => e.exerciseId === currentExLog.exerciseId)); const gd = (rd as any)?.exerciseGroups?.find((g: any) => g.exerciseIds?.includes(currentExLog.exerciseId)); return gd?.type === 'superset' ? '#e74c3c' : '#9b59b6' })() }}>
-{(() => { const rd = customRoutines.find(cr => cr.exercises.some(e => e.exerciseId === currentExLog.exerciseId)); const gd = (rd as any)?.exerciseGroups?.find((g: any) => g.exerciseIds?.includes(currentExLog.exerciseId)); return gd?.type === 'superset' ? String.fromCodePoint(0x1F525) + ' SUPERSET (encha\u00eener sans repos)' : String.fromCodePoint(0x26A1) + ' S\u00c9RIES ALTERN\u00c9ES (repos entre chaque)' })()
+                  <div style={{ textAlign: "center", padding: "6px 12px", marginBottom: 8, borderRadius: 8, background: groupColor + "18", border: "1px solid " + groupColor + "44", fontSize: "0.78rem", fontWeight: 700, color: groupColor }}>
+                    {isSupersetGroup ? String.fromCodePoint(0x1F525) + " SUPERSET" : String.fromCodePoint(0x26A1) + " SÉRIES ALTERNÉES"}
                   </div>
                 )}
 

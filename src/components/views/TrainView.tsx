@@ -69,6 +69,8 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
     const [showAiGenerator, setShowAiGenerator] = useState(false)
     const [supersetGroups, setSupersetGroups] = useState<string[][]>([])
     const [currentExIdx, setCurrentExIdx] = useState(0)
+    // Reset exercise index when workout changes
+    React.useEffect(() => { setCurrentExIdx(0) }, [activeWorkout?.sessionId])
 
     const selectedProgram = getProgramById(state.selectedProgramId)
     const nextIndex = state.programCursor[selectedProgram?.id ?? ''] ?? 0
@@ -160,7 +162,8 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
 
           <MesocycleProgress />
 
-          <SupersetManager
+          {/* SupersetManager hidden in guided mode - groups come from routine */}
+          {false && <SupersetManager
             exercises={activeWorkout.exercises}
             onGroupExercises={setSupersetGroups}
           />
@@ -543,7 +546,7 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
                   </div>
                 </div>
                 <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
-                  <button onClick={() => onStartCustomRoutine(routine)} type="button" style={{
+                  <button onClick={() => { if (routine.exerciseGroups) setSupersetGroups(routine.exerciseGroups.map(g => g.exerciseIds)); setCurrentExIdx(0); onStartCustomRoutine(routine) }} type="button" style={{
                     padding: '6px 14px', borderRadius: 8, border: 'none',
                     background: 'var(--accent)', color: '#000', fontWeight: 700, fontSize: '0.78rem', cursor: 'pointer',
                   }}>Commencer</button>

@@ -117,7 +117,7 @@ function computeReadiness(state: any): ReadinessResult {
   const workouts = state.workouts || []
   const lastWorkout = workouts.length > 0 ? workouts[workouts.length - 1] : null
   let recoveryScore = 25
-  let recoveryDetail = "Pas d'entra\u00eenement r\u00e9cent"
+  let recoveryDetail = "Pas d'entraînement récent"
 
   if (lastWorkout) {
     // BUG-F13: Use finishedAt timestamp if available, else fallback to date noon
@@ -132,10 +132,10 @@ function computeReadiness(state: any): ReadinessResult {
     else if (hoursSince < 48) recoveryScore = 22
     // else stays 25
 
-    recoveryDetail = `Dernier entra\u00eenement : ${lastWorkout.date}`
+    recoveryDetail = `Dernier entraînement : ${lastWorkout.date}`
   }
   components.push({
-    name: 'R\u00e9cup\u00e9ration musculaire',
+    name: 'Récupération musculaire',
     score: recoveryScore,
     maxScore: 25,
     detail: recoveryDetail,
@@ -151,7 +151,7 @@ function computeReadiness(state: any): ReadinessResult {
   else if (last7Workouts <= 5) loadScore = 8
   else loadScore = 3
   components.push({
-    name: "Charge d'entra\u00eenement",
+    name: "Charge d'entraînement",
     score: loadScore,
     maxScore: 15,
     detail: `${last7Workouts} séance${last7Workouts > 1 ? 's' : ''} cette semaine`,

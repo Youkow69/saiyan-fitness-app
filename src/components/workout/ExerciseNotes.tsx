@@ -27,7 +27,7 @@ export function ExerciseNotes({ exerciseId, initialNote = '', onSave }: Props) {
           display: 'flex', alignItems: 'center', gap: 4,
         }}
       >
-        {'\U0001f4dd'} {note ? note.slice(0, 30) + (note.length > 30 ? '...' : '') : 'Notes'}
+        {'📝'} {note ? note.slice(0, 30) + (note.length > 30 ? '...' : '') : 'Notes'}
       </button>
     )
   }
@@ -40,7 +40,7 @@ export function ExerciseNotes({ exerciseId, initialNote = '', onSave }: Props) {
       <textarea
         value={note}
         onChange={e => setNote(e.target.value)}
-        placeholder="Ex: Douleur \u00e9paule gauche, prise large..."
+        placeholder="Ex: Douleur épaule gauche, prise large..."
         rows={2}
         style={{
           width: '100%', background: 'transparent', border: 'none',
@@ -60,7 +60,7 @@ export function ExerciseNotes({ exerciseId, initialNote = '', onSave }: Props) {
             padding: '4px 12px', borderRadius: 6, border: '1px solid var(--border)',
             background: 'transparent', color: 'var(--text-secondary)',
             fontSize: '0.72rem', cursor: 'pointer',
-          }}>{'\u2715'}</button>
+          }}>{'✕'}</button>
       </div>
     </div>
   )

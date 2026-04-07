@@ -76,6 +76,33 @@ function AppInner({ user, pushToCloud, pullFromCloud, syncSteps, signOut }: AppI
   const [restTimer, setRestTimer] = useState(0)
   const restEndTimeRef = useRef<number>(0) // absolute timestamp when rest ends
   const timerIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+
+  // Send timer state to Service Worker for lock-screen notification
+  const notifyTimerSW = useCallback((type: string, seconds?: number) => {
+    if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+      navigator.serviceWorker.controller.postMessage({ type, seconds })
+    }
+  }, [])
+
+  // Listen for SKIP_TIMER from SW notification action
+  useEffect(() => {
+    if (!('serviceWorker' in navigator)) return
+    const handler = (e: MessageEvent) => {
+      if (e.data?.type === 'SKIP_TIMER') {
+        restEndTimeRef.current = 0
+        setRestTimer(0)
+      }
+    }
+    navigator.serviceWorker.addEventListener('message', handler)
+    return () => navigator.serviceWorker.removeEventListener('message', handler)
+  }, [])
+
+  // Request notification permission on first workout
+  useEffect(() => {
+    if ('Notification' in window && Notification.permission === 'default') {
+      // Will ask permission when user first starts a workout
+    }
+  }, [])
   const [pendingFeedback, setPendingFeedback] = useState<{
     workoutId: string
     muscles: MuscleGroup[]
@@ -178,6 +205,7 @@ function AppInner({ user, pushToCloud, pullFromCloud, syncSteps, signOut }: AppI
         restEndTimeRef.current = 0
         setRestTimer(0)
         if (timerIntervalRef.current) { clearInterval(timerIntervalRef.current); timerIntervalRef.current = null }
+        notifyTimerSW('TIMER_DONE')
         try {
           navigator.vibrate?.([200, 100, 200, 100, 200])
           const ctx = new AudioContext()
@@ -190,6 +218,7 @@ function AppInner({ user, pushToCloud, pullFromCloud, syncSteps, signOut }: AppI
         } catch {}
       } else {
         setRestTimer(remaining)
+        if (remaining % 5 === 0 || remaining <= 10) notifyTimerSW('TIMER_UPDATE', remaining)
         if (remaining === 3) { try { navigator.vibrate?.(100) } catch {} }
       }
     }
@@ -406,6 +435,11 @@ function AppInner({ user, pushToCloud, pullFromCloud, syncSteps, signOut }: AppI
         const seconds = exerciseTarget?.restSeconds ?? DEFAULT_REST_SECONDS
         restEndTimeRef.current = Date.now() + seconds * 1000
         setRestTimer(seconds)
+        // Request notification permission + show timer notification
+        if ('Notification' in window && Notification.permission === 'default') {
+          Notification.requestPermission()
+        }
+        notifyTimerSW('TIMER_START', seconds)
       }
 
       // Immediate cloud push after adding a set
@@ -599,7 +633,7 @@ function AppInner({ user, pushToCloud, pullFromCloud, syncSteps, signOut }: AppI
           onAddSet={addSet}
           onFinishWorkout={finishWorkout}
           restTimer={restTimer}
-          onSkipTimer={() => { restEndTimeRef.current = 0; setRestTimer(0) }}
+          onSkipTimer={() => { restEndTimeRef.current = 0; setRestTimer(0); notifyTimerSW('TIMER_CANCEL') }}
           onSetRestTimer={(s: number) => { restEndTimeRef.current = Date.now() + s * 1000; setRestTimer(s) }}
         />
       )}

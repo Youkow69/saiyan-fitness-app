@@ -320,7 +320,7 @@ export interface CustomRoutine {
     repMax: number
     restSeconds: number
   }[]
-  alternatingGroups?: string[][]
+  exerciseGroups?: { exerciseIds: string[]; type: 'superset' | 'alternating' }[]
 }
 
 export interface AppState {

@@ -126,7 +126,7 @@ export function getRecommendedRecipes(state: AppState) {
 
 export function getLowCarbWarning(carbsG: number): string | null {
   if (carbsG < 50) {
-    return '\u26A0\uFE0F Tes glucides sont tr\u00e8s bas (' + Math.round(carbsG) + 'g). Consulte un nutritionniste.'
+    return '⚠️ Tes glucides sont très bas (' + Math.round(carbsG) + 'g). Consulte un nutritionniste.'
   }
   return null
 }

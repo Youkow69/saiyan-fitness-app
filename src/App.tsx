@@ -75,6 +75,7 @@ function AppInner({ user, pushToCloud, pullFromCloud, syncSteps, signOut }: AppI
   const [tab, setTab] = useState<TabId>('home')
   const [restTimer, setRestTimer] = useState(0)
   const restEndTimeRef = useRef<number>(0) // absolute timestamp when rest ends
+  const timerIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const [pendingFeedback, setPendingFeedback] = useState<{
     workoutId: string
     muscles: MuscleGroup[]
@@ -160,16 +161,23 @@ function AppInner({ user, pushToCloud, pullFromCloud, syncSteps, signOut }: AppI
     return () => clearInterval(interval)
   }, [user, pushToCloud])
 
-  // Rest timer effect — uses Date.now() to survive background throttling
+  // Rest timer — Date.now() based, survives background/screen-off
   useEffect(() => {
-    if (restTimer <= 0) return
+    // Clean up any existing interval
+    if (timerIntervalRef.current) {
+      clearInterval(timerIntervalRef.current)
+      timerIntervalRef.current = null
+    }
 
-    // Tick every 250ms using absolute time for accuracy in background
-    const tick = window.setInterval(() => {
-      const remaining = Math.ceil((restEndTimeRef.current - Date.now()) / 1000)
+    if (restEndTimeRef.current <= 0) return
+
+    const tick = () => {
+      const now = Date.now()
+      const remaining = Math.ceil((restEndTimeRef.current - now) / 1000)
       if (remaining <= 0) {
-        setRestTimer(0)
         restEndTimeRef.current = 0
+        setRestTimer(0)
+        if (timerIntervalRef.current) { clearInterval(timerIntervalRef.current); timerIntervalRef.current = null }
         try {
           navigator.vibrate?.([200, 100, 200, 100, 200])
           const ctx = new AudioContext()
@@ -184,23 +192,23 @@ function AppInner({ user, pushToCloud, pullFromCloud, syncSteps, signOut }: AppI
         setRestTimer(remaining)
         if (remaining === 3) { try { navigator.vibrate?.(100) } catch {} }
       }
-    }, 250)
+    }
 
-    // Recalculate immediately when app returns to foreground
+    // Tick immediately then every 250ms
+    tick()
+    timerIntervalRef.current = setInterval(tick, 250)
+
+    // Recalculate when app returns to foreground
     const onVisible = () => {
-      if (document.visibilityState === 'visible' && restEndTimeRef.current > 0) {
-        const rem = Math.ceil((restEndTimeRef.current - Date.now()) / 1000)
-        setRestTimer(rem > 0 ? rem : 0)
-      }
+      if (document.visibilityState === 'visible') tick()
     }
     document.addEventListener('visibilitychange', onVisible)
 
     return () => {
-      window.clearInterval(tick)
+      if (timerIntervalRef.current) { clearInterval(timerIntervalRef.current); timerIntervalRef.current = null }
       document.removeEventListener('visibilitychange', onVisible)
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [restTimer > 0])
+  }, [restTimer])
 
   // Theme effect
   useEffect(() => {

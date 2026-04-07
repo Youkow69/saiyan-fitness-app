@@ -65,6 +65,17 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
     const [showAiGenerator, setShowAiGenerator] = useState(false)
     const [supersetGroups, setSupersetGroups] = useState<string[][]>([])
     const [currentExIdx, setCurrentExIdx] = useState(0)
+    const [elapsedSeconds, setElapsedSeconds] = useState(0)
+
+    // Session chrono — ticks every second using Date.now() for accuracy
+    React.useEffect(() => {
+      if (!activeWorkout) return
+      const startMs = new Date(activeWorkout.startedAt).getTime()
+      const tick = () => setElapsedSeconds(Math.floor((Date.now() - startMs) / 1000))
+      tick()
+      const id = setInterval(tick, 1000)
+      return () => clearInterval(id)
+    }, [activeWorkout?.startedAt])
 
     const selectedProgram = getProgramById(state.selectedProgramId)
     const nextIndex = state.programCursor[selectedProgram?.id ?? ''] ?? 0
@@ -100,6 +111,14 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
               <div>
                 <SectionTitle icon="🏋️" label="Séance en cours" />
                 <h3 style={{ margin: '4px 0 0' }}>{nextSession?.name || activeWorkout.sessionName || 'Seance personnalisee'}</h3>
+                {/* Session chrono */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 4 }}>
+                  <span style={{ fontSize: '1.4rem', fontFamily: "'Bebas Neue', sans-serif", color: 'var(--accent-gold)', letterSpacing: '0.05em', fontVariantNumeric: 'tabular-nums' }}>
+                    {String(Math.floor(elapsedSeconds / 3600)).padStart(2, '0')}:{String(Math.floor((elapsedSeconds % 3600) / 60)).padStart(2, '0')}:{String(elapsedSeconds % 60).padStart(2, '0')}
+                  </span>
+                  <span style={{ fontSize: '0.68rem', color: 'var(--muted)' }}>temps de séance</span>
+                </div>
+
               </div>
               <div style={{ display: 'flex', gap: 8 }}>
                 <button type="button" onClick={() => {

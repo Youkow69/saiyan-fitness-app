@@ -36,7 +36,7 @@ export function WarmupGenerator({ workingWeight, exerciseId: _exerciseId, onAddW
         cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4,
       }}
     >
-      {'\U0001f525'} \u00c9chauffement auto ({Math.round(workingWeight)}kg)
+      {'🔥'} Échauffement auto ({Math.round(workingWeight)}kg)
     </button>
   )
 }

@@ -8,15 +8,15 @@ type Status = 'rested' | 'recovering' | 'fatigued' | 'unknown'
 const MUSCLES: MuscleGroup[] = ['Chest', 'Back', 'Shoulders', 'Biceps', 'Triceps', 'Quads', 'Hamstrings', 'Glutes', 'Calves', 'Core']
 
 const FR: Record<MuscleGroup, string> = {
-  Chest: 'Pectoraux', Back: 'Dos', Shoulders: '\u00C9paules', Biceps: 'Biceps', Triceps: 'Triceps',
+  Chest: 'Pectoraux', Back: 'Dos', Shoulders: 'Épaules', Biceps: 'Biceps', Triceps: 'Triceps',
   Quads: 'Quadriceps', Hamstrings: 'Ischio-jambiers', Glutes: 'Fessiers', Calves: 'Mollets', Core: 'Abdominaux',
 }
 
 const STATUS_META: Record<Status, { label: string; color: string; points: number; advice: string }> = {
-  rested:     { label: 'Repos\u00E9',        color: '#22c55e', points: 10, advice: 'Pr\u00EAt \u00E0 \u00EAtre retravail\u00E9.' },
-  recovering: { label: 'R\u00E9cup\u00E9ration', color: '#f59e0b', points: 5,  advice: 'Privil\u00E9gie un entra\u00EEnement l\u00E9ger.' },
-  fatigued:   { label: 'Fatigu\u00E9',       color: '#ef4444', points: 1,  advice: '\u00C9vite de retravailler ce muscle.' },
-  unknown:    { label: 'Inconnu',       color: '#6b7280', points: 0,  advice: 'Aucune donn\u00E9e. Entra\u00EEne-toi !' },
+  rested:     { label: 'Reposé',        color: '#22c55e', points: 10, advice: 'Prêt à être retravailé.' },
+  recovering: { label: 'Récupération', color: '#f59e0b', points: 5,  advice: 'Privilégie un entraînement léger.' },
+  fatigued:   { label: 'Fatigué',       color: '#ef4444', points: 1,  advice: 'Évite de retravailler ce muscle.' },
+  unknown:    { label: 'Inconnu',       color: '#6b7280', points: 0,  advice: 'Aucune donnée. Entraîne-toi !' },
 }
 
 function getStatus(hours: number | null): Status {
@@ -104,7 +104,7 @@ export function RecoveryMap() {
               <span style={{ flex: 1, fontWeight: 600, fontSize: 14 }}>{m.fr}</span>
               <span style={{ fontSize: 12, color: m.color, fontWeight: 600 }}>{m.label}</span>
               <span style={{ fontSize: 12, color: 'var(--text-muted, #a3a3a3)', minWidth: 36, textAlign: 'right' }}>
-                {m.hours !== null ? `${m.hours}h` : '\u2014'}
+                {m.hours !== null ? `${m.hours}h` : '—'}
               </span>
             </div>
             {/* Progress bar */}

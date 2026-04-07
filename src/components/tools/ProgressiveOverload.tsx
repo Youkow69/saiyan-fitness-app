@@ -108,7 +108,7 @@ function getSuggestions(
       reason = `${last.reps} reps sous la cible -- reduis`
       trend = 'down'
     } else {
-      reason = `${last.reps} reps @ RIR ${last.rir} \u2014 progresse bien, essaie +1 rep avant d'augmenter le poids`
+      reason = `${last.reps} reps @ RIR ${last.rir} — progresse bien, essaie +1 rep avant d'augmenter le poids`
     }
 
     return {
@@ -189,9 +189,9 @@ const styles = {
 }
 
 function trendIcon(trend: Suggestion['trend']): string {
-  if (trend === 'up') return '\u2B06\uFE0F'
-  if (trend === 'down') return '\u2B07\uFE0F'
-  return '\u27A1\uFE0F'
+  if (trend === 'up') return '⬆️'
+  if (trend === 'down') return '⬇️'
+  return '➡️'
 }
 
 function weightColor(trend: Suggestion['trend']): string {

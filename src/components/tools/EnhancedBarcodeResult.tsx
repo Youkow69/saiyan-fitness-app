@@ -120,7 +120,7 @@ export function EnhancedBarcodeResult({ data, onConfirm, onCancel }: Props) {
       {/* Grams input */}
       <div style={{ marginBottom: 12 }}>
         <label style={{ fontSize: '0.75rem', fontWeight: 600, display: 'block', marginBottom: 4 }}>
-          Quantit\u00e9 (g)
+          Quantité (g)
         </label>
         <div style={{ display: 'flex', gap: 6 }}>
           <input
@@ -192,7 +192,7 @@ export function RecentScans({ onSelect }: { onSelect: (data: NutritionData) => v
   return (
     <div style={{ marginBottom: 12 }}>
       <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 6 }}>
-        Scans r\u00e9cents
+        Scans récents
       </div>
       <div style={{ display: 'flex', gap: 6, overflowX: 'auto', paddingBottom: 4 }}>
         {scans.slice(0, 8).map((s, i) => (

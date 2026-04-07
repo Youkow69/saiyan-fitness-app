@@ -53,6 +53,9 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
     const [creatingRoutine, setCreatingRoutine] = useState(false)
     const [routineName, setRoutineName] = useState('')
     const [routineExercises, setRoutineExercises] = useState<Array<{ exerciseId: string; sets: number; repMin: number; repMax: number; restSeconds: number }>>([])
+    const [routineGroups, setRoutineGroups] = useState<string[][]>([])
+    const [groupingMode, setGroupingMode] = useState(false)
+    const [groupSelection, setGroupSelection] = useState<string[]>([])
     const [exerciseSearch, setExerciseSearch] = useState('')
     const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null)
     const [editingRoutineId, setEditingRoutineId] = useState<string | null>(null)
@@ -381,7 +384,7 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
           <section className="hevy-card stack-md" style={{ marginBottom: 12 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <SectionTitle icon="✏️" label={editingRoutineId ? "Modifier la routine" : "Nouvelle routine"} />
-              <button className="ghost-btn" style={{ minHeight: 34, padding: '4px 12px' }} onClick={() => { setCreatingRoutine(false); setEditingRoutineId(null); setRoutineName(''); setRoutineExercises([]); setExerciseSearch('') }} type="button">✕</button>
+              <button className="ghost-btn" style={{ minHeight: 34, padding: '4px 12px' }} onClick={() => { setCreatingRoutine(false); setEditingRoutineId(null); setRoutineName(''); setRoutineExercises([]); setRoutineGroups([]); setGroupSelection([]); setGroupingMode(false); setExerciseSearch('') }} type="button">✕</button>
             </div>
             <label><span>Nom de la routine</span><input value={routineName} onChange={(e) => setRoutineName(e.target.value)} placeholder="Ex: Full Body A" /></label>
             <div>
@@ -418,9 +421,56 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
                 })}
               </div>
             )}
+            {/* Grouper des exercices (series alternees) */}
+            {routineExercises.length >= 2 && (
+              <div style={{ padding: 10, borderRadius: 10, border: "1px dashed rgba(155,89,182,0.4)", background: "rgba(155,89,182,0.05)" }}>
+                {!groupingMode ? (
+                  <button type="button" onClick={() => setGroupingMode(true)} style={{ width: "100%", padding: 8, borderRadius: 8, border: "none", background: "rgba(155,89,182,0.15)", color: "#9b59b6", fontWeight: 700, fontSize: "0.82rem", cursor: "pointer" }}>
+                    {String.fromCodePoint(0x26A1)} Grouper des exercices (séries alternées)
+                  </button>
+                ) : (
+                  <div>
+                    <p style={{ fontSize: "0.75rem", color: "var(--muted)", margin: "0 0 8px" }}>Sélectionne 2+ exercices à alterner :</p>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 4, marginBottom: 8 }}>
+                      {routineExercises.map(re => {
+                        const ex = getExerciseById(re.exerciseId)
+                        const isSelected = groupSelection.includes(re.exerciseId)
+                        const alreadyGrouped = routineGroups.some(g => g.includes(re.exerciseId))
+                        return (
+                          <button key={re.exerciseId} type="button" disabled={alreadyGrouped}
+                            onClick={() => setGroupSelection(prev => isSelected ? prev.filter(id => id !== re.exerciseId) : [...prev, re.exerciseId])}
+                            style={{ padding: "8px 12px", borderRadius: 8, border: isSelected ? "2px solid #9b59b6" : alreadyGrouped ? "1px solid var(--border)" : "1px solid var(--border)", background: isSelected ? "rgba(155,89,182,0.15)" : "transparent", color: alreadyGrouped ? "var(--muted)" : "var(--text)", textAlign: "left", fontSize: "0.82rem", cursor: alreadyGrouped ? "default" : "pointer", opacity: alreadyGrouped ? 0.5 : 1 }}>
+                            {isSelected ? String.fromCodePoint(0x2705) + " " : ""}{ex?.name || re.exerciseId}
+                          </button>
+                        )
+                      })}
+                    </div>
+                    <div style={{ display: "flex", gap: 6 }}>
+                      <button type="button" disabled={groupSelection.length < 2} onClick={() => {
+                        setRoutineGroups(prev => [...prev, groupSelection])
+                        setGroupSelection([])
+                        setGroupingMode(false)
+                      }} style={{ flex: 1, padding: 8, borderRadius: 8, border: "none", background: "#9b59b6", color: "#fff", fontWeight: 700, fontSize: "0.82rem", cursor: "pointer", opacity: groupSelection.length < 2 ? 0.5 : 1 }}>Valider le groupe</button>
+                      <button type="button" onClick={() => { setGroupingMode(false); setGroupSelection([]) }} style={{ padding: "8px 14px", borderRadius: 8, border: "1px solid var(--border)", background: "transparent", color: "var(--muted)", fontSize: "0.82rem", cursor: "pointer" }}>Annuler</button>
+                    </div>
+                    {routineGroups.length > 0 && (
+                      <div style={{ marginTop: 8 }}>
+                        <span style={{ fontSize: "0.72rem", color: "#9b59b6", fontWeight: 600 }}>Groupes créés :</span>
+                        {routineGroups.map((g, gi) => (
+                          <div key={gi} style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 4 }}>
+                            <span style={{ fontSize: "0.72rem", color: "var(--text)" }}>{g.map(id => getExerciseById(id)?.name || id).join(" + ")}</span>
+                            <button type="button" onClick={() => setRoutineGroups(prev => prev.filter((_, i) => i !== gi))} style={{ background: "none", border: "none", color: "var(--accent-red)", cursor: "pointer", fontSize: "0.75rem" }}>{String.fromCodePoint(0x2716)}</button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
             <button className="primary-btn" type="button" disabled={!routineName.trim() || routineExercises.length === 0}
               onClick={() => {
-                const routine: CustomRoutine = { id: editingRoutineId || makeId('cr'), name: routineName.trim(), exercises: routineExercises }
+                const routine: CustomRoutine = { id: editingRoutineId || makeId('cr'), name: routineName.trim(), exercises: routineExercises, alternatingGroups: routineGroups.length > 0 ? routineGroups : undefined }
                 if (editingRoutineId) {
                   // BUG-F4: Preserve routine ID on edit via UPDATE action
                   dispatch({ type: 'UPDATE_CUSTOM_ROUTINE', payload: { id: editingRoutineId, routine } })
@@ -428,7 +478,7 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
                   dispatch({ type: 'ADD_CUSTOM_ROUTINE', payload: routine })
                 }
                 showToast(`Routine "${routine.name}" creee`, 'success')
-                setCreatingRoutine(false); setEditingRoutineId(null); setRoutineName(''); setRoutineExercises([]); setExerciseSearch('')
+                setCreatingRoutine(false); setEditingRoutineId(null); setRoutineName(''); setRoutineExercises([]); setRoutineGroups([]); setGroupSelection([]); setGroupingMode(false); setExerciseSearch('')
               }}>
               {editingRoutineId ? "Mettre à jour" : "Sauvegarder la routine"}
             </button>

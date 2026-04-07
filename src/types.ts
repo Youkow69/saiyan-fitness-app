@@ -320,6 +320,7 @@ export interface CustomRoutine {
     repMax: number
     restSeconds: number
   }[]
+  alternatingGroups?: string[][]
 }
 
 export interface AppState {

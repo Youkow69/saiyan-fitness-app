@@ -79,8 +79,20 @@ function AppInner({ user, pushToCloud, pullFromCloud, syncSteps, signOut }: AppI
 
   // Send timer state to Service Worker for lock-screen notification
   const notifyTimerSW = useCallback((type: string, seconds?: number) => {
+    // Try Service Worker first (works in background)
     if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
       navigator.serviceWorker.controller.postMessage({ type, seconds })
+      return
+    }
+    // Fallback: use Notification API directly (may not work in background)
+    if ('Notification' in window && Notification.permission === 'granted') {
+      if (type === 'TIMER_DONE') {
+        new Notification('Repos terminé !', { body: 'Reprends ta série, guerrier !', tag: 'rest-timer', requireInteraction: false })
+      } else if (type === 'TIMER_START') {
+        const mins = Math.floor((seconds || 0) / 60)
+        const secs = (seconds || 0) % 60
+        new Notification('Repos en cours', { body: (mins > 0 ? mins + ':' + String(secs).padStart(2, '0') : secs + 's') + ' restantes', tag: 'rest-timer', silent: true })
+      }
     }
   }, [])
 
@@ -97,12 +109,7 @@ function AppInner({ user, pushToCloud, pullFromCloud, syncSteps, signOut }: AppI
     return () => navigator.serviceWorker.removeEventListener('message', handler)
   }, [])
 
-  // Request notification permission on first workout
-  useEffect(() => {
-    if ('Notification' in window && Notification.permission === 'default') {
-      // Will ask permission when user first starts a workout
-    }
-  }, [])
+
   const [pendingFeedback, setPendingFeedback] = useState<{
     workoutId: string
     muscles: MuscleGroup[]
@@ -409,6 +416,7 @@ function AppInner({ user, pushToCloud, pullFromCloud, syncSteps, signOut }: AppI
       }
       dispatch({ type: 'START_WORKOUT', payload: draft })
       setTab('train')
+    if ('Notification' in window && Notification.permission === 'default') Notification.requestPermission()
     },
     [dispatch]
   )

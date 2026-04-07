@@ -178,7 +178,6 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
             const allComplete = displayExercises.every(ex => ex && ex.sets.length >= (ex.target?.sets || 3))
             // Find which exercises in group still need sets
             const nextInGroup = displayExercises.find(ex => ex && ex.sets.length < (ex.target?.sets || 3))
-            const isLastExercise = safeIdx >= activeWorkout.exercises.length - 1
             // For supersets: check if the LAST exercise of the group is the last overall
             const groupEndIdx = supersetGroup
               ? Math.max(...supersetGroup.map(id => activeWorkout.exercises.findIndex(e => e.exerciseId === id)))

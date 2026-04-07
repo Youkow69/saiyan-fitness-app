@@ -161,84 +161,125 @@ export const TrainView: React.FC<TrainViewProps> = React.memo(
             onGroupExercises={setSupersetGroups}
           />
 
-          {/* === GUIDED MODE: One exercise at a time === */}
+          {/* === GUIDED MODE: One exercise at a time (superset-aware) === */}
           {(() => {
             const safeIdx = Math.min(currentExIdx, activeWorkout.exercises.length - 1)
-            const exerciseLog = activeWorkout.exercises[safeIdx]
-            if (!exerciseLog) return null
-            const exercise = getExerciseById(exerciseLog.exerciseId)
-            if (!exercise) return null
-            const target = exerciseLog.target
-            const previous = getLastSet(state.workouts, exercise.id)
-            const currentInput = draftInputs[exercise.id] ?? {
-              weight: previous?.weightKg?.toString() ?? '',
-              reps: previous?.reps?.toString() ?? `${target.repMin}`,
-              rir: String(target.targetRir),
-              setType: 'normal' as SetType,
-            }
-            const setsCompleted = exerciseLog.sets.length
-            const setsTarget = target.sets
-            const isComplete = setsCompleted >= setsTarget
+            const currentExLog = activeWorkout.exercises[safeIdx]
+            if (!currentExLog) return null
+
+            // Check if current exercise is in a superset group
+            const supersetGroup = supersetGroups.find(g => g.includes(currentExLog.exerciseId))
+            // Get all exercises to display (single or group)
+            const displayExercises = supersetGroup
+              ? supersetGroup.map(id => activeWorkout.exercises.find(e => e.exerciseId === id)).filter(Boolean)
+              : [currentExLog]
+
+            // Check if ALL exercises in the group are complete
+            const allComplete = displayExercises.every(ex => ex && ex.sets.length >= (ex.target?.sets || 3))
+            // Find which exercises in group still need sets
+            const nextInGroup = displayExercises.find(ex => ex && ex.sets.length < (ex.target?.sets || 3))
             const isLastExercise = safeIdx >= activeWorkout.exercises.length - 1
+            // For supersets: check if the LAST exercise of the group is the last overall
+            const groupEndIdx = supersetGroup
+              ? Math.max(...supersetGroup.map(id => activeWorkout.exercises.findIndex(e => e.exerciseId === id)))
+              : safeIdx
+            const isLastGroup = groupEndIdx >= activeWorkout.exercises.length - 1
 
             return (
-              <section className='hevy-card stack-md'>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                  <div>
-                    <h3 style={{ margin: 0 }}>
-                      <span onClick={() => setDetailExerciseId(exercise.id)} style={{ cursor: 'pointer', textDecoration: 'underline', textDecorationStyle: 'dotted', textUnderlineOffset: 3 }} role='button' tabIndex={0}>
-                        {exercise.name}
-                      </span>
-                    </h3>
-                    <p style={{ margin: '2px 0 0', fontSize: '0.78rem', color: 'var(--muted)' }}>{target.sets}{String.fromCharCode(215)}{target.repMin}-{target.repMax} | RIR {target.targetRir} | Repos {target.restSeconds}s</p>
-                  </div>
-                  <div style={{ textAlign: 'center', padding: '6px 14px', borderRadius: 10, background: isComplete ? 'rgba(34,197,94,0.12)' : 'rgba(255,140,0,0.1)', border: '1px solid ' + (isComplete ? '#22c55e33' : 'var(--accent)' + '33') }}>
-                    <div style={{ fontSize: '1.2rem', fontWeight: 800, color: isComplete ? '#22c55e' : 'var(--accent)' }}>{setsCompleted}/{setsTarget}</div>
-                    <div style={{ fontSize: '0.65rem', color: 'var(--muted)' }}>Séries</div>
-                  </div>
-                </div>
-                {previous && <div style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', marginBottom: 4 }}>Dernier: {previous.weightKg}kg {String.fromCharCode(215)} {previous.reps} @ RIR {previous.rir}</div>}
-                {!isComplete && (
-                  <div>
-                    <div className='field-grid compact-grid'>
-                      <label><span>Poids (kg)</span><input value={currentInput.weight} onChange={(e) => setDraftInputs({ ...draftInputs, [exercise.id]: { ...currentInput, weight: e.target.value } })} /></label>
-                      <label><span>Reps</span><input value={currentInput.reps} onChange={(e) => setDraftInputs({ ...draftInputs, [exercise.id]: { ...currentInput, reps: e.target.value } })} /></label>
-                      <label><span>RIR</span><input value={currentInput.rir} onChange={(e) => setDraftInputs({ ...draftInputs, [exercise.id]: { ...currentInput, rir: e.target.value } })} /></label>
-                    </div>
-                    <button className='primary-btn' type='button' style={{ width: '100%', marginTop: 8 }} onClick={() => {
-                      const group = supersetGroups.find(g => g.includes(exercise.id))
-                      const isLastInGroup = !group || group[group.length - 1] === exercise.id
-                      onAddSet(exercise.id, Number(currentInput.weight || 0), Number(currentInput.reps || 0), Number(currentInput.rir || target.targetRir), currentInput.setType, !isLastInGroup)
-                    }}>
-                      Série {setsCompleted + 1}/{setsTarget}
-                    </button>
+              <div>
+                {/* Superset label */}
+                {supersetGroup && supersetGroup.length > 1 && (
+                  <div style={{ textAlign: 'center', padding: '4px 12px', marginBottom: 8, borderRadius: 8, background: 'rgba(155,89,182,0.1)', border: '1px solid rgba(155,89,182,0.3)', fontSize: '0.75rem', fontWeight: 700, color: '#9b59b6' }}>
+                    {String.fromCodePoint(0x26A1)} Superset {String.fromCharCode(8212)} {supersetGroup.length} exercices
                   </div>
                 )}
-                <div className='set-list'>
-                  {exerciseLog.sets.map((set) => (
-                    <div className='set-row' key={set.id}>
-                      <span>S{set.setIndex}</span>
-                      <strong>{set.weightKg} kg {String.fromCharCode(215)} {set.reps}</strong>
-                      <span>RIR {set.rir}</span>
-                    </div>
-                  ))}
-                </div>
-                {isComplete && !isLastExercise && (
-                  <button className='primary-btn' type='button' style={{ width: '100%', background: 'linear-gradient(135deg, #22c55e, #16a34a)' }} onClick={() => setCurrentExIdx(i => i + 1)}>
+
+                {displayExercises.map((exerciseLog) => {
+                  if (!exerciseLog) return null
+                  const exercise = getExerciseById(exerciseLog.exerciseId)
+                  if (!exercise) return null
+                  const target = exerciseLog.target
+                  const previous = getLastSet(state.workouts, exercise.id)
+                  const currentInput = draftInputs[exercise.id] ?? {
+                    weight: previous?.weightKg?.toString() ?? '',
+                    reps: previous?.reps?.toString() ?? `${target.repMin}`,
+                    rir: String(target.targetRir),
+                    setType: 'normal' as SetType,
+                  }
+                  const setsCompleted = exerciseLog.sets.length
+                  const setsTarget = target.sets
+                  const isExComplete = setsCompleted >= setsTarget
+                  // In superset: highlight the exercise that needs the next set
+                  const isActiveInGroup = nextInGroup?.exerciseId === exerciseLog.exerciseId
+
+                  return (
+                    <section key={exercise.id} className='hevy-card stack-md' style={{ borderColor: isActiveInGroup && supersetGroup ? '#9b59b633' : undefined, borderWidth: isActiveInGroup && supersetGroup ? 2 : undefined }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                        <div>
+                          <h3 style={{ margin: 0 }}>
+                            <span onClick={() => setDetailExerciseId(exercise.id)} style={{ cursor: 'pointer', textDecoration: 'underline', textDecorationStyle: 'dotted', textUnderlineOffset: 3 }} role='button' tabIndex={0}>
+                              {exercise.name}
+                            </span>
+                          </h3>
+                          <p style={{ margin: '2px 0 0', fontSize: '0.78rem', color: 'var(--muted)' }}>{target.sets}{String.fromCharCode(215)}{target.repMin}-{target.repMax} | RIR {target.targetRir} | Repos {target.restSeconds}s</p>
+                        </div>
+                        <div style={{ textAlign: 'center', padding: '6px 14px', borderRadius: 10, background: isExComplete ? 'rgba(34,197,94,0.12)' : 'rgba(255,140,0,0.1)' }}>
+                          <div style={{ fontSize: '1.2rem', fontWeight: 800, color: isExComplete ? '#22c55e' : 'var(--accent)' }}>{setsCompleted}/{setsTarget}</div>
+                          <div style={{ fontSize: 'max(0.75rem, 0.65rem)', color: 'var(--muted)' }}>S\u00e9ries</div>
+                        </div>
+                      </div>
+                      {previous && <div style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', marginBottom: 4 }}>Dernier: {previous.weightKg}kg {String.fromCharCode(215)} {previous.reps}</div>}
+                      {!isExComplete && (!supersetGroup || isActiveInGroup) && (
+                        <div>
+                          <div className='field-grid compact-grid'>
+                            <label><span>Poids (kg)</span><input value={currentInput.weight} onChange={(e) => setDraftInputs({ ...draftInputs, [exercise.id]: { ...currentInput, weight: e.target.value } })} /></label>
+                            <label><span>Reps</span><input value={currentInput.reps} onChange={(e) => setDraftInputs({ ...draftInputs, [exercise.id]: { ...currentInput, reps: e.target.value } })} /></label>
+                            <label><span>RIR</span><input value={currentInput.rir} onChange={(e) => setDraftInputs({ ...draftInputs, [exercise.id]: { ...currentInput, rir: e.target.value } })} /></label>
+                          </div>
+                          <button className='primary-btn' type='button' style={{ width: '100%', marginTop: 8 }} onClick={() => {
+                            // In superset: skip rest unless it's the last exercise in the group rotation
+                            const isLastInRotation = !supersetGroup || supersetGroup[supersetGroup.length - 1] === exercise.id
+                            onAddSet(exercise.id, Number(currentInput.weight || 0), Number(currentInput.reps || 0), Number(currentInput.rir || target.targetRir), currentInput.setType, !isLastInRotation)
+                          }}>
+                            S\u00e9rie {setsCompleted + 1}/{setsTarget}
+                          </button>
+                        </div>
+                      )}
+                      {exerciseLog.sets.length > 0 && (
+                        <div className='set-list'>
+                          {exerciseLog.sets.map((set) => (
+                            <div className='set-row' key={set.id}>
+                              <span>S{set.setIndex}</span>
+                              <strong>{set.weightKg} kg {String.fromCharCode(215)} {set.reps}</strong>
+                              <span>RIR {set.rir}</span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </section>
+                  )
+                })}
+
+                {allComplete && !isLastGroup && (
+                  <button className='primary-btn' type='button' style={{ width: '100%', background: 'linear-gradient(135deg, #22c55e, #16a34a)' }} onClick={() => {
+                    // Skip to next exercise after the group
+                    const nextIdx = supersetGroup ? groupEndIdx + 1 : safeIdx + 1
+                    setCurrentExIdx(nextIdx)
+                  }}>
                     Exercice suivant {String.fromCodePoint(0x27A1)}
                   </button>
                 )}
-                {isComplete && isLastExercise && (
+                {allComplete && isLastGroup && (
                   <button className='primary-btn' type='button' style={{ width: '100%', background: 'linear-gradient(135deg, #FFD700, #FF8C00)' }} onClick={onFinishWorkout}>
-                    {String.fromCodePoint(0x1F3C6)} Terminer la séance
+                    {String.fromCodePoint(0x1F3C6)} Terminer la s\u00e9ance
                   </button>
                 )}
-                {!isComplete && (
-                  <button type='button' onClick={() => { if (window.confirm('Passer cet exercice ? Les séries manquantes ne seront pas comptées.')) setCurrentExIdx(i => Math.min(i + 1, activeWorkout.exercises.length - 1)) }} style={{ width: '100%', marginTop: 6, padding: 8, borderRadius: 8, border: '1px solid var(--border)', background: 'transparent', color: 'var(--muted)', fontSize: '0.75rem', cursor: 'pointer' }}>
-                    Passer cet exercice
+                {!allComplete && (
+                  <button type='button' onClick={() => { if (window.confirm('Passer ? Les s\u00e9ries manquantes ne seront pas compt\u00e9es.')) { const next = supersetGroup ? groupEndIdx + 1 : safeIdx + 1; setCurrentExIdx(Math.min(next, activeWorkout.exercises.length - 1)) } }} style={{ width: '100%', marginTop: 6, padding: 8, borderRadius: 8, border: '1px solid var(--border)', background: 'transparent', color: 'var(--muted)', fontSize: '0.75rem', cursor: 'pointer' }}>
+                    Passer
                   </button>
                 )}
-              </section>
+              </div>
             )
           })()}
           {/* Small toggle buttons at the bottom of active workout */}

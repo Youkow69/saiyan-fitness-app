@@ -88,7 +88,7 @@ export function FeedView() {
         username: state.profile?.name || 'Saiyan',
         avatar_level: Math.min(9, Math.floor((state.workouts.length || 0) / 10)),
         workout_date: workout.date,
-        session_name: workout.sessionName || 'Entra\u00eenement',
+        session_name: workout.sessionName || 'Entraînement',
         duration_min: workout.durationMinutes,
         total_volume: volume,
         exercises_summary: exercisesSummary,
@@ -96,7 +96,7 @@ export function FeedView() {
       })
 
       if (error) throw error
-      showToast('S\u00e9ance partag\u00e9e !', 'success')
+      showToast('Séance partagée !', 'success')
       loadFeed()
     } catch (err) {
       showToast('Erreur de partage', 'error')
@@ -130,7 +130,7 @@ export function FeedView() {
           background: 'linear-gradient(135deg, #ffd700, #ff8c00)',
           WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
         }}>
-          {'\U0001f525'} Tournoi des Guerriers
+          {'🔥'} Tournoi des Guerriers
         </h2>
         <p style={{ fontSize: '0.78rem', color: 'var(--text-secondary, #888)', margin: 0 }}>
           Vois les combats des autres Saiyans !
@@ -149,7 +149,7 @@ export function FeedView() {
             fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer', marginBottom: 16,
           }}
         >
-          {sharing ? 'Partage en cours...' : `\U0001f4e4 Partager: ${lastWorkout.sessionName || 'Derni\u00e8re s\u00e9ance'}`}
+          {sharing ? 'Partage en cours...' : `📤 Partager: ${lastWorkout.sessionName || 'Dernière séance'}`}
         </button>
       )}
 
@@ -160,7 +160,7 @@ export function FeedView() {
         </div>
       ) : feed.length === 0 ? (
         <div style={{ textAlign: 'center', padding: 32, color: 'var(--text-secondary)', fontSize: '0.85rem' }}>
-          Aucune s\u00e9ance partag\u00e9e. Sois le premier !
+          Aucune séance partagée. Sois le premier !
         </div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -188,8 +188,8 @@ export function FeedView() {
               {/* Workout info */}
               <h4 style={{ margin: '0 0 4px', fontSize: '0.9rem' }}>{item.session_name}</h4>
               <div style={{ display: 'flex', gap: 12, fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: 6 }}>
-                <span>{'\u23F1'} {item.duration_min} min</span>
-                <span>{'\U0001f4aa'} {Math.round(item.total_volume).toLocaleString()} kg</span>
+                <span>{'⏱'} {item.duration_min} min</span>
+                <span>{'💪'} {Math.round(item.total_volume).toLocaleString()} kg</span>
               </div>
 
               <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary, #888)', margin: '0 0 6px' }}>
@@ -205,7 +205,7 @@ export function FeedView() {
                       background: 'rgba(255,215,0,0.12)', color: '#ffd700',
                       fontSize: '0.68rem', fontWeight: 600,
                     }}>
-                      {'\U0001f3c6'} {pr}
+                      {'🏆'} {pr}
                     </span>
                   ))}
                 </div>
@@ -218,7 +218,7 @@ export function FeedView() {
                 color: item.liked_by_me ? '#ef4444' : 'var(--text-secondary, #888)',
                 fontSize: '0.78rem', fontWeight: item.liked_by_me ? 700 : 400,
               }}>
-                {item.liked_by_me ? '\u2764\ufe0f' : '\U0001f90d'} {item.likes || 0}
+                {item.liked_by_me ? '❤️' : '🤍'} {item.likes || 0}
               </button>
             </div>
           ))}
@@ -240,7 +240,7 @@ function getDemoFeed(): SharedWorkout[] {
     },
     {
       id: 'demo2', user_id: 'demo2', username: 'Vegeta', avatar_level: 8,
-      workout_date: new Date().toISOString().slice(0, 10), session_name: 'Leg Day - Gravit\u00e9 x300',
+      workout_date: new Date().toISOString().slice(0, 10), session_name: 'Leg Day - Gravité x300',
       duration_min: 75, total_volume: 18200, exercises_summary: 'Squat, RDL, Leg Press, Lunges',
       prs: ['Squat: 180kg x 3', 'RDL: 140kg x 8'], likes: 12, liked_by_me: false,
       created_at: new Date().toISOString(),

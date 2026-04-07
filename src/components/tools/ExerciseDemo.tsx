@@ -66,7 +66,7 @@ export function ExerciseDemo({ exerciseId, compact }: Props) {
         fontSize: '0.75rem', color: 'var(--text-secondary, #888)',
         textAlign: 'center',
       }}>
-        {'\U0001f3ac'} D\u00e9mo non disponible
+        {'🎬'} Démo non disponible
       </div>
     )
   }
@@ -82,9 +82,9 @@ export function ExerciseDemo({ exerciseId, compact }: Props) {
           padding: '2px 6px', borderRadius: 4,
           color: showVideo ? '#3b82f6' : 'var(--text-secondary, #888)',
         }}
-        title="Voir la d\u00e9mo"
+        title="Voir la démo"
       >
-        {'\U0001f3ac'}
+        {'🎬'}
       </button>
     )
   }
@@ -102,7 +102,7 @@ export function ExerciseDemo({ exerciseId, compact }: Props) {
           fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer',
         }}
       >
-        {'\U0001f3ac'} {showVideo ? 'Masquer la d\u00e9mo' : 'Voir la d\u00e9mo'}
+        {'🎬'} {showVideo ? 'Masquer la démo' : 'Voir la démo'}
       </button>
 
       {showVideo && !error && (
@@ -129,7 +129,7 @@ export function ExerciseDemo({ exerciseId, compact }: Props) {
       )}
       {error && showVideo && (
         <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', textAlign: 'center' }}>
-          Vid\u00e9o non disponible
+          Vidéo non disponible
         </p>
       )}
     </div>

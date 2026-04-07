@@ -9,12 +9,10 @@ import { PlateCalculator } from '../tools/PlateCalculator'
 import { WorkoutTimer } from '../tools/WorkoutTimer'
 import ExerciseLibrary from '../workout/ExerciseLibrary'
 import { SectionTitle } from '../ui/Shared'
-import { ExerciseVideoLink } from '../tools/ExerciseVideos'
 import { ProgramBuilder } from '../tools/ProgramBuilder'
 import { WorkoutHistory } from '../stats/WorkoutHistory'
 import { SmartWorkoutGenerator } from '../tools/SmartWorkoutGenerator'
 import { MesocycleProgress } from '../tools/MesocycleProgress'
-import { SupersetManager, SupersetBar } from '../tools/SupersetIndicator'
 import { ExerciseDetail } from '../tools/ExerciseDetail'
 
 function getLastSet(workouts: AppState['workouts'], exerciseId: string) {

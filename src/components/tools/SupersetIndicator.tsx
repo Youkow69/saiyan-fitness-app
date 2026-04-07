@@ -76,7 +76,7 @@ export function SupersetManager({ exercises, onGroupExercises }: Props) {
             fontSize: '0.78rem', fontWeight: 600, cursor: 'pointer',
           }}
         >
-          {'\u26A1'} {groups.length > 0 ? `${groups.length} superset(s) actif(s)` : 'Cr\u00e9er un superset'}
+          {'⚡'} {groups.length > 0 ? `${groups.length} superset(s) actif(s)` : 'Créer un superset'}
         </button>
       </div>
     )
@@ -89,16 +89,16 @@ export function SupersetManager({ exercises, onGroupExercises }: Props) {
     }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
         <span style={{ fontWeight: 700, fontSize: '0.85rem', color: '#9b59b6' }}>
-          {'\u26A1'} Mode superset
+          {'⚡'} Mode superset
         </span>
         <button type="button" onClick={() => setGroupMode(false)} style={{
           background: 'transparent', border: 'none', color: 'var(--text-secondary)',
           cursor: 'pointer', fontSize: '0.85rem',
-        }}>{'\u2715'}</button>
+        }}>{'✕'}</button>
       </div>
 
       <p style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', margin: '0 0 8px' }}>
-        S\u00e9lectionne 2-3 exercices puis appuie sur "Grouper"
+        Sélectionne 2-3 exercices puis appuie sur "Grouper"
       </p>
 
       {/* Exercise selection */}
@@ -122,7 +122,7 @@ export function SupersetManager({ exercises, onGroupExercises }: Props) {
                 opacity: groupInfo ? 0.7 : 1,
               }}
             >
-              {isSelected ? '\u2611' : groupInfo ? '\u26A1' : '\u2610'} {info?.name || ex.exerciseId}
+              {isSelected ? '☑' : groupInfo ? '⚡' : '☐'} {info?.name || ex.exerciseId}
             </button>
           )
         })}
@@ -155,7 +155,7 @@ export function SupersetManager({ exercises, onGroupExercises }: Props) {
               <button type="button" onClick={() => removeGroup(i)} style={{
                 background: 'transparent', border: 'none', color: 'var(--text-secondary)',
                 cursor: 'pointer', fontSize: '0.8rem',
-              }}>{'\u2715'}</button>
+              }}>{'✕'}</button>
             </div>
           ))}
         </div>
@@ -214,7 +214,7 @@ export function SupersetBar({ exerciseId, groups, onMoveExercise }: {
                     alignItems: 'center', justifyContent: 'center', padding: 0,
                   }}
                   aria-label="Monter"
-                >{'\u2191'}</button>
+                >{'↑'}</button>
               )}
               {!isLast && (
                 <button
@@ -227,7 +227,7 @@ export function SupersetBar({ exerciseId, groups, onMoveExercise }: {
                     alignItems: 'center', justifyContent: 'center', padding: 0,
                   }}
                   aria-label="Descendre"
-                >{'\u2193'}</button>
+                >{'↓'}</button>
               )}
             </div>
           )}
